@@ -10,15 +10,6 @@ Text Domain: zm-sh
 Domain Path: /languages
 */
 
-// Iconset dir where to search for iconsets.
-define("hssb_dir", plugin_dir_path(__FILE__));
-//define("hssb_url_iconset", hssb_dir . "iconset");
-
-define("hssb_url", plugin_dir_url(__FILE__));
-define("hssb_url_iconset", hssb_url . "iconset/");
-define("hssb_url_assets", hssb_url . "assets/");
-define("hssb_url_assets_img", hssb_url_assets . "image/");
-
 $loader = require __DIR__ . '/vendor/autoload.php';
 
 new HSSB\HSSB();
