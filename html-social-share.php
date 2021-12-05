@@ -42,7 +42,7 @@ $zm_sh_default_options = array(
 							"pinterest"		=> 1,
 							"mail"			=> 1,
 							)
-						
+
 					);
 
 //include interfaces.php
@@ -97,7 +97,7 @@ function zm_sh_btn($options){
 class zm_social_share{
 	public	$iconset;
 	public	$iconsets;
-	
+
 	public	$options;
 	private	$schemas;
 	private	$icons;
@@ -112,41 +112,41 @@ class zm_social_share{
 		}
 		return $instance;
 	}*/
-	
+
 	function __construct(){
 		global $zm_sh_default_options;
-		
+
 		$this->options = get_option("zm_shbt_fld", $zm_sh_default_options);
 		$this->iconsets	= new zm_sh_iconset;
 		//print_r($this->iconsets);
 		// getting options form database
 		// getting the current iconset
 		$this->iconset = $this->iconsets->get_current_iconset();
-		
-		//print styles and floating buttons 
+
+		//print styles and floating buttons
 		add_action('wp_footer',  array($this,'footer'));
 		//register stylesheets from theme
 		//add_action( 'wp_enqueue_scripts', array($this,'register_styles') );
-		
-		
-		
+
+
+
 		add_action('plugins_loaded', array($this, 'plugins_loaded'));
 
-		if(isset($this->options['show_after_post']) and $this->options['show_after_post'] or $this->options['show_before_post'])
+		if(isset($this->options['show_after_post']) and $this->options['show_after_post'] or isset($this->options['show_before_post']) and $this->options['show_before_post'])
 			add_filter( 'the_content', array($this, 'filter_the_content') );
-			
+
 		add_action('wp', array($this, 'wp'));
 	}
 	/*
-	
-	
-	
+
+
+
 	*/
 	function wp(){
 		global $post;
 		//echo $post->ID;
 		//print_r($post);
-		
+
 		$excludes		= $this->options['excludes'];
 		$excludes		= (array) explode(',', $excludes);
 		//print_r($excludes);
@@ -154,21 +154,21 @@ class zm_social_share{
 			$this->excluded	= true;
 			return;
 		}
-		
+
 		$disable_share = get_post_meta( $post->ID, '_zm_sh_disable_share', true );
 		if($disable_share=='on'){
 			$this->excluded	= true;
 			return;
 		}
 	}
-	
+
 	function plugins_loaded(){
 		// Localization
 		load_plugin_textdomain('zm-sh', false, dirname(plugin_basename(__FILE__)) . '/languages' );
-		
-		
+
+
 	}
-	
+
 	function filter_the_content($content){
 		//if(isset($this->excluded) and $this->excluded == true) return;
 		//print_r($this->options);
@@ -184,14 +184,14 @@ class zm_social_share{
 		}
 		return $content;
 	}
-	
-	
-	
-	//print styles and floating buttons 
+
+
+
+	//print styles and floating buttons
 	function footer(){
 		if(isset($this->excluded) and $this->excluded == true) return;
 		$options = $this->options;
-		
+
 		if(isset($options['g_analytics']) and $options['g_analytics']){
 			echo "
 				<script>
@@ -212,10 +212,10 @@ class zm_social_share{
 						_gaq.push(['_trackSocial', this.className, action]);
 						conlole.log(action);
 					});
-				}); 
+				});
 				</script>
 			";
-		}		
+		}
 		if(isset($options['show_in']['show_left']) and $options['show_in']['show_left']){
 			$options['class'] = 'left';
 			$options['show_on'] = 'show_left';
@@ -226,7 +226,7 @@ class zm_social_share{
 			$options['show_on'] = 'show_right';
 			echo $this->zm_sh_btn($options);
 		}
-		
+
 		$this->register_styles();
 		$this->icon_styles();
 	}
@@ -240,7 +240,7 @@ class zm_social_share{
 		else
 			wp_enqueue_style("social-share-default", plugins_url( 'iconset/default/', __FILE__) . 'style.css');
 	}
-	
+
 	//print styles for each icons in footer
 	function icon_styles() {
 		if(!is_array($this->printed_icons))
@@ -268,18 +268,18 @@ class zm_social_share{
 		}
 		echo "</style>";
 	}
-	
+
 	//the button generator function
 	function zm_sh_btn($instance = ""){
 		$output			= '';
 		if(isset($this->excluded) and $this->excluded == true) return;
 		$options		= $instance?$instance:$this->options;
-		
+
 		$__class		= $options['class']?$options['class']:"left";
 		$iconset_id		= $options['iconset'];
 		$selected_icons = $options['icons'];
 		$nofollow		= isset($options['nofollow'])? ' rel="nofollow" ' : '';
-		
+
 		$iconset		= $this->iconsets->get_iconset($iconset_id);
 		$this->stylesheets[$iconset->id]	= $iconset->url . $iconset->stylesheet;
 		$icons			= $iconset->icons;
@@ -292,7 +292,7 @@ class zm_social_share{
 		//print_r($options);
 		if(
 			(
-				isset($options['show_on']) and 
+				isset($options['show_on']) and
 				($options['show_on'] == 'show_after_post' or $options['show_on'] == 'show_before_post')
 			)
 			or
@@ -321,12 +321,12 @@ class zm_social_share{
         $output .= "</div>";
 		return $output;
 	}
-	
-	
+
+
 }
 
 
-	
+
 function zm_sh_curentPageURL() {
 	global $zm_sh_default_options;
 	$options = get_option("zm_shbt_fld", $zm_sh_default_options);
