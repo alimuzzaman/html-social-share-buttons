@@ -4,27 +4,32 @@ Author: Md. Alimuzzaman Alim
 Donate link: none
 Tags: Social-share, Social-share-button, Social, share, button, widget, translation ready, facebook share, google plus share, linkedin share, social media share, social sharing, Social-share-button, twitter share.
 Requires at least: 3.0.0
-Tested up to: 4.2.2
-Version: 2.1.6
+Tested up to: 5.8
+Version: 2.1.14
 License: GPLv2
-Stable tag: 2.1.6
+Stable tag: 2.1.14
 
-Are you searching for a lightweight sharing plugin? You are in right place. This pluign not use JavaScript.
- 
+
+Are you searching for a lightweight sharing plugin? You are in right place. This plugin does not use JavaScript.
+
 == Description ==
-For live demo <a target="_blank" href="http://www.zm-tech.net/wp-plugins/html-social-share-buttons/" rel="follow">Live demo</a>.
+If you have the version 2.1.13, please update the plugin (That version isn't stable).
 
 Designed By Hakan Ertan <a target="_blank" href="https://www.tonicons.com/" rel="follow">www.tonicons.com</a>
 
+To make Icons horizontal append  class='in_widget' in ShortCode.
+Ex. [zm_sh_btn iconset='long-shadows' iconset_type='square' icons='facebook,twitter,linkedin,googlepluse,pinterest,mail' class='in_widget']
+
 <strong>New feature:</strong><br />
 <ul>
-	<li>Desable icons on specific page. You can disable by the post edit screen or put the page ID on the setting page.</li>
+	<li>Added ability to provide url in shortcode ( To use provide url parameter).</li>
+	<li>Disable icons on specific page. You can disable by the post edit screen or put the page ID on the setting page.</li>
 	<li>Exclude page/post by ID/slug</li>
 	<li><strong>Social tracker:</strong> Google Social analytics integrated. Now you can track your social shares. Need to enable on settings page.</li>
 	<li>2 New <strong>Premium icons</strong> set added with different styles.</li>
-	<li>Visual composer support. You will be able to use in visual composer.</li>
+	<li>WPBakery support.</li>
 	<li>Short code generator</li>
-	<li>Opiton to add bottom of post.</li>
+	<li>Option to add bottom of post.</li>
 	<li>PHP code generator to use in theme</li>
 	<li>Translation ready. (Help me to translate to your language.)</li>
 	<li>3 Different button set.</li>
@@ -68,12 +73,3 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 5. Then drag and drop this widget to your sidebar or header banner or footer.
 
 6. That's all. Enjoy this widget.
-
-If you have any question about installation you may visit  <a href="http://www.zm-tech.net/wp-plugins/html-social-share-buttons/" rel="follow">Html shcial share button</a>.
-
-
-== Upgrade Notice ==
-To uptodate please visit <a href="http://www.zm-tech.net/wp-plugins/html-social-share-buttons/" rel="follow">Html shcial share button</a>. A new version can be publish on site before wordpress.
-
-== Screenshots == 
-1. http://www.zm-tech.net/wp-content/plugins/Html%20Social%20share%20buttons/share.png

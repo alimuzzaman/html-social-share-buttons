@@ -58,6 +58,8 @@ class zm_form{
 			$chk	= "checked='checked'";
 		else
 			$chk	= '';
+		if(!isset($options[$id]) or !$options[$id])
+			$options[$id] = array_shift(array_slice($iconset->types, 0, 1));
 		//if($chk and !$circle and !$square)
 			//$circle = 'checked="checked"';
 		echo "<div class='row toggle'>";

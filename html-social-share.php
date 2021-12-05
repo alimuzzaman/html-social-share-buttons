@@ -4,7 +4,7 @@ Plugin Name: Html Social share buttons
 Plugin URI: http://wordpress.org/plugins/html-social-share-buttons/
 Description: Html share button. It show lite share button only with html. It's not using any javascript whats anothers do. It's load only extra 10-11 kb total on your site.
 Author: Alimuzzaman Alim
-Version: 2.1.6
+Version: 2.1.14
 Author URI: http://www.zm-tech.net
 Text Domain: zm-sh
 Domain Path: /languages
@@ -25,20 +25,22 @@ $zm_sh_default_options = array(
 						"title"				=> "Share this with your friends",
 						"iconset"			=> "default",
 						"use_port"			=> false,
-						
-						"show_left"			=> true,
-						"show_right"		=> false,
-						"show_before_post"	=> false,
-						"show_after_post"	=> true,
+						"auto_hide_btn"		=> false,
+						"show_in" 			=> array(
+													"show_left"			=> true,
+													"show_right"		=> false,
+													"show_before_post"	=> false,
+													"show_after_post"	=> true,
+												),
 						'iconset_type'	=> "square",
 						"icons" => array(
-							"facebook"		=> "on",
-							"twitter"		=> "on",
-							"linkedin"		=> "on",
-							"googlepluse"	=> "on",
-							"bookmark"		=> "on",
-							"pinterest"		=> "on",
-							"mail"			=> "on",
+							"facebook"		=> 1,
+							"twitter"		=> 1,
+							"linkedin"		=> 1,
+							"googlepluse"	=> 1,
+							"bookmark"		=> 1,
+							"pinterest"		=> 1,
+							"mail"			=> 1,
 							)
 						
 					);
@@ -243,6 +245,7 @@ class zm_social_share{
 	function icon_styles() {
 		if(!is_array($this->printed_icons))
 			return;
+		$options = $this->options;
 		echo "<style>";
 		//print_r($this->printed_icons);
 		foreach($this->printed_icons as $id=>$iconset){
@@ -251,6 +254,16 @@ class zm_social_share{
 			.zmshbt.$iconset_id.$iconset_type .$class {
 					background-image:url('$iconset_url$iconset_type/$image');
 			}
+			";
+		}
+		if(!$options['auto_hide_btn']){
+			echo "
+				.zmshbt.left{
+					left: 0 !important;
+				}
+				.zmshbt.right {
+					right: 0 !important;
+				}
 			";
 		}
 		echo "</style>";
@@ -300,7 +313,9 @@ class zm_social_share{
 				$icon['iconset_type']	= $iconset_type;
 				if(!array_key_exists($id, (array)$selected_icons) and !in_array($id, (array)$selected_icons)) continue;
 				$this->printed_icons[$iconset->id."_$iconset_type\0_".$id] = $icon;
-				$url= apply_filters("zm_sh_placeholder", $url);
+				if(isset($options['url']) and !empty($options['url']))
+					$url = str_replace( "%%permalink%%", $options['url'], $url);
+				$url = apply_filters("zm_sh_placeholder", $url);
 				$output .= "<a class='$class' target='_blank' href='$url' $nofollow></a>\n";
 			}
         $output .= "</div>";

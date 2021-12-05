@@ -10,6 +10,7 @@
 		$atts = shortcode_atts(array(
 									'title'			=> '',
 									'iconset'		=> "default",
+									'url'			=> "%%permalink%%",
 									'icons'			=> array(
 															"facebook"		=> "on",
 															"twitter"		=> "on",

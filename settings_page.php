@@ -52,6 +52,7 @@ class zm_sh_settings{
 	function zm_sh_opt(){
 		$zm_form = new zm_form;
 		$options = $this->options;
+		//print_r($this->options);
 		?>
         <div class="wrap">
             <h2 class="zm_options_page_heading"><?php _e("Html Social Share button", "zm-sh");?></h2>
@@ -61,6 +62,7 @@ class zm_sh_settings{
             <?php $zm_form->text("title", "Enter a Title");?>
             <?php $zm_form->textArea("excludes", "Exclude");?>
  			<?php $zm_form->checkbox('g_analytics', 'Google Social analytics', $name = '',null,'','','','', "Be sure you have google analytics already in page" );?>
+ 			<?php $zm_form->checkbox('auto_hide_btn', 'Auto hide button', $name = '',null,'','','','', "Auto hide button on page load when used on left or right side." );?>
  			<?php $zm_form->checkbox('use_port', 'Use port on the url.', $name = '',null,'','','','', "Ex. ssl port :443" );?>
  			<?php $zm_form->checkbox('nofollow', 'No follow social link', $name = '',null,'','','','', "This will make all social link nofollow." );?>
             <?php $zm_form->select_iconset("iconset", "Select Button Style");?>

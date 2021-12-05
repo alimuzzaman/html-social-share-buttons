@@ -9,8 +9,8 @@ class zm_sh_filters{
 	}
 	
 	function zm_sh_placeholder($item){
-		$title			= get_the_title();
 		$parmalink		= zm_sh_curentPageURL();
+		$title			= $this->make_title($parmalink);
 		$description	= get_bloginfo ( 'description' );
 		$image_url		= $this->image_url($parmalink);
 		$item 			= str_replace( "%%permalink%%",		urlencode($parmalink),		$item);
@@ -26,6 +26,20 @@ class zm_sh_filters{
 		return $ico_link;
 	}
 	
+	function make_title($url){
+		$home = get_home_url();
+		if($home == $url or $home . "/" == $url){
+			$title	= get_bloginfo ( 'name' );
+		}
+		elseif($postid = url_to_postid( $url )){
+			$title 	= get_the_title( $postid );
+		}
+		else{
+			$title 	= get_the_title( );
+		}
+		return apply_filters('zm_sh_title', $title);
+	}
+
 	function image_url($url) {
 		global $post;
 		$thumb_id	= get_post_thumbnail_id($post->ID);
