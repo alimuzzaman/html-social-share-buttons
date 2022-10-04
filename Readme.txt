@@ -5,15 +5,14 @@ Donate link: none
 Tags: Social-share, Social-share-button, Social, share, button, widget, translation ready, facebook share, google plus share, linkedin share, social media share, social sharing, Social-share-button, twitter share.
 Requires at least: 3.0.0
 Tested up to: 5.8
-Version: 2.1.15
+Version: 2.1.16
 License: GPLv2
-Stable tag: 2.1.15
+Stable tag: 2.1.16
 
 
 Are you searching for a lightweight sharing plugin? You are in right place. This plugin does not use JavaScript.
 
 == Description ==
-If you have the version 2.1.13, please update the plugin (That version isn't stable).
 
 Designed By Hakan Ertan <a target="_blank" href="https://www.tonicons.com/" rel="follow">www.tonicons.com</a>
 
