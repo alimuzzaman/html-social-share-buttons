@@ -2,12 +2,12 @@
 
 new zm_sh_filters;
 class zm_sh_filters{
-	
+
 	function __construct(){
 		add_filter("zm_sh_placeholder", array($this, "zm_sh_placeholder"));
 		add_filter("zm_sh_ico_link", array($this, "ico_link"));
 	}
-	
+
 	function zm_sh_placeholder($item){
 		$parmalink		= zm_sh_curentPageURL();
 		$title			= $this->make_title($parmalink);
@@ -19,13 +19,13 @@ class zm_sh_filters{
 		$item 			= str_replace( "%%imageurl%%",		urlencode($image_url),		$item);
 		return $item;
 	}
-	
+
 	function ico_link($ico_link){
-		
-		
+
+
 		return $ico_link;
 	}
-	
+
 	function make_title($url){
 		$home = get_home_url();
 		if($home == $url or $home . "/" == $url){
@@ -42,10 +42,11 @@ class zm_sh_filters{
 
 	function image_url($url) {
 		global $post;
+		if(empty($post->ID)) return;
 		$thumb_id	= get_post_thumbnail_id($post->ID);
 		$attachmetn_url	= wp_get_attachment_url( $thumb_id);
 		$imageurl = urlencode( $attachmetn_url );
-		
+
 		if(!$imageurl){
 			$postid = url_to_postid( $url );
 			$post = get_post( $postid, "OBJECT" );

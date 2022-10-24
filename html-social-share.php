@@ -146,6 +146,7 @@ class zm_social_share{
 		global $post;
 		//echo $post->ID;
 		//print_r($post);
+		if(empty($post->ID)) return;
 
 		$excludes		= !empty($this->options['excludes']) ? $this->options['excludes'] : '';
 		$excludes		= (array) explode(',', $excludes);
@@ -189,6 +190,7 @@ class zm_social_share{
 
 	//print styles and floating buttons
 	function footer(){
+		if(is_admin()) return;
 		if(isset($this->excluded) and $this->excluded == true) return;
 		$options = $this->options;
 
