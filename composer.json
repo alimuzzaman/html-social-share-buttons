@@ -1,0 +1,15 @@
+{
+    "name": "alim/html-social-share-buttons",
+    "autoload": {
+        "psr-4": {
+            "HSSB\\": "includes/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Md. Alimuzzaman Alim",
+            "email": "alimuzzamanalim@gmail.com"
+        }
+    ],
+    "require": {}
+}
