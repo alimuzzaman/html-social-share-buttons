@@ -24,11 +24,11 @@ class SocialSharePlugin {
 
     public function generateShareButtons($url, $title) {
         // The selected social media platforms
-        $selectedPlatforms = $this->getOption('platforms', []);
+        $selectedPlatforms = $this->getOption('icons', []);
         $icon_set          = $this->getOption('icon_set', '');
 
         $buttons = '';
-        foreach ($selectedPlatforms as $platform) {
+        foreach ($selectedPlatforms as $platform => $value) {
             // Check if the platform is supported
             if (isset($this->socialMediaClasses[$platform])) {
                 $buttons .= '<a href="' . $this->socialMediaClasses[$platform]->share($url, $title) . '">';
@@ -41,7 +41,7 @@ class SocialSharePlugin {
 
     public function generatePageLinks($username) {
         // The selected social media platforms
-        $selectedPlatforms = $this->getOption('platforms', []);
+        $selectedPlatforms = $this->getOption('icons', []);
 
         $links = '';
         foreach ($selectedPlatforms as $platform) {

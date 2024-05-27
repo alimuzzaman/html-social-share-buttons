@@ -53,7 +53,7 @@ class PluginManager {
      * Load the plugin's text domain
      */
     public function load_textdomain() {
-        load_plugin_textdomain('html-social-share-buttons', false, HSSB_PLUGIN_DIR . '/languages/');
+        load_plugin_textdomain('zm-sh', false, HSSB_PLUGIN_DIR . '/languages/');
     }
 
     // Add other methods here...
