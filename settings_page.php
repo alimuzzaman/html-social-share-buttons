@@ -7,6 +7,8 @@ add_action('init', function(){
 
 class zm_sh_settings{
 	private $options;
+	private $zm_sh;
+	private $iconsets;
 	function __construct(){
 		global $zm_sh, $zm_sh_default_options;
 		$this->zm_sh	= &$zm_sh;

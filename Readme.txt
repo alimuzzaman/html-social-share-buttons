@@ -2,10 +2,10 @@
 Contributors: alimuzzamanalim
 Author: Md. Alimuzzaman Alim
 Donate link: none
-Tags: Social-share, Social-share-button, Social, share, button, widget, translation ready, facebook share, google plus share, linkedin share, social media share, social sharing, Social-share-button, twitter share.
+Tags: lightweight, no javascript, social share, fast, privacy-friendly
 Requires at least: 3.0.0
-Tested up to: 6.0.2
-Version: 2.2.0
+Tested up to: 6.8
+Version: 2.2.1
 License: GPLv2
 Stable tag: 2.2.0
 
@@ -74,6 +74,12 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 6. That's all. Enjoy this widget.
 
 == Changelog ==
+
+= 2.2.1 =
+* Tested up to WordPress 6.8
+* Tags updated to emphasize lightweight, no-JS focus (limited to 5)
+* Fixed PHP 8.2 deprecation: dynamic property creation in iconsets and core classes
+* Minor code quality improvements
 
 = 2.2.0 =
 * **SECURITY FIX**: Fixed Stored Cross-Site Scripting (XSS) vulnerability (CVE-2025-9849) in zm_sh_btn shortcode

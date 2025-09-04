@@ -4,7 +4,7 @@ Plugin Name: Html Social share buttons
 Plugin URI: http://wordpress.org/plugins/html-social-share-buttons/
 Description: Html share button. It show lite share button only with html. It's not using any javascript whats another do. It's load only extra 10-11 kb total on your site.
 Author: Alimuzzaman Alim
-Version: 2.2.0
+Version: 2.2.1
 Author URI: https://alim.dev
 Text Domain: zm-sh
 Domain Path: /languages
@@ -22,28 +22,28 @@ define("zm_sh_url_assets_img", zm_sh_url_assets . "image/");
 $dir_iconset = plugin_dir_path(__FILE__) . "iconset";
 
 $zm_sh_default_options = array(
-						"title"				=> "Share this with your friends",
-						"iconset"			=> "default",
-						"use_port"			=> false,
-						"auto_hide_btn"		=> false,
-						"show_in" 			=> array(
-													"show_left"			=> true,
-													"show_right"		=> false,
-													"show_before_post"	=> false,
-													"show_after_post"	=> true,
-												),
-						'iconset_type'	=> "square",
-						"icons" => array(
-							"facebook"		=> 1,
-							"twitter"		=> 1,
-							"linkedin"		=> 1,
-							"googlepluse"	=> 1,
-							"bookmark"		=> 1,
-							"pinterest"		=> 1,
-							"mail"			=> 1,
-							)
+	"title"				=> "Share this with your friends",
+	"iconset"			=> "default",
+	"use_port"			=> false,
+	"auto_hide_btn"		=> false,
+	"show_in" 			=> array(
+		"show_left"			=> true,
+		"show_right"		=> false,
+		"show_before_post"	=> false,
+		"show_after_post"	=> true,
+	),
+	'iconset_type'	=> "square",
+	"icons" => array(
+		"facebook"		=> 1,
+		"twitter"		=> 1,
+		"linkedin"		=> 1,
+		"googlepluse"	=> 1,
+		"bookmark"		=> 1,
+		"pinterest"		=> 1,
+		"mail"			=> 1,
+	)
 
-					);
+);
 
 //include interfaces.php
 //it's contains all interfaces
@@ -78,25 +78,26 @@ include("settings_page.php");
 global $zm_sh_iconset_classes;
 
 //new instance of class zm_social_share
-add_action('init', function(){
+add_action('init', function () {
 	global $zm_sh;
 	$zm_sh = new zm_social_share;
 	//echo 'xxxxx init done';
 }, 1);
 
-function zm_sh_btn($options){
+function zm_sh_btn($options) {
 	global $zm_sh;
 	//print_r($zm_sh);
 	//wp_die();
-	if(!is_object($zm_sh))
+	if (!is_object($zm_sh))
 		trigger_error('Please call after init hook');
 	$options['icons']	= array_flip($options['icons']);
 	return $zm_sh->zm_sh_btn($options);
 }
 
-class zm_social_share{
+class zm_social_share {
 	public	$iconset;
 	public	$iconsets;
+	public  $excluded = false;
 
 	public	$options;
 	private	$schemas;
@@ -113,7 +114,7 @@ class zm_social_share{
 		return $instance;
 	}*/
 
-	function __construct(){
+	function __construct() {
 		global $zm_sh_default_options;
 
 		$this->options = get_option("zm_shbt_fld", $zm_sh_default_options);
@@ -124,7 +125,7 @@ class zm_social_share{
 		$this->iconset = $this->iconsets->get_current_iconset();
 
 		//print styles and floating buttons
-		add_action('wp_footer',  array($this,'footer'));
+		add_action('wp_footer',  array($this, 'footer'));
 		//register stylesheets from theme
 		//add_action( 'wp_enqueue_scripts', array($this,'register_styles') );
 
@@ -132,8 +133,8 @@ class zm_social_share{
 
 		add_action('plugins_loaded', array($this, 'plugins_loaded'));
 
-		if(isset($this->options['show_after_post']) and $this->options['show_after_post'] or isset($this->options['show_before_post']) and $this->options['show_before_post'])
-			add_filter( 'the_content', array($this, 'filter_the_content') );
+		if (isset($this->options['show_after_post']) and $this->options['show_after_post'] or isset($this->options['show_before_post']) and $this->options['show_before_post'])
+			add_filter('the_content', array($this, 'filter_the_content'));
 
 		add_action('wp', array($this, 'wp'));
 	}
@@ -142,44 +143,42 @@ class zm_social_share{
 
 
 	*/
-	function wp(){
+	function wp() {
 		global $post;
 		//echo $post->ID;
 		//print_r($post);
-		if(empty($post->ID)) return;
+		if (empty($post->ID)) return;
 
 		$excludes		= !empty($this->options['excludes']) ? $this->options['excludes'] : '';
 		$excludes		= (array) explode(',', $excludes);
 		//print_r($excludes);
-		if(in_array($post->ID, $excludes)){
+		if (in_array($post->ID, $excludes)) {
 			$this->excluded	= true;
 			return;
 		}
 
-		$disable_share = get_post_meta( $post->ID, '_zm_sh_disable_share', true );
-		if($disable_share=='on'){
+		$disable_share = get_post_meta($post->ID, '_zm_sh_disable_share', true);
+		if ($disable_share == 'on') {
 			$this->excluded	= true;
 			return;
 		}
 	}
 
-	function plugins_loaded(){
+	function plugins_loaded() {
 		// Localization
-		load_plugin_textdomain('zm-sh', false, dirname(plugin_basename(__FILE__)) . '/languages' );
-
-
+		load_plugin_textdomain('zm-sh', false, dirname(plugin_basename(__FILE__)) . '/languages');
 	}
 
-	function filter_the_content($content){
+	function filter_the_content($content) {
 		//if(isset($this->excluded) and $this->excluded == true) return;
 		//print_r($this->options);
 		$options = $this->options;
 		$options['class'] = "in_widget";
-		if( is_singular() && isset($options['show_in']['show_before_post']) and  $options['show_in']['show_before_post']) {
+		if (is_singular() && isset($options['show_in']['show_before_post']) and  $options['show_in']['show_before_post']) {
 			$options['show_on'] = 'show_before_post';
-			$content = $this->zm_sh_btn($options).$content;
+			$content = $this->zm_sh_btn($options) . $content;
 		}
-		if( is_singular() && isset($options['show_in']['show_after_post']) and $options['show_in']['show_after_post']) {
+		if (is_singular() && isset($options['show_in']['show_after_post']) and $options['show_in']['show_after_post']) {
 			$options['show_on'] = 'show_after_post';
 			$content = $content . $this->zm_sh_btn($options);
 		}
@@ -189,12 +188,12 @@ class zm_social_share{
 
 
 	//print styles and floating buttons
-	function footer(){
-		if(is_admin()) return;
-		if(isset($this->excluded) and $this->excluded == true) return;
+	function footer() {
+		if (is_admin()) return;
+		if (isset($this->excluded) and $this->excluded == true) return;
 		$options = $this->options;
 
-		if(isset($options['g_analytics']) and $options['g_analytics']){
+		if (isset($options['g_analytics']) and $options['g_analytics']) {
 			echo "
 				<script>
 				jQuery(document).ready(function($){
@@ -218,12 +217,12 @@ class zm_social_share{
 				</script>
 			";
 		}
-		if(isset($options['show_in']['show_left']) and $options['show_in']['show_left']){
+		if (isset($options['show_in']['show_left']) and $options['show_in']['show_left']) {
 			$options['class'] = 'left';
 			$options['show_on'] = 'show_left';
 			echo $this->zm_sh_btn($options);
 		}
-		if(isset($options['show_in']['show_right']) and $options['show_in']['show_right']){
+		if (isset($options['show_in']['show_right']) and $options['show_in']['show_right']) {
 			$options['class'] = 'right';
 			$options['show_on'] = 'show_right';
 			echo $this->zm_sh_btn($options);
@@ -233,24 +232,23 @@ class zm_social_share{
 		$this->icon_styles();
 	}
 	//register stylesheets from theme
-	function register_styles(){
-		if(is_array($this->stylesheets)){
-			foreach($this->stylesheets as $id=>$stylesheet){
-				echo "<link rel='stylesheet' id='social-share-".esc_attr($id)."'  href='".esc_url($stylesheet)."' type='text/css' media='all' />\n";
+	function register_styles() {
+		if (is_array($this->stylesheets)) {
+			foreach ($this->stylesheets as $id => $stylesheet) {
+				echo "<link rel='stylesheet' id='social-share-" . esc_attr($id) . "'  href='" . esc_url($stylesheet) . "' type='text/css' media='all' />\n";
 			}
-		}
-		else
-			wp_enqueue_style("social-share-default", plugins_url( 'iconset/default/', __FILE__) . 'style.css');
+		} else
+			wp_enqueue_style("social-share-default", plugins_url('iconset/default/', __FILE__) . 'style.css');
 	}
 
 	//print styles for each icons in footer
 	function icon_styles() {
-		if(!is_array($this->printed_icons))
+		if (!is_array($this->printed_icons))
 			return;
 		$options = $this->options;
 		echo "<style>";
 		//print_r($this->printed_icons);
-		foreach($this->printed_icons as $id=>$iconset){
+		foreach ($this->printed_icons as $id => $iconset) {
 			extract($iconset);
 			echo "
 			.zmshbt.$iconset_id.$iconset_type .$class {
@@ -258,7 +256,7 @@ class zm_social_share{
 			}
 			";
 		}
-		if(!$options['auto_hide_btn']){
+		if (!$options['auto_hide_btn']) {
 			echo "
 				.zmshbt.left{
 					left: 0 !important;
@@ -272,60 +270,58 @@ class zm_social_share{
 	}
 
 	//the button generator function
-	function zm_sh_btn($instance = ""){
+	function zm_sh_btn($instance = "") {
 		$output			= '';
-		if(isset($this->excluded) and $this->excluded == true) return;
-		$options		= $instance?$instance:$this->options;
+		if (isset($this->excluded) and $this->excluded == true) return;
+		$options		= $instance ? $instance : $this->options;
 
 		// Sanitize inputs to prevent XSS vulnerabilities
-		$__class		= sanitize_html_class($options['class']?$options['class']:"left");
+		$__class		= sanitize_html_class($options['class'] ? $options['class'] : "left");
 		$iconset_id		= sanitize_key($options['iconset']);
 		$selected_icons = $options['icons'];
-		$nofollow		= isset($options['nofollow'])? ' rel="nofollow" ' : '';
+		$nofollow		= isset($options['nofollow']) ? ' rel="nofollow" ' : '';
 
 		$iconset		= $this->iconsets->get_iconset($iconset_id);
 		$this->stylesheets[$iconset->id]	= $iconset->url . $iconset->stylesheet;
 		$icons			= $iconset->icons;
-		if(!isset($options['show_on']))
+		if (!isset($options['show_on']))
 			$options['show_on']				= 'show_left';
-		if(isset($options['iconset_type']) and $options['iconset_type'])
+		if (isset($options['iconset_type']) and $options['iconset_type'])
 			$iconset_type					= sanitize_key($options['iconset_type']);
 		else
 			$iconset_type					= sanitize_key($options[$options['show_on']]);
 		//print_r($options);
-		if(
+		if (
 			(
 				isset($options['show_on']) and
 				($options['show_on'] == 'show_after_post' or $options['show_on'] == 'show_before_post')
 			)
 			or
-			( isset($options['title']) and $options['class'] == 'in_shortcode' )
+			(isset($options['title']) and $options['class'] == 'in_shortcode')
 		)
-			$output = "<h3>".esc_html($options['title'])."</h3>";
+			$output = "<h3>" . esc_html($options['title']) . "</h3>";
 		//print_r($options);
 		//echo "\n\n\n\n\n\n\n\n\n\n\n\n";
-        $output .= "<div class='zmshbt ".esc_attr($__class)." ".esc_attr($iconset_id)." ".esc_attr($iconset_type)."'>";
+		$output .= "<div class='zmshbt " . esc_attr($__class) . " " . esc_attr($iconset_id) . " " . esc_attr($iconset_type) . "'>";
 		//print_r($icons);
-        if(is_array($selected_icons))
-			foreach($selected_icons as $id => $ico){
+		if (is_array($selected_icons))
+			foreach ($selected_icons as $id => $ico) {
 				$icon = $icons[$id];
-				if(!$icon) continue;
+				if (!$icon) continue;
 				extract($icon);
 				$icon['iconset_id']		= $iconset->id;
 				$icon['iconset_url']	= $iconset->url;
 				$icon['iconset_type']	= $iconset_type;
-				if(!array_key_exists($id, (array)$selected_icons) and !in_array($id, (array)$selected_icons)) continue;
-				$this->printed_icons[$iconset->id."_$iconset_type\0_".$id] = $icon;
-				if(isset($options['url']) and !empty($options['url']))
-					$url = str_replace( "%%permalink%%", $options['url'], $url);
+				if (!array_key_exists($id, (array)$selected_icons) and !in_array($id, (array)$selected_icons)) continue;
+				$this->printed_icons[$iconset->id . "_$iconset_type\0_" . $id] = $icon;
+				if (isset($options['url']) and !empty($options['url']))
+					$url = str_replace("%%permalink%%", $options['url'], $url);
 				$url = apply_filters("zm_sh_placeholder", $url);
-				$output .= "<a class='".esc_attr($class)."' target='_blank' href='".esc_url($url)."' $nofollow></a>\n";
+				$output .= "<a class='" . esc_attr($class) . "' target='_blank' href='" . esc_url($url) . "' $nofollow></a>\n";
 			}
-        $output .= "</div>";
+		$output .= "</div>";
 		return $output;
 	}
-
-
 }
 
 
@@ -334,12 +330,14 @@ function zm_sh_curentPageURL() {
 	global $zm_sh_default_options;
 	$options = get_option("zm_shbt_fld", $zm_sh_default_options);
 	$pageURL = 'http';
-	if(isset($_SERVER["HTTPS"])) if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
-		$pageURL .= "://";
-	if (($_SERVER["SERVER_PORT"] != "80" and $_SERVER["SERVER_PORT"] != "443" ) or (isset($options['use_port']) and $options['use_port'])){
-		$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+	if (isset($_SERVER["HTTPS"])) if ($_SERVER["HTTPS"] == "on") {
+		$pageURL .= "s";
+	}
+	$pageURL .= "://";
+	if (($_SERVER["SERVER_PORT"] != "80" and $_SERVER["SERVER_PORT"] != "443") or (isset($options['use_port']) and $options['use_port'])) {
+		$pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
 	} else {
-		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+		$pageURL .= $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 	}
 	return $pageURL;
 }

@@ -2,6 +2,8 @@
 class zm_form{
 
 	public $options;
+	public $zm_sh;
+	public $iconsets;
 
 	function __construct($options = ""){
 		global $zm_sh, $zm_sh_default_options;
