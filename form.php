@@ -14,8 +14,8 @@ class zm_form{
 		$name	= $name		? $name		: "zm_shbt_fld[$id]";
 		$value	= $value	? $value	: $this->options[$id];
 		echo "<div class='row'>";
-			echo "<label for='$id' style='width:140px;line-height: 37px;'>$label</label>";
-			echo "<input type='text' id='$id' name='$name' value='$value' style='width: 278px;height: 33px;	background-color: #ffffff;border: 1.2px solid #B8B8B8;' >";
+			echo "<label for='".esc_attr($id)."' style='width:140px;line-height: 37px;'>".esc_html($label)."</label>";
+			echo "<input type='text' id='".esc_attr($id)."' name='".esc_attr($name)."' value='".esc_attr($value)."' style='width: 278px;height: 33px;	background-color: #ffffff;border: 1.2px solid #B8B8B8;' >";
 		echo "</div>";
 	}
 
@@ -23,8 +23,8 @@ class zm_form{
 		$name	= $name		? $name		: "zm_shbt_fld[$id]";
 		$value	= $value	? $value	: (isset($this->options[$id]) ? $this->options[$id] : '');
 		echo "<div class='row'>";
-			echo "<label for='$id' style='width:140px;line-height: 37px;'>$label</label>";
-			echo "<textarea type='text' id='$id' name='$name' style='width: 278px;background-color: #ffffff;border: 1.2px solid #B8B8B8;' placeholder='Exclude by Page ID, Page Title or Page Slug' >$value</textarea>";
+			echo "<label for='".esc_attr($id)."' style='width:140px;line-height: 37px;'>".esc_html($label)."</label>";
+			echo "<textarea type='text' id='".esc_attr($id)."' name='".esc_attr($name)."' style='width: 278px;background-color: #ffffff;border: 1.2px solid #B8B8B8;' placeholder='Exclude by Page ID, Page Title or Page Slug' >".esc_textarea($value)."</textarea>";
 		echo "</div>";
 	}
 
@@ -37,14 +37,14 @@ class zm_form{
 		$chk = $selected===null?checked($saved_val, true, false):$selected;
 		$name = $name ? $name : "zm_shbt_fld[$id]";
 		echo "<div class='row'>";
-			echo "<label for='$id_prefix$id' title='$description'>$label</label>";
-			echo "<input name='$name' id='$id_prefix$id' $chk type='checkbox' value='1' data-id='$id' />";
+			echo "<label for='".esc_attr($id_prefix.$id)."' title='".esc_attr($description)."'>".esc_html($label)."</label>";
+			echo "<input name='".esc_attr($name)."' id='".esc_attr($id_prefix.$id)."' $chk type='checkbox' value='1' data-id='".esc_attr($id)."' />";
 			echo "<span class='for_label'>";
-				echo "<label for='$id_prefix$id' class='$class' data-on='$yes' data-off='$no'></label>";
+				echo "<label for='".esc_attr($id_prefix.$id)."' class='".esc_attr($class)."' data-on='".esc_attr($yes)."' data-off='".esc_attr($no)."'></label>";
 			echo "</span>";
 		echo "</div>";
 		if($description)
-			echo "<p>$description</p>";
+			echo "<p>".esc_html($description)."</p>";
 	}
 
 	function show_on($id, $label, $selected=false, $class = 'toggle-check', $yes = "", $no = ""){
@@ -103,7 +103,7 @@ class zm_form{
 		$icons = $this->iconsets->get_iconset($iconset)->get_icons();
 		//print_r(func_get_args());
 		echo "<div class='row' style='margin-bottom:20px'>";
-			echo "<h2>$label</h2>";
+			echo "<h2>".esc_html($label)."</h2>";
 		echo "</div>";
 		$selected_icons = $selected_icons?$selected_icons:array();
 		foreach($icons as $icon){
@@ -120,11 +120,11 @@ class zm_form{
 
 	function dropdown($id, $label, $items, $name=false, $selected=false){
 		echo "<div class='row'>";
-			echo "<label for='$id'>$label</label>";
-			echo "<select id='$id' name='$name'>";
+			echo "<label for='".esc_attr($id)."'>".esc_html($label)."</label>";
+			echo "<select id='".esc_attr($id)."' name='".esc_attr($name)."'>";
 			foreach($items as $item){
 				$selec = selected($selected, $item, false);
-				echo "<option value='$item' $selec>".ucwords($item)."</option>";
+				echo "<option value='".esc_attr($item)."' $selec>".esc_html(ucwords($item))."</option>";
 			}
 			echo "</select>";
 		echo "</div>";
@@ -135,17 +135,17 @@ class zm_form{
 		$selected = $selected ? $selected : $this->options[$id];
 		//$iconset = $this->iconsets->get_iconset($selected);
 		echo "<div class='row'>";
-			echo "<label for='$id'>$label</label>";
-			echo "<select id='$id' name='$name'>";
+			echo "<label for='".esc_attr($id)."'>".esc_html($label)."</label>";
+			echo "<select id='".esc_attr($id)."' name='".esc_attr($name)."'>";
 			foreach($items as $i_id=>$i_name){
 				$selec = selected($selected, $i_id, false);
-				echo "<option value='{$i_id}' $selec>{$i_name}</option>";
+				echo "<option value='".esc_attr($i_id)."' $selec>".esc_html($i_name)."</option>";
 			}
 			echo "</select>";
 			//print_r($this->zm_sh->iconsets->get_iconset($selected));
 			?>
 			<div class="button-style-img">
-				<img src="<?php echo $this->iconsets->get_iconset($selected)->get_iconset_preview(); ?>" alt="" class="" />
+				<img src="<?php echo esc_url($this->iconsets->get_iconset($selected)->get_iconset_preview()); ?>" alt="" class="" />
 			</div>
 			<?php
 		echo "</div>";

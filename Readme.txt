@@ -5,9 +5,9 @@ Donate link: none
 Tags: Social-share, Social-share-button, Social, share, button, widget, translation ready, facebook share, google plus share, linkedin share, social media share, social sharing, Social-share-button, twitter share.
 Requires at least: 3.0.0
 Tested up to: 6.0.2
-Version: 2.1.16
+Version: 2.2.0
 License: GPLv2
-Stable tag: 2.1.16
+Stable tag: 2.2.0
 
 
 Are you searching for a lightweight sharing plugin? You are in right place. This plugin does not use JavaScript.
@@ -72,3 +72,17 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 5. Then drag and drop this widget to your sidebar or header banner or footer.
 
 6. That's all. Enjoy this widget.
+
+== Changelog ==
+
+= 2.2.0 =
+* **SECURITY FIX**: Fixed Stored Cross-Site Scripting (XSS) vulnerability (CVE-2025-9849) in zm_sh_btn shortcode
+* **SECURITY**: Added proper input sanitization for all shortcode attributes using sanitize_text_field(), sanitize_key(), and sanitize_html_class()
+* **SECURITY**: Added output escaping throughout the plugin using esc_attr(), esc_html(), esc_url(), and esc_textarea()
+* **SECURITY**: Fixed unescaped HTML output in form functions and stylesheet generation
+* **SECURITY**: Improved overall security posture with defense-in-depth approach
+* **CREDIT**: Security vulnerability responsibly disclosed by Peter Thaleikis
+* **IMPROVEMENT**: Enhanced code quality and WordPress coding standards compliance
+
+= 2.1.16 =
+* Previous version features and fixes

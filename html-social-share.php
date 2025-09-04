@@ -4,7 +4,7 @@ Plugin Name: Html Social share buttons
 Plugin URI: http://wordpress.org/plugins/html-social-share-buttons/
 Description: Html share button. It show lite share button only with html. It's not using any javascript whats another do. It's load only extra 10-11 kb total on your site.
 Author: Alimuzzaman Alim
-Version: 2.1.16
+Version: 2.2.0
 Author URI: https://alim.dev
 Text Domain: zm-sh
 Domain Path: /languages
@@ -236,7 +236,7 @@ class zm_social_share{
 	function register_styles(){
 		if(is_array($this->stylesheets)){
 			foreach($this->stylesheets as $id=>$stylesheet){
-				echo "<link rel='stylesheet' id='social-share-$id'  href='$stylesheet' type='text/css' media='all' />\n";
+				echo "<link rel='stylesheet' id='social-share-".esc_attr($id)."'  href='".esc_url($stylesheet)."' type='text/css' media='all' />\n";
 			}
 		}
 		else
@@ -277,8 +277,9 @@ class zm_social_share{
 		if(isset($this->excluded) and $this->excluded == true) return;
 		$options		= $instance?$instance:$this->options;
 
-		$__class		= $options['class']?$options['class']:"left";
-		$iconset_id		= $options['iconset'];
+		// Sanitize inputs to prevent XSS vulnerabilities
+		$__class		= sanitize_html_class($options['class']?$options['class']:"left");
+		$iconset_id		= sanitize_key($options['iconset']);
 		$selected_icons = $options['icons'];
 		$nofollow		= isset($options['nofollow'])? ' rel="nofollow" ' : '';
 
@@ -288,9 +289,9 @@ class zm_social_share{
 		if(!isset($options['show_on']))
 			$options['show_on']				= 'show_left';
 		if(isset($options['iconset_type']) and $options['iconset_type'])
-			$iconset_type					= $options['iconset_type'];
+			$iconset_type					= sanitize_key($options['iconset_type']);
 		else
-			$iconset_type					= $options[$options['show_on']];
+			$iconset_type					= sanitize_key($options[$options['show_on']]);
 		//print_r($options);
 		if(
 			(
@@ -300,10 +301,10 @@ class zm_social_share{
 			or
 			( isset($options['title']) and $options['class'] == 'in_shortcode' )
 		)
-			$output = "<h3>".$options['title']."</h3>";
+			$output = "<h3>".esc_html($options['title'])."</h3>";
 		//print_r($options);
 		//echo "\n\n\n\n\n\n\n\n\n\n\n\n";
-        $output .= "<div class='zmshbt $__class $iconset_id $iconset_type'>";
+        $output .= "<div class='zmshbt ".esc_attr($__class)." ".esc_attr($iconset_id)." ".esc_attr($iconset_type)."'>";
 		//print_r($icons);
         if(is_array($selected_icons))
 			foreach($selected_icons as $id => $ico){
@@ -318,7 +319,7 @@ class zm_social_share{
 				if(isset($options['url']) and !empty($options['url']))
 					$url = str_replace( "%%permalink%%", $options['url'], $url);
 				$url = apply_filters("zm_sh_placeholder", $url);
-				$output .= "<a class='$class' target='_blank' href='$url' $nofollow></a>\n";
+				$output .= "<a class='".esc_attr($class)."' target='_blank' href='".esc_url($url)."' $nofollow></a>\n";
 			}
         $output .= "</div>";
 		return $output;
