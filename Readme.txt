@@ -7,7 +7,7 @@ Requires at least: 3.0.0
 Tested up to: 6.8
 Version: 2.2.1
 License: GPLv2
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 
 
 Are you searching for a lightweight sharing plugin? You are in right place. This plugin does not use JavaScript.
