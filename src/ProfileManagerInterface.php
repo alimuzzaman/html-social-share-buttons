@@ -3,13 +3,58 @@ namespace HtmlSocialShare;
 
 interface ProfileManagerInterface
 {
-    public function createProfile(array $data): int;
+    /**
+     * Create a new profile
+     *
+     * @param array $data Profile data
+     * @return string Profile ID
+     */
+    public function createProfile(array $data): string;
 
-    public function getProfile(int $id): ?array;
+    /**
+     * Get a profile by ID
+     *
+     * @param string $id Profile ID
+     * @return array|null Profile data or null if not found
+     */
+    public function getProfile(string $id): ?array;
 
-    public function updateProfile(int $id, array $data): bool;
+    /**
+     * Update an existing profile
+     *
+     * @param string $id Profile ID
+     * @param array $data Updated profile data
+     * @return bool True if updated, false if profile not found
+     */
+    public function updateProfile(string $id, array $data): bool;
 
-    public function deleteProfile(int $id): bool;
+    /**
+     * Delete a profile
+     *
+     * @param string $id Profile ID
+     * @return bool True if deleted, false if profile not found
+     */
+    public function deleteProfile(string $id): bool;
 
+    /**
+     * List all profiles
+     *
+     * @return array Array of profiles keyed by ID
+     */
     public function listProfiles(): array;
+
+    /**
+     * Get profiles by type
+     *
+     * @param string $type Profile type (share, follow, etc.)
+     * @return array Array of profiles of the specified type
+     */
+    public function getProfilesByType(string $type): array;
+
+    /**
+     * Get enabled share profiles
+     *
+     * @return array Array of enabled share profiles
+     */
+    public function getEnabledShareProfiles(): array;
 }

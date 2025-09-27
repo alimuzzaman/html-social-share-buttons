@@ -83,93 +83,78 @@ class SettingsPage
 
     private function saveSettings()
     {
-        // DEBUG: Start of save process
-        error_log('HTML Social Share: saveSettings() called');
-        error_log('HTML Social Share: POST data: ' . print_r($_POST, true));
-        echo '<!-- DEBUG: saveSettings() called at ' . date('Y-m-d H:i:s') . ' -->';
-        echo '<!-- DEBUG: POST data: ' . esc_html(print_r($_POST, true)) . ' -->';
-
         if (!wp_verify_nonce($_POST['_wpnonce'], 'html_social_share_settings')) {
-            error_log('HTML Social Share: Nonce verification failed');
-            echo '<!-- DEBUG: Nonce verification failed -->';
             return;
-        }
-        error_log('HTML Social Share: Nonce verification passed');
-        echo '<!-- DEBUG: Nonce verification passed -->';
-
-        if (isset($_POST['enabled_networks'])) {
-            $networks = $_POST['enabled_networks'];
-            error_log('HTML Social Share: Setting enabled_networks: ' . print_r($networks, true));
-            echo '<!-- DEBUG: Setting enabled_networks: ' . esc_html(print_r($networks, true)) . ' -->';
-            $this->settings->set('enabled_networks', $networks);
-        }
-
-        if (isset($_POST['iconset'])) {
-            $iconset = sanitize_text_field($_POST['iconset']);
-            error_log('HTML Social Share: Setting iconset: ' . $iconset);
-            echo '<!-- DEBUG: Setting iconset: ' . esc_html($iconset) . ' -->';
-            $this->settings->set('iconset', $iconset);
-        }
-
-        if (isset($_POST['placement'])) {
-            $placement = $_POST['placement'];
-            error_log('HTML Social Share: Setting placement: ' . print_r($placement, true));
-            echo '<!-- DEBUG: Setting placement: ' . esc_html(print_r($placement, true)) . ' -->';
-            $this->settings->set('placement', $placement);
         }
 
         // Save general settings
         if (isset($_POST['title'])) {
-            $title = sanitize_text_field($_POST['title']);
-            error_log('HTML Social Share: Setting title: ' . $title);
-            echo '<!-- DEBUG: Setting title: ' . esc_html($title) . ' -->';
-            $this->settings->set('title', $title);
+            $this->settings->set('title', sanitize_text_field($_POST['title']));
         }
 
-        if (isset($_POST['exclude'])) {
-            $exclude = sanitize_text_field($_POST['exclude']);
-            error_log('HTML Social Share: Setting exclude: ' . $exclude);
-            echo '<!-- DEBUG: Setting exclude: ' . esc_html($exclude) . ' -->';
-            $this->settings->set('exclude', $exclude);
+        // Save enabled networks
+        if (isset($_POST['enabled_networks'])) {
+            $networks = array_map('sanitize_text_field', $_POST['enabled_networks']);
+            $this->settings->set('enabled_networks', $networks);
         }
 
-        // Save advanced options
-        $googleAnalytics = isset($_POST['google_analytics']);
-        $autoHide = isset($_POST['auto_hide']);
-        $usePort = isset($_POST['use_port']);
-        $nofollow = isset($_POST['nofollow']);
+        // Save positions
+        if (isset($_POST['positions'])) {
+            $positions = array_map('sanitize_text_field', $_POST['positions']);
+            $validPositions = ['left', 'right', 'before_post', 'after_post'];
+            $positions = array_intersect($positions, $validPositions);
+            $this->settings->set('positions', $positions);
+        }
 
-        error_log('HTML Social Share: Setting advanced options - GA: ' . ($googleAnalytics ? 'true' : 'false') . ', auto_hide: ' . ($autoHide ? 'true' : 'false') . ', use_port: ' . ($usePort ? 'true' : 'false') . ', nofollow: ' . ($nofollow ? 'true' : 'false'));
-        echo '<!-- DEBUG: Setting advanced options - GA: ' . ($googleAnalytics ? 'true' : 'false') . ', auto_hide: ' . ($autoHide ? 'true' : 'false') . ', use_port: ' . ($usePort ? 'true' : 'false') . ', nofollow: ' . ($nofollow ? 'true' : 'false') . ' -->';
+        // Save exclusions
+        $exclusions = [
+            'ids' => [],
+            'slugs' => [],
+            'titles' => []
+        ];
 
-        $this->settings->set('google_analytics', $googleAnalytics);
-        $this->settings->set('auto_hide', $autoHide);
-        $this->settings->set('use_port', $usePort);
-        $this->settings->set('nofollow', $nofollow);
+        if (isset($_POST['exclude_ids'])) {
+            $exclusions['ids'] = array_map('intval', array_filter($_POST['exclude_ids']));
+        }
 
-        // Refresh icon registry with new iconset
-        if (isset($_POST['iconset']) && method_exists($this->shareRenderer, 'setIconset')) {
+        if (isset($_POST['exclude_slugs'])) {
+            $exclusions['slugs'] = array_map('sanitize_text_field', $_POST['exclude_slugs']);
+        }
+
+        if (isset($_POST['exclude_titles'])) {
+            $exclusions['titles'] = array_map('sanitize_text_field', $_POST['exclude_titles']);
+        }
+
+        $this->settings->set('exclusions', $exclusions);
+
+        // Save boolean settings
+        $booleanSettings = [
+            'auto_hide' => 'auto_hide',
+            'use_port' => 'use_port',
+            'google_analytics' => 'google_analytics',
+            'nofollow' => 'nofollow'
+        ];
+
+        foreach ($booleanSettings as $settingKey => $postKey) {
+            $this->settings->set($settingKey, isset($_POST[$postKey]));
+        }
+
+        // Save iconset
+        if (isset($_POST['iconset'])) {
             $iconset = sanitize_text_field($_POST['iconset']);
-            $mappings = [
-                'default' => 'default_square',
-                'square' => 'flat_square',
-                'circle' => 'flat_circle',
-                'minimal' => 'prajin_square'
-            ];
-            $path = $mappings[$iconset] ?? 'default_square';
-            error_log('HTML Social Share: Refreshing iconset to: ' . $path);
-            echo '<!-- DEBUG: Refreshing iconset to: ' . esc_html($path) . ' -->';
-            $this->shareRenderer->setIconset($path);
+            $this->settings->set('iconset', $iconset);
         }
 
-        // DEBUG: Show all saved settings
-        $allSettings = $this->settings->getAll();
-        error_log('HTML Social Share: All saved settings: ' . print_r($allSettings, true));
-        echo '<!-- DEBUG: All saved settings: ' . esc_html(print_r($allSettings, true)) . ' -->';
+        // Clear caches after settings update
+        $this->settings->clearAllCaches();
 
-        echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
-        error_log('HTML Social Share: Settings save completed successfully');
-        echo '<!-- DEBUG: Settings save completed successfully -->';
+        // Show success message
+        add_settings_error(
+            'html_social_share_settings',
+            'settings_updated',
+            __('Settings saved successfully.', 'html-social-share'),
+            'updated'
+        );
     }
 
     private function renderGeneralTab()
@@ -178,7 +163,7 @@ class SettingsPage
         echo '<p>Configure general plugin settings.</p>';
 
         $title = $this->settings->get('title', 'Share this with your friends');
-        $exclude = $this->settings->get('exclude', '');
+        $exclusions = $this->settings->get('exclusions', ['ids' => [], 'slugs' => [], 'titles' => []]);
         $googleAnalytics = $this->settings->get('google_analytics', false);
         $autoHide = $this->settings->get('auto_hide', false);
         $usePort = $this->settings->get('use_port', false);
@@ -198,10 +183,32 @@ class SettingsPage
 
         // Exclude field
         echo '<tr>';
-        echo '<th scope="row"><label for="exclude">Exclude Pages</label></th>';
+        echo '<th scope="row">Exclude Content</th>';
         echo '<td>';
-        echo '<input type="text" id="exclude" name="exclude" value="' . esc_attr($exclude) . '" class="regular-text" aria-describedby="exclude_desc">';
-        echo '<p id="exclude_desc" class="description">Exclude by Page ID, Page Title or Page Slug (comma separated).</p>';
+        echo '<fieldset>';
+
+        // Exclude by IDs
+        echo '<label for="exclude_ids">';
+        echo '<strong>Exclude by Post/Page IDs:</strong><br>';
+        echo '<input type="text" id="exclude_ids" name="exclude_ids[]" value="' . esc_attr(implode(', ', $exclusions['ids'])) . '" class="regular-text" placeholder="1, 2, 3">';
+        echo '<p class="description">Comma-separated list of post/page IDs to exclude.</p>';
+        echo '</label><br><br>';
+
+        // Exclude by slugs
+        echo '<label for="exclude_slugs">';
+        echo '<strong>Exclude by Slugs:</strong><br>';
+        echo '<input type="text" id="exclude_slugs" name="exclude_slugs[]" value="' . esc_attr(implode(', ', $exclusions['slugs'])) . '" class="regular-text" placeholder="about, contact">';
+        echo '<p class="description">Comma-separated list of post/page slugs to exclude.</p>';
+        echo '</label><br><br>';
+
+        // Exclude by titles
+        echo '<label for="exclude_titles">';
+        echo '<strong>Exclude by Titles:</strong><br>';
+        echo '<input type="text" id="exclude_titles" name="exclude_titles[]" value="' . esc_attr(implode(', ', $exclusions['titles'])) . '" class="regular-text" placeholder="Privacy Policy, Terms of Service">';
+        echo '<p class="description">Comma-separated list of post/page titles to exclude.</p>';
+        echo '</label>';
+
+        echo '</fieldset>';
         echo '</td>';
         echo '</tr>';
 
@@ -267,8 +274,10 @@ class SettingsPage
         echo '<h2>Appearance</h2>';
         echo '<p>Customize the appearance of share buttons.</p>';
 
-        $availableIconsets = Iconsets::getAvailableIconsets();
-        $currentIconset = Iconsets::getCurrentIconset($this->settings);
+        // Get available iconsets from the icon registry
+        $iconRegistry = new \HtmlSocialShare\IconRegistry($this->settings);
+        $availableIconsets = $iconRegistry->getAvailableIconsets();
+        $currentIconset = $this->settings->get('iconset', 'builtin');
 
         echo '<table class="form-table">';
         echo '<tbody>';
@@ -278,7 +287,9 @@ class SettingsPage
         echo '<select id="iconset_select" name="iconset" aria-describedby="iconset_desc">';
         foreach ($availableIconsets as $key => $iconset) {
             $selected = ($currentIconset === $key) ? 'selected' : '';
-            echo '<option value="' . esc_attr($key) . '" ' . $selected . '>' . esc_html($iconset['label']) . ' - ' . esc_html($iconset['description']) . '</option>';
+            $label = $iconset['name'] ?? $key;
+            $description = $iconset['meta']['description'] ?? 'Social media icons';
+            echo '<option value="' . esc_attr($key) . '" ' . $selected . '>' . esc_html($label) . ' - ' . esc_html($description) . '</option>';
         }
         echo '</select>';
         echo '<p id="iconset_desc" class="description">Choose the style for your social share icons.</p>';
@@ -293,27 +304,24 @@ class SettingsPage
         echo '<h2>Placement</h2>';
         echo '<p>Choose where to display share buttons.</p>';
 
-        $placements = [
+        $positions = [
             'before_post' => 'Before post content',
             'after_post' => 'After post content',
-            'before_page' => 'Before page content',
-            'after_page' => 'After page content',
-            'left_side' => 'Show on left side',
-            'right_side' => 'Show on right side',
-            'manual' => 'Manual placement only (via shortcode/widget)'
+            'left' => 'Show on left side',
+            'right' => 'Show on right side'
         ];
 
-        $currentPlacements = $this->settings->get('placement', ['after_post']);
+        $currentPositions = $this->settings->get('positions', ['after_post']);
 
         echo '<table class="form-table">';
         echo '<tbody>';
-        foreach ($placements as $key => $label) {
-            $checked = in_array($key, $currentPlacements) ? 'checked' : '';
+        foreach ($positions as $key => $label) {
+            $checked = in_array($key, $currentPositions) ? 'checked' : '';
             echo '<tr>';
-            echo '<th scope="row"><label for="placement_' . esc_attr($key) . '">' . esc_html($label) . '</label></th>';
+            echo '<th scope="row"><label for="position_' . esc_attr($key) . '">' . esc_html($label) . '</label></th>';
             echo '<td>';
-            echo '<input type="checkbox" id="placement_' . esc_attr($key) . '" name="placement[]" value="' . esc_attr($key) . '" ' . $checked . ' aria-describedby="placement_desc_' . esc_attr($key) . '">';
-            echo '<span id="placement_desc_' . esc_attr($key) . '" class="description">Display share buttons ' . esc_html(strtolower($label)) . '</span>';
+            echo '<input type="checkbox" id="position_' . esc_attr($key) . '" name="positions[]" value="' . esc_attr($key) . '" ' . $checked . ' aria-describedby="position_desc_' . esc_attr($key) . '">';
+            echo '<span id="position_desc_' . esc_attr($key) . '" class="description">Display share buttons ' . esc_html(strtolower($label)) . '</span>';
             echo '</td>';
             echo '</tr>';
         }

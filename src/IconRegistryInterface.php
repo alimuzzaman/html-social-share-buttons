@@ -34,4 +34,44 @@ interface IconRegistryInterface
      * @return string[]
      */
     public function listIcons(): array;
+
+    /**
+     * Set the current iconset.
+     *
+     * @param string $iconset
+     * @return void
+     */
+    public function setIconset(string $iconset): void;
+
+    /**
+     * Get the current iconset.
+     *
+     * @return string
+     */
+    public function getCurrentIconset(): string;
+
+    /**
+     * Add a custom icon.
+     *
+     * @param string $key
+     * @param string $svg
+     * @param array $meta
+     * @return void
+     */
+    public function addCustomIcon(string $key, string $svg, array $meta = []): void;
+
+    /**
+     * Remove a custom icon.
+     *
+     * @param string $key
+     * @return void
+     */
+    public function removeCustomIcon(string $key): void;
+
+    /**
+     * Get all available iconsets.
+     *
+     * @return array
+     */
+    public function getAvailableIconsets(): array;
 }

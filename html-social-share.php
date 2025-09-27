@@ -34,6 +34,9 @@ if ($container === null) {
 // Initialize admin interface
 $admin = $container->get('admin');
 
+// Initialize content display
+$contentDisplay = $container->get('content_display');
+
 // Register widget
 $widget = $container->get('widget');
 add_action('widgets_init', function() use ($widget) {
@@ -52,8 +55,9 @@ $integrationLoader = new \HtmlSocialShare\IntegrationLoader($container);
 $integrationLoader->init();
 
 // Hook into WordPress
-register_activation_hook(__FILE__, function() {
-    // Activation logic here
+register_activation_hook(__FILE__, function() use ($container) {
+    $migration = $container->get('migration');
+    $migration->run();
 });
 
 register_deactivation_hook(__FILE__, function() {

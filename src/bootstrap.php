@@ -18,8 +18,8 @@ $container->set('info', function () {
     return new HtmlSocialShare\Info();
 });
 
-$container->set('profile_manager', function () {
-    return new HtmlSocialShare\ProfileManager();
+$container->set('profile_manager', function ($c) {
+    return new HtmlSocialShare\ProfileManager($c->get('settings'));
 });
 
 $container->set('share_renderer', function ($c) {
@@ -46,8 +46,12 @@ $container->set('admin', function ($c) {
     return new HtmlSocialShare\Admin\Admin($c->get('settings'), $c->get('profile_manager'), $c->get('share_renderer'));
 });
 
-$container->set('svg_sanitizer', function () {
-    return new HtmlSocialShare\Svg\Sanitizer();
+$container->set('content_display', function ($c) {
+    return new HtmlSocialShare\ContentDisplay(
+        $c->get('settings'),
+        $c->get('profile_manager'),
+        $c->get('share_renderer')
+    );
 });
 
 $container->set('widget', function ($c) {
