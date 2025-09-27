@@ -42,8 +42,16 @@ $container->set('back_compat', function ($c) {
     return new HtmlSocialShare\BackCompatShim($c->get('settings'));
 });
 
+$container->set('admin', function ($c) {
+    return new HtmlSocialShare\Admin\Admin($c->get('settings'), $c->get('profile_manager'), $c->get('share_renderer'));
+});
+
 $container->set('svg_sanitizer', function () {
     return new HtmlSocialShare\Svg\Sanitizer();
+});
+
+$container->set('widget', function ($c) {
+    return new HtmlSocialShare\Widget\Widget($c->get('share_renderer'), $c->get('settings'));
 });
 
 return $container;

@@ -1,0 +1,121 @@
+/* HTML Social Share Buttons - Admin Styles */
+
+/* Tabbed interface */
+.nav-tab-wrapper {
+    margin-bottom: 20px;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+/* Preview styles */
+.hssb-preview {
+    padding: 15px;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.hssb-preview a {
+    margin-right: 10px;
+    padding: 5px 10px;
+    background: #007cba;
+    color: white;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.hssb-preview a:hover {
+    background: #005a87;
+}
+
+/* Responsive design */
+@media screen and (max-width: 782px) {
+    /* Mobile styles for admin */
+    .nav-tab-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-tab {
+        margin-bottom: 5px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .form-table th,
+    .form-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .form-table th {
+        padding-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-table td {
+        padding-left: 0;
+        padding-top: 5px;
+    }
+
+    .wp-list-table {
+        font-size: 14px;
+    }
+
+    .wp-list-table th,
+    .wp-list-table td {
+        padding: 8px 4px;
+    }
+
+    /* Stack buttons vertically on mobile */
+    .hssb-preview a {
+        display: block;
+        margin-bottom: 5px;
+        margin-right: 0;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    /* Extra small screens */
+    .wrap h1 {
+        font-size: 1.5em;
+    }
+
+    .tab-content h2 {
+        font-size: 1.2em;
+    }
+
+    .form-table input[type="text"],
+    .form-table input[type="url"],
+    .form-table select {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .nav-tab-active,
+    .nav-tab-active:hover,
+    .nav-tab-active:focus {
+        background: #000;
+        color: #fff;
+        border-color: #000;
+    }
+
+    .hssb-preview {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .nav-tab,
+    .hssb-preview a {
+        transition: none;
+    }
+}

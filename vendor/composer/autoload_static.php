@@ -22,18 +22,6 @@ class ComposerStaticInit1355b1eeadbf9993ad757bb070c2afe5
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'HtmlSocialShare\\Cache' => __DIR__ . '/../..' . '/src/Cache.php',
-        'HtmlSocialShare\\CacheInterface' => __DIR__ . '/../..' . '/src/CacheInterface.php',
-        'HtmlSocialShare\\Container' => __DIR__ . '/../..' . '/src/Container.php',
-        'HtmlSocialShare\\IconRegistry' => __DIR__ . '/../..' . '/src/IconRegistry.php',
-        'HtmlSocialShare\\IconRegistryInterface' => __DIR__ . '/../..' . '/src/IconRegistryInterface.php',
-        'HtmlSocialShare\\Info' => __DIR__ . '/../..' . '/src/Info.php',
-        'HtmlSocialShare\\ProfileManager' => __DIR__ . '/../..' . '/src/ProfileManager.php',
-        'HtmlSocialShare\\ProfileManagerInterface' => __DIR__ . '/../..' . '/src/ProfileManagerInterface.php',
-        'HtmlSocialShare\\Settings' => __DIR__ . '/../..' . '/src/Settings.php',
-        'HtmlSocialShare\\SettingsInterface' => __DIR__ . '/../..' . '/src/SettingsInterface.php',
-        'HtmlSocialShare\\ShareRenderer' => __DIR__ . '/../..' . '/src/ShareRenderer.php',
-        'HtmlSocialShare\\ShareRendererInterface' => __DIR__ . '/../..' . '/src/ShareRendererInterface.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
