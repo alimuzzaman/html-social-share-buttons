@@ -5,10 +5,10 @@
 This index aggregates all implementation tasks from the project documentation. Tasks are organized by category and include status tracking for centralized project management.
 
 **Last Updated**: September 28, 2025
-**Total Tasks**: 90
+**Total Tasks**: 97
 **Completed**: 90
 **In Progress**: 0
-**Pending**: 4
+**Pending**: 7
 
 ---
 
@@ -42,7 +42,19 @@ This index aggregates all implementation tasks from the project documentation. T
 - [DONE] **PHASE2-004**: Configure CI security gating (3 hours) - `tasks/todo/security-testing/02-Security-and-Testing.md`
 - [DONE] **PHASE2-005**: Create security disclosure process (2 hours) - `tasks/todo/security-testing/02-Security-and-Testing.md`
 
-### 🔧 Integrations (48 tasks)
+### � Data Model & Options Schema (7 tasks)
+
+#### Data Model Implementation (7 tasks)
+
+- [PENDING] **DATAMODEL-001**: Implement New Options Schema Persistence (4 hours) - `tasks/todo/data-model-options-schema.md`
+- [PENDING] **DATAMODEL-002**: Implement Legacy Options Migration (6 hours) - `tasks/todo/data-model-options-schema.md`
+- [PENDING] **DATAMODEL-003**: Create Icon Registry Structure (5 hours) - `tasks/todo/data-model-options-schema.md`
+- [PENDING] **DATAMODEL-004**: Update Profile Management (4 hours) - `tasks/todo/data-model-options-schema.md`
+- [PENDING] **DATAMODEL-005**: Update Admin Interface (5 hours) - `tasks/todo/data-model-options-schema.md`
+- [PENDING] **DATAMODEL-006**: Implement Options Caching (3 hours) - `tasks/todo/data-model-options-schema.md`
+- [PENDING] **DATAMODEL-007**: Add Migration and Persistence Tests (4 hours) - `tasks/todo/data-model-options-schema.md`
+
+### �🔧 Integrations (48 tasks)
 
 #### Elementor Widget (8 tasks)
 
@@ -181,10 +193,10 @@ This index aggregates all implementation tasks from the project documentation. T
 
 ### Quick Stats
 
-- **Total Tasks**: 90
-- **Completed**: 62 (69%)
+- **Total Tasks**: 97
+- **Completed**: 90 (93%)
 - **In Progress**: 0 (0%)
-- **Pending**: 28 (31%)
+- **Pending**: 7 (7%)
 
 ### Priority Breakdown
 
