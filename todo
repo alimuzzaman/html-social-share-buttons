@@ -7,12 +7,12 @@ must work with latest php version
 
 - Data model decision (done)
 - Frontend/Icon system (done)
-- Admin UI wireframes
+- Admin UI wireframes (done)
 - Core rendering contract: server-rendered shortcodes and block render callbacks that output no-JS markup by default.
+-- Google Analytics integration approach and extensibility readiness.
+-- with very little JS footprint.
 - Basic REST endpoints and capability mapping for admin operations.
 - Documentation release and community readiness plan.
-- Google Analytics integration approach and extensibility readiness.
--- with very little JS footprint.
 
 ### Admin UI wireframes
 
