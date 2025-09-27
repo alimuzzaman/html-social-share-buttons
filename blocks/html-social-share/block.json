@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "html-social-share/buttons",
+  "title": "HTML Social Share Buttons",
+  "category": "widgets",
+  "icon": "share",
+  "description": "Render HTML social share buttons with server-side sanitization.",
+  "supports": {
+    "html": false,
+    "align": true
+  },
+  "attributes": {
+    "networks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [ "facebook", "twitter", "linkedin" ]
+    },
+    "buttonShape": { "type": "string", "default": "square" },
+    "buttonColor": { "type": "string", "default": "#0073e6" },
+    "buttonSize": { "type": "number", "default": 40 }
+  },
+  "editorScript": "file:./editor.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css"
+}
