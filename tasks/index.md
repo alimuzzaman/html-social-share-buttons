@@ -92,12 +92,12 @@ This index aggregates all implementation tasks from the project documentation. T
 
 - [DONE] **BEAVER-001**: Create module class structure (4 hours) - `tasks/todo/integrations/beaver-builder-module.md`
 - [DONE] **BEAVER-002**: Register module with Beaver Builder (2 hours) - `tasks/todo/integrations/beaver-builder-module.md`
-- [PENDING] **BEAVER-003**: Implement basic form settings (4 hours) - `tasks/todo/integrations/beaver-builder-module.md`
-- [PENDING] **BEAVER-004**: Add select setting for styles (3 hours) - `tasks/todo/integrations/beaver-builder-module.md`
-- [PENDING] **BEAVER-005**: Implement module frontend rendering (4 hours) - `tasks/todo/integrations/beaver-builder-module.md`
-- [PENDING] **BEAVER-006**: Add responsive controls (3 hours) - `tasks/todo/integrations/beaver-builder-module.md`
-- [PENDING] **BEAVER-007**: Ensure module accessibility (2 hours) - `tasks/todo/integrations/beaver-builder-module.md`
-- [PENDING] **BEAVER-008**: Add module icon and category (2 hours) - `tasks/todo/integrations/beaver-builder-module.md`
+- [DONE] **BEAVER-003**: Implement basic form settings (4 hours) - `tasks/todo/integrations/beaver-builder-module.md`
+- [DONE] **BEAVER-004**: Add select setting for styles (3 hours) - `tasks/todo/integrations/beaver-builder-module.md`
+- [DONE] **BEAVER-005**: Implement module frontend rendering (4 hours) - `tasks/todo/integrations/beaver-builder-module.md`
+- [DONE] **BEAVER-006**: Add responsive controls (3 hours) - `tasks/todo/integrations/beaver-builder-module.md`
+- [DONE] **BEAVER-007**: Ensure module accessibility (2 hours) - `tasks/todo/integrations/beaver-builder-module.md`
+- [DONE] **BEAVER-008**: Add module icon and category (2 hours) - `tasks/todo/integrations/beaver-builder-module.md`
 
 #### WooCommerce Integration (8 tasks)
 

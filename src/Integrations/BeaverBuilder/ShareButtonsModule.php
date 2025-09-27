@@ -20,6 +20,7 @@ class ShareButtonsModule extends \FLBuilderModule
             'editor_export' => true,
             'enabled' => true,
             'partial_refresh' => false,
+            'file' => __DIR__ . '/includes/frontend.php',
         ]);
     }
 
@@ -102,43 +103,6 @@ class ShareButtonsModule extends \FLBuilderModule
         }
 
         return $settings;
-    }
-
-    public function frontend()
-    {
-        $settings = $this->settings;
-
-        $title = $settings->title ?? 'Share this with your friends';
-        $networks = $settings->networks ?? ['facebook', 'twitter', 'linkedin'];
-        $iconset = $settings->iconset ?? 'default_square';
-        $alignment = $settings->alignment ?? 'left';
-
-        // Ensure networks is an array
-        if (!is_array($networks)) {
-            $networks = [$networks];
-        }
-
-        // Set iconset on renderer
-        if (method_exists($this->shareRenderer, 'setIconset')) {
-            $this->shareRenderer->setIconset($iconset);
-        }
-
-        // Generate HTML
-        echo '<div class="fl-html-social-share-buttons fl-module" style="text-align: ' . esc_attr($alignment) . ';">';
-
-        if (!empty($title)) {
-            echo '<div class="share-title">' . esc_html($title) . '</div>';
-        }
-
-        echo '<div class="share-buttons">';
-
-        foreach ($networks as $network) {
-            $profile = ['handle' => '@example', 'network' => $network];
-            $buttonHtml = $this->shareRenderer->render($network, $profile);
-            echo $buttonHtml . ' ';
-        }
-
-        echo '</div></div>';
     }
 
     public function get_css()
