@@ -38,4 +38,25 @@ class ShareRenderer implements ShareRendererInterface
         error_log("HSS Debug: Rendered output for '{$network}': " . substr($output, 0, 100) . '...');
         return $output;
     }
+
+    /**
+     * Get CSS for all icons
+     *
+     * @return string
+     */
+    public function getIconCSS(): string
+    {
+        if (method_exists($this->iconRegistry, 'getIconCSS')) {
+            $iconCSS = $this->iconRegistry->getIconCSS();
+            if (!empty($iconCSS)) {
+                $css = '<style>';
+                foreach ($iconCSS as $class => $url) {
+                    $css .= sprintf('.%s { background-image: url("%s"); background-size: contain; background-repeat: no-repeat; background-position: center; }', $class, $url);
+                }
+                $css .= '</style>';
+                return $css;
+            }
+        }
+        return '';
+    }
 }

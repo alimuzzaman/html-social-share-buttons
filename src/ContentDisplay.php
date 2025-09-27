@@ -136,6 +136,12 @@ class ContentDisplay
             implode('', $shareButtons)
         );
 
+        // Add icon CSS
+        $iconCSS = $this->shareRenderer->getIconCSS();
+        if (!empty($iconCSS)) {
+            $output .= $iconCSS;
+        }
+
         error_log('HSS Debug: Final output length: ' . strlen($output));
         return $output;
     }

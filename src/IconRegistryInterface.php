@@ -29,6 +29,13 @@ interface IconRegistryInterface
     public function hasIcon(string $key): bool;
 
     /**
+     * Get CSS for all icons.
+     *
+     * @return array
+     */
+    public function getIconCSS(): array;
+
+    /**
      * List registered icon keys.
      *
      * @return string[]

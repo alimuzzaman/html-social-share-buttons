@@ -6,6 +6,7 @@ class IconRegistry implements IconRegistryInterface
     private Settings $settings;
     private array $loadedIcons = [];
     private string $currentIconset = 'builtin';
+    private array $iconCSS = [];
 
     public function __construct(Settings $settings)
     {
@@ -46,12 +47,12 @@ class IconRegistry implements IconRegistryInterface
     {
         $this->loadedIcons = [];
 
-        // Get the current iconset data
-        $iconsetData = $this->settings->getIcon($this->currentIconset, 'sets');
+        // Load iconsets from assets/iconset directory
+        $iconsetData = $this->loadIconsetFromDirectory($this->currentIconset);
 
         if (!$iconsetData) {
             // Fallback to builtin if current iconset doesn't exist
-            $iconsetData = $this->settings->getIcon('builtin', 'sets');
+            $iconsetData = $this->loadIconsetFromDirectory('default_square');
             if (!$iconsetData) {
                 $this->initializeBuiltinIconset();
                 $iconsetData = $this->settings->getIcon('builtin', 'sets');
@@ -59,10 +60,65 @@ class IconRegistry implements IconRegistryInterface
         }
 
         if ($iconsetData && isset($iconsetData['icons'])) {
-            foreach ($iconsetData['icons'] as $network => $iconRef) {
-                $this->loadedIcons[$network] = $this->renderIcon($iconRef, $network);
+            foreach ($iconsetData['icons'] as $network => $iconData) {
+                $this->loadedIcons[$network] = $this->renderIcon($network, $iconData);
             }
         }
+    }
+
+    /**
+     * Load iconset data from the assets/iconset directory
+     *
+     * @param string $iconsetName
+     * @return array|null
+     */
+    private function loadIconsetFromDirectory(string $iconsetName): ?array
+    {
+        $iconsetPath = plugin_dir_path(__DIR__, 2) . 'assets/iconset/' . $iconsetName;
+
+        if (!is_dir($iconsetPath)) {
+            return null;
+        }
+
+        // Map iconset names to network names
+        $networkMapping = [
+            'facebook.png' => 'facebook',
+            'twitter.png' => 'twitter',
+            'linkedin.png' => 'linkedin',
+            'googlepluse.png' => 'googleplus',
+            'bookmark.png' => 'bookmark',
+            'pinterest.png' => 'pinterest',
+            'mail.png' => 'email',
+            'whatsapp.png' => 'whatsapp',
+            'telegram.png' => 'telegram',
+            'reddit.png' => 'reddit',
+            'tumblr.png' => 'tumblr'
+        ];
+
+        $icons = [];
+        $files = scandir($iconsetPath);
+
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'png') {
+                $network = $networkMapping[$file] ?? null;
+                if ($network) {
+                    $icons[$network] = [
+                        'image' => $file,
+                        'url' => plugins_url('assets/iconset/' . $iconsetName . '/' . $file, plugin_dir_path(__DIR__, 2))
+                    ];
+                }
+            }
+        }
+
+        if (empty($icons)) {
+            return null;
+        }
+
+        return [
+            'id' => $iconsetName,
+            'name' => ucwords(str_replace(['_', '-'], ' ', $iconsetName)),
+            'icons' => $icons
+        ];
     }
 
     /**
@@ -100,14 +156,27 @@ class IconRegistry implements IconRegistryInterface
     /**
      * Render an icon from its reference
      *
-     * @param string $iconRef
      * @param string $network
+     * @param array $iconData
      * @return string
      */
-    private function renderIcon(string $iconRef, string $network): string
+    private function renderIcon(string $network, array $iconData): string
     {
-        // For now, return a placeholder SVG. In a real implementation,
-        // this would load actual SVG content from files or database
+        // For iconsets loaded from directory, return CSS class that will use background-image
+        if (isset($iconData['url'])) {
+            // Generate a unique CSS class for this icon
+            $cssClass = 'hss-icon-' . $network;
+
+            // Store CSS for later output
+            $this->enqueueIconCSS($cssClass, $iconData['url']);
+
+            return sprintf(
+                '<span class="hss-icon %s" aria-hidden="true"></span>',
+                esc_attr($cssClass)
+            );
+        }
+
+        // Fallback to builtin SVG
         $svgContent = $this->getBuiltinSvg($network);
 
         if ($svgContent) {
@@ -123,6 +192,28 @@ class IconRegistry implements IconRegistryInterface
             '<span class="dashicons dashicons-%s" aria-hidden="true"></span>',
             esc_attr($network === 'email' ? 'email' : 'share')
         );
+    }
+
+    /**
+     * Enqueue CSS for an icon
+     *
+     * @param string $cssClass
+     * @param string $imageUrl
+     * @return void
+     */
+    private function enqueueIconCSS(string $cssClass, string $imageUrl): void
+    {
+        $this->iconCSS[$cssClass] = $imageUrl;
+    }
+
+    /**
+     * Get all enqueued icon CSS
+     *
+     * @return array
+     */
+    public function getIconCSS(): array
+    {
+        return $this->iconCSS;
     }
 
     /**
