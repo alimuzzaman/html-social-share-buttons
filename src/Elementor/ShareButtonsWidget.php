@@ -102,7 +102,26 @@ class ShareButtonsWidget extends Widget_Base {
     }
 
     protected function render() {
-        // Output rendering will be implemented in a later task
-        echo '<div class="html-social-share-buttons">[Share buttons will render here]</div>';
+        $settings = $this->get_settings_for_display();
+        $networks = isset($settings['networks']) ? $settings['networks'] : [ 'facebook', 'twitter', 'linkedin' ];
+        $shape = isset($settings['button_shape']) ? $settings['button_shape'] : 'square';
+        $color = isset($settings['button_color']) ? $settings['button_color'] : '#0073e6';
+        $size = isset($settings['button_size']['size']) ? $settings['button_size']['size'] : 40;
+
+        echo '<div class="html-social-share-buttons">';
+        foreach ($networks as $network) {
+            printf(
+                '<a href="#" class="ssb-btn ssb-%s ssb-%s" style="background:%s;width:%dpx;height:%dpx;display:inline-block;margin:4px;border-radius:%s;line-height:%dpx;text-align:center;color:#fff;">%s</a>',
+                esc_attr($network),
+                esc_attr($shape),
+                esc_attr($color),
+                (int)$size,
+                (int)$size,
+                $shape === 'circle' ? '50%' : ($shape === 'rounded' ? '8px' : '0'),
+                (int)$size,
+                ucfirst($network)
+            );
+        }
+        echo '</div>';
     }
 }
