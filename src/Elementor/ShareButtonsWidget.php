@@ -52,6 +52,53 @@ class ShareButtonsWidget extends Widget_Base {
         );
 
         $this->end_controls_section();
+
+        // Style controls
+        $this->start_controls_section(
+            'section_style',
+            [
+                'label' => __( 'Button Style', 'html-social-share' ),
+                'tab' => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'button_shape',
+            [
+                'label' => __( 'Shape', 'html-social-share' ),
+                'type' => Controls_Manager::SELECT,
+                'options' => [
+                    'square' => __( 'Square', 'html-social-share' ),
+                    'circle' => __( 'Circle', 'html-social-share' ),
+                    'rounded' => __( 'Rounded', 'html-social-share' ),
+                ],
+                'default' => 'square',
+            ]
+        );
+
+        $this->add_control(
+            'button_color',
+            [
+                'label' => __( 'Button Color', 'html-social-share' ),
+                'type' => Controls_Manager::COLOR,
+                'default' => '#0073e6',
+            ]
+        );
+
+        $this->add_control(
+            'button_size',
+            [
+                'label' => __( 'Button Size', 'html-social-share' ),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => [ 'px' ],
+                'range' => [
+                    'px' => [ 'min' => 24, 'max' => 96 ],
+                ],
+                'default' => [ 'size' => 40, 'unit' => 'px' ],
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
     protected function render() {
