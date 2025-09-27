@@ -85,7 +85,7 @@ class ShareButtonsWidget extends Widget_Base {
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'button_size',
             [
                 'label' => __( 'Button Size', 'html-social-share' ),
