@@ -1,0 +1,24 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  php-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Install deps (none required)
+        run: echo "No composer install required for lightweight tests"
+      - name: Run unit scripts
+        run: |
+          php -v
+          php tests/unit/test-backcompat-shim.php
+          php tests/unit/test-svg-sanitizer.php
+      - name: Run smoke tests
+        run: |
+          php tests/test-backcompat-mapping.php
+          php tests/test-rest.php
