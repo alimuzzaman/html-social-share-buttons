@@ -17,7 +17,7 @@ class ShareRenderer implements ShareRendererInterface
         }
     }
 
-    public function render(string $network, array $profile): string
+    public function render(string $network, array $profile, string $url = '#'): string
     {
         // Debug: Log render call
         error_log("HSS Debug: Rendering network '{$network}' with profile: " . json_encode($profile));

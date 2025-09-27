@@ -117,7 +117,8 @@ class ContentDisplay
                 error_log("HSS Debug: Created default profile for network '{$network}'");
             }
 
-            $buttonHtml = $this->shareRenderer->render($network, $profile);
+            $shareUrl = $this->generateShareUrl($network, $post, $profile);
+            $buttonHtml = $this->shareRenderer->render($network, $profile, $shareUrl);
             if (!empty($buttonHtml)) {
                 $shareButtons[] = $buttonHtml;
             }
@@ -129,8 +130,11 @@ class ContentDisplay
         }
 
         $title = $this->settings->get('title', 'Share this with your friends');
+        $style = $this->settings->get('style', 'minimal');
+        $classes = 'hss-share-buttons hss-style-' . esc_attr($style);
         $output = sprintf(
-            '<div class="hss-share-buttons"><!-- HSS Debug: %d buttons generated --><h3 class="hss-title">%s</h3><div class="hss-buttons">%s</div></div>',
+            '<div class="%s"><!-- HSS Debug: %d buttons generated --><h3 class="hss-title">%s</h3><div class="hss-buttons">%s</div></div>',
+            $classes,
             count($shareButtons),
             esc_html($title),
             implode('', $shareButtons)
@@ -187,6 +191,20 @@ class ContentDisplay
         return $templates[$network] ?? 'https://example.com/share?url={url}&title={title}';
     }
 
+    private function generateShareUrl(string $network, object $post, array $profile): string
+    {
+        $template = $profile['url_template'] ?? $this->getDefaultUrlTemplate($network);
+        $url = get_permalink($post);
+        $title = get_the_title($post);
+        $replacements = [
+            '{url}' => urlencode($url),
+            '{title}' => urlencode($title),
+            '{text}' => urlencode($title),
+            '{handle}' => urlencode($profile['handle'] ?? ''),
+        ];
+        return str_replace(array_keys($replacements), array_values($replacements), $template);
+    }
+
     public function addFloatingShareButtons(): void
     {
         global $post;
@@ -219,12 +237,12 @@ class ContentDisplay
         echo $debugComment;
 
         if (in_array('left', $positions)) {
-            echo '<div class="hss-floating-buttons hss-floating-left">' . $shareButtons . '</div>';
+            echo '<div class="hss-share-buttons hss-pos-float-left hss-style-' . esc_attr($this->settings->get('style', 'minimal')) . '">' . $shareButtons . '</div>';
             error_log('HSS Debug: Added floating buttons on left side');
         }
 
         if (in_array('right', $positions)) {
-            echo '<div class="hss-floating-buttons hss-floating-right">' . $shareButtons . '</div>';
+            echo '<div class="hss-share-buttons hss-pos-float-right hss-style-' . esc_attr($this->settings->get('style', 'minimal')) . '">' . $shareButtons . '</div>';
             error_log('HSS Debug: Added floating buttons on right side');
         }
     }
@@ -285,5 +303,15 @@ class ContentDisplay
                 transform: scale(1.1);
             }
         ');
+    }
+
+    public function enqueueFrontendStyles(): void
+    {
+        wp_enqueue_style(
+            'html-social-share-frontend',
+            HTML_SOCIAL_SHARE_ASSETS_URL . 'frontend.css',
+            [],
+            '1.0.0'
+        );
     }
 }

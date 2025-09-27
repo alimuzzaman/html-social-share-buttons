@@ -145,6 +145,15 @@ class SettingsPage
             $this->settings->set('iconset', $iconset);
         }
 
+        // Save style
+        if (isset($_POST['style'])) {
+            $style = sanitize_text_field($_POST['style']);
+            $validStyles = ['minimal', 'rounded', 'outlined', 'gradient', 'contrast'];
+            if (in_array($style, $validStyles)) {
+                $this->settings->set('style', $style);
+            }
+        }
+
         // Clear caches after settings update
         $this->settings->clearAllCaches();
 
@@ -277,7 +286,9 @@ class SettingsPage
         // Get available iconsets from the icon registry
         $iconRegistry = new \HtmlSocialShare\IconRegistry($this->settings);
         $availableIconsets = $iconRegistry->getAvailableIconsets();
-        $currentIconset = $this->settings->get('iconset', 'builtin');
+        $currentIconset = $this->settings->get('iconset', 'default');
+
+        $currentStyle = $this->settings->get('style', 'minimal');
 
         echo '<table class="form-table">';
         echo '<tbody>';
@@ -287,12 +298,31 @@ class SettingsPage
         echo '<select id="iconset_select" name="iconset" aria-describedby="iconset_desc">';
         foreach ($availableIconsets as $key => $iconset) {
             $selected = ($currentIconset === $key) ? 'selected' : '';
-            $label = $iconset['name'] ?? $key;
-            $description = $iconset['meta']['description'] ?? 'Social media icons';
+            $label = is_array($iconset) ? ($iconset['label'] ?? $key) : $iconset;
+            $description = is_array($iconset) ? ($iconset['description'] ?? 'Social media icons') : 'Social media icons';
             echo '<option value="' . esc_attr($key) . '" ' . $selected . '>' . esc_html($label) . ' - ' . esc_html($description) . '</option>';
         }
         echo '</select>';
         echo '<p id="iconset_desc" class="description">Choose the style for your social share icons.</p>';
+        echo '</td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<th scope="row"><label for="style_select">Button Style</label></th>';
+        echo '<td>';
+        echo '<select id="style_select" name="style" aria-describedby="style_desc">';
+        $styles = [
+            'minimal' => 'Minimal Flat',
+            'rounded' => 'Rounded Accent',
+            'outlined' => 'Outlined Subtle',
+            'gradient' => 'Gradient Hover',
+            'contrast' => 'High-Contrast Accessible'
+        ];
+        foreach ($styles as $key => $label) {
+            $selected = ($currentStyle === $key) ? 'selected' : '';
+            echo '<option value="' . esc_attr($key) . '" ' . $selected . '>' . esc_html($label) . '</option>';
+        }
+        echo '</select>';
+        echo '<p id="style_desc" class="description">Choose the visual style for your share buttons.</p>';
         echo '</td>';
         echo '</tr>';
         echo '</tbody>';

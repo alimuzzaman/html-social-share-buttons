@@ -69,6 +69,9 @@ add_action('init', function() use ($container) {
 $integrationLoader = new \HtmlSocialShare\IntegrationLoader($container);
 $integrationLoader->init();
 
+// Enqueue frontend styles
+add_action('wp_enqueue_scripts', [$contentDisplay, 'enqueueFrontendStyles']);
+
 // Hook into WordPress
 register_activation_hook(__FILE__, function() use ($container) {
     $migration = $container->get('migration');

@@ -339,7 +339,31 @@ class IconRegistry implements IconRegistryInterface
      */
     public function getAvailableIconsets(): array
     {
-        $allIcons = $this->settings->getAllIcons();
-        return $allIcons['sets'] ?? [];
+        $iconsets = [];
+
+        // Scan assets/iconset directory for available iconsets
+        $iconsetDir = HTML_SOCIAL_SHARE_ICONSET_DIR;
+        if (is_dir($iconsetDir)) {
+            $dirs = scandir($iconsetDir);
+            foreach ($dirs as $dir) {
+                if ($dir !== '.' && $dir !== '..' && is_dir($iconsetDir . '/' . $dir)) {
+                    $label = ucfirst(str_replace(['_', '-'], ' ', $dir));
+                    $iconsets[$dir] = [
+                        'label' => $label,
+                        'description' => 'Icon set: ' . $label
+                    ];
+                }
+            }
+        }
+
+        // If no iconsets found, provide a default
+        if (empty($iconsets)) {
+            $iconsets['default'] = [
+                'label' => 'Default',
+                'description' => 'Default icon set'
+            ];
+        }
+
+        return $iconsets;
     }
 }
