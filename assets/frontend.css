@@ -7,7 +7,7 @@
   --hss-touch: 44px;       /* min target */
   --hss-gap: 8px;
   --hss-focus: 3px solid color-mix(in srgb, var(--hss-primary) 70%, black 30%);
-  --hss-float-offset: 50%; /* half-hidden offset percentage */
+  --hss-float-offset: 100%; /* full-hidden offset percentage */
 }
 
 /* accessibility helpers */
@@ -64,9 +64,16 @@
   .hssb-share{ transition: none !important; }
 }
 
-/* Positioning utilities - adapted for existing classes */
-.hss-pos-before{ display:inline-flex; gap:var(--hss-gap); align-items:center; }
-.hss-pos-after{ display:inline-flex; gap:var(--hss-gap); align-items:center; }
+.hss-pos-float-left .hss-share-buttons,
+.hss-pos-float-right .hss-share-buttons{
+  display:flex;
+  flex-direction:column;
+}
+.hss-pos-float-left .hss-buttons,
+.hss-pos-float-right .hss-buttons{
+  display:flex;
+  flex-direction:column;
+}
 
 /* Floating shared rules */
 .hss-pos-float-left,

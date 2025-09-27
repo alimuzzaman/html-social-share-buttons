@@ -278,7 +278,7 @@ class Admin
         if (strpos($hook, 'html-social-share') !== false) {
             wp_enqueue_style(
                 'html-social-share-admin',
-                HTML_SOCIAL_SHARE_ADMIN_URL . 'admin.css',
+                HTML_SOCIAL_SHARE_ASSETS_URL . 'admin.css',
                 [],
                 '1.0.0'
             );
