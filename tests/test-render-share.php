@@ -1,4 +1,9 @@
 <?php
+// Define plugin constants for testing
+define('HTML_SOCIAL_SHARE_PLUGIN_FILE', __DIR__ . '/../html-social-share.php');
+define('HTML_SOCIAL_SHARE_PLUGIN_DIR', __DIR__ . '/../');
+define('HTML_SOCIAL_SHARE_PLUGIN_URL', 'http://example.com/wp-content/plugins/html-social-share-buttons/');
+
 $container = require __DIR__ . '/../src/bootstrap.php';
 
 // Define WordPress functions for testing
@@ -26,8 +31,10 @@ if (!function_exists('get_option')) {
 if (!function_exists('update_option')) {
     function update_option($key, $value) { return true; }
 }
-if (!function_exists('delete_option')) {
-    function delete_option($key) { return true; }
+if (!function_exists('plugins_url')) {
+    function plugins_url($path = '', $plugin = '') {
+        return 'http://example.com/wp-content/plugins/html-social-share-buttons/' . ltrim($path, '/');
+    }
 }
 
 $registry = $container->get('icon_registry');

@@ -10,7 +10,12 @@ class Admin
     private $settings;
     private $settingsPage;
     private $profilesPage;
-    private $profileManager;
+    private $profi            wp_enqueue_style(
+                'html-social-share-admin',
+                plugins_url('assets/admin.css', HTML_SOCIAL_SHARE_PLUGIN_FILE),
+                [],
+                '1.0.0'
+            );ger;
 
     public function __construct(SettingsInterface $settings, ProfileManagerInterface $profileManager, ShareRendererInterface $shareRenderer)
     {
@@ -278,7 +283,7 @@ class Admin
         if (strpos($hook, 'html-social-share') !== false) {
             wp_enqueue_style(
                 'html-social-share-admin',
-                plugins_url('assets/admin.css', dirname(__DIR__, 2) . '/html-social-share.php'),
+                plugins_url('assets/admin.css', HTML_SOCIAL_SHARE_PLUGIN_FILE),
                 [],
                 '1.0.0'
             );

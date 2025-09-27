@@ -74,7 +74,7 @@ class IconRegistry implements IconRegistryInterface
      */
     private function loadIconsetFromDirectory(string $iconsetName): ?array
     {
-        $iconsetPath = plugin_dir_path(__DIR__, 2) . 'assets/iconset/' . $iconsetName;
+        $iconsetPath = HTML_SOCIAL_SHARE_PLUGIN_DIR . 'assets/iconset/' . $iconsetName;
 
         if (!is_dir($iconsetPath)) {
             return null;
@@ -104,7 +104,7 @@ class IconRegistry implements IconRegistryInterface
                 if ($network) {
                     $icons[$network] = [
                         'image' => $file,
-                        'url' => plugins_url('assets/iconset/' . $iconsetName . '/' . $file, plugin_dir_path(__DIR__, 2))
+                        'url' => plugins_url('assets/iconset/' . $iconsetName . '/' . $file, HTML_SOCIAL_SHARE_PLUGIN_FILE)
                     ];
                 }
             }
