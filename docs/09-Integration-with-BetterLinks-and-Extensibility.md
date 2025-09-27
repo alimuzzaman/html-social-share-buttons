@@ -415,6 +415,13 @@ Too many settings may overwhelm users. Progressive disclosure and context-sensit
 
 ---
 
+## Stub Connectors for BetterLinks
+
+- Capability to import/export links, use BetterLinks short URLs when available.
+- Clear plan to accept pro source code later for tighter integration.
+
+---
+
 ## Conclusion
 
 The integration of **Html Social Share Buttons** and **BetterLinks** exemplifies the emerging best practice in WordPress plugin ecosystem: **modular, privacy-first, API-driven, and user-respecting**. By leveraging WordPress core’s hooks/filters, REST API capabilities, and OO service abstractions, the integration enables:

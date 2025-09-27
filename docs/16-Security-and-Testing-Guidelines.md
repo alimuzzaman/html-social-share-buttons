@@ -417,6 +417,16 @@ Adherence to this checklist ensures the plugin satisfies both WordPress requirem
 
 ---
 
+## Advanced Security Testing and Threat Modeling
+
+- **Threat model and attack surface matrix:** Identify XSS via SVG, CSRF on admin endpoints, capability escalation, unsafe deserialization.
+- **Automated security tests:** Static analysis (Psalm/PHPStan), dependency scanning (Dependabot/GitHub CodeQL), unit tests asserting sanitized outputs.
+- **Fuzz tests:** For SVG parser and DOM-based sanitizer to catch malformed input.
+- **CI gating:** Block merges on PHPCS, failing tests, or security alerts.
+- **Security disclosure process:** File in repo for responsible disclosure.
+
+---
+
 ## Conclusion
 
 Secure, privacy-conscious WordPress plugin development is a discipline that abides by strict principles, proven patterns, and an ever-evolving body of knowledge. For plugins like Html Social Share Buttons, which prioritize a no-JavaScript, privacy-first frontend and accept user-configurable SVG-based social links, there is no substitute for diligent application of security and testing best practices. By grounding every input in meaningful sanitization, escaping all output per context, strictly enforcing nonce and capability checks, and rigorously testing each layer via unit, integration, E2E, and CI automation, developers can produce plugins that are not only robust and delightful but also trustworthy.

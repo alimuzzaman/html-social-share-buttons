@@ -115,6 +115,11 @@ html-social-share.php (main entry point)
 ```
 Adopt a **"service container"** pattern for dependency injection, bootstrapping classes from the main plugin loader.
 
+**PSR-4 Refactor Plan:**
+- Top-level namespace: `\HtmlShare`
+- Service container bootstrap for core classes: ProfileManager, ShareRenderer, IconRegistry, Settings, Cache
+- Core classes list: ProfileManager (handles social profiles), ShareRenderer (renders share buttons), IconRegistry (manages icons), Settings (admin settings), Cache (output caching)
+
 Maintainers can use starter kits like [PSR4-WordPress-Plugin-Boilerplate](https://github.com/PolyPlugins/PSR4-WordPress-Plugin-Boilerplate) or adapt from established skeletons.
 
 ---
@@ -165,6 +170,15 @@ A multi-layered testing regime is recommended:
 - **Acceptance/E2E:** Gutenberg + admin settings (using wp-env, Playwright, or Cypress)
 
 All new features and bugfixes should require tests in pull requests, enforced through CI.
+
+---
+
+## REST Endpoints and Admin Operations
+
+Basic REST endpoints for admin operations with capability mapping:
+- Endpoints for CRUD operations on profiles and settings
+- Capability checks for admin users (manage_options)
+- Nonce verification for security
 
 ---
 

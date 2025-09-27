@@ -10,6 +10,12 @@ It recommends keeping an option-first model (single canonical option + separate 
 
 ---
 
+### Backward Compatibility Shim Layer
+
+Implement migration scripts for legacy option structures to ensure smooth upgrade from previous versions.
+
+---
+
 ### New option schema (canonical storage)
 
 Store two main option records:

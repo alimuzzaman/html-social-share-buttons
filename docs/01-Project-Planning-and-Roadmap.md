@@ -457,3 +457,12 @@ A **comprehensive, high-level planning approach** for software development—one
 **Organizations that excel in these disciplines create not only reliable software, but also robust cultures of delivery excellence, resilience, and user trust.** Such software initiatives are characterized by transparency, adaptability, and the foresight to anticipate and manage change, resulting in on-target releases, positive user impact, and sustainable platform success.
 
 In summary, while coding and detailed technical design are crucial, it is at the high-level planning stage—where vision meets actionable, stakeholder-aligned roadmaps—that success is most fundamentally set in motion. Projects that invest in these strategic practices, and choose the right tools and frameworks for planning, coordination, and measurement, consistently outperform and innovate, whatever their technical ambition or market domain.
+
+---
+
+## Project Acceptance Criteria and Next Steps
+
+- **Minimum Viable Start:** Repo skeleton, PSR-4 boot, ProfileManager class, basic REST endpoints, sanitized icon registry, CI with lint/tests passing.
+- **Definition of Done for phase 1:** All CI checks green, unit tests cover core classes ≥ 70%, server-rendered shortcode outputs correct, security scan shows no critical findings.
+- **Provided inputs required:** Final decision on data storage choice and the BetterLinks pro source when implementing tighter integration.
+- **Next step:** Create the repo tree and file stubs or implement the ProfileManager class; choose one now to start execution.
