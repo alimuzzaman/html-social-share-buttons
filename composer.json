@@ -1,0 +1,13 @@
+{
+  "name": "alimuzzaman/html-social-share-buttons",
+  "description": "HTML Social Share Buttons plugin - PSR-4 setup",
+  "type": "wordpress-plugin",
+  "require": {
+    "php": ">=7.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "HtmlSocialShare\\": "src/"
+    }
+  }
+}
