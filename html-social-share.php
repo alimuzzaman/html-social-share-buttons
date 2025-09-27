@@ -60,6 +60,14 @@ if (defined('WPB_VC_VERSION')) {
     });
 }
 
+// Register Divi module
+if (class_exists('ET_Builder_Module')) {
+    add_action('et_builder_ready', function() use ($container) {
+        $shareRenderer = $container->get('share_renderer');
+        \HtmlSocialShare\Integrations\Divi\ShareButtonsModule::register($shareRenderer);
+    });
+}
+
 // Hook into WordPress
 register_activation_hook(__FILE__, function() {
     // Activation logic here
