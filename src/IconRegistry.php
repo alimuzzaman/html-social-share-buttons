@@ -6,8 +6,13 @@ class IconRegistry implements IconRegistryInterface
     private array $icons = [];
     private string $currentIconset = 'default_square';
 
-    public function __construct($settings = null)
+    private string $basePath;
+    private string $baseUrl;
+
+    public function __construct($settings = null, string $basePath = null, string $baseUrl = null)
     {
+        $this->basePath = $basePath ?: plugin_dir_path(dirname(__DIR__));
+        $this->baseUrl = $baseUrl ?: plugins_url('', dirname(__DIR__));
         if ($settings) {
             $iconset = $settings->get('iconset', 'default');
             // Map iconset to path
@@ -37,7 +42,7 @@ class IconRegistry implements IconRegistryInterface
     {
         $this->icons = [];
 
-        $iconsetPath = plugin_dir_path(dirname(__DIR__)) . 'assets/iconset/' . $this->currentIconset . '/';
+        $iconsetPath = $this->basePath . 'assets/iconset/' . $this->currentIconset . '/';
 
         $networkMappings = [
             'facebook' => 'facebook.png',
@@ -50,7 +55,7 @@ class IconRegistry implements IconRegistryInterface
         foreach ($networkMappings as $network => $filename) {
             $filePath = $iconsetPath . $filename;
             if (file_exists($filePath)) {
-                $iconUrl = plugins_url('assets/iconset/' . $this->currentIconset . '/' . $filename, dirname(__DIR__));
+                $iconUrl = $this->baseUrl . '/assets/iconset/' . $this->currentIconset . '/' . $filename;
                 $this->icons[$network] = sprintf('<img src="%s" alt="%s icon" width="24" height="24" />', esc_url($iconUrl), esc_attr($network));
             } else {
                 // Fallback to dashicon

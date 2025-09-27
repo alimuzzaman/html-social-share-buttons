@@ -1,7 +1,15 @@
 <?php
 require __DIR__ . '/../../src/bootstrap.php';
 
-$reg = new HtmlSocialShare\IconRegistry();
+// Define WordPress functions for testing
+if (!function_exists('esc_url')) {
+    function esc_url($url) { return $url; }
+}
+if (!function_exists('esc_attr')) {
+    function esc_attr($attr) { return $attr; }
+}
+
+$reg = new HtmlSocialShare\IconRegistry(null, __DIR__ . '/../../', 'http://example.com/wp-content/plugins/html-social-share-buttons');
 
 // initial list should contain at least 'twitter' from constructor
 $list = $reg->listIcons();
