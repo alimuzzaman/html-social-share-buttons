@@ -40,6 +40,11 @@ add_action('widgets_init', function() use ($widget) {
     register_widget($widget);
 });
 
+// Register Elementor widget
+if (defined('ELEMENTOR_VERSION')) {
+    require_once __DIR__ . '/src/Elementor/register_widget.php';
+}
+
 // Hook into WordPress
 register_activation_hook(__FILE__, function() {
     // Activation logic here

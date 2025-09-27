@@ -22,12 +22,12 @@ $container->set('profile_manager', function () {
     return new HtmlSocialShare\ProfileManager();
 });
 
-$container->set('share_renderer', function () {
-    return new HtmlSocialShare\ShareRenderer();
+$container->set('share_renderer', function ($c) {
+    return new HtmlSocialShare\ShareRenderer($c->get('icon_registry'));
 });
 
-$container->set('icon_registry', function () {
-    return new HtmlSocialShare\IconRegistry();
+$container->set('icon_registry', function ($c) {
+    return new HtmlSocialShare\IconRegistry($c->get('settings'));
 });
 
 $container->set('settings', function () {

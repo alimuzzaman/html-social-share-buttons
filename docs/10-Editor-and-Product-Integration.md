@@ -25,7 +25,7 @@ Before addressing specific integrations, it's critical to understand the archite
 - **Ultra-lightweight:** Less than 11KB; minimal HTTP requests; no jQuery or heavy scripting.
 - **Privacy-first:** No user-tracking by default; optionally integrates privacy-compliant analytics.
 - **No-JavaScript-by-default:** Markup and styles only; JavaScript only for optional enhancements.
-- **Shortcode-based:** Primary output through `[zm_sh_btn ...]` shortcode.
+- **Shortcode-based:** Primary output through `[html_social_share ...]` shortcode.
 - **Widget support:** Classic WordPress widget for Appearance > Widgets; can be extended for block/widget environments.
 - **PHP implementation:** Markup fully rendered in PHP for maximal compatibility.
 - **Customizable:** Through shortcode attributes, widget arguments, or PHP hooks/filters.
@@ -68,7 +68,7 @@ Gutenberg (the WordPress Block Editor) is the default editing experience for Wor
 
 #### 2. **Static Block Using Shortcode**
 
-- Register a block that simply renders the `[zm_sh_btn]` shortcode in the front-end output.
+- Register a block that simply renders the `[html_social_share]` shortcode in the front-end output.
 - Map block settings to corresponding shortcode attributes.
 
 #### 3. **Widget Block**
@@ -119,7 +119,7 @@ add_action('init', function() {
 <?php
 function html_social_share_render_block($attributes, $content) {
     ob_start();
-    echo do_shortcode('[zm_sh_btn'
+    echo do_shortcode('[html_social_share'
         . ' iconset="' . esc_attr($attributes['iconSet'] ?? 'long-shadows') . '"'
         . ' icons="' . esc_attr(implode(',', $attributes['icons'] ?? ['facebook', 'twitter'])) . '"'
         . (!empty($attributes['url']) ? ' url="' . esc_url($attributes['url']) . '"' : '')
@@ -228,7 +228,7 @@ Elementor is one of the most popular visual page builders for WordPress. Integra
 
 #### 2. **Expose Shortcode as a Widget**
 
-- Provide a generic way for users to insert the `[zm_sh_btn]` shortcode using Elementor’s native “Shortcode” widget.
+- Provide a generic way for users to insert the `[html_social_share]` shortcode using Elementor’s native “Shortcode” widget.
 - For advanced UX, document recommended attributes/settings for best results in Elementor-built pages.
 
 #### 3. **Asset Isolation**
@@ -282,7 +282,7 @@ class Html_Social_Share_Widget extends Widget_Base {
 
     protected function render() {
         $settings = $this->get_settings_for_display();
-        $shortcode = '[zm_sh_btn'
+        $shortcode = '[html_social_share'
             . (!empty($settings['iconset']) ? ' iconset="' . esc_attr($settings['iconset']) . '"' : '')
             . (!empty($settings['icons']) ? ' icons="' . esc_attr($settings['icons']) . '"' : '')
             . (!empty($settings['url']) ? ' url="' . esc_url($settings['url']) . '"' : '')
@@ -322,7 +322,7 @@ Beaver Builder allows “modules” (elements) in its drag-and-drop builder. To 
 
 #### 2. **Shortcode/HTML Module**
 
-- For simpler sites, recommend using Beaver Builder’s HTML or Shortcode module with `[zm_sh_btn]` directly.
+- For simpler sites, recommend using Beaver Builder’s HTML or Shortcode module with `[html_social_share]` directly.
 
 ### Example: Registering a Custom Beaver Builder Module
 
@@ -367,7 +367,7 @@ FLBuilder::register_module('HTML_Social_Share_BB_Module', [
 **Module rendering template (in the module’s `frontend.php`):**
 ```php
 <?php
-echo do_shortcode('[zm_sh_btn'
+echo do_shortcode('[html_social_share'
     . (!empty($settings->iconset) ? ' iconset="' . esc_attr($settings->iconset) . '"' : '')
     . (!empty($settings->icons) ? ' icons="' . esc_attr($settings->icons) . '"' : '')
     . (!empty($settings->url) ? ' url="' . esc_url($settings->url) . '"' : '')
@@ -406,7 +406,7 @@ The Divi Builder (by Elegant Themes) uses a proprietary module system based in P
 
 #### 2. **Code/Shortcode Module**
 
-- Simplest integration: use Divi’s built-in “Code” module to insert `[zm_sh_btn]` with parameters.
+- Simplest integration: use Divi’s built-in “Code” module to insert `[html_social_share]` with parameters.
 - Document recommended attribute usage for the most common use cases.
 
 ### Example: Registering a Basic Divi Module
@@ -437,7 +437,7 @@ class Html_Social_Share_Divi extends ET_Builder_Module {
             'class'   => '',
         ], $attrs);
 
-        return do_shortcode('[zm_sh_btn'
+        return do_shortcode('[html_social_share'
             . (!empty($atts['iconset']) ? ' iconset="' . esc_attr($atts['iconset']) . '"' : '')
             . (!empty($atts['icons']) ? ' icons="' . esc_attr($atts['icons']) . '"' : '')
             . (!empty($atts['url']) ? ' url="' . esc_url($atts['url']) . '"' : '')
@@ -477,7 +477,7 @@ WPBakery Page Builder (formerly Visual Composer) supports mapping shortcodes to 
 add_action('vc_before_init', function() {
     vc_map([
         'name' => __('HTML Social Share Buttons', 'html-social-share'),
-        'base' => 'zm_sh_btn',
+        'base' => 'html_social_share',
         'icon' => 'vc_icon-share',
         'category' => __('Social', 'js_composer'),
         'params' => [
@@ -508,7 +508,7 @@ add_action('vc_before_init', function() {
 
 #### 2. **Native Shortcode Usage**
 
-- Users can always insert `[zm_sh_btn ...]` through WPBakery’s Text Block or Raw HTML element.
+- Users can always insert `[html_social_share ...]` through WPBakery’s Text Block or Raw HTML element.
 
 #### 3. **Asset Conflicts**
 
@@ -531,7 +531,7 @@ Thrive Architect is another major visual/page builder for WordPress. The typical
 
 #### 1. **Expose Shortcode for Use in Thrive Architect**
 
-- Provide instructions for inserting `[zm_sh_btn]` shortcode in Thrive’s “Custom HTML” or “Shortcode” element.
+- Provide instructions for inserting `[html_social_share]` shortcode in Thrive’s “Custom HTML” or “Shortcode” element.
 
 #### 2. **Custom Element Integration**
 
@@ -567,7 +567,7 @@ BetterDocs is a widely used documentation/knowledge-base plugin by WPDeveloper.c
 ```php
 add_filter('betterdocs_content', function($content) {
     if (is_singular('docs')) { // Only on individual doc pages
-        $share = do_shortcode('[zm_sh_btn iconset="long-shadows" icons="facebook,twitter,linkedin"]');
+        $share = do_shortcode('[html_social_share iconset="long-shadows" icons="facebook,twitter,linkedin"]');
         $content .= $share; // Append at end; can prepend if desired
     }
     return $content;
@@ -576,7 +576,7 @@ add_filter('betterdocs_content', function($content) {
 
 #### 2. **Custom Shortcodes**
 
-- BetterDocs supports the use of generic shortcodes in its KB documents; users can insert `[zm_sh_btn]` directly in any doc.
+- BetterDocs supports the use of generic shortcodes in its KB documents; users can insert `[html_social_share]` directly in any doc.
 
 #### 3. **BetterDocs Template Overrides**
 
@@ -618,7 +618,7 @@ add_action('graphql_register_types', function() {
         'type' => 'String',
         'description' => __('HTML Social Share Buttons output', 'html-social-share'),
         'resolve' => function($post, $args, $context, $info) {
-            return do_shortcode('[zm_sh_btn url="' . get_permalink($post->ID) . '"]');
+            return do_shortcode('[html_social_share url="' . get_permalink($post->ID) . '"]');
         }
     ]);
 });

@@ -23,7 +23,7 @@ class SettingsPage
             $this->saveSettings();
         }
 
-        $currentTab = $_GET['tab'] ?? 'general';
+        $currentTab = $_POST['current_tab'] ?? 'general';
 
         echo '<div class="wrap">';
         echo '<h1>HTML Social Share Settings</h1>';
@@ -39,36 +39,44 @@ class SettingsPage
 
         foreach ($tabs as $tab => $label) {
             $class = ($currentTab === $tab) ? 'nav-tab nav-tab-active' : 'nav-tab';
-            $url = add_query_arg('tab', $tab);
-            echo '<a href="' . esc_url($url) . '" class="' . $class . '">' . $label . '</a>';
+            echo '<a href="#" class="nav-tab-link" data-tab="' . esc_attr($tab) . '" class="' . $class . '">' . $label . '</a>';
         }
         echo '</nav>';
 
         echo '<form method="post" action="">';
         wp_nonce_field('html_social_share_settings');
+        echo '<input type="hidden" name="current_tab" id="current_tab" value="' . esc_attr($currentTab) . '">';
 
-        echo '<div class="tab-content">';
-        switch ($currentTab) {
-            case 'general':
-                $this->renderGeneralTab();
-                break;
-            case 'networks':
-                $this->renderNetworksTab();
-                break;
-            case 'appearance':
-                $this->renderAppearanceTab();
-                break;
-            case 'placement':
-                $this->renderPlacementTab();
-                break;
-        }
+        // Render all tab content
+        echo '<div id="tab-general" class="tab-content" style="display: ' . ($currentTab === 'general' ? 'block' : 'none') . ';">';
+        $this->renderGeneralTab();
+        echo '</div>';
+
+        echo '<div id="tab-networks" class="tab-content" style="display: ' . ($currentTab === 'networks' ? 'block' : 'none') . ';">';
+        $this->renderNetworksTab();
+        echo '</div>';
+
+        echo '<div id="tab-appearance" class="tab-content" style="display: ' . ($currentTab === 'appearance' ? 'block' : 'none') . ';">';
+        $this->renderAppearanceTab();
+        echo '</div>';
+
+        echo '<div id="tab-placement" class="tab-content" style="display: ' . ($currentTab === 'placement' ? 'block' : 'none') . ';">';
+        $this->renderPlacementTab();
         echo '</div>';
 
         submit_button();
         echo '</form>';
 
         // Live preview
+        echo '<div id="hssb-live-preview-container">';
         $this->renderPreview();
+        echo '</div>';
+
+        // Add JavaScript for tab switching
+        $this->enqueueTabScript();
+
+        // Add JavaScript for live preview
+        $this->enqueuePreviewScript();
 
         echo '</div>';
     }
@@ -89,6 +97,19 @@ class SettingsPage
 
         if (isset($_POST['placement'])) {
             $this->settings->set('placement', $_POST['placement']);
+        }
+
+        // Refresh icon registry with new iconset
+        if (isset($_POST['iconset']) && method_exists($this->shareRenderer, 'setIconset')) {
+            $iconset = sanitize_text_field($_POST['iconset']);
+            $mappings = [
+                'default' => 'default/square',
+                'square' => 'flat/square',
+                'circle' => 'flat/circle',
+                'minimal' => 'prajin/square'
+            ];
+            $path = $mappings[$iconset] ?? 'default/square';
+            $this->shareRenderer->setIconset($path);
         }
 
         echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
@@ -202,5 +223,89 @@ class SettingsPage
         }
         echo '</div>';
         echo '<p><em>Note: This is a basic preview. Actual styling may vary.</em></p>';
+    }
+
+    private function enqueueTabScript()
+    {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.nav-tab-link');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const currentTabInput = document.getElementById('current_tab');
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+
+                    // Update active tab
+                    tabLinks.forEach(l => l.classList.remove('nav-tab-active'));
+                    this.classList.add('nav-tab-active');
+
+                    // Show selected tab content
+                    tabContents.forEach(content => {
+                        content.style.display = content.id === 'tab-' + tabId ? 'block' : 'none';
+                    });
+
+                    // Update hidden input
+                    if (currentTabInput) {
+                        currentTabInput.value = tabId;
+                    }
+                });
+            });
+        });
+        </script>
+        <?php
+    }
+
+    private function enqueuePreviewScript()
+    {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const previewContainer = document.getElementById('hssb-live-preview-container');
+
+            if (!form || !previewContainer) return;
+
+            // Watch for changes on form inputs
+            const inputs = form.querySelectorAll('input, select');
+            let updateTimeout;
+
+            inputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    clearTimeout(updateTimeout);
+                    updateTimeout = setTimeout(updatePreview, 500);
+                });
+            });
+
+            function updatePreview() {
+                const formData = new FormData(form);
+                formData.append('action', 'hssb_live_preview');
+                formData.append('_wpnonce', '<?php echo wp_create_nonce('hssb_live_preview'); ?>');
+
+                fetch(ajaxurl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.html) {
+                        previewContainer.innerHTML = data.data.html;
+                    }
+                })
+                .catch(error => {
+                    console.error('Preview update failed:', error);
+                });
+            }
+        });
+        </script>
+        <?php
+    }
+
+    public function getShareRenderer()
+    {
+        return $this->shareRenderer;
     }
 }
