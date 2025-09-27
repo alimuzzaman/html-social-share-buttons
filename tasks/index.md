@@ -101,11 +101,11 @@ This index aggregates all implementation tasks from the project documentation. T
 
 #### WooCommerce Integration (8 tasks)
 
-- [PENDING] **WOOCOMMERCE-001**: Create WooCommerce integration class (3 hours) - `tasks/todo/integrations/woocommerce-integration.md`
-- [PENDING] **WOOCOMMERCE-002**: Hook into product page display (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
-- [PENDING] **WOOCOMMERCE-003**: Implement product-specific URLs (3 hours) - `tasks/todo/integrations/woocommerce-integration.md`
-- [PENDING] **WOOCOMMERCE-004**: Add product image to shares (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
-- [PENDING] **WOOCOMMERCE-005**: Hook into shop/archive pages (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
+- [DONE] **WOOCOMMERCE-001**: Create WooCommerce integration class (3 hours) - `tasks/todo/integrations/woocommerce-integration.md`
+- [DONE] **WOOCOMMERCE-002**: Hook into product page display (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
+- [DONE] **WOOCOMMERCE-003**: Implement product-specific URLs (3 hours) - `tasks/todo/integrations/woocommerce-integration.md`
+- [DONE] **WOOCOMMERCE-004**: Add product image to shares (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
+- [DONE] **WOOCOMMERCE-005**: Hook into shop/archive pages (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
 - [PENDING] **WOOCOMMERCE-006**: Add admin settings for WooCommerce (3 hours) - `tasks/todo/integrations/woocommerce-integration.md`
 - [PENDING] **WOOCOMMERCE-007**: Ensure WooCommerce compatibility (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
 - [PENDING] **WOOCOMMERCE-008**: Add conditional display logic (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`

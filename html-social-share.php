@@ -76,6 +76,14 @@ if (class_exists('FLBuilder')) {
     });
 }
 
+// Register WooCommerce integration
+if (class_exists('WooCommerce')) {
+    add_action('init', function() use ($container) {
+        $shareRenderer = $container->get('share_renderer');
+        \HtmlSocialShare\Integrations\WooCommerce\ShareButtonsIntegration::register($shareRenderer);
+    });
+}
+
 // Hook into WordPress
 register_activation_hook(__FILE__, function() {
     // Activation logic here
