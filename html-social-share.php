@@ -84,6 +84,14 @@ if (class_exists('WooCommerce')) {
     });
 }
 
+// Register bbPress integration
+if (class_exists('bbPress')) {
+    add_action('init', function() use ($container) {
+        $shareRenderer = $container->get('share_renderer');
+        \HtmlSocialShare\Integrations\bbPress\ShareButtonsIntegration::register($shareRenderer);
+    });
+}
+
 // Hook into WordPress
 register_activation_hook(__FILE__, function() {
     // Activation logic here

@@ -106,16 +106,16 @@ This index aggregates all implementation tasks from the project documentation. T
 - [DONE] **WOOCOMMERCE-003**: Implement product-specific URLs (3 hours) - `tasks/todo/integrations/woocommerce-integration.md`
 - [DONE] **WOOCOMMERCE-004**: Add product image to shares (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
 - [DONE] **WOOCOMMERCE-005**: Hook into shop/archive pages (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
-- [PENDING] **WOOCOMMERCE-006**: Add admin settings for WooCommerce (3 hours) - `tasks/todo/integrations/woocommerce-integration.md`
-- [PENDING] **WOOCOMMERCE-007**: Ensure WooCommerce compatibility (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
-- [PENDING] **WOOCOMMERCE-008**: Add conditional display logic (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
+- [DONE] **WOOCOMMERCE-006**: Add admin settings for WooCommerce (3 hours) - `tasks/todo/integrations/woocommerce-integration.md`
+- [DONE] **WOOCOMMERCE-007**: Ensure WooCommerce compatibility (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
+- [DONE] **WOOCOMMERCE-008**: Add conditional display logic (2 hours) - `tasks/todo/integrations/woocommerce-integration.md`
 
 #### bbPress Integration (7 tasks)
 
-- [PENDING] **BBPRESS-001**: Create bbPress integration class (3 hours) - `tasks/todo/integrations/bbpress-integration.md`
-- [PENDING] **BBPRESS-002**: Hook into topic display (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
-- [PENDING] **BBPRESS-003**: Implement topic-specific URLs (3 hours) - `tasks/todo/integrations/bbpress-integration.md`
-- [PENDING] **BBPRESS-004**: Hook into reply display (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
+- [DONE] **BBPRESS-001**: Create bbPress integration class (3 hours) - `tasks/todo/integrations/bbpress-integration.md`
+- [DONE] **BBPRESS-002**: Hook into topic display (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
+- [DONE] **BBPRESS-003**: Implement topic-specific URLs (3 hours) - `tasks/todo/integrations/bbpress-integration.md`
+- [DONE] **BBPRESS-004**: Hook into reply display (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
 - [PENDING] **BBPRESS-005**: Add admin settings for bbPress (3 hours) - `tasks/todo/integrations/bbpress-integration.md`
 - [PENDING] **BBPRESS-006**: Ensure bbPress compatibility (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
 - [PENDING] **BBPRESS-007**: Add conditional display logic (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
