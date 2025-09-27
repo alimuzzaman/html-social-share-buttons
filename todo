@@ -1,0 +1,79 @@
+# Project TODOs
+
+php 5.6+ compatible
+must work with latest php version
+
+## Deep research items
+
+- Data model decision (done)
+- Frontend/Icon system
+- Admin UI wireframes
+- Core rendering contract: server-rendered shortcodes and block render callbacks that output no-JS markup by default.
+- Basic REST endpoints and capability mapping for admin operations.
+- Documentation release and community readiness plan.
+
+### Admin UI wireframes
+
+- Admin UI wireframes for profile CRUD, icon selection, and settings pages.
+- User flow diagrams for creating/editing profiles, selecting icons, and configuring settings.
+
+### Frontend/Icon system
+
+- we should support multiple format of image
+- svg, png
+- user provided
+- plugin will include multiple set(fb, x, github, etc) of icons
+- how should we organize them?
+- how should we process user upload?
+- how should we render in frontend?
+- SVG sanitization library choice and integration approach.
+
+**Data model decision**:
+- new format of option with migration strategy documented.
+- how icon sets will map into options after user choose them.
+- what data model should a icon set or individual icon have?
+- user should be able to choose from plugin provided iconset or provide icons themselves.
+- we need a unified data model so it can be used in both frontend and backend.
+- how should we handle other current setting?
+- how should current settings be mapped in new data model?
+
+
+## Priority checklist to start coding
+
+- Init repo and branch strategy: main, develop, feature/, hotfix/.
+- PSR-4 refactor plan: top-level namespace, service container bootstrap, and core classes list (ProfileManager, ShareRenderer, IconRegistry, Settings, Cache).
+- SVG sanitization unit implemented and covered by tests.
+
+## Security and testing items to include
+
+- Threat model and attack surface matrix (XSS via SVG, CSRF on admin endpoints, capability escalation, unsafe deserialization).
+- Automated security tests: static analysis (Psalm/PHPStan), dependency scanning (Dependabot/GitHub CodeQL), and unit tests asserting sanitized outputs.
+- Fuzz tests for SVG parser and DOM-based sanitizer to catch malformed input.
+- CI gating: block merges on PHPCS, failing tests, or security alerts.
+- Security disclosure and responsible disclosure process file in repo.
+
+## Integration and extensibility readiness
+
+- Plugin integration layer: adapter interfaces for external services (BetterLinks, link shorteners, analytics) with documented hooks and filters.
+- Event and filter catalog for extension points (profile CRUD, render markup, icon resolution, share payload).
+- Backward compatibility shim layer for legacy option structures and migration scripts.
+- Stub connectors for BetterLinks: capability to import/export links, use BetterLinks short URLs when available, and a clear plan to accept pro source code later.
+
+## Documentation release and community readiness
+
+- README and readme.txt with WP.org assets, banners, screenshot specs, and a clear changelog.
+- Contributing guidelines: CODE_OF_CONDUCT, CONTRIBUTING, ISSUE_TEMPLATE, PR_TEMPLATE.
+- i18n plan: text-domain, POT extraction config, and initial translations.
+- Beta testing plan with test matrix (WP versions, PHP versions, themes, major page builders) and rollout strategy (opt-in beta users).
+
+## Acceptance criteria and next steps
+
+- Minimum Viable Start: repo skeleton, PSR-4 boot, ProfileManager class, basic REST endpoints, sanitized icon registry, and CI with lint/tests passing.
+
+- Definition of Done for phase 1: all CI checks green, unit tests cover core classes ≥ 70%, server-rendered shortcode outputs correct, and security scan shows no critical findings.
+
+- Provided inputs required: final decision on data storage choice and the BetterLinks pro source when implementing tighter integration.
+
+- Next step: create the repo tree and file stubs or implement the ProfileManager class; choose one now to start execution.
+
+
