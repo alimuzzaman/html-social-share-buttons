@@ -22,7 +22,7 @@ class IconPicker
         $output .= '<div class="hssb-icon-grid">';
         foreach (self::$icons as $iconKey => $iconLabel) {
             $selected = ($currentValue === $iconKey) ? 'selected' : '';
-            $iconUrl = plugins_url('assets/iconset/default_square/' . $iconKey . '.png', HTML_SOCIAL_SHARE_PLUGIN_FILE);
+            $iconUrl = HTML_SOCIAL_SHARE_ICONSET_URL . 'default_square/' . $iconKey . '.png';
 
             $output .= '<div class="hssb-icon-option ' . $selected . '" data-icon="' . esc_attr($iconKey) . '">';
             $output .= '<img src="' . esc_url($iconUrl) . '" alt="' . esc_attr($iconLabel) . '" width="32" height="32">';

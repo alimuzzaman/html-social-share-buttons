@@ -104,7 +104,7 @@ class IconRegistry implements IconRegistryInterface
                 if ($network) {
                     $icons[$network] = [
                         'image' => $file,
-                        'url' => plugins_url('assets/iconset/' . $iconsetName . '/' . $file, HTML_SOCIAL_SHARE_PLUGIN_FILE)
+                        'url' => HTML_SOCIAL_SHARE_ICONSET_URL . $iconsetName . '/' . $file
                     ];
                 }
             }
