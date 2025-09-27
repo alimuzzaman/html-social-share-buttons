@@ -92,6 +92,14 @@ if (class_exists('bbPress')) {
     });
 }
 
+// Register BuddyPress integration
+if (class_exists('BuddyPress')) {
+    add_action('bp_init', function() use ($container) {
+        $shareRenderer = $container->get('share_renderer');
+        \HtmlSocialShare\Integrations\BuddyPress\ShareButtonsIntegration::register($shareRenderer);
+    });
+}
+
 // Hook into WordPress
 register_activation_hook(__FILE__, function() {
     // Activation logic here

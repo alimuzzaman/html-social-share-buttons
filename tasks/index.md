@@ -6,7 +6,7 @@ This index aggregates all implementation tasks from the project documentation. T
 
 **Last Updated**: September 28, 2025
 **Total Tasks**: 90
-**Completed**: 86
+**Completed**: 90
 **In Progress**: 0
 **Pending**: 4
 
@@ -116,19 +116,19 @@ This index aggregates all implementation tasks from the project documentation. T
 - [DONE] **BBPRESS-002**: Hook into topic display (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
 - [DONE] **BBPRESS-003**: Implement topic-specific URLs (3 hours) - `tasks/todo/integrations/bbpress-integration.md`
 - [DONE] **BBPRESS-004**: Hook into reply display (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
-- [PENDING] **BBPRESS-005**: Add admin settings for bbPress (3 hours) - `tasks/todo/integrations/bbpress-integration.md`
-- [PENDING] **BBPRESS-006**: Ensure bbPress compatibility (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
-- [PENDING] **BBPRESS-007**: Add conditional display logic (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
+- [DONE] **BBPRESS-005**: Add admin settings for bbPress (3 hours) - `tasks/todo/integrations/bbpress-integration.md`
+- [DONE] **BBPRESS-006**: Ensure bbPress compatibility (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
+- [DONE] **BBPRESS-007**: Add conditional display logic (2 hours) - `tasks/todo/integrations/bbpress-integration.md`
 
 #### BuddyPress Integration (7 tasks)
 
-- [PENDING] **BUDDYPRESS-001**: Create BuddyPress integration class (3 hours) - `tasks/todo/integrations/buddypress-integration.md`
-- [PENDING] **BUDDYPRESS-002**: Hook into activity stream (2 hours) - `tasks/todo/integrations/buddypress-integration.md`
-- [PENDING] **BUDDYPRESS-003**: Implement activity-specific URLs (3 hours) - `tasks/todo/integrations/buddypress-integration.md`
-- [PENDING] **BUDDYPRESS-004**: Hook into member profiles (2 hours) - `tasks/todo/integrations/buddypress-integration.md`
-- [PENDING] **BUDDYPRESS-005**: Add admin settings for BuddyPress (3 hours) - `tasks/todo/integrations/buddypress-integration.md`
-- [PENDING] **BUDDYPRESS-006**: Ensure BuddyPress compatibility (2 hours) - `tasks/todo/integrations/buddypress-integration.md`
-- [PENDING] **BUDDYPRESS-007**: Add conditional display logic (2 hours) - `tasks/todo/integrations/buddypress-integration.md`
+- [DONE] **BUDDYPRESS-001**: Create BuddyPress integration class (3 hours) - `tasks/todo/integrations/buddypress-integration.md`
+- [DONE] **BUDDYPRESS-002**: Hook into activity stream (2 hours) - `tasks/todo/integrations/buddypress-integration.md`
+- [DONE] **BUDDYPRESS-003**: Implement activity-specific URLs (3 hours) - `tasks/todo/integrations/buddypress-integration.md`
+- [DONE] **BUDDYPRESS-004**: Hook into member profiles (2 hours) - `tasks/todo/integrations/buddypress-integration.md`
+- [DONE] **BUDDYPRESS-005**: Add admin settings for BuddyPress (3 hours) - `tasks/todo/integrations/buddypress-integration.md`
+- [DONE] **BUDDYPRESS-006**: Ensure BuddyPress compatibility (2 hours) - `tasks/todo/integrations/buddypress-integration.md`
+- [DONE] **BUDDYPRESS-007**: Add conditional display logic (2 hours) - `tasks/todo/integrations/buddypress-integration.md`
 
 ### 🎨 Admin Frontend (24 tasks)
 
