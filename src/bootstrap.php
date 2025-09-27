@@ -42,4 +42,8 @@ $container->set('back_compat', function ($c) {
     return new HtmlSocialShare\BackCompatShim($c->get('settings'));
 });
 
+$container->set('svg_sanitizer', function () {
+    return new HtmlSocialShare\Svg\Sanitizer();
+});
+
 return $container;
