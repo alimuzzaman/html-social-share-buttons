@@ -60,3 +60,8 @@ jobs:
         run: |
           php tests/test-backcompat-mapping.php
           php tests/test-rest.php
+
+      - name: Run SVG sanitizer fuzzer
+        run: |
+          php tests/security/svg_fuzzer.php 100
+        continue-on-error: false
