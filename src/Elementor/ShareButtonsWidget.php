@@ -1,3 +1,12 @@
+    public function is_pro_available() {
+        return defined('ELEMENTOR_PRO_VERSION');
+    }
+
+    public function show_pro_notice() {
+        if ( ! $this->is_pro_available() ) {
+            echo '<div class="elementor-alert elementor-alert-warning">Elementor Pro is not active. Some features may be unavailable.</div>';
+        }
+    }
 <?php
 namespace HtmlSocialShare\Elementor;
 
@@ -102,6 +111,7 @@ class ShareButtonsWidget extends Widget_Base {
     }
 
     protected function render() {
+        $this->show_pro_notice();
         $settings = $this->get_settings_for_display();
         $networks = isset($settings['networks']) ? $settings['networks'] : [ 'facebook', 'twitter', 'linkedin' ];
         $shape = isset($settings['button_shape']) ? $settings['button_shape'] : 'square';
