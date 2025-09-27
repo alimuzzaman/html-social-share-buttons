@@ -68,6 +68,14 @@ if (class_exists('ET_Builder_Module')) {
     });
 }
 
+// Register Beaver Builder module
+if (class_exists('FLBuilder')) {
+    add_action('init', function() use ($container) {
+        $shareRenderer = $container->get('share_renderer');
+        \HtmlSocialShare\Integrations\BeaverBuilder\ShareButtonsModule::register($shareRenderer);
+    });
+}
+
 // Hook into WordPress
 register_activation_hook(__FILE__, function() {
     // Activation logic here

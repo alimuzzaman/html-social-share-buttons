@@ -90,8 +90,8 @@ This index aggregates all implementation tasks from the project documentation. T
 
 #### Beaver Builder Module (8 tasks)
 
-- [PENDING] **BEAVER-001**: Create module class structure (4 hours) - `tasks/todo/integrations/beaver-builder-module.md`
-- [PENDING] **BEAVER-002**: Register module with Beaver Builder (2 hours) - `tasks/todo/integrations/beaver-builder-module.md`
+- [DONE] **BEAVER-001**: Create module class structure (4 hours) - `tasks/todo/integrations/beaver-builder-module.md`
+- [DONE] **BEAVER-002**: Register module with Beaver Builder (2 hours) - `tasks/todo/integrations/beaver-builder-module.md`
 - [PENDING] **BEAVER-003**: Implement basic form settings (4 hours) - `tasks/todo/integrations/beaver-builder-module.md`
 - [PENDING] **BEAVER-004**: Add select setting for styles (3 hours) - `tasks/todo/integrations/beaver-builder-module.md`
 - [PENDING] **BEAVER-005**: Implement module frontend rendering (4 hours) - `tasks/todo/integrations/beaver-builder-module.md`
