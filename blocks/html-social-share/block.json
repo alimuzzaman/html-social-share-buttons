@@ -16,9 +16,18 @@
       "items": { "type": "string" },
       "default": [ "facebook", "twitter", "linkedin" ]
     },
-    "buttonShape": { "type": "string", "default": "square" },
-    "buttonColor": { "type": "string", "default": "#0073e6" },
-    "buttonSize": { "type": "number", "default": 40 }
+    "iconset": {
+      "type": "string",
+      "default": "default"
+    },
+    "title": {
+      "type": "string",
+      "default": "Share this with your friends"
+    },
+    "alignment": {
+      "type": "string",
+      "default": "left"
+    }
   },
   "editorScript": "file:./editor.js",
   "editorStyle": "file:./editor.css",

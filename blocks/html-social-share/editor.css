@@ -1,0 +1,31 @@
+/* Gutenberg Block Editor Styles */
+.wp-block-html-social-share-buttons {
+    border: 1px dashed #ccc;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.share-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.hssb-share {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+}
+
+.hssb-share .dashicons {
+    margin-right: 5px;
+}

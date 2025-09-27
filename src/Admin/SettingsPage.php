@@ -99,16 +99,31 @@ class SettingsPage
             $this->settings->set('placement', $_POST['placement']);
         }
 
+        // Save general settings
+        if (isset($_POST['title'])) {
+            $this->settings->set('title', sanitize_text_field($_POST['title']));
+        }
+
+        if (isset($_POST['exclude'])) {
+            $this->settings->set('exclude', sanitize_text_field($_POST['exclude']));
+        }
+
+        // Save advanced options
+        $this->settings->set('google_analytics', isset($_POST['google_analytics']));
+        $this->settings->set('auto_hide', isset($_POST['auto_hide']));
+        $this->settings->set('use_port', isset($_POST['use_port']));
+        $this->settings->set('nofollow', isset($_POST['nofollow']));
+
         // Refresh icon registry with new iconset
         if (isset($_POST['iconset']) && method_exists($this->shareRenderer, 'setIconset')) {
             $iconset = sanitize_text_field($_POST['iconset']);
             $mappings = [
-                'default' => 'default/square',
-                'square' => 'flat/square',
-                'circle' => 'flat/circle',
-                'minimal' => 'prajin/square'
+                'default' => 'default_square',
+                'square' => 'flat_square',
+                'circle' => 'flat_circle',
+                'minimal' => 'prajin_square'
             ];
-            $path = $mappings[$iconset] ?? 'default/square';
+            $path = $mappings[$iconset] ?? 'default_square';
             $this->shareRenderer->setIconset($path);
         }
 
@@ -119,7 +134,66 @@ class SettingsPage
     {
         echo '<h2>General Settings</h2>';
         echo '<p>Configure general plugin settings.</p>';
-        // TODO: Add form fields
+
+        $title = $this->settings->get('title', 'Share this with your friends');
+        $exclude = $this->settings->get('exclude', '');
+        $googleAnalytics = $this->settings->get('google_analytics', false);
+        $autoHide = $this->settings->get('auto_hide', false);
+        $usePort = $this->settings->get('use_port', false);
+        $nofollow = $this->settings->get('nofollow', false);
+
+        echo '<table class="form-table">';
+        echo '<tbody>';
+
+        // Title field
+        echo '<tr>';
+        echo '<th scope="row"><label for="title">Share Title</label></th>';
+        echo '<td>';
+        echo '<input type="text" id="title" name="title" value="' . esc_attr($title) . '" class="regular-text" aria-describedby="title_desc">';
+        echo '<p id="title_desc" class="description">The text to display above the share buttons.</p>';
+        echo '</td>';
+        echo '</tr>';
+
+        // Exclude field
+        echo '<tr>';
+        echo '<th scope="row"><label for="exclude">Exclude Pages</label></th>';
+        echo '<td>';
+        echo '<input type="text" id="exclude" name="exclude" value="' . esc_attr($exclude) . '" class="regular-text" aria-describedby="exclude_desc">';
+        echo '<p id="exclude_desc" class="description">Exclude by Page ID, Page Title or Page Slug (comma separated).</p>';
+        echo '</td>';
+        echo '</tr>';
+
+        // Advanced Options
+        echo '<tr>';
+        echo '<th scope="row">Advanced Options</th>';
+        echo '<td>';
+        echo '<fieldset>';
+        echo '<label for="google_analytics">';
+        echo '<input type="checkbox" id="google_analytics" name="google_analytics" value="1" ' . checked($googleAnalytics, true, false) . '> ';
+        echo 'Enable Google Social Analytics';
+        echo '</label><br>';
+        echo '<span class="description">Be sure you have Google Analytics already installed on your site.</span><br><br>';
+
+        echo '<label for="auto_hide">';
+        echo '<input type="checkbox" id="auto_hide" name="auto_hide" value="1" ' . checked($autoHide, true, false) . '> ';
+        echo 'Auto hide buttons on page load (for left/right side placement)';
+        echo '</label><br><br>';
+
+        echo '<label for="use_port">';
+        echo '<input type="checkbox" id="use_port" name="use_port" value="1" ' . checked($usePort, true, false) . '> ';
+        echo 'Use port in URLs (e.g., SSL port :443)';
+        echo '</label><br><br>';
+
+        echo '<label for="nofollow">';
+        echo '<input type="checkbox" id="nofollow" name="nofollow" value="1" ' . checked($nofollow, true, false) . '> ';
+        echo 'Add nofollow to social links';
+        echo '</label>';
+        echo '</fieldset>';
+        echo '</td>';
+        echo '</tr>';
+
+        echo '</tbody>';
+        echo '</table>';
     }
 
     private function renderNetworksTab()
@@ -182,6 +256,8 @@ class SettingsPage
             'after_post' => 'After post content',
             'before_page' => 'Before page content',
             'after_page' => 'After page content',
+            'left_side' => 'Show on left side',
+            'right_side' => 'Show on right side',
             'manual' => 'Manual placement only (via shortcode/widget)'
         ];
 

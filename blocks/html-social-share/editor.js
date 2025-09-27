@@ -1,0 +1,97 @@
+/**
+ * Gutenberg Block Editor Script
+ */
+import { registerBlockType } from '@wordpress/blocks';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, SelectControl, TextControl, CheckboxControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+
+const Edit = ({ attributes, setAttributes }) => {
+    const { networks, iconset, title, alignment } = attributes;
+
+    const availableNetworks = [
+        { label: 'Facebook', value: 'facebook' },
+        { label: 'Twitter', value: 'twitter' },
+        { label: 'LinkedIn', value: 'linkedin' },
+        { label: 'Google+', value: 'googleplus' },
+        { label: 'Pinterest', value: 'pinterest' },
+        { label: 'Email', value: 'email' }
+    ];
+
+    const availableIconsets = [
+        { label: 'Default (Square)', value: 'default' },
+        { label: 'Flat Square', value: 'square' },
+        { label: 'Flat Circle', value: 'circle' },
+        { label: 'Minimal', value: 'minimal' }
+    ];
+
+    const alignmentOptions = [
+        { label: 'Left', value: 'left' },
+        { label: 'Center', value: 'center' },
+        { label: 'Right', value: 'right' }
+    ];
+
+    const handleNetworkChange = (network, checked) => {
+        const newNetworks = checked
+            ? [...networks, network]
+            : networks.filter(n => n !== network);
+        setAttributes({ networks: newNetworks });
+    };
+
+    return (
+        <>
+            <InspectorControls>
+                <PanelBody title={__('Share Buttons Settings', 'html-social-share')}>
+                    <TextControl
+                        label={__('Title', 'html-social-share')}
+                        value={title}
+                        onChange={(value) => setAttributes({ title: value })}
+                    />
+
+                    <SelectControl
+                        label={__('Icon Set', 'html-social-share')}
+                        value={iconset}
+                        options={availableIconsets}
+                        onChange={(value) => setAttributes({ iconset: value })}
+                    />
+
+                    <SelectControl
+                        label={__('Alignment', 'html-social-share')}
+                        value={alignment}
+                        options={alignmentOptions}
+                        onChange={(value) => setAttributes({ alignment: value })}
+                    />
+
+                    <div>
+                        <label>{__('Social Networks', 'html-social-share')}</label>
+                        {availableNetworks.map(network => (
+                            <CheckboxControl
+                                key={network.value}
+                                label={network.label}
+                                checked={networks.includes(network.value)}
+                                onChange={(checked) => handleNetworkChange(network.value, checked)}
+                            />
+                        ))}
+                    </div>
+                </PanelBody>
+            </InspectorControls>
+
+            <div {...useBlockProps()} style={{ textAlign: alignment }}>
+                {title && <div className="share-title">{title}</div>}
+                <div className="share-buttons">
+                    {networks.map(network => (
+                        <span key={network} className={`hssb-share hssb-${network}`}>
+                            <span className="dashicons dashicons-share"></span>
+                            <span className="hssb-label">{network}</span>
+                        </span>
+                    ))}
+                </div>
+            </div>
+        </>
+    );
+};
+
+registerBlockType('html-social-share/buttons', {
+    edit: Edit,
+    save: () => null, // Server-side rendering
+});

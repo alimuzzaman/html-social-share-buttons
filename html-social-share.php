@@ -45,6 +45,13 @@ if (defined('ELEMENTOR_VERSION')) {
     require_once __DIR__ . '/src/Elementor/register_widget.php';
 }
 
+// Register Gutenberg block
+add_action('init', function() use ($container) {
+    $shareRenderer = $container->get('share_renderer');
+    $block = new \HtmlSocialShare\Blocks\ShareButtons\Block($shareRenderer);
+    $block->register();
+});
+
 // Hook into WordPress
 register_activation_hook(__FILE__, function() {
     // Activation logic here
