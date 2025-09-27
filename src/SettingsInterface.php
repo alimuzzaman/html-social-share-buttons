@@ -28,4 +28,11 @@ interface SettingsInterface
      * @return void
      */
     public function delete(string $key): void;
+
+    /**
+     * Get all settings as an array.
+     *
+     * @return array
+     */
+    public function getAll(): array;
 }

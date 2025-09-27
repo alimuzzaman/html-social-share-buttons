@@ -40,11 +40,6 @@ add_action('widgets_init', function() use ($widget) {
     register_widget($widget);
 });
 
-// Register Elementor widget
-if (defined('ELEMENTOR_VERSION')) {
-    require_once __DIR__ . '/src/Elementor/register_widget.php';
-}
-
 // Register Gutenberg block
 add_action('init', function() use ($container) {
     $shareRenderer = $container->get('share_renderer');
@@ -52,53 +47,9 @@ add_action('init', function() use ($container) {
     $block->register();
 });
 
-// Register WPBakery element
-if (defined('WPB_VC_VERSION')) {
-    add_action('vc_before_init', function() use ($container) {
-        $shareRenderer = $container->get('share_renderer');
-        \HtmlSocialShare\Integrations\WPBakery\ShareButtonsElement::register($shareRenderer);
-    });
-}
-
-// Register Divi module
-if (class_exists('ET_Builder_Module')) {
-    add_action('et_builder_ready', function() use ($container) {
-        $shareRenderer = $container->get('share_renderer');
-        \HtmlSocialShare\Integrations\Divi\ShareButtonsModule::register($shareRenderer);
-    });
-}
-
-// Register Beaver Builder module
-if (class_exists('FLBuilder')) {
-    add_action('init', function() use ($container) {
-        $shareRenderer = $container->get('share_renderer');
-        \HtmlSocialShare\Integrations\BeaverBuilder\ShareButtonsModule::register($shareRenderer);
-    });
-}
-
-// Register WooCommerce integration
-if (class_exists('WooCommerce')) {
-    add_action('init', function() use ($container) {
-        $shareRenderer = $container->get('share_renderer');
-        \HtmlSocialShare\Integrations\WooCommerce\ShareButtonsIntegration::register($shareRenderer);
-    });
-}
-
-// Register bbPress integration
-if (class_exists('bbPress')) {
-    add_action('init', function() use ($container) {
-        $shareRenderer = $container->get('share_renderer');
-        \HtmlSocialShare\Integrations\bbPress\ShareButtonsIntegration::register($shareRenderer);
-    });
-}
-
-// Register BuddyPress integration
-if (class_exists('BuddyPress')) {
-    add_action('bp_init', function() use ($container) {
-        $shareRenderer = $container->get('share_renderer');
-        \HtmlSocialShare\Integrations\BuddyPress\ShareButtonsIntegration::register($shareRenderer);
-    });
-}
+// Initialize integrations
+$integrationLoader = new \HtmlSocialShare\IntegrationLoader($container);
+$integrationLoader->init();
 
 // Hook into WordPress
 register_activation_hook(__FILE__, function() {

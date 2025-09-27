@@ -19,4 +19,14 @@ class Settings implements SettingsInterface
     {
         unset($this->store[$key]);
     }
+
+    /**
+     * Get all settings as an array.
+     *
+     * @return array
+     */
+    public function getAll(): array
+    {
+        return $this->store;
+    }
 }

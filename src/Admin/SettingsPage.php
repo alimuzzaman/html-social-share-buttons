@@ -83,36 +83,69 @@ class SettingsPage
 
     private function saveSettings()
     {
+        // DEBUG: Start of save process
+        error_log('HTML Social Share: saveSettings() called');
+        error_log('HTML Social Share: POST data: ' . print_r($_POST, true));
+        echo '<!-- DEBUG: saveSettings() called at ' . date('Y-m-d H:i:s') . ' -->';
+        echo '<!-- DEBUG: POST data: ' . esc_html(print_r($_POST, true)) . ' -->';
+
         if (!wp_verify_nonce($_POST['_wpnonce'], 'html_social_share_settings')) {
+            error_log('HTML Social Share: Nonce verification failed');
+            echo '<!-- DEBUG: Nonce verification failed -->';
             return;
         }
+        error_log('HTML Social Share: Nonce verification passed');
+        echo '<!-- DEBUG: Nonce verification passed -->';
 
         if (isset($_POST['enabled_networks'])) {
-            $this->settings->set('enabled_networks', $_POST['enabled_networks']);
+            $networks = $_POST['enabled_networks'];
+            error_log('HTML Social Share: Setting enabled_networks: ' . print_r($networks, true));
+            echo '<!-- DEBUG: Setting enabled_networks: ' . esc_html(print_r($networks, true)) . ' -->';
+            $this->settings->set('enabled_networks', $networks);
         }
 
         if (isset($_POST['iconset'])) {
-            $this->settings->set('iconset', sanitize_text_field($_POST['iconset']));
+            $iconset = sanitize_text_field($_POST['iconset']);
+            error_log('HTML Social Share: Setting iconset: ' . $iconset);
+            echo '<!-- DEBUG: Setting iconset: ' . esc_html($iconset) . ' -->';
+            $this->settings->set('iconset', $iconset);
         }
 
         if (isset($_POST['placement'])) {
-            $this->settings->set('placement', $_POST['placement']);
+            $placement = $_POST['placement'];
+            error_log('HTML Social Share: Setting placement: ' . print_r($placement, true));
+            echo '<!-- DEBUG: Setting placement: ' . esc_html(print_r($placement, true)) . ' -->';
+            $this->settings->set('placement', $placement);
         }
 
         // Save general settings
         if (isset($_POST['title'])) {
-            $this->settings->set('title', sanitize_text_field($_POST['title']));
+            $title = sanitize_text_field($_POST['title']);
+            error_log('HTML Social Share: Setting title: ' . $title);
+            echo '<!-- DEBUG: Setting title: ' . esc_html($title) . ' -->';
+            $this->settings->set('title', $title);
         }
 
         if (isset($_POST['exclude'])) {
-            $this->settings->set('exclude', sanitize_text_field($_POST['exclude']));
+            $exclude = sanitize_text_field($_POST['exclude']);
+            error_log('HTML Social Share: Setting exclude: ' . $exclude);
+            echo '<!-- DEBUG: Setting exclude: ' . esc_html($exclude) . ' -->';
+            $this->settings->set('exclude', $exclude);
         }
 
         // Save advanced options
-        $this->settings->set('google_analytics', isset($_POST['google_analytics']));
-        $this->settings->set('auto_hide', isset($_POST['auto_hide']));
-        $this->settings->set('use_port', isset($_POST['use_port']));
-        $this->settings->set('nofollow', isset($_POST['nofollow']));
+        $googleAnalytics = isset($_POST['google_analytics']);
+        $autoHide = isset($_POST['auto_hide']);
+        $usePort = isset($_POST['use_port']);
+        $nofollow = isset($_POST['nofollow']);
+
+        error_log('HTML Social Share: Setting advanced options - GA: ' . ($googleAnalytics ? 'true' : 'false') . ', auto_hide: ' . ($autoHide ? 'true' : 'false') . ', use_port: ' . ($usePort ? 'true' : 'false') . ', nofollow: ' . ($nofollow ? 'true' : 'false'));
+        echo '<!-- DEBUG: Setting advanced options - GA: ' . ($googleAnalytics ? 'true' : 'false') . ', auto_hide: ' . ($autoHide ? 'true' : 'false') . ', use_port: ' . ($usePort ? 'true' : 'false') . ', nofollow: ' . ($nofollow ? 'true' : 'false') . ' -->';
+
+        $this->settings->set('google_analytics', $googleAnalytics);
+        $this->settings->set('auto_hide', $autoHide);
+        $this->settings->set('use_port', $usePort);
+        $this->settings->set('nofollow', $nofollow);
 
         // Refresh icon registry with new iconset
         if (isset($_POST['iconset']) && method_exists($this->shareRenderer, 'setIconset')) {
@@ -124,10 +157,19 @@ class SettingsPage
                 'minimal' => 'prajin_square'
             ];
             $path = $mappings[$iconset] ?? 'default_square';
+            error_log('HTML Social Share: Refreshing iconset to: ' . $path);
+            echo '<!-- DEBUG: Refreshing iconset to: ' . esc_html($path) . ' -->';
             $this->shareRenderer->setIconset($path);
         }
 
+        // DEBUG: Show all saved settings
+        $allSettings = $this->settings->getAll();
+        error_log('HTML Social Share: All saved settings: ' . print_r($allSettings, true));
+        echo '<!-- DEBUG: All saved settings: ' . esc_html(print_r($allSettings, true)) . ' -->';
+
         echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
+        error_log('HTML Social Share: Settings save completed successfully');
+        echo '<!-- DEBUG: Settings save completed successfully -->';
     }
 
     private function renderGeneralTab()
