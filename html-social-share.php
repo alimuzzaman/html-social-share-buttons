@@ -52,6 +52,14 @@ add_action('init', function() use ($container) {
     $block->register();
 });
 
+// Register WPBakery element
+if (defined('WPB_VC_VERSION')) {
+    add_action('vc_before_init', function() use ($container) {
+        $shareRenderer = $container->get('share_renderer');
+        \HtmlSocialShare\Integrations\WPBakery\ShareButtonsElement::register($shareRenderer);
+    });
+}
+
 // Hook into WordPress
 register_activation_hook(__FILE__, function() {
     // Activation logic here

@@ -6,9 +6,9 @@ This index aggregates all implementation tasks from the project documentation. T
 
 **Last Updated**: September 28, 2025
 **Total Tasks**: 90
-**Completed**: 62
+**Completed**: 70
 **In Progress**: 0
-**Pending**: 28
+**Pending**: 20
 
 ---
 
@@ -57,14 +57,14 @@ This index aggregates all implementation tasks from the project documentation. T
 
 #### Gutenberg Block (8 tasks)
 
-- [PENDING] **GUTENBERG-001**: Create block.json configuration (3 hours) - `tasks/todo/integrations/gutenberg-block.md`
-- [PENDING] **GUTENBERG-002**: Register block with WordPress (2 hours) - `tasks/todo/integrations/gutenberg-block.md`
-- [PENDING] **GUTENBERG-003**: Implement server-side render callback (4 hours) - `tasks/todo/integrations/gutenberg-block.md`
-- [PENDING] **GUTENBERG-004**: Add block editor controls (4 hours) - `tasks/todo/integrations/gutenberg-block.md`
-- [PENDING] **GUTENBERG-005**: Implement block alignment support (3 hours) - `tasks/todo/integrations/gutenberg-block.md`
-- [PENDING] **GUTENBERG-006**: Add responsive controls (3 hours) - `tasks/todo/integrations/gutenberg-block.md`
-- [PENDING] **GUTENBERG-007**: Ensure block accessibility (2 hours) - `tasks/todo/integrations/gutenberg-block.md`
-- [PENDING] **GUTENBERG-008**: Add block preview in editor (2 hours) - `tasks/todo/integrations/gutenberg-block.md`
+- [DONE] **GUTENBERG-001**: Create block.json configuration (3 hours) - `tasks/todo/integrations/gutenberg-block.md`
+- [DONE] **GUTENBERG-002**: Register block with WordPress (2 hours) - `tasks/todo/integrations/gutenberg-block.md`
+- [DONE] **GUTENBERG-003**: Implement server-side render callback (4 hours) - `tasks/todo/integrations/gutenberg-block.md`
+- [DONE] **GUTENBERG-004**: Add block editor controls (4 hours) - `tasks/todo/integrations/gutenberg-block.md`
+- [DONE] **GUTENBERG-005**: Implement block alignment support (3 hours) - `tasks/todo/integrations/gutenberg-block.md`
+- [DONE] **GUTENBERG-006**: Add responsive controls (3 hours) - `tasks/todo/integrations/gutenberg-block.md`
+- [DONE] **GUTENBERG-007**: Ensure block accessibility (2 hours) - `tasks/todo/integrations/gutenberg-block.md`
+- [DONE] **GUTENBERG-008**: Add block preview in editor (2 hours) - `tasks/todo/integrations/gutenberg-block.md`
 
 #### WPBakery Element (8 tasks)
 
