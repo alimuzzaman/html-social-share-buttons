@@ -74,6 +74,7 @@ class IntegrationLoader
         $this->registerIntegration('woocommerce', 'WooCommerce', [$this, 'loadWooCommerceIntegration']);
         $this->registerIntegration('bbpress', 'bbPress', [$this, 'loadbbPressIntegration']);
         $this->registerIntegration('buddypress', 'BuddyPress', [$this, 'loadBuddyPressIntegration']);
+        $this->registerIntegration('betterlinks', 'BetterLinks', [$this, 'loadBetterLinksIntegration']);
     }
 
     /**
@@ -162,6 +163,9 @@ class IntegrationLoader
             case 'buddypress':
                 return class_exists('BuddyPress');
 
+            case 'betterlinks':
+                return class_exists('BetterLinks');
+
             default:
                 return false;
         }
@@ -248,6 +252,21 @@ class IntegrationLoader
     {
         add_action('bp_init', function() {
             \HtmlSocialShare\Integrations\BuddyPress\ShareButtonsIntegration::register($this->shareRenderer);
+        });
+    }
+
+    /**
+     * Load BetterLinks integration
+     *
+     * @return void
+     */
+    public function loadBetterLinksIntegration()
+    {
+        add_action('init', function() {
+            $integration = new \HtmlSocialShare\Integrations\BetterLinks\BetterLinksIntegration();
+            $settings = $this->container->get('settings')->get('betterlinks', []);
+            $urlFilter = new \HtmlSocialShare\Integrations\BetterLinks\BetterLinksUrlFilter($integration, $settings);
+            $urlFilter->register();
         });
     }
 

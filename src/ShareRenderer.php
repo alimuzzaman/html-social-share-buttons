@@ -65,6 +65,10 @@ class ShareRenderer implements ShareRendererInterface
             '{encoded_title}' => urlencode($title),
         ];
 
-        return str_replace(array_keys($replacements), array_values($replacements), $template);
+        $shareUrl = str_replace(array_keys($replacements), array_values($replacements), $template);
+
+        // Apply filters for integrations like BetterLinks
+        $network = $profile['network'] ?? '';
+        return apply_filters('hss_share_url', $shareUrl, $network, $url, $title, $profile);
     }
 }
