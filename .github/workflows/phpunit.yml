@@ -1,10 +1,7 @@
 name: PHPUnit
 
 on:
-  push:
-    branches: [ master, new ]
-  pull_request:
-    branches: [ master ]
+  workflow_dispatch: {}
 
 jobs:
   phpunit:
@@ -31,13 +28,6 @@ jobs:
           php-version: 8.1
           extensions: mbstring, xml, curl, gd, json
 
-      - name: Get Composer Cache
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
@@ -52,4 +42,4 @@ jobs:
           bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
 
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --configuration phpunit.xml.dist -v
+        run: vendor/bin/phpunit --configuration phpunit.xml.dist

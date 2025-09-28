@@ -1,2 +1,43 @@
 .DS_Store
-node_modules
+Thumbs.db
+
+# Composer
+/vendor/
+composer.phar
+
+# Node
+/node_modules/
+npm-debug.log
+pnpm-lock.yaml
+package-lock.json
+
+# Editor/IDE
+/.vscode/
+/.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Tests and build artifacts
+/tests/
+/reports/
+/.phpunit.result.cache
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
+*.swp
+
+# Coverage and output
+/coverage/
+
+# Playwright reports
+/playwright-report/
+
+# Environment
+.env
+.env.local
+
+# Other
+*.cache

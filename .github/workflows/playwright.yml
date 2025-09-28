@@ -1,10 +1,7 @@
 name: Playwright E2E
 
 on:
-  push:
-    branches: [ master, new ]
-  pull_request:
-    branches: [ master ]
+  workflow_dispatch: {}
 
 jobs:
   e2e:
@@ -22,12 +19,6 @@ jobs:
 
       - name: Install pnpm
         run: corepack enable && corepack prepare pnpm@latest --activate
-
-      - name: Cache node modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Install dependencies
         run: pnpm install

@@ -4,7 +4,6 @@
 # Development and testing directories
 tests/
 security/
-docs/
 
 # Markdown documentation files (except README)
 *.md
