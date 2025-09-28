@@ -2,14 +2,40 @@
 require __DIR__ . '/../../src/bootstrap.php';
 
 // Define WordPress functions for testing
+global $mock_options;
+$mock_options = [];
+
 if (!function_exists('esc_url')) {
     function esc_url($url) { return $url; }
 }
 if (!function_exists('esc_attr')) {
     function esc_attr($attr) { return $attr; }
 }
+if (!function_exists('wp_cache_get')) {
+    function wp_cache_get($key) { return false; }
+}
+if (!function_exists('wp_cache_set')) {
+    function wp_cache_set($key, $value, $group = '', $expiration = 0) { return true; }
+}
+if (!function_exists('wp_cache_delete')) {
+    function wp_cache_delete($key) { return true; }
+}
+if (!function_exists('get_option')) {
+    function get_option($key, $default = false) {
+        global $mock_options;
+        return $mock_options[$key] ?? $default;
+    }
+}
+if (!function_exists('update_option')) {
+    function update_option($key, $value) {
+        global $mock_options;
+        $mock_options[$key] = $value;
+        return true;
+    }
+}
 
-$reg = new HtmlSocialShare\IconRegistry(null, __DIR__ . '/../../', 'http://example.com/wp-content/plugins/html-social-share-buttons');
+$settings = new HtmlSocialShare\Settings();
+$reg = new HtmlSocialShare\IconRegistry($settings, __DIR__ . '/../../', 'http://example.com/wp-content/plugins/html-social-share-buttons');
 
 // initial list should contain at least 'twitter' from constructor
 $list = $reg->listIcons();

@@ -62,4 +62,8 @@ $container->set('widget', function ($c) {
     return new HtmlSocialShare\Widget\Widget($c->get('share_renderer'), $c->get('settings'));
 });
 
+$container->set('svg_sanitizer', function () {
+    return new HtmlSocialShare\Svg\Sanitizer();
+});
+
 return $container;
