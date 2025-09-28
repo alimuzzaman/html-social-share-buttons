@@ -36,17 +36,17 @@ Before addressing specific integrations, it's critical to understand the archite
 
 ## Integration Summary Table
 
-| Integration Target       | Entry Points        | Hook/Filter Points        | Registration Mode          | Recommended Practice                          | Compatibility Notes                  |
-|-------------------------|---------------------|---------------------------|----------------------------|-----------------------------------------------|--------------------------------------|
-| **Gutenberg**           | Block registration  | `register_block_type`, custom render callback | Dynamic/server block, or static block | Use block.json, dual server/client reg., server-side rendering | Full compatibility                  |
-| **Elementor**           | Widget registration | Elementor Widget API      | Custom Widget / Shortcode  | Register widget and expose shortcode/attrs    | No JS conflicts, use PHP output      |
-| **Beaver Builder**      | Module integration  | Add-on module system      | Custom BB Module/shortcode | Register as custom module & via shortcodes    | Confirm styling, avoid JS collision  |
-| **Divi Builder**        | Module registration | Divi Module API           | Custom Module / Shortcode  | Map plugin output as Divi Module or shortcode | Confirm asset enqueuing              |
-| **WPBakery**            | Shortcode mapping   | Element mapping           | Shortcode or content block | Map shortcode using Shortcode Mapper          | Supported; PHP rendering preferred   |
-| **Thrive Architect**    | Element/Shortcode   | Custom Element API        | Shortcode Embed Block      | Expose via shortcode, document attributes     | Avoid extra JS; ensure style isolation|
-| **BetterDocs**          | Filter/action hooks | `betterdocs_content`, filters | Shortcode, Filters, Hooks | Register shortcode or hook into render chain  | Works in DOC pages & templates       |
-| **Headless WP**         | WPGraphQL           | `register_graphql_field`  | GraphQL field for shortcode| Expose sharing via GraphQL query field        | Docs recommend server-side rendering |
-| **General WP**          | PHP hooks/filters   | `do_shortcode`, widgets   | Shortcode, Widget, Filter  | Adhere to plugin standards; document hooks    | Extensible, overrideable             |
+| Integration Target       | Entry Points        | Hook/Filter Points        | Registration Mode          | Recommended Practice                          | Compatibility Notes                  | Status |
+|-------------------------|---------------------|---------------------------|----------------------------|-----------------------------------------------|--------------------------------------|---------|
+| **Gutenberg**           | Block registration  | `register_block_type`, custom render callback | Dynamic/server block, or static block | Use block.json, dual server/client reg., server-side rendering | Full compatibility                  | ✅ IMPLEMENTED |
+| **Elementor**           | Widget registration | Elementor Widget API      | Custom Widget / Shortcode  | Register widget and expose shortcode/attrs    | No JS conflicts, use PHP output      | ✅ IMPLEMENTED |
+| **Beaver Builder**      | Module integration  | Add-on module system      | Custom BB Module/shortcode | Register as custom module & via shortcodes    | Confirm styling, avoid JS collision  | ✅ IMPLEMENTED |
+| **Divi Builder**        | Module registration | Divi Module API           | Custom Module / Shortcode  | Map plugin output as Divi Module or shortcode | Confirm asset enqueuing              | ✅ IMPLEMENTED |
+| **WPBakery**            | Shortcode mapping   | Element mapping           | Shortcode or content block | Map shortcode using Shortcode Mapper          | Supported; PHP rendering preferred   | ✅ IMPLEMENTED |
+| **Thrive Architect**    | Element/Shortcode   | Custom Element API        | Shortcode Embed Block      | Expose via shortcode, document attributes     | Avoid extra JS; ensure style isolation| ⚠️ PARTIAL |
+| **BetterDocs**          | Filter/action hooks | `betterdocs_content`, filters | Shortcode, Filters, Hooks | Register shortcode or hook into render chain  | Works in DOC pages & templates       | ✅ IMPLEMENTED |
+| **Headless WP**         | WPGraphQL           | `register_graphql_field`  | GraphQL field for shortcode| Expose sharing via GraphQL query field        | Docs recommend server-side rendering | ❌ TODO |
+| **General WP**          | PHP hooks/filters   | `do_shortcode`, widgets   | Shortcode, Widget, Filter  | Adhere to plugin standards; document hooks    | Extensible, overrideable             | ✅ IMPLEMENTED |
 
 *Each section below expands upon these points with detailed implementation.*
 
