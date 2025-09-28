@@ -143,7 +143,19 @@ class ContentDisplay
         // Add icon CSS
         $iconCSS = $this->shareRenderer->getIconCSS();
         if (!empty($iconCSS)) {
-            $output .= $iconCSS;
+            // getIconCSS() returns an array of [cssClass => imageUrl]
+            if (is_array($iconCSS)) {
+                $output .= '<style class="hss-iconset-inline">';
+                foreach ($iconCSS as $cssClass => $imageUrl) {
+                    $output .= sprintf('.%s{background-image:url(%s);background-size:contain;background-repeat:no-repeat;background-position:center;} ',
+                        esc_attr($cssClass), esc_url($imageUrl)
+                    );
+                }
+                $output .= '</style>';
+            } elseif (is_string($iconCSS)) {
+                // Backwards compatibility: allow string CSS to be appended directly
+                $output .= $iconCSS;
+            }
         }
 
         error_log('HSS Debug: Final output length: ' . strlen($output));
