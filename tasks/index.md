@@ -39,6 +39,7 @@ This index aggregates all implementation tasks from the project documentation. T
 - [DONE] **PHASE1-101**: Implement basic REST endpoints (4 hours) - `tasks/todo/setup-architecture/01-Setup-and-Architecture.md`
 - [DONE] **PHASE1-102**: Implement SVG sanitization (4 hours) - `tasks/todo/setup-architecture/01-Setup-and-Architecture.md`
 - [DONE] **PHASE1-103**: Set up CI/CD pipeline (3 hours) - `tasks/todo/setup-architecture/01-Setup-and-Architecture.md`
+- [PENDING] **GIT-001**: Adopt GitHub MCP for Git/GitHub operations (1 hour) - `tasks/todo/github-mcp-adoption.md`
 
 ### 🔒 Security & Testing (5 tasks)
 
