@@ -85,11 +85,22 @@ class ShareRenderer implements ShareRendererInterface
      */
     private function generateShareUrl(array $profile, string $url, string $title = ''): string
     {
-        if (empty($profile['url_template'])) {
-            return '#';
+        $template = $profile['url_template'] ?? '';
+
+        // If profile doesn't contain a url_template, attempt to resolve from Networks registry
+        if (empty($template)) {
+            $networkKey = $profile['network'] ?? '';
+            if ($networkKey) {
+                $available = Networks::getAvailableNetworks();
+                if (isset($available[$networkKey]['url_template'])) {
+                    $template = $available[$networkKey]['url_template'];
+                }
+            }
         }
 
-        $template = $profile['url_template'];
+        if (empty($template)) {
+            return '#';
+        }
 
         // Replace placeholders
         $replacements = [

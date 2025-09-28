@@ -204,7 +204,15 @@ class ProfileManager implements ProfileManagerInterface
             'whatsapp' => 'https://wa.me/?text={title}%20{url}',
             'telegram' => 'https://t.me/share/url?url={url}&text={title}',
             'reddit' => 'https://reddit.com/submit?url={url}&title={title}',
-            'tumblr' => 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&title={title}'
+            'tumblr' => 'https://www.tumblr.com/widgets/share/tool?canonicalUrl={url}&title={title}',
+            // New networks
+            'mastodon' => 'https://mastodon.social/share?text={title}%20{url}',
+            'threads' => 'https://www.threads.net/intent/post?text={title}%20{url}',
+            'vk' => 'https://vk.com/share.php?url={url}&title={title}',
+            'bluesky' => 'https://bsky.app/intent/compose?text={title}%20{url}',
+            'wechat' => 'https://web.wechat.com/?text={title}%20{url}',
+            'instagram' => 'https://www.instagram.com/direct/inbox/',
+            'messenger' => 'https://www.facebook.com/dialog/send?link={url}&app_id=123456789&redirect_uri={url}'
         ];
 
         return $templates[$network] ?? 'https://example.com/share?url={url}&title={title}';
