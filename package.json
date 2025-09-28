@@ -1,6 +1,6 @@
 {
   "name": "html-social-share-buttons",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "main": "test-settings-playwright.js",
   "directories": {
