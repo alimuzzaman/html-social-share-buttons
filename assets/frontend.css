@@ -158,3 +158,27 @@
 .hss-style-contrast .hssb-share .hss-icon{ width:28px; height:28px; }
 .hss-style-contrast .hssb-share:hover{ filter:brightness(1.05); }
 .hss-style-contrast .hssb-share:focus{ outline: 4px solid color-mix(in srgb, var(--hss-accent) 60%, black 10%); outline-offset:2px; }
+
+/* WeChat QR code container and transitions */
+.hssb-wechat { position: relative; display: inline-block; }
+.hssb-wechat-qr {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 8px);
+  transform: translateX(-50%) scale(0.96);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  padding: 8px;
+  border-radius: 8px;
+  display: none;
+  opacity: 0;
+  transition: opacity 180ms ease, transform 180ms ease;
+  z-index: 2000;
+}
+.hssb-wechat-qr img{ display:block; max-width:200px; height:auto; }
+.hssb-wechat-qr.hssb-wechat-qr--visible{ display: block; opacity: 1; transform: translateX(-50%) scale(1); }
+.hssb-wechat-btn[aria-expanded="true"]{ box-shadow: 0 0 0 3px rgba(53,132,255,0.14); }
+@media (max-width:480px){
+  .hssb-wechat-qr{ left: 50%; top: calc(100% + 6px); transform: translateX(-50%) scale(0.98); }
+}
