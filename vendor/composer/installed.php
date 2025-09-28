@@ -3,7 +3,7 @@
         'name' => 'alimuzzaman/html-social-share-buttons',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'd69a95d35f5e0dc7a5d3a3527514ce0611cae7c3',
+        'reference' => '860c32bd59306b48065c33fb454db3e7515d0e92',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'alimuzzaman/html-social-share-buttons' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'd69a95d35f5e0dc7a5d3a3527514ce0611cae7c3',
+            'reference' => '860c32bd59306b48065c33fb454db3e7515d0e92',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

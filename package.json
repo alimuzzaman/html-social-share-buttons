@@ -1,6 +1,7 @@
 {
   "name": "html-social-share-buttons",
   "version": "1.0.0",
+  "type": "module",
   "main": "test-settings-playwright.js",
   "directories": {
     "doc": "docs",
@@ -11,8 +12,9 @@
     "test:playwright:settings": "node test-settings-playwright.js",
     "test:playwright:frontend": "node tests/playwright/test-frontend-playwright.js",
     "test:playwright": "npm run test:playwright:settings ; npm run test:playwright:frontend",
-    "test:e2e": "playwright test",
-    "test:e2e:headed": "playwright test --headed"
+    "test:e2e": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed",
+    "playground:server": "npx @wp-playground/cli@latest server --blueprint=./blueprints/test-blueprint.json --auto-mount --login"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,8 @@
     "playwright": "^1.55.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.1"
+    "@playwright/test": "^1.55.1",
+    "@wordpress/e2e-test-utils-playwright": "^1.31.0",
+    "@wp-playground/cli": "^3.0.5"
   }
 }

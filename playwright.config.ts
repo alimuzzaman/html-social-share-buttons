@@ -5,6 +5,7 @@ import { defineConfig } from '@playwright/test';
 const dynamicBaseUrl = process.env.WP_PLAYGROUND_URL || 'http://localhost:3000';
 
 export default defineConfig({
+  globalSetup: './playwright/global.setup.ts',
   use: {
     // Base URL will be set by the setup process
     baseURL: dynamicBaseUrl,
