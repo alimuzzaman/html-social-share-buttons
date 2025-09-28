@@ -2,6 +2,9 @@
 namespace HtmlSocialShare;
 
 use HtmlSocialShare\Container;
+use HtmlSocialShare\Bootstrap\ServiceRegistrar;
+use HtmlSocialShare\Bootstrap\HookRegistrar;
+use HtmlSocialShare\Telemetry\TelemetryInterface;
 
 // Bootstrap class that creates the service container and wires WordPress hooks.
 class Bootstrap
@@ -13,105 +16,16 @@ class Bootstrap
     {
         $this->pluginFile = $pluginFile;
         $this->container = new Container();
-        $this->registerServices();
-        $this->registerHooks();
+
+        // Delegate service registration to ServiceRegistrar for better SOLID separation
+        $serviceRegistrar = new ServiceRegistrar();
+        $serviceRegistrar->register($this->container);
+
+        // Delegate hook registration to HookRegistrar. Bootstrap remains the activation handler.
+        $hookRegistrar = new HookRegistrar();
+        $hookRegistrar->register($this->container, $this->pluginFile, $this);
+
         $this->init();
-    }
-
-    private function registerServices(): void
-    {
-        $c = $this->container;
-
-        $c->set('info', function () {
-            return new Info();
-        });
-
-        $c->set('profile_manager', function ($c) {
-            return new ProfileManager($c->get('settings'));
-        });
-
-        $c->set('share_renderer', function ($c) {
-            return new ShareRenderer($c->get('icon_registry'), $c->get('settings'), $c->get('share_counts'));
-        });
-
-        $c->set('icon_registry', function ($c) {
-            return new IconRegistry($c->get('settings'));
-        });
-
-        $c->set('settings', function () {
-            return new Settings();
-        });
-
-        $c->set('cache', function () {
-            return new Cache();
-        });
-
-        $c->set('share_counts', function ($c) {
-            return new ShareCounts\ShareCountManager($c->get('cache'), $c->get('settings'));
-        });
-
-        $c->set('migration', function ($c) {
-            return new Migration($c->get('settings'));
-        });
-
-        $c->set('back_compat', function ($c) {
-            return new BackCompatShim($c->get('settings'));
-        });
-
-        $c->set('admin', function ($c) {
-            return new Admin\Admin($c->get('settings'), $c->get('profile_manager'), $c->get('share_renderer'));
-        });
-
-        $c->set('content_display', function ($c) {
-            return new ContentDisplay(
-                $c->get('settings'),
-                $c->get('profile_manager'),
-                $c->get('share_renderer')
-            );
-        });
-
-        $c->set('widget', function ($c) {
-            return new Widget\Widget($c->get('share_renderer'), $c->get('settings'));
-        });
-
-        $c->set('svg_sanitizer', function () {
-            return new Svg\Sanitizer();
-        });
-    }
-
-    private function registerHooks(): void
-    {
-        // Cron hook
-        add_action('hss_refresh_share_counts', [$this, 'handleCron']);
-
-        // AJAX endpoints
-        add_action('wp_ajax_hss_refresh_counts', [$this, 'ajaxRefreshCounts']);
-        add_action('wp_ajax_hss_flush_share_counts', [$this, 'ajaxFlushCounts']);
-
-        // Frontend assets
-        add_action('wp_enqueue_scripts', [$this->container->get('content_display'), 'enqueueFrontendStyles']);
-
-        // Widgets
-        add_action('widgets_init', function() {
-            register_widget($this->container->get('widget'));
-        });
-
-        // Server-side block registration
-        add_action('init', function() {
-            $shareRenderer = $this->container->get('share_renderer');
-            $block = new Blocks\ShareButtons\Block($shareRenderer);
-            $block->register();
-        });
-
-        // Integrations - directly instantiate our IntegrationLoader
-        $integrationLoader = new IntegrationLoader($this->container);
-        if (method_exists($integrationLoader, 'init')) {
-            $integrationLoader->init();
-        }
-
-        // Activation / Deactivation
-        register_activation_hook($this->pluginFile, [$this, 'onActivate']);
-        register_deactivation_hook($this->pluginFile, [$this, 'onDeactivate']);
     }
 
     private function init(): void
@@ -179,6 +93,19 @@ class Bootstrap
         if ($this->container->get('share_counts') && method_exists($this->container->get('share_counts'), 'scheduleCron')) {
             $this->container->get('share_counts')->scheduleCron();
         }
+
+        // Telemetry / logging hook for activation
+        try {
+            $telemetry = $this->container->get('telemetry');
+            if ($telemetry instanceof TelemetryInterface) {
+                $telemetry->track('plugin_activated', ['plugin_file' => $this->pluginFile, 'time' => time()]);
+            }
+        } catch (\Exception $e) {
+            // Do not prevent activation if telemetry fails; swallow errors
+        }
+
+        // Provide a WordPress hook so external integrations can react to activation
+        do_action('hss_activated', $this->container);
     }
 
     public function onDeactivate(): void
@@ -186,6 +113,19 @@ class Bootstrap
         if ($this->container && method_exists($this->container->get('share_counts'), 'unscheduleCron')) {
             $this->container->get('share_counts')->unscheduleCron();
         }
+
+        // Telemetry / logging hook for deactivation
+        try {
+            $telemetry = $this->container->get('telemetry');
+            if ($telemetry instanceof TelemetryInterface) {
+                $telemetry->track('plugin_deactivated', ['plugin_file' => $this->pluginFile, 'time' => time()]);
+            }
+        } catch (\Exception $e) {
+            // Swallow telemetry errors on deactivation
+        }
+
+        // Provide a WordPress hook so external integrations can react to deactivation
+        do_action('hss_deactivated', $this->container);
     }
 }
 
