@@ -23,7 +23,8 @@ $container->set('profile_manager', function ($c) {
 });
 
 $container->set('share_renderer', function ($c) {
-    return new HtmlSocialShare\ShareRenderer($c->get('icon_registry'));
+    $renderer = new HtmlSocialShare\ShareRenderer($c->get('icon_registry'), $c->get('settings'), $c->get('share_counts'));
+    return $renderer;
 });
 
 $container->set('icon_registry', function ($c) {
@@ -36,6 +37,11 @@ $container->set('settings', function () {
 
 $container->set('cache', function () {
     return new HtmlSocialShare\Cache();
+});
+
+// Register share counts manager service
+$container->set('share_counts', function ($c) {
+    return new \HtmlSocialShare\ShareCounts\ShareCountManager($c->get('cache'), $c->get('settings'));
 });
 
 $container->set('migration', function ($c) {
@@ -64,6 +70,27 @@ $container->set('widget', function ($c) {
 
 $container->set('svg_sanitizer', function () {
     return new HtmlSocialShare\Svg\Sanitizer();
+});
+
+// Hook the scheduled refresh event to the ShareCountManager refresh method
+add_action('hss_refresh_share_counts', function() use ($container) {
+    $container->get('share_counts')->refreshCounts();
+});
+
+// Admin AJAX endpoint to trigger a manual refresh (requires manage_options)
+add_action('wp_ajax_hss_refresh_counts', function() use ($container) {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'forbidden'], 403);
+    }
+
+    check_ajax_referer('hss_refresh_counts', '_hss_nonce');
+
+    try {
+        $container->get('share_counts')->refreshCounts();
+        wp_send_json_success(['message' => 'Refresh completed']);
+    } catch (Exception $e) {
+        wp_send_json_error(['message' => $e->getMessage()], 500);
+    }
 });
 
 return $container;

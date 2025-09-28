@@ -4,10 +4,14 @@ namespace HtmlSocialShare;
 class ShareRenderer implements ShareRendererInterface
 {
     private IconRegistryInterface $iconRegistry;
+    private $settings;
+    private $shareCountManager = null;
 
-    public function __construct(IconRegistryInterface $iconRegistry)
+    public function __construct(IconRegistryInterface $iconRegistry, $settings = null, $shareCountManager = null)
     {
         $this->iconRegistry = $iconRegistry;
+        $this->settings = $settings;
+        $this->shareCountManager = $shareCountManager;
     }
 
     public function setIconset(string $iconset): void
@@ -15,6 +19,11 @@ class ShareRenderer implements ShareRendererInterface
         if (method_exists($this->iconRegistry, 'setIconset')) {
             $this->iconRegistry->setIconset($iconset);
         }
+    }
+
+    public function setShareCountManager($manager): void
+    {
+        $this->shareCountManager = $manager;
     }
 
     public function render(string $network, array $profile, string $url = '#', string $title = ''): string
@@ -34,11 +43,32 @@ class ShareRenderer implements ShareRendererInterface
             error_log("HSS Debug: No icon found for network '{$network}', using fallback");
         }
 
-        $output = sprintf('<a class="hssb-share hssb-%s" href="%s" title="Share on %s">%s<span class="hssb-label">%s</span></a>',
-            $label, $shareUrl, ucfirst($label), $icon, $handle ? ' ' . $handle : '');
+        $countHtml = '';
+        $enabled = $this->settings ? ($this->settings->get('share_counts_enabled', false) ?: false) : false;
+        if ($enabled && $this->shareCountManager) {
+            $postId = (int) (get_the_ID() ?: 0);
+            if ($postId > 0) {
+                $count = $this->shareCountManager->getCountForPostNetwork($postId, $network);
+                $countHtml = '<span class="hssb-count">' . $this->formatCount($count) . '</span>';
+            }
+        }
+
+        $output = sprintf('<a class="hssb-share hssb-%s" href="%s" title="Share on %s">%s<span class="hssb-label">%s</span>%s</a>',
+            $label, $shareUrl, ucfirst($label), $icon, $handle ? ' ' . $handle : '', $countHtml);
 
         error_log("HSS Debug: Rendered output for '{$network}': " . substr($output, 0, 100) . '...');
         return $output;
+    }
+
+    private function formatCount(int $count): string
+    {
+        if ($count < 1000) {
+            return (string) $count;
+        }
+        if ($count < 1000000) {
+            return round($count / 1000, 1) . 'K';
+        }
+        return round($count / 1000000, 1) . 'M';
     }
 
     /**

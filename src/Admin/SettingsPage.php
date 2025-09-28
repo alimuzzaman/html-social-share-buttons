@@ -152,6 +152,16 @@ class SettingsPage
             $this->settings->set($settingKey, isset($_POST[$postKey]));
         }
 
+        // Save share count settings
+        $this->settings->set('share_counts_enabled', isset($_POST['share_counts_enabled']));
+        if (isset($_POST['share_counts_cache_ttl'])) {
+            $ttl = intval($_POST['share_counts_cache_ttl']);
+            if ($ttl <= 0) {
+                $ttl = 43200;
+            }
+            $this->settings->set('share_counts_cache_ttl', $ttl);
+        }
+
         // Save iconset
         if (isset($_POST['iconset'])) {
             $iconset = sanitize_text_field($_POST['iconset']);
@@ -212,7 +222,9 @@ class SettingsPage
                 echo '<p><strong>Migration pending.</strong> Legacy options detected that need to be migrated to the new format.</p>';
                 echo '</div>';
             }
-}        echo '<table class="form-table">';
+        }
+
+        echo '<table class="form-table">';
         echo '<tbody>';
 
         // Title field
@@ -301,6 +313,34 @@ class SettingsPage
         echo '<span class="description">Add UTM parameters for better analytics tracking.</span>';
 
         echo '</fieldset>';
+        echo '</td>';
+        echo '</tr>';
+
+        // Share counts settings
+        $shareCountsEnabled = $this->settings->get('share_counts_enabled', false);
+        $shareCountsTTL = (int) $this->settings->get('share_counts_cache_ttl', 43200);
+
+        echo '<tr>';
+        echo '<th scope="row">Share Counts</th>';
+        echo '<td>';
+        echo '<label for="share_counts_enabled">';
+        echo '<input type="checkbox" id="share_counts_enabled" name="share_counts_enabled" value="1" ' . checked($shareCountsEnabled, true, false) . '> ';
+        echo 'Enable Share Count Display (server-side, cached)';
+        echo '</label><br><br>';
+        echo '<label for="share_counts_cache_ttl">';
+        echo '<strong>Counts Cache TTL (seconds):</strong><br>';
+        echo '<input type="number" id="share_counts_cache_ttl" name="share_counts_cache_ttl" value="' . esc_attr($shareCountsTTL) . '" class="small-text">';
+        echo '<p class="description">How long to cache remote counts (default 43200 = 12 hours).</p>';
+        echo '</label>';
+        echo '</td>';
+        echo '</tr>';
+
+        // Manual refresh control
+        echo '<tr>';
+        echo '<th scope="row">Manual Share Count Actions</th>';
+        echo '<td>';
+        echo '<button type="button" id="hss-refresh-counts" class="button">Refresh Share Counts Now</button>';
+        echo '<span id="hss-refresh-status" style="margin-left:10px"></span>';
         echo '</td>';
         echo '</tr>';
 
@@ -563,7 +603,7 @@ class SettingsPage
                     body: formData
                 })
                 .then(response => response.json())
-                .then(data => {
+                .then data => {
                     if (data.success && data.data.html) {
                         previewContainer.innerHTML = data.data.html;
                     }
@@ -603,3 +643,42 @@ class SettingsPage
         ];
     }
 }
+?>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('hss-refresh-counts');
+            const status = document.getElementById('hss-refresh-status');
+            if (!btn) return;
+
+            btn.addEventListener('click', function() {
+                status.textContent = 'Starting refresh...';
+                const formData = new FormData();
+                formData.append('_wpnonce', '<?php echo wp_create_nonce('hss_refresh_counts'); ?>');
+
+                fetch(ajaxurl, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    // Append action param on the query string for WP admin-ajax compatibility
+                }).then(() => {
+                    // Fallback for servers that require action in query string
+                    return fetch(ajaxurl + '?action=hss_refresh_counts&_wpnonce=<?php echo wp_create_nonce('hss_refresh_counts'); ?>', {
+                        method: 'POST',
+                        credentials: 'same-origin'
+                    });
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        status.textContent = 'Refresh completed.';
+                    } else {
+                        status.textContent = 'Refresh failed: ' + (data.data && data.data.message ? data.data.message : 'unknown');
+                    }
+                }).catch(err => {
+                    status.textContent = 'Refresh failed: ' + err.message;
+                });
+            });
+        });
+        </script>

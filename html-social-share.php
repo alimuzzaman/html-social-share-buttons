@@ -76,8 +76,17 @@ add_action('wp_enqueue_scripts', [$contentDisplay, 'enqueueFrontendStyles']);
 register_activation_hook(__FILE__, function() use ($container) {
     $migration = $container->get('migration');
     $migration->run();
+
+    // Ensure share counts DB schema is created on activation
+    if ($container->get('share_counts') && method_exists($container->get('share_counts'), 'installSchema')) {
+        $container->get('share_counts')->installSchema();
+    }
 });
 
-register_deactivation_hook(__FILE__, function() {
+register_deactivation_hook(__FILE__, function() use ($container) {
+    // Unschedule cron jobs and other cleanup
+    if ($container && method_exists($container->get('share_counts'), 'unscheduleCron')) {
+        $container->get('share_counts')->unscheduleCron();
+    }
     // Deactivation logic here
 });
