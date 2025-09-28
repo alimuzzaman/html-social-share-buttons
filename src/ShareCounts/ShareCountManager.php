@@ -134,7 +134,8 @@ class ShareCountManager
             return (int) $cached;
         }
 
-        // Choose adapter based on network
+        // Attempt to select adapter; if none of the specific adapters match, fall back
+        // to a configurable aggregator adapter if an endpoint is configured.
         switch (strtolower($network)) {
             case 'facebook':
                 $adapter = new \HtmlSocialShare\ShareCounts\Adapters\FacebookAdapter($this->settings);
@@ -162,7 +163,12 @@ class ShareCountManager
                 $adapter = new \HtmlSocialShare\ShareCounts\Adapters\ThreadsAdapter();
                 break;
             default:
-                $adapter = new \HtmlSocialShare\ShareCounts\Adapters\GenericAdapter();
+                $aggregatorEndpoint = $this->settings->get('share_counts_aggregator_endpoint', '');
+                if (!empty($aggregatorEndpoint)) {
+                    $adapter = new \HtmlSocialShare\ShareCounts\Adapters\AggregatorAdapter($this->settings);
+                } else {
+                    $adapter = new \HtmlSocialShare\ShareCounts\Adapters\GenericAdapter();
+                }
                 break;
         }
 
