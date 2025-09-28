@@ -283,12 +283,9 @@ class ShareCountManager
             $this->cache->clear();
         } else {
             foreach ($postIds as $pid) {
-                $keyPattern = $this->getCacheKey((int)$pid, '%s');
-                // CacheInterface does not provide pattern deletion - attempt to delete known keys for networks
-                $enabledNetworks = $this->settings->get('enabled_networks', []);
-                foreach ($enabledNetworks as $network) {
-                    $this->cache->delete(sprintf($this->getCacheKey((int)$pid, $network)));
-                }
+                $keyPattern = $this->getCacheKey((int)$pid, '*');
+                // Use pattern deletion from enhanced CacheInterface
+                $this->cache->deletePattern($keyPattern);
             }
         }
 

@@ -5,34 +5,83 @@ use HtmlSocialShare\Container;
 use HtmlSocialShare\Bootstrap\ServiceRegistrar;
 use HtmlSocialShare\Bootstrap\HookRegistrar;
 use HtmlSocialShare\Telemetry\TelemetryInterface;
+use HtmlSocialShare\Utils\DataUtils;
 
-// Bootstrap class that creates the service container and wires WordPress hooks.
+/**
+ * Bootstrap class that creates the service container and wires WordPress hooks.
+ * 
+ * Handles plugin initialization, service registration, and lifecycle events
+ * with proper error handling and telemetry integration.
+ * 
+ * @package HtmlSocialShare
+ * @since 3.0.0
+ */
 class Bootstrap
 {
     private Container $container;
     private string $pluginFile;
+    private bool $initialized = false;
 
     public function __construct(string $pluginFile)
     {
+        if (!self::isValidPluginFile($pluginFile)) {
+            throw new \InvalidArgumentException('Invalid plugin file path provided');
+        }
+
         $this->pluginFile = $pluginFile;
         $this->container = new Container();
 
-        // Delegate service registration to ServiceRegistrar for better SOLID separation
-        $serviceRegistrar = new ServiceRegistrar();
-        $serviceRegistrar->register($this->container);
-
-        // Delegate hook registration to HookRegistrar. Bootstrap remains the activation handler.
-        $hookRegistrar = new HookRegistrar();
-        $hookRegistrar->register($this->container, $this->pluginFile, $this);
-
-        $this->init();
+        try {
+            $this->registerServices();
+            $this->registerHooks();
+            $this->init();
+        } catch (\Exception $e) {
+            // Log initialization error but don't prevent WordPress from loading
+            error_log('HTML Social Share Bootstrap Error: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
+    /**
+     * Register all services in the container
+     */
+    private function registerServices(): void
+    {
+        $serviceRegistrar = new ServiceRegistrar();
+        $serviceRegistrar->register($this->container);
+    }
+
+    /**
+     * Register all WordPress hooks
+     */
+    private function registerHooks(): void
+    {
+        $hookRegistrar = new HookRegistrar();
+        $hookRegistrar->register($this->container, $this->pluginFile, $this);
+    }
+
+    /**
+     * Initialize required services
+     */
     private function init(): void
     {
-        // Initialize admin and content display to ensure hooks are registered
-        $this->container->get('admin');
-        $this->container->get('content_display');
+        if ($this->initialized) {
+            return;
+        }
+
+        try {
+            // Initialize admin and content display to ensure hooks are registered
+            $this->container->get('admin');
+            $this->container->get('content_display');
+            
+            $this->initialized = true;
+            
+            // Fire initialization complete action
+            do_action('hss_bootstrap_initialized', $this->container);
+        } catch (\Exception $e) {
+            error_log('HTML Social Share Init Error: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function getContainer(): Container
@@ -40,23 +89,43 @@ class Bootstrap
         return $this->container;
     }
 
-    // --- Hook handlers ---
+    public function isInitialized(): bool
+    {
+        return $this->initialized;
+    }
+
+    // --- Hook handlers with enhanced error handling ---
+    
     public function handleCron(): void
     {
-        $this->container->get('share_counts')->refreshCounts();
+        try {
+            $shareCountManager = $this->container->get('share_counts');
+            if (method_exists($shareCountManager, 'refreshCounts')) {
+                $shareCountManager->refreshCounts();
+                
+                // Track successful cron execution
+                $this->trackTelemetryEvent('cron_executed', ['success' => true]);
+            }
+        } catch (\Exception $e) {
+            error_log('HSS Cron Error: ' . $e->getMessage());
+            $this->trackTelemetryEvent('cron_executed', ['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 
     public function ajaxRefreshCounts(): void
     {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'forbidden'], 403);
+        if (!$this->validateAjaxRequest('hss_refresh_counts', '_hss_nonce')) {
+            return;
         }
 
-        check_ajax_referer('hss_refresh_counts', '_hss_nonce');
-
         try {
-            $this->container->get('share_counts')->refreshCounts();
-            wp_send_json_success(['message' => 'Refresh completed']);
+            $shareCountManager = $this->container->get('share_counts');
+            if (method_exists($shareCountManager, 'refreshCounts')) {
+                $shareCountManager->refreshCounts();
+                wp_send_json_success(['message' => 'Refresh completed']);
+            } else {
+                wp_send_json_error(['message' => 'Share count manager not available'], 500);
+            }
         } catch (\Exception $e) {
             wp_send_json_error(['message' => $e->getMessage()], 500);
         }
@@ -64,18 +133,20 @@ class Bootstrap
 
     public function ajaxFlushCounts(): void
     {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'forbidden'], 403);
+        if (!$this->validateAjaxRequest('hss_flush_counts', '_hss_flush_nonce')) {
+            return;
         }
 
-        check_ajax_referer('hss_flush_counts', '_hss_flush_nonce');
-
-        $postIds = isset($_POST['post_ids']) && is_array($_POST['post_ids']) ? array_map('intval', $_POST['post_ids']) : null;
-        $removeDb = !empty($_POST['remove_db']);
-
+        $requestData = self::sanitizeFlushRequest($_POST);
+        
         try {
-            $this->container->get('share_counts')->flushCache($postIds, $removeDb);
-            wp_send_json_success(['message' => 'Flush completed']);
+            $shareCountManager = $this->container->get('share_counts');
+            if (method_exists($shareCountManager, 'flushCache')) {
+                $shareCountManager->flushCache($requestData['post_ids'], $requestData['remove_db']);
+                wp_send_json_success(['message' => 'Flush completed']);
+            } else {
+                wp_send_json_error(['message' => 'Share count manager not available'], 500);
+            }
         } catch (\Exception $e) {
             wp_send_json_error(['message' => $e->getMessage()], 500);
         }
@@ -83,49 +154,164 @@ class Bootstrap
 
     public function onActivate(): void
     {
-        $migration = $this->container->get('migration');
-        $migration->run();
-
-        if ($this->container->get('share_counts') && method_exists($this->container->get('share_counts'), 'installSchema')) {
-            $this->container->get('share_counts')->installSchema();
-        }
-
-        if ($this->container->get('share_counts') && method_exists($this->container->get('share_counts'), 'scheduleCron')) {
-            $this->container->get('share_counts')->scheduleCron();
-        }
-
-        // Telemetry / logging hook for activation
         try {
-            $telemetry = $this->container->get('telemetry');
-            if ($telemetry instanceof TelemetryInterface) {
-                $telemetry->track('plugin_activated', ['plugin_file' => $this->pluginFile, 'time' => time()]);
-            }
-        } catch (\Exception $e) {
-            // Do not prevent activation if telemetry fails; swallow errors
-        }
+            $this->runMigrations();
+            $this->installSchemas();
+            $this->scheduleCronJobs();
+            
+            $this->trackTelemetryEvent('plugin_activated', [
+                'plugin_file' => $this->pluginFile,
+                'time' => time()
+            ]);
 
-        // Provide a WordPress hook so external integrations can react to activation
-        do_action('hss_activated', $this->container);
+            // Provide a WordPress hook so external integrations can react to activation
+            do_action('hss_activated', $this->container);
+        } catch (\Exception $e) {
+            error_log('HSS Activation Error: ' . $e->getMessage());
+            // Don't prevent activation, but log the error
+        }
     }
 
     public function onDeactivate(): void
     {
-        if ($this->container && method_exists($this->container->get('share_counts'), 'unscheduleCron')) {
-            $this->container->get('share_counts')->unscheduleCron();
+        try {
+            $this->unscheduleCronJobs();
+            
+            $this->trackTelemetryEvent('plugin_deactivated', [
+                'plugin_file' => $this->pluginFile,
+                'time' => time()
+            ]);
+
+            // Provide a WordPress hook so external integrations can react to deactivation
+            do_action('hss_deactivated', $this->container);
+        } catch (\Exception $e) {
+            error_log('HSS Deactivation Error: ' . $e->getMessage());
+        }
+    }
+
+    // --- Private helper methods with side effects ---
+    
+    private function runMigrations(): void
+    {
+        $migration = $this->container->get('migration');
+        if (method_exists($migration, 'run')) {
+            $migration->run();
+        }
+    }
+    
+    private function installSchemas(): void
+    {
+        $shareCountManager = $this->container->get('share_counts');
+        if ($shareCountManager && method_exists($shareCountManager, 'installSchema')) {
+            $shareCountManager->installSchema();
+        }
+    }
+    
+    private function scheduleCronJobs(): void
+    {
+        $shareCountManager = $this->container->get('share_counts');
+        if ($shareCountManager && method_exists($shareCountManager, 'scheduleCron')) {
+            $shareCountManager->scheduleCron();
+        }
+    }
+    
+    private function unscheduleCronJobs(): void
+    {
+        $shareCountManager = $this->container->get('share_counts');
+        if ($shareCountManager && method_exists($shareCountManager, 'unscheduleCron')) {
+            $shareCountManager->unscheduleCron();
+        }
+    }
+    
+    private function validateAjaxRequest(string $action, string $nonceField): bool
+    {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'forbidden'], 403);
+            return false;
         }
 
-        // Telemetry / logging hook for deactivation
+        if (!check_ajax_referer($action, $nonceField, false)) {
+            wp_send_json_error(['message' => 'invalid nonce'], 403);
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private function trackTelemetryEvent(string $event, array $data = []): void
+    {
         try {
             $telemetry = $this->container->get('telemetry');
             if ($telemetry instanceof TelemetryInterface) {
-                $telemetry->track('plugin_deactivated', ['plugin_file' => $this->pluginFile, 'time' => time()]);
+                $telemetry->track($event, $data);
             }
         } catch (\Exception $e) {
-            // Swallow telemetry errors on deactivation
+            // Swallow telemetry errors - they shouldn't prevent normal operation
         }
+    }
 
-        // Provide a WordPress hook so external integrations can react to deactivation
-        do_action('hss_deactivated', $this->container);
+    // --- Pure helper functions ---
+    
+    /**
+     * Pure function to validate plugin file path
+     *
+     * @param string $pluginFile Plugin file path
+     * @return bool True if valid
+     */
+    public static function isValidPluginFile(string $pluginFile): bool
+    {
+        return !empty($pluginFile) && 
+               is_string($pluginFile) && 
+               strlen($pluginFile) > 4 && 
+               str_ends_with($pluginFile, '.php');
+    }
+
+    /**
+     * Pure function to sanitize flush request data
+     *
+     * @param array $postData POST data from request
+     * @return array Sanitized request data
+     */
+    public static function sanitizeFlushRequest(array $postData): array
+    {
+        $postIds = null;
+        if (isset($postData['post_ids']) && is_array($postData['post_ids'])) {
+            $postIds = array_map('intval', $postData['post_ids']);
+            $postIds = array_filter($postIds, function($id) { return $id > 0; });
+            $postIds = empty($postIds) ? null : array_values($postIds);
+        }
+        
+        $removeDb = !empty($postData['remove_db']);
+        
+        return [
+            'post_ids' => $postIds,
+            'remove_db' => $removeDb,
+        ];
+    }
+
+    /**
+     * Pure function to validate initialization requirements
+     *
+     * @param Container $container Service container
+     * @return array Validation result with success flag and errors
+     */
+    public static function validateInitializationRequirements(Container $container): array
+    {
+        $errors = [];
+        $requiredServices = ['settings', 'admin', 'content_display', 'share_renderer'];
+        
+        foreach ($requiredServices as $service) {
+            try {
+                $container->get($service);
+            } catch (\Exception $e) {
+                $errors[] = "Required service '{$service}' not available: " . $e->getMessage();
+            }
+        }
+        
+        return [
+            'success' => empty($errors),
+            'errors' => $errors,
+        ];
     }
 }
 

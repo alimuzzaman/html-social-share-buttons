@@ -1,6 +1,8 @@
 <?php
 namespace HtmlSocialShare;
 
+use HtmlSocialShare\Utils\ArrayUtils;
+
 class BackCompatShim implements BackCompatInterface
 {
     protected $settings;
@@ -34,11 +36,20 @@ class BackCompatShim implements BackCompatInterface
             if ($val !== null) {
                 // Normalize: if the legacy value is a WP-style associative list of links,
                 // try to coerce it into a numeric-indexed profiles array.
-                if ($path === 'profiles' && is_array($val) && $this->looksLikeAssociativeMap($val)) {
+                if ($path === 'profiles' && is_array($val) && ArrayUtils::isAssociative($val)) {
                     $val = array_values($val);
                 }
 
-                $this->applyPath($canonical, $path, $val);
+                // Read existing value at path using pure ArrayUtils helpers
+                $existing = ArrayUtils::get($canonical, $path, null);
+
+                if (is_array($existing) && is_array($val)) {
+                    // Merge arrays preserving canonical structure
+                    $merged = ArrayUtils::deepMerge($existing, $val);
+                    $canonical = ArrayUtils::set($canonical, $path, $merged);
+                } else {
+                    $canonical = ArrayUtils::set($canonical, $path, $val);
+                }
             }
         }
 
@@ -48,7 +59,7 @@ class BackCompatShim implements BackCompatInterface
         return $canonical;
     }
 
-    public function mapLegacy(string $key)
+    public function mapLegacy(string $key): ?string
     {
         $map = [
             'hssb_profiles' => 'profiles',
@@ -57,35 +68,5 @@ class BackCompatShim implements BackCompatInterface
         ];
 
         return $map[$key] ?? null;
-    }
-
-    protected function applyPath(array & $target, string $path, $value)
-    {
-        $parts = explode('.', $path);
-        $ref = & $target;
-        foreach ($parts as $part) {
-            if (!isset($ref[$part]) || !is_array($ref[$part])) {
-                $ref[$part] = [];
-            }
-            $ref = & $ref[$part];
-        }
-
-        // If target is an array and value is array, merge
-        if (is_array($ref) && is_array($value)) {
-            $ref = array_merge($ref, $value);
-        } else {
-            $ref = $value;
-        }
-    }
-
-    protected function looksLikeAssociativeMap(array $arr): bool
-    {
-        // Heuristic: if keys are strings, consider associative map
-        foreach (array_keys($arr) as $k) {
-            if (is_string($k)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

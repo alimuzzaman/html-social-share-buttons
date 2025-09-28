@@ -13,6 +13,9 @@ interface BackCompatInterface
     /**
      * Map a single legacy option key to a canonical path.
      * Returns null if no mapping exists.
+     *
+     * @param string $key Legacy option key
+     * @return string|null Canonical dot-notated path or null when no mapping exists
      */
-    public function mapLegacy(string $key);
+    public function mapLegacy(string $key): ?string;
 }
