@@ -49,7 +49,11 @@ class ShareRenderer implements ShareRendererInterface
             $postId = (int) (get_the_ID() ?: 0);
             if ($postId > 0) {
                 $count = $this->shareCountManager->getCountForPostNetwork($postId, $network);
-                $countHtml = '<span class="hssb-count">' . $this->formatCount($count) . '</span>';
+                // Visible badge (aria-hidden) and separate screen-reader-only text
+                $visible = '<span class="hssb-count" aria-hidden="true">' . $this->formatCount($count) . '</span>';
+                $srText = sprintf('%s shares on %s', number_format_i18n($count), ucfirst($label));
+                $sr = '<span class="hss-sr">' . esc_html($srText) . '</span>';
+                $countHtml = $visible . $sr;
             }
         }
 
