@@ -35,7 +35,16 @@ define('HTML_SOCIAL_SHARE_CSS_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/css/'
 define('HTML_SOCIAL_SHARE_JS_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/js/');
 define('HTML_SOCIAL_SHARE_IMAGES_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/images/');
 
-// Bootstrap the plugin
+// Ensure composer autoloader is loaded from the main plugin directory.
+if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
+    add_action('admin_notices', function() {
+        echo '<div class="notice notice-error"><p>HTML Social Share Buttons: Composer dependencies not installed. Please run <code>composer install</code> in the plugin directory.</p></div>';
+    });
+    return;
+}
+
+require_once __DIR__ . '/vendor/autoload.php';
+
 $container = require __DIR__ . '/src/bootstrap.php';
 
 if ($container === null) {
