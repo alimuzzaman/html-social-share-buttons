@@ -51,7 +51,7 @@ class ShareButtonsElement extends \WPBakeryShortCode
         // Networks checkboxes
         $availableNetworks = [
             'facebook' => __('Facebook', 'html-social-share'),
-            'twitter' => __('Twitter', 'html-social-share'),
+            'twitter' => __('X', 'html-social-share'),
             'linkedin' => __('LinkedIn', 'html-social-share'),
             'googleplus' => __('Google+', 'html-social-share'),
             'pinterest' => __('Pinterest', 'html-social-share'),

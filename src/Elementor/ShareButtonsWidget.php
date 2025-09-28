@@ -48,7 +48,7 @@ class ShareButtonsWidget extends Widget_Base {
                 'multiple' => true,
                 'options' => [
                     'facebook' => __( 'Facebook', 'html-social-share' ),
-                    'twitter' => __( 'Twitter', 'html-social-share' ),
+                    'twitter' => __( 'X', 'html-social-share' ),
                     'linkedin' => __( 'LinkedIn', 'html-social-share' ),
                     'pinterest' => __( 'Pinterest', 'html-social-share' ),
                     'reddit' => __( 'Reddit', 'html-social-share' ),

@@ -60,7 +60,7 @@ class ShareButtonsModule extends \ET_Builder_Module
                 'description' => esc_html__('Select which social networks to display.', 'html-social-share'),
                 'options' => [
                     'facebook' => esc_html__('Facebook', 'html-social-share'),
-                    'twitter' => esc_html__('Twitter', 'html-social-share'),
+                    'twitter' => esc_html__('X', 'html-social-share'),
                     'linkedin' => esc_html__('LinkedIn', 'html-social-share'),
                     'googleplus' => esc_html__('Google+', 'html-social-share'),
                     'pinterest' => esc_html__('Pinterest', 'html-social-share'),

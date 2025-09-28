@@ -161,6 +161,33 @@ class ProfileManager implements ProfileManagerInterface
     }
 
     /**
+     * Generate share URL from profile template
+     *
+     * @param array $profile Profile data
+     * @param string $url The URL to share
+     * @param string $title The title to share
+     * @return string Generated share URL
+     */
+    public function generateShareUrl(array $profile, string $url, string $title = ''): string
+    {
+        if (empty($profile['url_template'])) {
+            return '#';
+        }
+
+        $template = $profile['url_template'];
+
+        // Replace placeholders
+        $replacements = [
+            '{url}' => urlencode($url),
+            '{title}' => urlencode($title),
+            '{encoded_url}' => urlencode($url),
+            '{encoded_title}' => urlencode($title),
+        ];
+
+        return str_replace(array_keys($replacements), array_values($replacements), $template);
+    }
+
+    /**
      * Get default URL template for a network
      *
      * @param string $network Network name
@@ -170,7 +197,7 @@ class ProfileManager implements ProfileManagerInterface
     {
         $templates = [
             'facebook' => 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}',
-            'twitter' => 'https://twitter.com/intent/tweet?url={url}&text={title}',
+            'twitter' => 'https://x.com/intent/tweet?url={url}&text={title}',
             'linkedin' => 'https://www.linkedin.com/sharing/share-offsite/?url={url}',
             'pinterest' => 'https://pinterest.com/pin/create/button/?url={url}&description={title}',
             'email' => 'mailto:?subject={title}&body={url}',
@@ -182,4 +209,3 @@ class ProfileManager implements ProfileManagerInterface
 
         return $templates[$network] ?? 'https://example.com/share?url={url}&title={title}';
     }
-}

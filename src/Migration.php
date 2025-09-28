@@ -67,7 +67,8 @@ class Migration
             'html_social_share_options',
             'html_social_share',
             'hss_options',
-            'social_share_options'
+            'social_share_options',
+            'zm_shbt_fld' // Original key from archive settings
         ];
 
         foreach ($possibleKeys as $key) {
@@ -93,9 +94,9 @@ class Migration
             'version' => '3.0.0',
             'title' => $legacy['title'] ?? 'Share this with your friends',
             'positions' => $this->normalizePositions($legacy),
-            'auto_hide' => !empty($legacy['auto_hide']),
+            'auto_hide' => !empty($legacy['auto_hide_btn']),
             'use_port' => !empty($legacy['use_port']),
-            'google_analytics' => !empty($legacy['google_social_analytics']),
+            'google_analytics' => !empty($legacy['g_analytics']),
             'nofollow' => !empty($legacy['nofollow']),
             'enabled_networks' => $this->getEnabledNetworks($legacy),
             'exclusions' => $this->normalizeExclusions($legacy)
@@ -121,8 +122,8 @@ class Migration
 
         // Map legacy position flags to new format
         $positionMapping = [
-            'show_on_left' => 'left',
-            'show_on_right' => 'right',
+            'show_left' => 'left',
+            'show_right' => 'right',
             'show_before_post' => 'before_post',
             'show_after_post' => 'after_post'
         ];
@@ -151,16 +152,39 @@ class Migration
     {
         $networks = [];
 
-        // Common social networks to check
-        $commonNetworks = [
-            'facebook', 'twitter', 'linkedin', 'google_plus', 'pinterest',
-            'email', 'whatsapp', 'telegram', 'reddit', 'tumblr'
-        ];
+        // Check if icons array exists (newer legacy format)
+        if (!empty($legacy['icons']) && is_array($legacy['icons'])) {
+            // Map legacy network names to standard names
+            $networkMapping = [
+                'facebook' => 'facebook',
+                'twitter' => 'twitter',
+                'linkedin' => 'linkedin',
+                'googlepluse' => 'googleplus',
+                'pinterest' => 'pinterest',
+                'mail' => 'email',
+                'whatsapp' => 'whatsapp',
+                'telegram' => 'telegram',
+                'reddit' => 'reddit',
+                'tumblr' => 'tumblr'
+            ];
 
-        foreach ($commonNetworks as $network) {
-            $enableKey = 'enable_' . $network;
-            if (!empty($legacy[$enableKey])) {
-                $networks[] = $network;
+            foreach ($legacy['icons'] as $icon) {
+                if (isset($networkMapping[$icon])) {
+                    $networks[] = $networkMapping[$icon];
+                }
+            }
+        } else {
+            // Fallback to enable_ prefixed keys (older format)
+            $commonNetworks = [
+                'facebook', 'twitter', 'linkedin', 'google_plus', 'pinterest',
+                'email', 'whatsapp', 'telegram', 'reddit', 'tumblr'
+            ];
+
+            foreach ($commonNetworks as $network) {
+                $enableKey = 'enable_' . $network;
+                if (!empty($legacy[$enableKey])) {
+                    $networks[] = $network;
+                }
             }
         }
 
@@ -186,9 +210,9 @@ class Migration
             'titles' => []
         ];
 
-        if (!empty($legacy['exclude'])) {
+        if (!empty($legacy['excludes'])) {
             // Try to parse the exclude field - could be comma-separated IDs/slugs
-            $excludeValue = $legacy['exclude'];
+            $excludeValue = $legacy['excludes'];
             if (is_string($excludeValue)) {
                 $parts = array_map('trim', explode(',', $excludeValue));
                 // For now, treat as IDs - could be enhanced to detect slugs/titles
@@ -243,7 +267,7 @@ class Migration
     {
         $templates = [
             'facebook' => 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}',
-            'twitter' => 'https://twitter.com/intent/tweet?url={url}&text={title}',
+            'twitter' => 'https://x.com/intent/tweet?url={url}&text={title}',
             'linkedin' => 'https://www.linkedin.com/sharing/share-offsite/?url={url}',
             'pinterest' => 'https://pinterest.com/pin/create/button/?url={url}&description={title}',
             'email' => 'mailto:?subject={title}&body={url}',

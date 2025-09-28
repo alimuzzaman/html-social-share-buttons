@@ -178,7 +178,7 @@ class ContentDisplay
     {
         $templates = [
             'facebook' => 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}',
-            'twitter' => 'https://twitter.com/intent/tweet?url={url}&text={title}',
+            'twitter' => 'https://x.com/intent/tweet?url={url}&text={title}',
             'linkedin' => 'https://www.linkedin.com/sharing/share-offsite/?url={url}',
             'pinterest' => 'https://pinterest.com/pin/create/button/?url={url}&description={title}',
             'email' => 'mailto:?subject={title}&body={url}',
