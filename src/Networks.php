@@ -12,7 +12,7 @@ class Networks
                 'icon' => 'facebook'
             ],
             'twitter' => [
-                'label' => 'X',
+                'label' => 'X (formerly Twitter)',
                 'url_template' => 'https://x.com/intent/tweet?url={url}&text={title}',
                 'icon' => 'twitter'
             ],
