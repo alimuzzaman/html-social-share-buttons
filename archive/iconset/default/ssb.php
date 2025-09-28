@@ -3,9 +3,9 @@
 /*add_action('zm_sh_add_iconset', 'zm_sh_iconset_default');
 function zm_sh_iconset_default(){
 	global $zm_sh;
-	
+
 	$zm_sh->iconsets->add_iconset(new zm_sh_iconset_default);
-	
+
 }*/
 
 class zm_sh_iconset_default extends __iconset_parent_class{
@@ -25,10 +25,10 @@ class zm_sh_iconset_default extends __iconset_parent_class{
 							),
 				'twitter'=>array(
 								'id' => 'twitter',
-								'name' => "Twitter",
+								'name' => "X",
 								'class' => 'twitter',
 								'image' => 'twitter.png',
-								'url' => "http://twitter.com/share?url=%%permalink%%&amp;text=%%title%%",
+								'url' => "https://x.com/share?url=%%permalink%%&amp;text=%%title%%",
 							),
 				'linkedin'=>array(
 								'id' => 'linkedin',
@@ -66,10 +66,10 @@ class zm_sh_iconset_default extends __iconset_parent_class{
 								'url' => "mailto:?subject=I wanted you to see this site&amp;body=This is about %%title%% %%permalink%%",
 							),
 				);
-	
-	
-	
-	
+
+
+
+
 }
 
 

@@ -20,7 +20,7 @@ class	zm_sh_iconset_flat extends __iconset_parent_class{
 								'name' => "Twitter",
 								'class' => 'twitter',
 								'image' => 'Twitter.png',
-								'url' => "http://twitter.com/share?url=%%permalink%%&amp;text=%%title%%",
+								'url' => "https://x.com/share?url=%%permalink%%&amp;text=%%title%%",
 							),
 				'linkedin'=>array(
 								'id' => 'linkedin',
@@ -58,7 +58,7 @@ class	zm_sh_iconset_flat extends __iconset_parent_class{
 								'url' => "mailto:?subject=I wanted you to see this site&amp;body=This is about %%title%% %%permalink%%",
 							),
 				);
-	
+
 }
 
 

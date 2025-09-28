@@ -20,7 +20,7 @@ class	zm_sh_iconset_prajin extends __iconset_parent_class{
 								'name' => "Twitter",
 								'class' => 'twitter',
 								'image' => 'twitter.png',
-								'url' => "http://twitter.com/share?url=%%permalink%%&amp;text=%%title%%",
+								'url' => "https://x.com/share?url=%%permalink%%&amp;text=%%title%%",
 							),
 				'linkedin'=>array(
 								'id' => 'linkedin',
@@ -51,7 +51,7 @@ class	zm_sh_iconset_prajin extends __iconset_parent_class{
 								'url' => "http://pinterest.com/pin/create/button/?url=%%permalink%%&amp;media=%%imageurl%%&amp;description=%%title%%",
 							),
 				);
-	
+
 }
 
 
