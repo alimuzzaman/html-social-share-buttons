@@ -7,7 +7,10 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:playwright:settings": "node test-settings-playwright.js",
+    "test:playwright:frontend": "node tests/playwright/test-frontend-playwright.js",
+    "test:playwright": "npm run test:playwright:settings ; npm run test:playwright:frontend"
   },
   "keywords": [],
   "author": "",

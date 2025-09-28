@@ -1,5 +1,11 @@
 const { chromium } = require('playwright');
 
+// Make admin URL and credentials configurable
+const ADMIN_URL = process.env.WP_ADMIN_URL || 'https://s3.templately-multi.test/wp-admin/';
+const ADMIN_PAGE = process.env.WP_ADMIN_PAGE || 'admin.php?page=html-social-share';
+const ADMIN_USER = process.env.WP_ADMIN_USER || process.env.USER || null;
+const ADMIN_PASS = process.env.WP_ADMIN_PASS || null;
+
 async function testSettingsSave() {
     console.log('Starting HTML Social Share Settings Save Test...');
 
@@ -37,9 +43,27 @@ async function testSettingsSave() {
     });
 
     try {
+        // Optional login step: if credentials provided, attempt to log in
+        if (ADMIN_USER && ADMIN_PASS) {
+            console.log('Attempting to login with provided credentials...');
+            await page.goto(ADMIN_URL, { waitUntil: 'networkidle' });
+            // Wait for login form
+            if (await page.$('form#loginform')) {
+                await page.fill('input#user_login', ADMIN_USER);
+                await page.fill('input#user_pass', ADMIN_PASS);
+                await Promise.all([
+                    page.waitForNavigation({ waitUntil: 'networkidle' }),
+                    page.click('input#wp-submit')
+                ]);
+                console.log('Login attempted, current URL:', page.url());
+            } else {
+                console.log('No login form found on admin page; assuming already authenticated or alternate auth method in use.');
+            }
+        }
+
         // Navigate to the settings page
         console.log('Navigating to settings page...');
-        await page.goto('https://s3.templately-multi.test/wp-admin/admin.php?page=html-social-share', {
+        await page.goto(`${ADMIN_URL}${ADMIN_PAGE}`, {
             waitUntil: 'networkidle'
         });
 

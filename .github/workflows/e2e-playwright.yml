@@ -1,0 +1,42 @@
+name: Playwright E2E Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - new
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Playwright tests
+        env:
+          WP_FRONTEND_URL: ${{ secrets.WP_FRONTEND_URL }}
+          WP_ADMIN_URL: ${{ secrets.WP_ADMIN_URL }}
+          WP_ADMIN_USER: ${{ secrets.WP_ADMIN_USER }}
+          WP_ADMIN_PASS: ${{ secrets.WP_ADMIN_PASS }}
+        run: npm run test:playwright
+
+      - name: Upload screenshots (if any)
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: |
+            before-settings.png
+            after-settings.png
+            frontend-share-buttons.png
+            error-frontend.png
+            error-settings.png
