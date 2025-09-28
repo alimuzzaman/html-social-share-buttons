@@ -93,4 +93,24 @@ add_action('wp_ajax_hss_refresh_counts', function() use ($container) {
     }
 });
 
+// Admin AJAX endpoint to flush share count caches (and optionally DB) (requires manage_options)
+add_action('wp_ajax_hss_flush_share_counts', function() use ($container) {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'forbidden'], 403);
+    }
+
+    check_ajax_referer('hss_flush_counts', '_hss_flush_nonce');
+
+    // Optionally accept post_ids[] and remove_db flag
+    $postIds = isset($_POST['post_ids']) && is_array($_POST['post_ids']) ? array_map('intval', $_POST['post_ids']) : null;
+    $removeDb = !empty($_POST['remove_db']);
+
+    try {
+        $container->get('share_counts')->flushCache($postIds, $removeDb);
+        wp_send_json_success(['message' => 'Flush completed']);
+    } catch (Exception $e) {
+        wp_send_json_error(['message' => $e->getMessage()], 500);
+    }
+});
+
 return $container;

@@ -344,6 +344,16 @@ class SettingsPage
         echo '</td>';
         echo '</tr>';
 
+        // Flush cache control
+        echo '<tr>';
+        echo '<th scope="row">Cache & Data</th>';
+        echo '<td>';
+        echo '<button type="button" id="hss-flush-cache" class="button">Flush Share Count Cache</button>';
+        echo '<label style="margin-left:10px"><input type="checkbox" id="hss-flush-db" name="hss_flush_db"> Also remove DB-stored counts (destructive)</label>';
+        echo '<span id="hss-flush-status" style="margin-left:10px"></span>';
+        echo '</td>';
+        echo '</tr>';
+
         echo '</tbody>';
         echo '</table>';
     }
@@ -680,5 +690,78 @@ class SettingsPage
                     status.textContent = 'Refresh failed: ' + err.message;
                 });
             });
+        });
+        </script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('hss-flush-cache');
+            const status = document.getElementById('hss-flush-status');
+            const flushDbCheck = document.getElementById('hss-flush-db');
+            if (!btn) return;
+
+            btn.addEventListener('click', function() {
+                const isChecked = flushDbCheck.checked;
+                const confirmMessage = isChecked ? 'This will remove all stored share counts from the database. Are you sure?' : 'This will flush the share count cache. Are you sure?';
+                
+                if (confirm(confirmMessage)) {
+                    status.textContent = 'Flushing cache...';
+                    const formData = new FormData();
+                    formData.append('_wpnonce', '<?php echo wp_create_nonce('hss_flush_cache'); ?>');
+                    if (isChecked) {
+                        formData.append('flush_db', '1');
+                    }
+
+                    fetch(ajaxurl, {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            status.textContent = 'Cache flushed successfully.';
+                        } else {
+                            status.textContent = 'Cache flush failed: ' + (data.data && data.data.message ? data.data.message : 'unknown');
+                        }
+                    }).catch(err => {
+                        status.textContent = 'Cache flush failed: ' + err.message;
+                    });
+                }
+            });
+        });
+        </script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flushBtn = document.getElementById('hss-flush-cache');
+            const flushStatus = document.getElementById('hss-flush-status');
+            const flushDbCheck = document.getElementById('hss-flush-db');
+            if (flushBtn) {
+                flushBtn.addEventListener('click', function() {
+                    flushStatus.textContent = 'Flushing cache...';
+                    const formData = new FormData();
+                    formData.append('_wpnonce', '<?php echo wp_create_nonce('hss_flush_counts'); ?>');
+                    formData.append('action', 'hss_flush_share_counts');
+                    if (flushDbCheck && flushDbCheck.checked) {
+                        formData.append('remove_db', '1');
+                    }
+
+                    fetch(ajaxurl + '?action=hss_flush_share_counts', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin'
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            flushStatus.textContent = 'Flush completed.';
+                        } else {
+                            flushStatus.textContent = 'Flush failed: ' + (data.data && data.data.message ? data.data.message : 'unknown');
+                        }
+                    }).catch(err => {
+                        flushStatus.textContent = 'Flush failed: ' + err.message;
+                    });
+                });
+            }
         });
         </script>

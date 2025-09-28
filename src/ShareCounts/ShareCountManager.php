@@ -240,6 +240,44 @@ class ShareCountManager
         wp_clear_scheduled_hook('hss_refresh_share_counts');
     }
 
+    /**
+     * Flush internal caches used for share counts. Optionally limit to a set of post IDs
+     * and optionally remove DB-stored counts as well (destructive).
+     *
+     * @param array|null $postIds
+     * @param bool $removeDbEntries
+     * @return void
+     */
+    public function flushCache(?array $postIds = null, bool $removeDbEntries = false): void
+    {
+        // If no specific post IDs provided, clear entire cache store
+        if (empty($postIds)) {
+            $this->cache->clear();
+        } else {
+            foreach ($postIds as $pid) {
+                $keyPattern = $this->getCacheKey((int)$pid, '%s');
+                // CacheInterface does not provide pattern deletion - attempt to delete known keys for networks
+                $enabledNetworks = $this->settings->get('enabled_networks', []);
+                foreach ($enabledNetworks as $network) {
+                    $this->cache->delete(sprintf($this->getCacheKey((int)$pid, $network)));
+                }
+            }
+        }
+
+        // Optionally remove DB entries (destructive) when requested
+        if ($removeDbEntries) {
+            global $wpdb;
+            $table = $this->wpdb->prefix . 'hss_share_counts';
+            if (empty($postIds)) {
+                $wpdb->query("TRUNCATE TABLE {$table}");
+            } else {
+                $ids = array_map('intval', $postIds);
+                $in = implode(',', $ids);
+                $wpdb->query("DELETE FROM {$table} WHERE post_id IN ({$in})");
+            }
+        }
+    }
+
     private function getCacheKey(int $postId, string $network): string
     {
         return sprintf('hss:sharecount:%d:%s', $postId, $network);

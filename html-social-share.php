@@ -81,6 +81,11 @@ register_activation_hook(__FILE__, function() use ($container) {
     if ($container->get('share_counts') && method_exists($container->get('share_counts'), 'installSchema')) {
         $container->get('share_counts')->installSchema();
     }
+
+    // Schedule cron for share counts refresh if available
+    if ($container->get('share_counts') && method_exists($container->get('share_counts'), 'scheduleCron')) {
+        $container->get('share_counts')->scheduleCron();
+    }
 });
 
 register_deactivation_hook(__FILE__, function() use ($container) {

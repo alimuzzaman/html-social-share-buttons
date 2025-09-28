@@ -54,6 +54,21 @@
 /* Assuming icons are inline SVGs or background; adjust as needed */
 .hssb-share .hss-icon{ width:var(--hss-size); height:var(--hss-size); display:block; fill:currentColor; }
 
+/* Share count badge style */
+.hssb-count{
+  display:inline-block;
+  min-width:22px;
+  padding:2px 6px;
+  font-size:12px;
+  line-height:1;
+  border-radius:999px;
+  background:rgba(0,0,0,0.06);
+  color:var(--hss-foreground);
+  margin-left:6px;
+  text-align:center;
+}
+.hssb-count[aria-hidden="true"]{ font-weight:600; }
+
 /* responsive scale */
 @media (max-width:420px){
   :root{ --hss-size:20px; --hss-touch:40px; --hss-gap:6px; }
