@@ -38,6 +38,10 @@ $container->set('cache', function () {
     return new HtmlSocialShare\Cache();
 });
 
+$container->set('migration', function ($c) {
+    return new HtmlSocialShare\Migration($c->get('settings'));
+});
+
 $container->set('back_compat', function ($c) {
     return new HtmlSocialShare\BackCompatShim($c->get('settings'));
 });

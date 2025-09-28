@@ -209,3 +209,4 @@ class ProfileManager implements ProfileManagerInterface
 
         return $templates[$network] ?? 'https://example.com/share?url={url}&title={title}';
     }
+}

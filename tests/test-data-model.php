@@ -3,6 +3,17 @@
  * Test suite for the new data model, migration, and caching
  */
 
+// Define plugin constants
+define('HTML_SOCIAL_SHARE_PLUGIN_DIR', __DIR__ . '/../');
+define('HTML_SOCIAL_SHARE_PLUGIN_URL', 'http://example.com/wp-content/plugins/html-social-share-buttons/');
+define('HTML_SOCIAL_SHARE_ASSETS_DIR', HTML_SOCIAL_SHARE_PLUGIN_DIR . 'assets/');
+define('HTML_SOCIAL_SHARE_ASSETS_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/');
+define('HTML_SOCIAL_SHARE_ICONSET_DIR', HTML_SOCIAL_SHARE_PLUGIN_DIR . 'assets/iconset/');
+define('HTML_SOCIAL_SHARE_ICONSET_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/iconset/');
+define('HTML_SOCIAL_SHARE_ADMIN_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/admin/');
+define('HTML_SOCIAL_SHARE_CSS_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/css/');
+define('HTML_SOCIAL_SHARE_JS_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/js/');
+
 // Mock WordPress storage
 $wp_options = [];
 $wp_cache = [];

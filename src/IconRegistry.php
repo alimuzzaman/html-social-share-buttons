@@ -47,15 +47,22 @@ class IconRegistry implements IconRegistryInterface
     {
         $this->loadedIcons = [];
 
+        // For builtin iconset, use SVG icons
+        if ($this->currentIconset === 'builtin') {
+            $this->loadBuiltinIcons();
+            return;
+        }
+
         // Load iconsets from assets/iconset directory
         $iconsetData = $this->loadIconsetFromDirectory($this->currentIconset);
 
         if (!$iconsetData) {
-            // Fallback to builtin if current iconset doesn't exist
+            // Fallback to default_square if current iconset doesn't exist
             $iconsetData = $this->loadIconsetFromDirectory('default_square');
             if (!$iconsetData) {
-                $this->initializeBuiltinIconset();
-                $iconsetData = $this->settings->getIcon('builtin', 'sets');
+                // Ultimate fallback to builtin SVG
+                $this->loadBuiltinIcons();
+                return;
             }
         }
 
@@ -63,6 +70,20 @@ class IconRegistry implements IconRegistryInterface
             foreach ($iconsetData['icons'] as $network => $iconData) {
                 $this->loadedIcons[$network] = $this->renderIcon($network, $iconData);
             }
+        }
+    }
+
+    /**
+     * Load builtin SVG icons
+     *
+     * @return void
+     */
+    private function loadBuiltinIcons(): void
+    {
+        $networks = ['facebook', 'twitter', 'linkedin', 'pinterest', 'email', 'whatsapp', 'telegram', 'reddit', 'tumblr'];
+
+        foreach ($networks as $network) {
+            $this->loadedIcons[$network] = $this->renderIcon($network, []);
         }
     }
 
