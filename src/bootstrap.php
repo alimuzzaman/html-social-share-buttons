@@ -1,167 +1,194 @@
 <?php
-// Minimal bootstrap for local development and tests
-// Loads composer's autoloader and returns a simple service container placeholder.
+namespace HtmlSocialShare;
 
-if (! file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    // Composer dependencies not installed yet.
-    return null;
-}
-
-$loader = require __DIR__ . '/../vendor/autoload.php';
-
-// Boot a very small container and register basic services.
 use HtmlSocialShare\Container;
 
-$container = new Container();
+// Bootstrap class that creates the service container and wires WordPress hooks.
+class Bootstrap
+{
+    private Container $container;
+    private string $pluginFile;
 
-$container->set('info', function () {
-    return new HtmlSocialShare\Info();
-});
-
-$container->set('profile_manager', function ($c) {
-    return new HtmlSocialShare\ProfileManager($c->get('settings'));
-});
-
-$container->set('share_renderer', function ($c) {
-    $renderer = new HtmlSocialShare\ShareRenderer($c->get('icon_registry'), $c->get('settings'), $c->get('share_counts'));
-    return $renderer;
-});
-
-$container->set('icon_registry', function ($c) {
-    return new HtmlSocialShare\IconRegistry($c->get('settings'));
-});
-
-$container->set('settings', function () {
-    return new HtmlSocialShare\Settings();
-});
-
-$container->set('cache', function () {
-    return new HtmlSocialShare\Cache();
-});
-
-// Register share counts manager service
-$container->set('share_counts', function ($c) {
-    return new \HtmlSocialShare\ShareCounts\ShareCountManager($c->get('cache'), $c->get('settings'));
-});
-
-$container->set('migration', function ($c) {
-    return new HtmlSocialShare\Migration($c->get('settings'));
-});
-
-$container->set('back_compat', function ($c) {
-    return new HtmlSocialShare\BackCompatShim($c->get('settings'));
-});
-
-$container->set('admin', function ($c) {
-    return new HtmlSocialShare\Admin\Admin($c->get('settings'), $c->get('profile_manager'), $c->get('share_renderer'));
-});
-
-$container->set('content_display', function ($c) {
-    return new HtmlSocialShare\ContentDisplay(
-        $c->get('settings'),
-        $c->get('profile_manager'),
-        $c->get('share_renderer')
-    );
-});
-
-$container->set('widget', function ($c) {
-    return new HtmlSocialShare\Widget\Widget($c->get('share_renderer'), $c->get('settings'));
-});
-
-$container->set('svg_sanitizer', function () {
-    return new HtmlSocialShare\Svg\Sanitizer();
-});
-
-// Hook the scheduled refresh event to the ShareCountManager refresh method
-add_action('hss_refresh_share_counts', function() use ($container) {
-    $container->get('share_counts')->refreshCounts();
-});
-
-// Admin AJAX endpoint to trigger a manual refresh (requires manage_options)
-add_action('wp_ajax_hss_refresh_counts', function() use ($container) {
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error(['message' => 'forbidden'], 403);
+    public function __construct(string $pluginFile)
+    {
+        $this->pluginFile = $pluginFile;
+        $this->container = new Container();
+        $this->registerServices();
+        $this->registerHooks();
+        $this->init();
     }
 
-    check_ajax_referer('hss_refresh_counts', '_hss_nonce');
+    private function registerServices(): void
+    {
+        $c = $this->container;
 
-    try {
-        $container->get('share_counts')->refreshCounts();
-        wp_send_json_success(['message' => 'Refresh completed']);
-    } catch (Exception $e) {
-        wp_send_json_error(['message' => $e->getMessage()], 500);
+        $c->set('info', function () {
+            return new Info();
+        });
+
+        $c->set('profile_manager', function ($c) {
+            return new ProfileManager($c->get('settings'));
+        });
+
+        $c->set('share_renderer', function ($c) {
+            return new ShareRenderer($c->get('icon_registry'), $c->get('settings'), $c->get('share_counts'));
+        });
+
+        $c->set('icon_registry', function ($c) {
+            return new IconRegistry($c->get('settings'));
+        });
+
+        $c->set('settings', function () {
+            return new Settings();
+        });
+
+        $c->set('cache', function () {
+            return new Cache();
+        });
+
+        $c->set('share_counts', function ($c) {
+            return new ShareCounts\ShareCountManager($c->get('cache'), $c->get('settings'));
+        });
+
+        $c->set('migration', function ($c) {
+            return new Migration($c->get('settings'));
+        });
+
+        $c->set('back_compat', function ($c) {
+            return new BackCompatShim($c->get('settings'));
+        });
+
+        $c->set('admin', function ($c) {
+            return new Admin\Admin($c->get('settings'), $c->get('profile_manager'), $c->get('share_renderer'));
+        });
+
+        $c->set('content_display', function ($c) {
+            return new ContentDisplay(
+                $c->get('settings'),
+                $c->get('profile_manager'),
+                $c->get('share_renderer')
+            );
+        });
+
+        $c->set('widget', function ($c) {
+            return new Widget\Widget($c->get('share_renderer'), $c->get('settings'));
+        });
+
+        $c->set('svg_sanitizer', function () {
+            return new Svg\Sanitizer();
+        });
     }
-});
 
-// Admin AJAX endpoint to flush share count caches (and optionally DB) (requires manage_options)
-add_action('wp_ajax_hss_flush_share_counts', function() use ($container) {
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error(['message' => 'forbidden'], 403);
+    private function registerHooks(): void
+    {
+        // Cron hook
+        add_action('hss_refresh_share_counts', [$this, 'handleCron']);
+
+        // AJAX endpoints
+        add_action('wp_ajax_hss_refresh_counts', [$this, 'ajaxRefreshCounts']);
+        add_action('wp_ajax_hss_flush_share_counts', [$this, 'ajaxFlushCounts']);
+
+        // Frontend assets
+        add_action('wp_enqueue_scripts', [$this->container->get('content_display'), 'enqueueFrontendStyles']);
+
+        // Widgets
+        add_action('widgets_init', function() {
+            register_widget($this->container->get('widget'));
+        });
+
+        // Server-side block registration
+        add_action('init', function() {
+            $shareRenderer = $this->container->get('share_renderer');
+            $block = new Blocks\ShareButtons\Block($shareRenderer);
+            $block->register();
+        });
+
+        // Integrations - directly instantiate our IntegrationLoader
+        $integrationLoader = new IntegrationLoader($this->container);
+        if (method_exists($integrationLoader, 'init')) {
+            $integrationLoader->init();
+        }
+
+        // Activation / Deactivation
+        register_activation_hook($this->pluginFile, [$this, 'onActivate']);
+        register_deactivation_hook($this->pluginFile, [$this, 'onDeactivate']);
     }
 
-    check_ajax_referer('hss_flush_counts', '_hss_flush_nonce');
-
-    // Optionally accept post_ids[] and remove_db flag
-    $postIds = isset($_POST['post_ids']) && is_array($_POST['post_ids']) ? array_map('intval', $_POST['post_ids']) : null;
-    $removeDb = !empty($_POST['remove_db']);
-
-    try {
-        $container->get('share_counts')->flushCache($postIds, $removeDb);
-        wp_send_json_success(['message' => 'Flush completed']);
-    } catch (Exception $e) {
-        wp_send_json_error(['message' => $e->getMessage()], 500);
+    private function init(): void
+    {
+        // Initialize admin and content display to ensure hooks are registered
+        $this->container->get('admin');
+        $this->container->get('content_display');
     }
-});
 
-// Initialize admin interface (instantiates Admin class and registers admin hooks)
-$container->get('admin');
-
-// Initialize content display and ensure frontend styles are enqueued
-$container->get('content_display');
-add_action('wp_enqueue_scripts', [$container->get('content_display'), 'enqueueFrontendStyles']);
-
-// Register widget at widgets_init
-add_action('widgets_init', function() use ($container) {
-    $widget = $container->get('widget');
-    register_widget($widget);
-});
-
-// Register Gutenberg block server-side registration
-add_action('init', function() use ($container) {
-    $shareRenderer = $container->get('share_renderer');
-    $block = new \HtmlSocialShare\Blocks\ShareButtons\Block($shareRenderer);
-    $block->register();
-});
-
-// Initialize integrations loader
-if (class_exists('\HtmlSocialShare\IntegrationLoader')) {
-    $integrationLoader = new \HtmlSocialShare\IntegrationLoader($container);
-    if (method_exists($integrationLoader, 'init')) {
-        $integrationLoader->init();
+    public function getContainer(): Container
+    {
+        return $this->container;
     }
-}
 
-// Activation and deactivation hooks should reference the plugin file constant so
-// bootstrap can be used from the main plugin file without duplicating logic.
-if (defined('HTML_SOCIAL_SHARE_PLUGIN_FILE')) {
-    register_activation_hook(HTML_SOCIAL_SHARE_PLUGIN_FILE, function() use ($container) {
-        $migration = $container->get('migration');
+    // --- Hook handlers ---
+    public function handleCron(): void
+    {
+        $this->container->get('share_counts')->refreshCounts();
+    }
+
+    public function ajaxRefreshCounts(): void
+    {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'forbidden'], 403);
+        }
+
+        check_ajax_referer('hss_refresh_counts', '_hss_nonce');
+
+        try {
+            $this->container->get('share_counts')->refreshCounts();
+            wp_send_json_success(['message' => 'Refresh completed']);
+        } catch (\Exception $e) {
+            wp_send_json_error(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function ajaxFlushCounts(): void
+    {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'forbidden'], 403);
+        }
+
+        check_ajax_referer('hss_flush_counts', '_hss_flush_nonce');
+
+        $postIds = isset($_POST['post_ids']) && is_array($_POST['post_ids']) ? array_map('intval', $_POST['post_ids']) : null;
+        $removeDb = !empty($_POST['remove_db']);
+
+        try {
+            $this->container->get('share_counts')->flushCache($postIds, $removeDb);
+            wp_send_json_success(['message' => 'Flush completed']);
+        } catch (\Exception $e) {
+            wp_send_json_error(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function onActivate(): void
+    {
+        $migration = $this->container->get('migration');
         $migration->run();
 
-        if ($container->get('share_counts') && method_exists($container->get('share_counts'), 'installSchema')) {
-            $container->get('share_counts')->installSchema();
+        if ($this->container->get('share_counts') && method_exists($this->container->get('share_counts'), 'installSchema')) {
+            $this->container->get('share_counts')->installSchema();
         }
 
-        if ($container->get('share_counts') && method_exists($container->get('share_counts'), 'scheduleCron')) {
-            $container->get('share_counts')->scheduleCron();
+        if ($this->container->get('share_counts') && method_exists($this->container->get('share_counts'), 'scheduleCron')) {
+            $this->container->get('share_counts')->scheduleCron();
         }
-    });
+    }
 
-    register_deactivation_hook(HTML_SOCIAL_SHARE_PLUGIN_FILE, function() use ($container) {
-        if ($container && method_exists($container->get('share_counts'), 'unscheduleCron')) {
-            $container->get('share_counts')->unscheduleCron();
+    public function onDeactivate(): void
+    {
+        if ($this->container && method_exists($this->container->get('share_counts'), 'unscheduleCron')) {
+            $this->container->get('share_counts')->unscheduleCron();
         }
-    });
+    }
 }
 
-return $container;
+// Instantiate and return the container to the caller (main plugin file expects a container)
+$bootstrap = new Bootstrap(HTML_SOCIAL_SHARE_PLUGIN_FILE);
+return $bootstrap->getContainer();
