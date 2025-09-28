@@ -45,8 +45,26 @@ if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-// Instantiate Bootstrap and get the service container
-$bootstrap = new \HtmlSocialShare\Bootstrap(HTML_SOCIAL_SHARE_PLUGIN_FILE);
-$container = $bootstrap->getContainer();
+require_once __DIR__ . '/src/bootstrap.php';
+
+/**
+ * Get the plugin service container.
+ *
+ * Lazily instantiates the Bootstrap class and returns a shared Container instance.
+ *
+ * @return \HtmlSocialShare\Container
+ */
+function html_social_share_get_container(): \HtmlSocialShare\Container
+{
+    static $container = null;
+    if ($container === null) {
+        $bootstrap = new \HtmlSocialShare\Bootstrap(HTML_SOCIAL_SHARE_PLUGIN_FILE);
+        $container = $bootstrap->getContainer();
+    }
+    return $container;
+}
+
+// Retrieve container for immediate use
+$container = html_social_share_get_container();
 
 // Bootstrap performs initialization and hook wiring; container is available
