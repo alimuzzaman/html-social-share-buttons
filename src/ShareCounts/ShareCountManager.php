@@ -139,6 +139,19 @@ class ShareCountManager
             case 'facebook':
                 $adapter = new \HtmlSocialShare\ShareCounts\Adapters\FacebookAdapter($this->settings);
                 break;
+            case 'pinterest':
+                $adapter = new \HtmlSocialShare\ShareCounts\Adapters\PinterestAdapter($this->settings);
+                break;
+            case 'x':
+            case 'twitter':
+                $adapter = new \HtmlSocialShare\ShareCounts\Adapters\XAdapter();
+                break;
+            case 'linkedin':
+                $adapter = new \HtmlSocialShare\ShareCounts\Adapters\LinkedInAdapter($this->settings);
+                break;
+            case 'vk':
+                $adapter = new \HtmlSocialShare\ShareCounts\Adapters\VkAdapter();
+                break;
             default:
                 $adapter = new \HtmlSocialShare\ShareCounts\Adapters\GenericAdapter();
                 break;
