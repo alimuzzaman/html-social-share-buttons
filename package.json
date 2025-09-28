@@ -10,7 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:playwright:settings": "node test-settings-playwright.js",
     "test:playwright:frontend": "node tests/playwright/test-frontend-playwright.js",
-    "test:playwright": "npm run test:playwright:settings ; npm run test:playwright:frontend"
+    "test:playwright": "npm run test:playwright:settings ; npm run test:playwright:frontend",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed"
   },
   "keywords": [],
   "author": "",
@@ -18,5 +20,8 @@
   "description": "",
   "dependencies": {
     "playwright": "^1.55.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.1"
   }
 }
