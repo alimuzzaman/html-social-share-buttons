@@ -179,7 +179,8 @@ class IntegrationLoader
     public function loadElementorIntegration()
     {
         add_action('init', function() {
-            require_once __DIR__ . '/../Elementor/register_widget.php';
+            $integration = new \HtmlSocialShare\Integrations\Elementor\ElementorIntegration($this->container);
+            $integration->init();
         });
     }
 

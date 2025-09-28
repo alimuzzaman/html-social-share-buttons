@@ -34,3 +34,24 @@ All notable changes to this project are documented in this file.
 ---
 
 For detailed changes, see the individual commits on the `new` branch.
+
+## [1.1.0] - 2025-09-29
+### Added
+- Elementor integration and widget (`src/Integrations/Elementor/ShareButtonsWidget.php`, `src/Integrations/Elementor/ElementorIntegration.php`).
+- Advanced Icon Picker for admin (`src/Admin/IconPicker.php`) with search and live preview.
+- Pure function utilities for rendering and data processing (`src/Renderers/RenderUtils.php`, `src/Utils/DataUtils.php`, `src/Utils/ArrayUtils.php`).
+- ShareUrlBuilder and ShareButtonRenderer to separate URL-building and HTML rendering responsibilities (`src/Renderers/ShareUrlBuilder.php`, `src/Renderers/ShareButtonRenderer.php`).
+- RefactoredShareRenderer as a DI-friendly main renderer (`src/RefactoredShareRenderer.php`).
+- Unit tests for RenderUtils, IconPicker, Elementor and WPBakery components added.
+
+### Changed
+- WPBakery element enhanced with dynamic networks, accessibility improvements, and additional styling parameters (`src/Integrations/WPBakery/ShareButtonsElement.php`).
+- Updated README to reflect current implementation status and testing information.
+
+### Fixed
+- Miscellaneous bug fixes related to iconset mapping and admin preview handling.
+
+### Security
+- Added additional sanitization and validation utilities to reduce risk of XSS and malformed input.
+
+---
