@@ -154,28 +154,28 @@ This index aggregates all implementation tasks from the project documentation. T
 
 #### New Social Networks (5 tasks)
 
-- [DONE] **NEWNET-001**: Add Mastodon Support (3 hours) - `tasks/todo/new-features/new-social-networks.md`
-- [DONE] **NEWNET-002**: Add Bluesky Support (3 hours) - `tasks/todo/new-features/new-social-networks.md`
-- [DONE] **NEWNET-003**: Add Threads Support (3 hours) - `tasks/todo/new-features/new-social-networks.md`
-- [DONE] **NEWNET-004**: Add VK Support (3 hours) - `tasks/todo/new-features/new-social-networks.md`
-- [DONE] **NEWNET-005**: Add WeChat Support (4 hours) - `tasks/todo/new-features/new-social-networks.md`
+- [DONE] **NEWNET-001**: Add Mastodon Support (3 hours) - `tasks/done/new-features/new-social-networks.md`
+- [DONE] **NEWNET-002**: Add Bluesky Support (3 hours) - `tasks/done/new-features/new-social-networks.md`
+- [DONE] **NEWNET-003**: Add Threads Support (3 hours) - `tasks/done/new-features/new-social-networks.md`
+- [DONE] **NEWNET-004**: Add VK Support (3 hours) - `tasks/done/new-features/new-social-networks.md`
+- [DONE] **NEWNET-005**: Add WeChat Support (4 hours) - `tasks/done/new-features/new-social-networks.md`
 
 #### Share Count Display (5 tasks)
 
-- [DONE] **SHARECOUNT-001**: Design Share Count Storage and Caching (4 hours) - `tasks/todo/new-features/share-counts.md`
-- [DONE] **SHARECOUNT-002**: Implement Social Network APIs Integration (6 hours) - `tasks/todo/new-features/share-counts.md`
-- [DONE] **SHARECOUNT-003**: Add Share Count Display to Frontend (4 hours) - `tasks/todo/new-features/share-counts.md`
-- [DONE] **SHARECOUNT-004**: Implement Admin Settings for Share Counts (3 hours) - `tasks/todo/new-features/share-counts.md`
-- [DONE] **SHARECOUNT-005**: Add Share Count Testing and Validation (3 hours) - `tasks/todo/new-features/share-counts.md`
+- [DONE] **SHARECOUNT-001**: Design Share Count Storage and Caching (4 hours) - `tasks/done/new-features/share-counts.md`
+- [DONE] **SHARECOUNT-002**: Implement Social Network APIs Integration (6 hours) - `tasks/done/new-features/share-counts.md`
+- [DONE] **SHARECOUNT-003**: Add Share Count Display to Frontend (4 hours) - `tasks/done/new-features/share-counts.md`
+- [DONE] **SHARECOUNT-004**: Implement Admin Settings for Share Counts (3 hours) - `tasks/done/new-features/share-counts.md`
+- [DONE] **SHARECOUNT-005**: Add Share Count Testing and Validation (3 hours) - `tasks/done/new-features/share-counts.md`
 
 #### Gutenberg Block Support (6 tasks)
 
-- [DONE] **GUTENBERG-001**: Create Block Registration (3 hours) - `tasks/todo/new-features/gutenberg-block.md`
-- [DONE] **GUTENBERG-002**: Implement Block Editor Controls (4 hours) - `tasks/todo/new-features/gutenberg-block.md`
-- [DONE] **GUTENBERG-003**: Add Block Inspector Controls (3 hours) - `tasks/todo/new-features/gutenberg-block.md`
-- [DONE] **GUTENBERG-004**: Implement Block Preview (4 hours) - `tasks/todo/new-features/gutenberg-block.md`
-- [DONE] **GUTENBERG-005**: Add Block Accessibility Features (2 hours) - `tasks/todo/new-features/gutenberg-block.md`
-- [DONE] **GUTENBERG-006**: Test Block Functionality (3 hours) - `tasks/todo/new-features/gutenberg-block.md`
+- [DONE] **GUTENBERG-001**: Create Block Registration (3 hours) - `tasks/done/new-features/gutenberg-block.md`
+- [DONE] **GUTENBERG-002**: Implement Block Editor Controls (4 hours) - `tasks/done/new-features/gutenberg-block.md`
+- [DONE] **GUTENBERG-003**: Add Block Inspector Controls (3 hours) - `tasks/done/new-features/gutenberg-block.md`
+- [DONE] **GUTENBERG-004**: Implement Block Preview (4 hours) - `tasks/done/new-features/gutenberg-block.md`
+- [DONE] **GUTENBERG-005**: Add Block Accessibility Features (2 hours) - `tasks/done/new-features/gutenberg-block.md`
+- [DONE] **GUTENBERG-006**: Test Block Functionality (3 hours) - `tasks/done/new-features/gutenberg-block.md`
 
 #### BetterLinks Integration (5 tasks)
 
