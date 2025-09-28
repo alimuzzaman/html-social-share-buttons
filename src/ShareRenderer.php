@@ -57,6 +57,21 @@ class ShareRenderer implements ShareRendererInterface
             }
         }
 
+        // Special-case WeChat: render a QR code for privacy-friendly sharing
+        if ($network === 'wechat') {
+            $qrUrl = 'https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=' . rawurlencode($shareUrl);
+            $iconHtml = $icon;
+            $button = '<div class="hssb-share hssb-wechat" role="group" aria-label="Share on WeChat">';
+            $button .= sprintf('<button class="hssb-wechat-btn" type="button" aria-describedby="wechat-desc-%d">%s<span class="hssb-label">%s</span></button>',
+                crc32($shareUrl), $iconHtml, esc_html($label));
+            $button .= sprintf('<div id="wechat-desc-%d" class="hssb-wechat-qr" style="display:none">', crc32($shareUrl));
+            $button .= sprintf('<img src="%s" alt="QR code to share on WeChat" width="200" height="200">', esc_attr($qrUrl));
+            $button .= '</div></div>';
+
+            // Note: front-end JS can toggle visibility of the .hssb-wechat-qr element on click for progressive enhancement
+            return $button;
+        }
+
         $output = sprintf('<a class="hssb-share hssb-%s" href="%s" title="Share on %s" aria-label="Share on %s%s">%s<span class="hssb-label">%s</span>%s</a>',
             $label, $shareUrl, ucfirst($label), ucfirst($label), $handle ? ' with ' . $handle : '', $icon, $handle ? ' ' . $handle : '', $countHtml);
 
