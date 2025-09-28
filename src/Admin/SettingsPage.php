@@ -162,6 +162,17 @@ class SettingsPage
             $this->settings->set('share_counts_cache_ttl', $ttl);
         }
 
+        // Save aggregator integration settings
+        $this->settings->set('share_counts_aggregator_enabled', isset($_POST['share_counts_aggregator_enabled']));
+        if (isset($_POST['share_counts_aggregator_endpoint'])) {
+            $endpoint = sanitize_text_field($_POST['share_counts_aggregator_endpoint']);
+            $this->settings->set('share_counts_aggregator_endpoint', $endpoint);
+        }
+        if (isset($_POST['share_counts_aggregator_key'])) {
+            $key = sanitize_text_field($_POST['share_counts_aggregator_key']);
+            $this->settings->set('share_counts_aggregator_key', $key);
+        }
+
         // Save iconset
         if (isset($_POST['iconset'])) {
             $iconset = sanitize_text_field($_POST['iconset']);
@@ -440,6 +451,33 @@ class SettingsPage
             echo '</td>';
             echo '</tr>';
         }
+
+        // Aggregator configuration
+        $aggregatorEnabled = $this->settings->get('share_counts_aggregator_enabled', false);
+        $aggregatorEndpoint = $this->settings->get('share_counts_aggregator_endpoint', '');
+        $aggregatorKey = $this->settings->get('share_counts_aggregator_key', '');
+
+        echo '<tr>';
+        echo '<th scope="row"><label for="share_counts_aggregator_enabled">Aggregator Endpoint</label></th>';
+        echo '<td>';
+        echo '<label for="share_counts_aggregator_enabled">';
+        echo '<input type="checkbox" id="share_counts_aggregator_enabled" name="share_counts_aggregator_enabled" value="1" ' . checked($aggregatorEnabled, true, false) . '> Enable external aggregator endpoint for share counts (fallback)';
+        echo '</label><br><br>';
+
+        echo '<label for="share_counts_aggregator_endpoint">';
+        echo '<strong>Aggregator Endpoint URL</strong><br>';
+        echo '<input type="url" id="share_counts_aggregator_endpoint" name="share_counts_aggregator_endpoint" value="' . esc_attr($aggregatorEndpoint) . '" class="regular-text">';
+        echo '<p class="description">A JSON-based aggregator that returns {"count": N} or {"counts": {...}} for a given URL. Optional: add ?key= API key.</p>';
+        echo '</label><br><br>';
+
+        echo '<label for="share_counts_aggregator_key">';
+        echo '<strong>Aggregator API Key (optional)</strong><br>';
+        echo '<input type="text" id="share_counts_aggregator_key" name="share_counts_aggregator_key" value="' . esc_attr($aggregatorKey) . '" class="regular-text">';
+        echo '<p class="description">If your aggregator requires an API key, enter it here. The key will be sent as a query parameter named "key".</p>';
+        echo '</label>';
+
+        echo '</td>';
+        echo '</tr>';
 
         echo '</tbody>';
         echo '</table>';

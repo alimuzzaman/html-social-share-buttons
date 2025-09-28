@@ -29,18 +29,12 @@ class AggregatorAdapter implements AdapterInterface
 
         $endpointUrl = $endpoint . (strpos($endpoint, '?') === false ? '?' : '&') . http_build_query($query);
 
-        if (!function_exists('wp_remote_get')) {
-            error_log('HSS AggregatorAdapter: wp_remote_get not available in environment');
+        // Use the overridable request method to allow tests to stub HTTP behaviour
+        $body = $this->doRequest($endpointUrl);
+        if ($body === false) {
             return 0;
         }
 
-        $response = wp_remote_get($endpointUrl, ['timeout' => 10]);
-        if (is_wp_error($response)) {
-            error_log('HSS AggregatorAdapter: HTTP error: ' . $response->get_error_message());
-            return 0;
-        }
-
-        $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
         if (is_array($data) && isset($data['count'])) {
             return (int) $data['count'];
@@ -52,5 +46,28 @@ class AggregatorAdapter implements AdapterInterface
         }
 
         return 0;
+    }
+
+    /**
+     * Perform HTTP GET request to aggregator endpoint.
+     * Extracted into a protected method so tests can override it.
+     *
+     * @param string $endpointUrl
+     * @return string|false Body string on success or false on failure
+     */
+    protected function doRequest(string $endpointUrl)
+    {
+        if (!function_exists('wp_remote_get')) {
+            error_log('HSS AggregatorAdapter: wp_remote_get not available in environment');
+            return false;
+        }
+
+        $response = wp_remote_get($endpointUrl, ['timeout' => 10]);
+        if (is_wp_error($response)) {
+            error_log('HSS AggregatorAdapter: HTTP error: ' . $response->get_error_message());
+            return false;
+        }
+
+        return wp_remote_retrieve_body($response);
     }
 }
