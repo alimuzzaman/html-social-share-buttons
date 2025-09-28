@@ -113,7 +113,15 @@ class IconRegistry implements IconRegistryInterface
             'whatsapp.png' => 'whatsapp',
             'telegram.png' => 'telegram',
             'reddit.png' => 'reddit',
-            'tumblr.png' => 'tumblr'
+            'tumblr.png' => 'tumblr',
+            // New network icons
+            'mastodon.png' => 'mastodon',
+            'threads.png' => 'threads',
+            'vk.png' => 'vk',
+            'bluesky.png' => 'bluesky',
+            'wechat.png' => 'wechat',
+            'instagram.png' => 'instagram',
+            'messenger.png' => 'messenger'
         ];
 
         $icons = [];

@@ -12,11 +12,21 @@ const Edit = ({ attributes, setAttributes }) => {
 
     const availableNetworks = [
         { label: 'Facebook', value: 'facebook' },
-        { label: 'Twitter', value: 'twitter' },
+        { label: 'X (formerly Twitter)', value: 'twitter' },
         { label: 'LinkedIn', value: 'linkedin' },
-        { label: 'Google+', value: 'googleplus' },
         { label: 'Pinterest', value: 'pinterest' },
-        { label: 'Email', value: 'email' }
+        { label: 'WhatsApp', value: 'whatsapp' },
+        { label: 'Telegram', value: 'telegram' },
+        { label: 'Reddit', value: 'reddit' },
+        { label: 'Tumblr', value: 'tumblr' },
+        { label: 'Email', value: 'email' },
+        { label: 'Mastodon', value: 'mastodon' },
+        { label: 'Bluesky', value: 'bluesky' },
+        { label: 'Threads', value: 'threads' },
+        { label: 'VK', value: 'vk' },
+        { label: 'WeChat', value: 'wechat' },
+        { label: 'Instagram Direct', value: 'instagram' },
+        { label: 'Messenger', value: 'messenger' }
     ];
 
     const availableIconsets = [
