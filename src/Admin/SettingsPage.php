@@ -34,6 +34,7 @@ class SettingsPage
             'general' => 'General',
             'networks' => 'Networks',
             'profiles' => 'Profiles',
+            'integrations' => 'Integrations',
             'appearance' => 'Appearance',
             'placement' => 'Placement'
         ];
@@ -59,6 +60,10 @@ class SettingsPage
 
         echo '<div id="tab-profiles" class="tab-content" style="display: ' . ($currentTab === 'profiles' ? 'block' : 'none') . ';">';
         $this->renderProfilesTab();
+        echo '</div>';
+
+        echo '<div id="tab-integrations" class="tab-content" style="display: ' . ($currentTab === 'integrations' ? 'block' : 'none') . ';">';
+        $this->renderIntegrationsTab();
         echo '</div>';
 
         echo '<div id="tab-appearance" class="tab-content" style="display: ' . ($currentTab === 'appearance' ? 'block' : 'none') . ';">';
@@ -137,7 +142,10 @@ class SettingsPage
             'auto_hide' => 'auto_hide',
             'use_port' => 'use_port',
             'google_analytics' => 'google_analytics',
-            'nofollow' => 'nofollow'
+            'nofollow' => 'nofollow',
+            'betterlinks_enabled' => 'betterlinks_enabled',
+            'betterlinks_shorten_urls' => 'betterlinks_shorten_urls',
+            'betterlinks_add_tracking' => 'betterlinks_add_tracking'
         ];
 
         foreach ($booleanSettings as $settingKey => $postKey) {
@@ -182,6 +190,9 @@ class SettingsPage
         $autoHide = $this->settings->get('auto_hide', false);
         $usePort = $this->settings->get('use_port', false);
         $nofollow = $this->settings->get('nofollow', false);
+        $betterlinksEnabled = $this->settings->get('betterlinks_enabled', false);
+        $betterlinksShortenUrls = $this->settings->get('betterlinks_shorten_urls', true);
+        $betterlinksAddTracking = $this->settings->get('betterlinks_add_tracking', true);
 
         // Migration status
         $migrationStatus = $this->settings->getMigrationStatus();
@@ -201,9 +212,7 @@ class SettingsPage
                 echo '<p><strong>Migration pending.</strong> Legacy options detected that need to be migrated to the new format.</p>';
                 echo '</div>';
             }
-        }
-
-        echo '<table class="form-table">';
+}        echo '<table class="form-table">';
         echo '<tbody>';
 
         // Title field
@@ -270,7 +279,27 @@ class SettingsPage
         echo '<label for="nofollow">';
         echo '<input type="checkbox" id="nofollow" name="nofollow" value="1" ' . checked($nofollow, true, false) . '> ';
         echo 'Add nofollow to social links';
-        echo '</label>';
+        echo '</label><br><br>';
+
+        // BetterLinks Integration
+        echo '<strong>BetterLinks Integration</strong><br>';
+        echo '<label for="betterlinks_enabled">';
+        echo '<input type="checkbox" id="betterlinks_enabled" name="betterlinks_enabled" value="1" ' . checked($betterlinksEnabled, true, false) . '> ';
+        echo 'Enable BetterLinks integration';
+        echo '</label><br>';
+        echo '<span class="description">Automatically shorten share URLs using BetterLinks plugin.</span><br><br>';
+
+        echo '<label for="betterlinks_shorten_urls">';
+        echo '<input type="checkbox" id="betterlinks_shorten_urls" name="betterlinks_shorten_urls" value="1" ' . checked($betterlinksShortenUrls, true, false) . ' ' . disabled($betterlinksEnabled, false, false) . '> ';
+        echo 'Shorten URLs with BetterLinks';
+        echo '</label><br><br>';
+
+        echo '<label for="betterlinks_add_tracking">';
+        echo '<input type="checkbox" id="betterlinks_add_tracking" name="betterlinks_add_tracking" value="1" ' . checked($betterlinksAddTracking, true, false) . ' ' . disabled($betterlinksEnabled, false, false) . '> ';
+        echo 'Add UTM tracking parameters';
+        echo '</label><br>';
+        echo '<span class="description">Add UTM parameters for better analytics tracking.</span>';
+
         echo '</fieldset>';
         echo '</td>';
         echo '</tr>';
@@ -332,6 +361,38 @@ class SettingsPage
             }
             echo '</tbody></table>';
         }
+    }
+
+    private function renderIntegrationsTab()
+    {
+        echo '<h2>Integrations</h2>';
+        echo '<p>Configure integrations with third-party plugins and services.</p>';
+
+        // Get integration status
+        $integrations = $this->getIntegrationStatus();
+
+        echo '<table class="form-table">';
+        echo '<tbody>';
+
+        foreach ($integrations as $slug => $integration) {
+            echo '<tr>';
+            echo '<th scope="row"><label for="integration_' . esc_attr($slug) . '">' . esc_html($integration['name']) . '</label></th>';
+            echo '<td>';
+            if ($integration['available']) {
+                echo '<span class="dashicons dashicons-yes" style="color: green;"></span> Available';
+                if ($integration['active']) {
+                    echo ' | <a href="' . esc_url(admin_url('admin.php?page=html-social-share&tab=integrations&integration=' . $slug)) . '" class="button">Configure</a>';
+                }
+            } else {
+                echo '<span class="dashicons dashicons-no" style="color: red;"></span> Not Available';
+                echo '<p class="description">Install and activate ' . esc_html($integration['name']) . ' to enable this integration.</p>';
+            }
+            echo '</td>';
+            echo '</tr>';
+        }
+
+        echo '</tbody>';
+        echo '</table>';
     }
 
     private function renderAppearanceTab()
@@ -519,5 +580,26 @@ class SettingsPage
     public function getShareRenderer()
     {
         return $this->shareRenderer;
+    }
+
+    private function getIntegrationStatus()
+    {
+        return [
+            'betterlinks' => [
+                'name' => 'BetterLinks',
+                'available' => class_exists('BetterLinks'),
+                'active' => $this->settings->get('betterlinks_enabled', false)
+            ],
+            'woocommerce' => [
+                'name' => 'WooCommerce',
+                'available' => class_exists('WooCommerce'),
+                'active' => true // Always available when WooCommerce is active
+            ],
+            'elementor' => [
+                'name' => 'Elementor',
+                'available' => defined('ELEMENTOR_VERSION'),
+                'active' => true // Always available when Elementor is active
+            ]
+        ];
     }
 }
