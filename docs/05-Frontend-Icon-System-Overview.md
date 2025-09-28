@@ -59,7 +59,7 @@ This document defines the frontend icon system for Html Social Share Buttons fol
 - Default markup example (server-rendered, no-JS):
 
 ```html
-<a class="hss-profile-button hss-profile-twitter" href="https://twitter.com/example" target="_blank" rel="noopener noreferrer" aria-label="Follow on X">
+<a class="hss-profile-button hss-profile-twitter" href="https://x.com/example" target="_blank" rel="noopener noreferrer" aria-label="Follow on X">
   <span class="hss-icon-wrap" aria-hidden="true">
     <!-- inline sanitized svg here -->
     <svg viewBox="0 0 24 24" role="img" focusable="false"><path d="..."></path></svg>

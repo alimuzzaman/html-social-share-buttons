@@ -59,7 +59,7 @@ Example JSON (stored as PHP array via update_option):
     'type'=>'profile',
     'label'=>'Follow on X',
     'handle'=>'twitter',
-    'url'=>'https://twitter.com/example',
+    'url'=>'https://x.com/example',
     'visible'=>true,
     'icon' => ['source'=>'custom','ref'=>'svg_hash_abc'],
   ]

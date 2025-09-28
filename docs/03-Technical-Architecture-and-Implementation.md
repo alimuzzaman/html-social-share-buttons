@@ -241,7 +241,7 @@ Our implementation will **always default to static, privacy-safe HTML output**.
 
 - **Pure HTML `<a>` tags** using “share URLs” per network, e.g.:
   ```html
-  <a href="https://twitter.com/intent/tweet?url=...&text=..." rel="noopener noreferrer" target="_blank">
+  <a href="https://x.com/intent/tweet?url=...&text=..." rel="noopener noreferrer" target="_blank">
     <svg>...</svg> Share on Twitter
   </a>
   ```
@@ -262,7 +262,7 @@ Link templates per network are defined centrally (e.g., Twitter, Facebook, Linke
 **Sample PHP Snippet:**
 ```php
 'share_url' => sprintf(
-    'https://twitter.com/intent/tweet?url=%s&text=%s',
+    'https://x.com/intent/tweet?url=%s&text=%s',
     rawurlencode( $url ),
     rawurlencode( $title )
 )
@@ -415,7 +415,7 @@ This newly scoped feature allows site admins to display profile/follow buttons f
 - Admin interface for configuring profile URLs per network (Twitter, LinkedIn, etc.)
 - Option to enable/disable each network per display instance
 - Frontend rendering reuses the same icon and button system as share links
-- Output: `<a href="https://twitter.com/handle" rel="me noopener" target="_blank">Twitter</a>`
+- Output: `<a href="https://x.com/handle" rel="me noopener" target="_blank">X</a>`
 
 **Differentiation from share links:** No post metadata passed, URLs are static to admin’s public profiles.
 
