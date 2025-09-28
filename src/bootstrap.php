@@ -113,4 +113,55 @@ add_action('wp_ajax_hss_flush_share_counts', function() use ($container) {
     }
 });
 
+// Initialize admin interface (instantiates Admin class and registers admin hooks)
+$container->get('admin');
+
+// Initialize content display and ensure frontend styles are enqueued
+$container->get('content_display');
+add_action('wp_enqueue_scripts', [$container->get('content_display'), 'enqueueFrontendStyles']);
+
+// Register widget at widgets_init
+add_action('widgets_init', function() use ($container) {
+    $widget = $container->get('widget');
+    register_widget($widget);
+});
+
+// Register Gutenberg block server-side registration
+add_action('init', function() use ($container) {
+    $shareRenderer = $container->get('share_renderer');
+    $block = new \HtmlSocialShare\Blocks\ShareButtons\Block($shareRenderer);
+    $block->register();
+});
+
+// Initialize integrations loader
+if (class_exists('\HtmlSocialShare\IntegrationLoader')) {
+    $integrationLoader = new \HtmlSocialShare\IntegrationLoader($container);
+    if (method_exists($integrationLoader, 'init')) {
+        $integrationLoader->init();
+    }
+}
+
+// Activation and deactivation hooks should reference the plugin file constant so
+// bootstrap can be used from the main plugin file without duplicating logic.
+if (defined('HTML_SOCIAL_SHARE_PLUGIN_FILE')) {
+    register_activation_hook(HTML_SOCIAL_SHARE_PLUGIN_FILE, function() use ($container) {
+        $migration = $container->get('migration');
+        $migration->run();
+
+        if ($container->get('share_counts') && method_exists($container->get('share_counts'), 'installSchema')) {
+            $container->get('share_counts')->installSchema();
+        }
+
+        if ($container->get('share_counts') && method_exists($container->get('share_counts'), 'scheduleCron')) {
+            $container->get('share_counts')->scheduleCron();
+        }
+    });
+
+    register_deactivation_hook(HTML_SOCIAL_SHARE_PLUGIN_FILE, function() use ($container) {
+        if ($container && method_exists($container->get('share_counts'), 'unscheduleCron')) {
+            $container->get('share_counts')->unscheduleCron();
+        }
+    });
+}
+
 return $container;
