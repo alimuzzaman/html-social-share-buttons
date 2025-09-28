@@ -33,6 +33,7 @@ class SettingsPage
         $tabs = [
             'general' => 'General',
             'networks' => 'Networks',
+            'profiles' => 'Profiles',
             'appearance' => 'Appearance',
             'placement' => 'Placement'
         ];
@@ -54,6 +55,10 @@ class SettingsPage
 
         echo '<div id="tab-networks" class="tab-content" style="display: ' . ($currentTab === 'networks' ? 'block' : 'none') . ';">';
         $this->renderNetworksTab();
+        echo '</div>';
+
+        echo '<div id="tab-profiles" class="tab-content" style="display: ' . ($currentTab === 'profiles' ? 'block' : 'none') . ';">';
+        $this->renderProfilesTab();
         echo '</div>';
 
         echo '<div id="tab-appearance" class="tab-content" style="display: ' . ($currentTab === 'appearance' ? 'block' : 'none') . ';">';
@@ -178,6 +183,26 @@ class SettingsPage
         $usePort = $this->settings->get('use_port', false);
         $nofollow = $this->settings->get('nofollow', false);
 
+        // Migration status
+        $migrationStatus = $this->settings->getMigrationStatus();
+        if (!empty($migrationStatus)) {
+            if (!empty($migrationStatus['done'])) {
+                echo '<div class="notice notice-success inline">';
+                echo '<p><strong>Migration completed successfully!</strong></p>';
+                if (!empty($migrationStatus['from_version'])) {
+                    echo '<p>Migrated from version: ' . esc_html($migrationStatus['from_version']) . '</p>';
+                }
+                if (!empty($migrationStatus['date'])) {
+                    echo '<p>Migration date: ' . esc_html($migrationStatus['date']) . '</p>';
+                }
+                echo '</div>';
+            } else {
+                echo '<div class="notice notice-warning inline">';
+                echo '<p><strong>Migration pending.</strong> Legacy options detected that need to be migrated to the new format.</p>';
+                echo '</div>';
+            }
+        }
+
         echo '<table class="form-table">';
         echo '<tbody>';
 
@@ -276,6 +301,37 @@ class SettingsPage
         }
         echo '</tbody>';
         echo '</table>';
+    }
+
+    private function renderProfilesTab()
+    {
+        echo '<h2>Social Profiles</h2>';
+        echo '<p>Manage social network profiles and share configurations.</p>';
+
+        // This is a basic implementation - in a real scenario, you'd have forms to edit profiles
+        echo '<div class="notice notice-info inline">';
+        echo '<p>Profile management is handled automatically based on enabled networks. Custom profiles can be managed programmatically.</p>';
+        echo '</div>';
+
+        // Show current profiles
+        $profiles = $this->settings->getAllProfiles();
+        if (!empty($profiles)) {
+            echo '<h3>Current Profiles</h3>';
+            echo '<table class="widefat">';
+            echo '<thead><tr><th>Network</th><th>Type</th><th>Label</th><th>URL Template</th><th>Status</th></tr></thead>';
+            echo '<tbody>';
+            foreach ($profiles as $profile) {
+                $status = !empty($profile['visible']) ? 'Enabled' : 'Disabled';
+                echo '<tr>';
+                echo '<td>' . esc_html($profile['handle'] ?? $profile['id']) . '</td>';
+                echo '<td>' . esc_html($profile['type'] ?? 'share') . '</td>';
+                echo '<td>' . esc_html($profile['label']) . '</td>';
+                echo '<td>' . esc_html($profile['url_template']) . '</td>';
+                echo '<td>' . $status . '</td>';
+                echo '</tr>';
+            }
+            echo '</tbody></table>';
+        }
     }
 
     private function renderAppearanceTab()

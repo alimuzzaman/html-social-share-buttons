@@ -17,14 +17,16 @@ class ShareRenderer implements ShareRendererInterface
         }
     }
 
-    public function render(string $network, array $profile, string $url = '#'): string
+    public function render(string $network, array $profile, string $url = '#', string $title = ''): string
     {
         // Debug: Log render call
         error_log("HSS Debug: Rendering network '{$network}' with profile: " . json_encode($profile));
 
         $label = htmlspecialchars($network, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $handle = isset($profile['handle']) ? htmlspecialchars($profile['handle'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : '';
-        $url = '#';
+
+        // Use provided URL or generate from template
+        $shareUrl = ($url !== '#') ? $url : $this->generateShareUrl($profile, $url, $title);
 
         $icon = $this->iconRegistry->getIcon($network);
         if (!$icon) {
@@ -33,30 +35,36 @@ class ShareRenderer implements ShareRendererInterface
         }
 
         $output = sprintf('<a class="hssb-share hssb-%s" href="%s" title="Share on %s">%s<span class="hssb-label">%s</span></a>',
-            $label, $url, ucfirst($label), $icon, $handle ? ' ' . $handle : '');
+            $label, $shareUrl, ucfirst($label), $icon, $handle ? ' ' . $handle : '');
 
         error_log("HSS Debug: Rendered output for '{$network}': " . substr($output, 0, 100) . '...');
         return $output;
     }
 
     /**
-     * Get CSS for all icons
+     * Generate share URL from profile template
      *
-     * @return string
+     * @param array $profile Profile data
+     * @param string $url The URL to share
+     * @param string $title The title to share
+     * @return string Generated share URL
      */
-    public function getIconCSS(): string
+    private function generateShareUrl(array $profile, string $url, string $title = ''): string
     {
-        if (method_exists($this->iconRegistry, 'getIconCSS')) {
-            $iconCSS = $this->iconRegistry->getIconCSS();
-            if (!empty($iconCSS)) {
-                $css = '<style>';
-                foreach ($iconCSS as $class => $url) {
-                    $css .= sprintf('.%s { background-image: url("%s"); background-size: contain; background-repeat: no-repeat; background-position: center; }', $class, $url);
-                }
-                $css .= '</style>';
-                return $css;
-            }
+        if (empty($profile['url_template'])) {
+            return '#';
         }
-        return '';
+
+        $template = $profile['url_template'];
+
+        // Replace placeholders
+        $replacements = [
+            '{url}' => urlencode($url),
+            '{title}' => urlencode($title),
+            '{encoded_url}' => urlencode($url),
+            '{encoded_title}' => urlencode($title),
+        ];
+
+        return str_replace(array_keys($replacements), array_values($replacements), $template);
     }
 }

@@ -9,9 +9,11 @@ interface ShareRendererInterface
      *
      * @param string $network
      * @param array $profile
+     * @param string $url
+     * @param string $title
      * @return string
      */
-    public function render(string $network, array $profile): string;
+    public function render(string $network, array $profile, string $url = '#', string $title = ''): string;
 
     /**
      * Set the iconset to use for rendering.
