@@ -57,8 +57,8 @@ class ShareRenderer implements ShareRendererInterface
             }
         }
 
-        $output = sprintf('<a class="hssb-share hssb-%s" href="%s" title="Share on %s">%s<span class="hssb-label">%s</span>%s</a>',
-            $label, $shareUrl, ucfirst($label), $icon, $handle ? ' ' . $handle : '', $countHtml);
+        $output = sprintf('<a class="hssb-share hssb-%s" href="%s" title="Share on %s" aria-label="Share on %s%s">%s<span class="hssb-label">%s</span>%s</a>',
+            $label, $shareUrl, ucfirst($label), ucfirst($label), $handle ? ' with ' . $handle : '', $icon, $handle ? ' ' . $handle : '', $countHtml);
 
         error_log("HSS Debug: Rendered output for '{$network}': " . substr($output, 0, 100) . '...');
         return $output;

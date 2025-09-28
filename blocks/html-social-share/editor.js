@@ -4,6 +4,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, TextControl, CheckboxControl } from '@wordpress/components';
+import { ServerSideRender } from '@wordpress/server-side-render';
 import { __ } from '@wordpress/i18n';
 
 const Edit = ({ attributes, setAttributes }) => {
@@ -76,16 +77,12 @@ const Edit = ({ attributes, setAttributes }) => {
                 </PanelBody>
             </InspectorControls>
 
-            <div {...useBlockProps()} style={{ textAlign: alignment }}>
-                {title && <div className="share-title">{title}</div>}
-                <div className="share-buttons">
-                    {networks.map(network => (
-                        <span key={network} className={`hssb-share hssb-${network}`}>
-                            <span className="dashicons dashicons-share"></span>
-                            <span className="hssb-label">{network}</span>
-                        </span>
-                    ))}
-                </div>
+            <div {...useBlockProps()}>
+                <ServerSideRender
+                    block="html-social-share/buttons"
+                    attributes={attributes}
+                    httpMethod="POST"
+                />
             </div>
         </>
     );

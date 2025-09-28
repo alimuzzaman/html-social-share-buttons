@@ -62,13 +62,13 @@ class Block
             $this->shareRenderer->setIconset($internalIconset);
         }
 
-        $output = '<div class="wp-block-html-social-share-buttons" style="text-align: ' . esc_attr($alignment) . ';">';
+        $output = '<div class="wp-block-html-social-share-buttons" style="text-align: ' . esc_attr($alignment) . ';" role="group" aria-label="' . esc_attr__('Social sharing buttons', 'html-social-share') . '">';
 
         if (!empty($title)) {
             $output .= '<div class="share-title">' . esc_html($title) . '</div>';
         }
 
-        $output .= '<div class="share-buttons">';
+        $output .= '<div class="share-buttons" role="group" aria-label="' . esc_attr__('Share buttons', 'html-social-share') . '">';
 
         foreach ($networks as $network) {
             $profile = ['handle' => '@example', 'network' => $network];

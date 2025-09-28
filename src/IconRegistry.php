@@ -80,7 +80,7 @@ class IconRegistry implements IconRegistryInterface
      */
     private function loadBuiltinIcons(): void
     {
-        $networks = ['facebook', 'twitter', 'linkedin', 'pinterest', 'email', 'whatsapp', 'telegram', 'reddit', 'tumblr'];
+        $networks = ['facebook', 'twitter', 'linkedin', 'pinterest', 'email', 'whatsapp', 'telegram', 'reddit', 'tumblr', 'mastodon', 'threads', 'vk', 'bluesky', 'wechat', 'instagram', 'messenger'];
 
         foreach ($networks as $network) {
             $this->loadedIcons[$network] = $this->renderIcon($network, []);
