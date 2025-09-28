@@ -45,8 +45,6 @@ if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-require_once __DIR__ . '/src/bootstrap.php';
-
 /**
  * Get the plugin service container.
  *
@@ -64,7 +62,7 @@ function html_social_share_get_container(): \HtmlSocialShare\Container
     return $container;
 }
 
-// Retrieve container for immediate use
-$container = html_social_share_get_container();
+// Ensure Bootstrap is instantiated (do not keep a local reference)
+html_social_share_get_container();
 
 // Bootstrap performs initialization and hook wiring; container is available
