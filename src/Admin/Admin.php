@@ -282,6 +282,15 @@ class Admin
                 [],
                 '1.0.0'
             );
+
+            // Lightweight JS to enable WeChat QR progressive enhancement in preview
+            wp_enqueue_script(
+                'html-social-share-wechat-toggle',
+                HTML_SOCIAL_SHARE_JS_URL . 'wechat-toggle.js',
+                [],
+                '1.0.0',
+                true
+            );
         }
     }
 

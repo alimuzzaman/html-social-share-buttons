@@ -152,6 +152,15 @@ class ShareCountManager
             case 'vk':
                 $adapter = new \HtmlSocialShare\ShareCounts\Adapters\VkAdapter();
                 break;
+            case 'mastodon':
+                $adapter = new \HtmlSocialShare\ShareCounts\Adapters\MastodonAdapter();
+                break;
+            case 'bluesky':
+                $adapter = new \HtmlSocialShare\ShareCounts\Adapters\BlueskyAdapter();
+                break;
+            case 'threads':
+                $adapter = new \HtmlSocialShare\ShareCounts\Adapters\ThreadsAdapter();
+                break;
             default:
                 $adapter = new \HtmlSocialShare\ShareCounts\Adapters\GenericAdapter();
                 break;

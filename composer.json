@@ -3,7 +3,8 @@
   "description": "HTML Social Share Buttons plugin - PSR-4 setup",
   "type": "wordpress-plugin",
   "require": {
-    "php": ">=7.4"
+    "php": ">=7.4",
+    "endroid/qr-code": "^4.6"
   },
   "autoload": {
     "psr-4": {

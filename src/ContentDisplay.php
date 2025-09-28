@@ -313,5 +313,14 @@ class ContentDisplay
             [],
             '1.0.0'
         );
+
+        // Enqueue progressive enhancement JS for WeChat QR toggle
+        wp_enqueue_script(
+            'html-social-share-wechat-toggle',
+            HTML_SOCIAL_SHARE_JS_URL . 'wechat-toggle.js',
+            [],
+            '1.0.0',
+            true
+        );
     }
 }
