@@ -189,6 +189,5 @@ class Bootstrap
     }
 }
 
-// Instantiate and return the container to the caller (main plugin file expects a container)
-$bootstrap = new Bootstrap(HTML_SOCIAL_SHARE_PLUGIN_FILE);
-return $bootstrap->getContainer();
+// NOTE: Bootstrap no longer self-instantiates. The main plugin file should
+// instantiate the Bootstrap class and retrieve the container via getContainer().

@@ -45,14 +45,8 @@ if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$container = require __DIR__ . '/src/bootstrap.php';
+// Instantiate Bootstrap and get the service container
+$bootstrap = new \HtmlSocialShare\Bootstrap(HTML_SOCIAL_SHARE_PLUGIN_FILE);
+$container = $bootstrap->getContainer();
 
-if ($container === null) {
-    // Composer dependencies not installed
-    add_action('admin_notices', function() {
-        echo '<div class="notice notice-error"><p>HTML Social Share Buttons: Composer dependencies not installed. Please run <code>composer install</code>.</p></div>';
-    });
-    return;
-}
-
-// Bootstrap performs all registration and hook wiring. Keep the main plugin file minimal.
+// Bootstrap performs initialization and hook wiring; container is available
