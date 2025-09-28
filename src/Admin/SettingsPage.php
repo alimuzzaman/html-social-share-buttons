@@ -608,17 +608,18 @@ class SettingsPage
                 formData.append('action', 'hssb_live_preview');
                 formData.append('_wpnonce', '<?php echo wp_create_nonce('hssb_live_preview'); ?>');
 
-                fetch(ajaxurl, {
+                fetch(ajaxurl + '?action=hssb_live_preview', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    credentials: 'same-origin'
                 })
                 .then(response => response.json())
-                .then data => {
+                .then(function(data) {
                     if (data.success && data.data.html) {
                         previewContainer.innerHTML = data.data.html;
                     }
                 })
-                .catch(error => {
+                .catch(function(error) {
                     console.error('Preview update failed:', error);
                 });
             }
