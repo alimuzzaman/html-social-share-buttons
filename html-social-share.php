@@ -35,20 +35,16 @@ define('HTML_SOCIAL_SHARE_CSS_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/css/'
 define('HTML_SOCIAL_SHARE_JS_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/js/');
 define('HTML_SOCIAL_SHARE_IMAGES_URL', HTML_SOCIAL_SHARE_PLUGIN_URL . 'assets/images/');
 
-// Ensure composer autoloader is loaded from the main plugin directory.
-if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
-    add_action('admin_notices', function() {
-        echo '<div class="notice notice-error"><p>HTML Social Share Buttons: Composer dependencies not installed. Please run <code>composer install</code> in the plugin directory.</p></div>';
-    });
-    return;
-}
-
-require_once __DIR__ . '/vendor/autoload.php';
+// NOTE: Do not require the autoloader here at top-level. The helper will
+// perform a combined check for the autoload file and the Bootstrap class
+// and report a single, clear admin notice when issues occur.
 
 /**
  * Get the plugin service container.
  *
  * Lazily instantiates the Bootstrap class and returns a shared Container instance.
+ * If Composer autoloader is missing or the Bootstrap class cannot be loaded,
+ * registers an admin notice and returns null.
  *
  * @return ?\HtmlSocialShare\Container
  */
@@ -56,18 +52,34 @@ function html_social_share_get_container(): ?\HtmlSocialShare\Container
 {
     static $container = null;
 
-    // If autoloading isn't working or the Bootstrap class isn't available,
-    // register an admin notice and avoid a fatal error by returning null.
+    // If vendor autoload is missing, show clear instructions
+    $autoloadPath = __DIR__ . '/vendor/autoload.php';
+    if (! file_exists($autoloadPath)) {
+        add_action('admin_notices', function() use ($autoloadPath) {
+            $pluginDir = esc_html(HTML_SOCIAL_SHARE_PLUGIN_DIR);
+            $cmd = '<code>composer install</code>';
+            echo '<div class="notice notice-error"><p><strong>HTML Social Share Buttons:</strong> Composer autoloader not found in <code>' . esc_html($autoloadPath) . '</code>. Please run ' . $cmd . ' in the plugin directory (<code>' . $pluginDir . '</code>).</p></div>';
+        });
+
+        if (function_exists('error_log')) {
+            error_log('HTML Social Share: vendor/autoload.php not found. Run composer install.');
+        }
+
+        return null;
+    }
+
+    // Load the autoloader (once)
+    require_once $autoloadPath;
+
+    // After loading, ensure our Bootstrap class is available
     if (! class_exists('\HtmlSocialShare\\Bootstrap')) {
         add_action('admin_notices', function() {
             $pluginDir = esc_html(HTML_SOCIAL_SHARE_PLUGIN_DIR);
-            $cmd = '<code>composer install</code>';
-            echo '<div class="notice notice-error"><p><strong>HTML Social Share Buttons:</strong> The plugin autoloader is not available and the plugin cannot initialize. Please ensure Composer dependencies are installed in <code>' . $pluginDir . '</code> and the autoloader is present. On your machine run: ' . $cmd . ' in the plugin directory.</p></div>';
+            echo '<div class="notice notice-error"><p><strong>HTML Social Share Buttons:</strong> The plugin autoloader was loaded but the plugin classes could not be found. Please verify that the plugin files are present in <code>' . $pluginDir . '</code> and that the autoloader is up-to-date (run <code>composer dump-autoload</code>).</p></div>';
         });
 
-        // Log for server admins / CI
         if (function_exists('error_log')) {
-            error_log('HTML Social Share: Bootstrap class not found. Ensure composer install was run.');
+            error_log('HTML Social Share: Bootstrap class not found after autoloader was loaded. Check composer dump-autoload.');
         }
 
         return null;
