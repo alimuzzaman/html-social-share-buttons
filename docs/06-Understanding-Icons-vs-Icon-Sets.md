@@ -20,7 +20,7 @@ Icons have become especially prominent in applications, websites, mobile interfa
 
 ### Core Concept
 
-An **individual icon** is a single, standalone graphic element representing a specific entity, function, or platform. In the scope of a WordPress plugin, an individual icon could represent a social media service such as Facebook, X/Twitter, GitHub, LinkedIn, or Instagram.
+An **individual icon** is a single, standalone graphic element representing a specific entity, function, or platform. In the scope of a WordPress plugin, an individual icon could represent a social media service such as Facebook, X (formerly Twitter), GitHub, LinkedIn, or Instagram.
 
 For example, the graphical mark for Facebook—a stylized "f"—is an individual icon used to denote the social network across sites and applications.
 
