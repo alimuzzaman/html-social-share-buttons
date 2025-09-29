@@ -12,7 +12,8 @@
     }
   },
   "require-dev": {
-    "phpunit/phpunit": "^12.3"
+    "phpunit/phpunit": "^11.0",
+    "yoast/phpunit-polyfills": "^3.0"
   },
   "scripts": {
     "test": "phpunit",
@@ -22,7 +23,7 @@
     "test:performance": "php performance-test.php",
     "test:all": [
       "@test:utils",
-      "@test:security", 
+      "@test:security",
       "@test:performance"
     ]
   }

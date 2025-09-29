@@ -20,7 +20,7 @@ if ( false !== $_phpunit_polyfills_path ) {
 // Check if WordPress test environment is available
 if ( ! file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
 	echo "Could not find {$_tests_dir}/includes/functions.php, have you run bin/install-wp-tests.sh ?" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	
+
 	// Try to set up a minimal test environment for utility testing
 	if ( ! function_exists( 'tests_add_filter' ) ) {
 		/**
@@ -45,7 +45,7 @@ function _manually_load_plugin() {
 	if ( file_exists( $plugin_file ) ) {
 		require $plugin_file;
 	}
-	
+
 	// Also load the bootstrap for utility classes
 	$bootstrap_file = dirname( dirname( __FILE__ ) ) . '/src/bootstrap.php';
 	if ( file_exists( $bootstrap_file ) ) {
