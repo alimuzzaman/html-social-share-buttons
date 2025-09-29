@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="tests/bootstrap.php"
+         colors="true"
+         verbose="true"
+         stopOnFailure="false"
+         processIsolation="false"
+         backupGlobals="false"
+         syntaxCheck="false">
+    <testsuites>
+        <testsuite name="Html Social Share Buttons Unit Tests">
+            <directory>./tests/unit/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src/</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-html" target="./test-results/coverage" lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="./test-results/clover.xml"/>
+    </logging>
+</phpunit>

@@ -8,10 +8,10 @@ use HtmlSocialShare\Svg\SanitizerInterface;
 
 /**
  * Icon registry with enhanced security and pure functions
- * 
+ *
  * Manages icon sets, custom icons, and SVG rendering with proper sanitization
  * and caching. Separates pure icon processing from WordPress-specific I/O.
- * 
+ *
  * @package HtmlSocialShare
  * @since 3.0.0
  */
@@ -425,5 +425,43 @@ class IconRegistry implements IconRegistryInterface
         }
 
         return $iconsets;
+    }
+
+    /**
+     * Validate iconset ID (pure function)
+     *
+     * @param string $iconsetId
+     * @return bool
+     */
+    private static function isValidIconsetId(string $iconsetId): bool
+    {
+        // Basic validation - alphanumeric with underscores and hyphens
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $iconsetId)) {
+            return false;
+        }
+
+        // Length check
+        if (strlen($iconsetId) < 1 || strlen($iconsetId) > 50) {
+            return false;
+        }
+
+        // Reserved names
+        $reserved = ['..', '.', 'admin', 'wp-admin', 'wp-content'];
+        if (in_array($iconsetId, $reserved, true)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Clear internal cache
+     *
+     * @return void
+     */
+    private function clearCache(): void
+    {
+        $this->cache = [];
+        $this->iconCSS = [];
     }
 }

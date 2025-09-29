@@ -35,7 +35,7 @@ if (!function_exists('update_option')) {
 }
 
 $settings = new HtmlSocialShare\Settings();
-$registry = new HtmlSocialShare\IconRegistry($settings, __DIR__ . '/../../', 'http://example.com/wp-content/plugins/html-social-share-buttons');
+$registry = new HtmlSocialShare\IconRegistry($settings, null);
 $ctrl = new HtmlSocialShare\Admin\IconsController($registry);
 $html = $ctrl->index();
 
