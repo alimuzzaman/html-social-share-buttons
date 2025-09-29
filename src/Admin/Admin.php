@@ -4,374 +4,369 @@ namespace HtmlSocialShare\Admin;
 use HtmlSocialShare\SettingsInterface;
 use HtmlSocialShare\ProfileManagerInterface;
 use HtmlSocialShare\ShareRendererInterface;
+use HtmlSocialShare\Utils\SecurityUtils;
+use HtmlSocialShare\Utils\ArrayUtils;
+use HtmlSocialShare\Renderers\RenderUtils;
 
+/**
+ * WordPress Admin interface with enhanced security
+ * 
+ * Handles admin menu registration, page rendering, and AJAX operations
+ * with proper CSRF protection, input validation, and output escaping.
+ * 
+ * @since 3.0.0
+ */
 class Admin
 {
     private $settings;
+    private $profileManager;
     private $settingsPage;
     private $profilesPage;
-    private $profileManager;
+    private $shareRenderer;
 
-    public function __construct(SettingsInterface $settings, ProfileManagerInterface $profileManager, ShareRendererInterface $shareRenderer)
-    {
+    public function __construct(
+        SettingsInterface $settings,
+        ProfileManagerInterface $profileManager,
+        ShareRendererInterface $shareRenderer
+    ) {
         $this->settings = $settings;
         $this->profileManager = $profileManager;
-        $this->settingsPage = new SettingsPage($settings, $shareRenderer);
-        $this->profilesPage = new ProfilesPage($profileManager);
+        $this->shareRenderer = $shareRenderer;
 
+        try {
+            $this->settingsPage = new SettingsPage($settings, $shareRenderer);
+            $this->profilesPage = new ProfilesPage($profileManager);
+        } catch (\Throwable $e) {
+            error_log('HTML Social Share: Admin initialization error - ' . $e->getMessage());
+            return;
+        }
+
+        $this->initializeHooks();
+    }
+
+    private function initializeHooks()
+    {
         add_action('admin_menu', [$this, 'addAdminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminAssets']);
         add_action('wp_ajax_hssb_live_preview', [$this, 'handleLivePreview']);
+        add_action('admin_notices', [$this, 'showAdminNotices']);
     }
 
     public function addAdminMenu()
     {
-        // Add main menu
-        add_menu_page(
-            'HTML Social Share', // Page title
-            'Html Social Share', // Menu title
-            'manage_options', // Capability
-            'html-social-share', // Menu slug
-            [$this, 'renderSettingsPage'], // Callback
-            'dashicons-share', // Icon
-            59.679861 // Position
-        );
+        if (!current_user_can('manage_options')) {
+            return;
+        }
 
-        // Add submenu for settings (same as main)
-        add_submenu_page(
-            'html-social-share', // Parent slug
-            'Settings', // Page title
-            'Settings', // Menu title
-            'manage_options', // Capability
-            'html-social-share', // Menu slug (same as parent)
-            [$this, 'renderSettingsPage'] // Callback
-        );
+        try {
+            add_menu_page(
+                __('HTML Social Share', 'html-social-share'),
+                __('Html Social Share', 'html-social-share'),
+                'manage_options',
+                'html-social-share',
+                [$this, 'renderSettingsPage'],
+                'dashicons-share',
+                59.679861
+            );
 
-        // Add submenu for profiles
-        add_submenu_page(
-            'html-social-share', // Parent slug
-            'Social Profiles', // Page title
-            'Profiles', // Menu title
-            'manage_options', // Capability
-            'html-social-share-profiles', // Menu slug
-            [$this, 'renderProfilesPage'] // Callback
-        );
+            add_submenu_page(
+                'html-social-share',
+                __('Settings', 'html-social-share'),
+                __('Settings', 'html-social-share'),
+                'manage_options',
+                'html-social-share',
+                [$this, 'renderSettingsPage']
+            );
 
-        // Add submenu for shortcode generator
-        add_submenu_page(
-            'html-social-share', // Parent slug
-            'Shortcode Generator', // Page title
-            'Shortcode Generator', // Menu title
-            'manage_options', // Capability
-            'html-social-share-shortcode', // Menu slug
-            [$this, 'renderShortcodePage'] // Callback
-        );
+            add_submenu_page(
+                'html-social-share',
+                __('Social Profiles', 'html-social-share'),
+                __('Profiles', 'html-social-share'),
+                'manage_options',
+                'html-social-share-profiles',
+                [$this, 'renderProfilesPage']
+            );
+
+            add_submenu_page(
+                'html-social-share',
+                __('Shortcode Generator', 'html-social-share'),
+                __('Shortcode Generator', 'html-social-share'),
+                'manage_options',
+                'html-social-share-shortcode',
+                [$this, 'renderShortcodePage']
+            );
+
+        } catch (\Throwable $e) {
+            error_log('HTML Social Share: Admin menu error - ' . $e->getMessage());
+        }
     }
 
     public function renderSettingsPage()
     {
-        $this->settingsPage->render();
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Insufficient permissions.', 'html-social-share'));
+        }
+
+        try {
+            $this->settingsPage->render();
+        } catch (\Throwable $e) {
+            $this->renderErrorPage(__('Settings page error', 'html-social-share'), $e);
+        }
     }
 
     public function renderProfilesPage()
     {
-        $this->profilesPage->render();
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Insufficient permissions.', 'html-social-share'));
+        }
+
+        try {
+            $this->profilesPage->render();
+        } catch (\Throwable $e) {
+            $this->renderErrorPage(__('Profiles page error', 'html-social-share'), $e);
+        }
     }
 
     public function renderShortcodePage()
     {
-        $generated_shortcode = '';
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Insufficient permissions.', 'html-social-share'));
+        }
 
-        if (isset($_POST['generate']) && wp_verify_nonce($_POST['_wpnonce'], 'html_social_share_shortcode')) {
-            $networks = isset($_POST['networks']) ? array_map('sanitize_text_field', $_POST['networks']) : [];
-            $style = sanitize_text_field($_POST['style'] ?? 'default');
+        $generatedShortcode = '';
+        $errors = [];
 
-            // Validate networks
-            $valid_networks = ['facebook', 'twitter', 'linkedin', 'pinterest', 'email'];
-            $networks = array_intersect($networks, $valid_networks);
-
-            // Validate style
-            $valid_styles = ['default', 'square', 'circle', 'minimal'];
-            if (!in_array($style, $valid_styles)) {
-                $style = 'default';
-            }
-
-            if (!empty($networks)) {
-                $shortcode = '[html_social_share';
-                if ($style !== 'default') {
-                    $shortcode .= ' style="' . esc_attr($style) . '"';
-                }
-                $shortcode .= ' networks="' . esc_attr(implode(',', $networks)) . '"';
-                $shortcode .= ']';
-                $generated_shortcode = $shortcode;
+        if (isset($_POST['generate'])) {
+            $validation = $this->validateShortcodeRequest($_POST);
+            if ($validation['valid']) {
+                $generatedShortcode = $this->generateShortcode($validation['data']);
+            } else {
+                $errors = $validation['errors'];
             }
         }
 
-        echo '<div class="wrap hssb-shortcode-generator">';
-        echo '<h1><span class="dashicons dashicons-shortcode"></span> Shortcode Generator</h1>';
-        echo '<p class="description">Create custom shortcodes for your social share buttons with an easy-to-use interface.</p>';
-
-        // Quick Start Guide
-        echo '<div class="hssb-quick-guide card">';
-        echo '<h3><span class="dashicons dashicons-lightbulb"></span> Quick Start</h3>';
-        echo '<ol>';
-        echo '<li>Select the social networks you want to include</li>';
-        echo '<li>Choose a button style from the dropdown</li>';
-        echo '<li>Click "Generate Shortcode" to create your code</li>';
-        echo '<li>Copy the shortcode and paste it in your posts or pages</li>';
-        echo '</ol>';
-        echo '</div>';
-
-        echo '<div class="hssb-generator-container">';
-
-        // Left Column - Form
-        echo '<div class="hssb-generator-form">';
-        echo '<h3>Configure Your Share Buttons</h3>';
-
-        echo '<form method="post" action="" id="shortcode-form">';
-        wp_nonce_field('html_social_share_shortcode');
-
-        // Networks Section
-        echo '<div class="hssb-form-section">';
-        echo '<h4><span class="dashicons dashicons-share"></span> Social Networks</h4>';
-        echo '<p class="description">Choose which social networks to include in your share buttons.</p>';
-        echo '<div class="hssb-networks-grid">';
-
-        $networks = [
-            'facebook' => ['label' => 'Facebook', 'icon' => 'dashicons-facebook', 'color' => '#1877f2'],
-            'twitter' => ['label' => 'Twitter', 'icon' => 'dashicons-twitter', 'color' => '#1da1f2'],
-            'linkedin' => ['label' => 'LinkedIn', 'icon' => 'dashicons-linkedin', 'color' => '#0077b5'],
-            'pinterest' => ['label' => 'Pinterest', 'icon' => 'dashicons-pinterest', 'color' => '#e60023'],
-            'email' => ['label' => 'Email', 'icon' => 'dashicons-email', 'color' => '#666']
-        ];
-
-        foreach ($networks as $key => $network) {
-            $checked = (!isset($_POST['generate']) || in_array($key, $_POST['networks'] ?? [])) ? 'checked' : '';
-            echo '<label class="hssb-network-option" for="network_' . esc_attr($key) . '">';
-            echo '<input type="checkbox" id="network_' . esc_attr($key) . '" name="networks[]" value="' . esc_attr($key) . '" ' . $checked . '>';
-            echo '<span class="hssb-network-icon" style="background-color: ' . esc_attr($network['color']) . ';"><span class="' . esc_attr($network['icon']) . '"></span></span>';
-            echo '<span class="hssb-network-label">' . esc_html($network['label']) . '</span>';
-            echo '</label>';
-        }
-        echo '</div>';
-        echo '</div>';
-
-        // Style Section
-        echo '<div class="hssb-form-section">';
-        echo '<h4><span class="dashicons dashicons-art"></span> Button Style</h4>';
-        echo '<p class="description">Select the visual style for your share buttons.</p>';
-        echo '<select name="style" id="style-select">';
-        echo '<option value="default" ' . (($_POST['style'] ?? 'default') === 'default' ? 'selected' : '') . '>Default</option>';
-        echo '<option value="square" ' . (($_POST['style'] ?? '') === 'square' ? 'selected' : '') . '>Square</option>';
-        echo '<option value="circle" ' . (($_POST['style'] ?? '') === 'circle' ? 'selected' : '') . '>Circle</option>';
-        echo '<option value="minimal" ' . (($_POST['style'] ?? '') === 'minimal' ? 'selected' : '') . '>Minimal</option>';
-        echo '</select>';
-        echo '</div>';
-
-        echo '<div class="hssb-form-actions">';
-        echo '<button type="submit" name="generate" class="button button-primary button-large">';
-        echo '<span class="dashicons dashicons-shortcode"></span> Generate Shortcode';
-        echo '</button>';
-        echo '</div>';
-
-        echo '</form>';
-        echo '</div>';
-
-        // Right Column - Preview/Result
-        echo '<div class="hssb-generator-preview">';
-        echo '<h3>Preview & Code</h3>';
-
-        if (!empty($generated_shortcode)) {
-            echo '<div class="hssb-result-card">';
-            echo '<h4>Generated Shortcode</h4>';
-            echo '<div class="hssb-shortcode-display">';
-            echo '<code id="generated-shortcode">' . esc_html($generated_shortcode) . '</code>';
-            echo '<button type="button" id="copy-shortcode" class="button button-secondary" title="Copy to clipboard">';
-            echo '<span class="dashicons dashicons-clipboard"></span> Copy';
-            echo '</button>';
-            echo '</div>';
-            echo '</div>';
-
-            echo '<div class="hssb-preview-section">';
-            echo '<h4>Live Preview</h4>';
-            echo '<div class="hssb-preview-container" id="shortcode-preview">';
-            // Generate preview based on selected networks and style
-            $preview_networks = isset($_POST['networks']) ? $_POST['networks'] : [];
-            $preview_style = $_POST['style'] ?? 'default';
-
-            if (!empty($preview_networks)) {
-                echo '<div class="hssb-share-buttons hssb-style-' . esc_attr($preview_style) . '">';
-                foreach ($preview_networks as $network) {
-                    if (isset($networks[$network])) {
-                        $config = $networks[$network];
-                        echo '<a href="#" class="hssb-share-button hssb-' . esc_attr($network) . '" style="background-color: ' . esc_attr($config['color']) . ';" title="Share on ' . esc_attr($config['label']) . '">';
-                        echo '<span class="' . esc_attr($config['icon']) . '"></span>';
-                        echo '<span class="hssb-button-text">' . esc_html($config['label']) . '</span>';
-                        echo '</a>';
-                    }
-                }
-                echo '</div>';
-            }
-            echo '</div>';
-            echo '<p class="description">This is how your share buttons will appear on your site.</p>';
-            echo '</div>';
-        } else {
-            echo '<div class="hssb-placeholder">';
-            echo '<div class="dashicons dashicons-visibility"></div>';
-            echo '<p>Select networks and style, then click "Generate Shortcode" to see the preview.</p>';
-            echo '</div>';
-        }
-
-        echo '</div>'; // End preview column
-
-        echo '</div>'; // End generator container
-
-        // Usage Documentation
-        echo '<div class="hssb-documentation card">';
-        echo '<h3><span class="dashicons dashicons-book"></span> Usage Guide</h3>';
-        echo '<div class="hssb-docs-grid">';
-        echo '<div class="hssb-doc-section">';
-        echo '<h4>In Posts & Pages</h4>';
-        echo '<p>Paste the shortcode directly into your content:</p>';
-        echo '<code>[html_social_share networks="facebook,twitter" style="square"]</code>';
-        echo '</div>';
-        echo '<div class="hssb-doc-section">';
-        echo '<h4>In Theme Files</h4>';
-        echo '<p>Use the PHP function in your templates:</p>';
-        echo '<code>&lt;?php echo do_shortcode(\'[html_social_share networks="facebook,twitter"]\'); ?&gt;</code>';
-        echo '</div>';
-        echo '<div class="hssb-doc-section">';
-        echo '<h4>Parameters</h4>';
-        echo '<ul>';
-        echo '<li><code>networks</code>: Comma-separated network names</li>';
-        echo '<li><code>style</code>: Button style (default, square, circle, minimal)</li>';
-        echo '</ul>';
-        echo '</div>';
-        echo '</div>';
-        echo '</div>';
-
-        // Copy functionality script
-        echo '<script>
-        document.getElementById("copy-shortcode")?.addEventListener("click", function() {
-            const shortcode = document.getElementById("generated-shortcode");
-            if (shortcode) {
-                navigator.clipboard.writeText(shortcode.textContent).then(function() {
-                    const button = document.getElementById("copy-shortcode");
-                    const originalHTML = button.innerHTML;
-                    button.innerHTML = \'<span class="dashicons dashicons-yes"></span> Copied!\';
-                    button.classList.add("button-primary");
-                    setTimeout(function() {
-                        button.innerHTML = originalHTML;
-                        button.classList.remove("button-primary");
-                    }, 2000);
-                });
-            }
-        });
-        </script>';
-
-        echo '</div>';
-    }
-
-    public function enqueueAdminAssets($hook)
-    {
-        // Only load on our admin pages
-        if (strpos($hook, 'html-social-share') !== false) {
-            wp_enqueue_style(
-                'html-social-share-admin',
-                HTML_SOCIAL_SHARE_ASSETS_URL . 'admin.css',
-                [],
-                '1.0.0'
-            );
-
-            // Lightweight JS to enable WeChat QR progressive enhancement in preview
-            wp_enqueue_script(
-                'html-social-share-wechat-toggle',
-                HTML_SOCIAL_SHARE_JS_URL . 'wechat-toggle.js',
-                [],
-                '1.0.0',
-                true
-            );
-        }
-    }
-
-    private function renderIconPicker()
-    {
-        // Simple icon picker - in real implementation, this would be more sophisticated
-        $icons = ['facebook', 'twitter', 'linkedin', 'pinterest', 'email'];
-        $output = '<select id="profile_icon" name="icon" aria-describedby="icon_desc">';
-        $output .= '<option value="">Select Icon</option>';
-        foreach ($icons as $icon) {
-            $output .= '<option value="' . esc_attr($icon) . '">' . esc_html(ucfirst($icon)) . '</option>';
-        }
-        $output .= '</select>';
-        $output .= '<p id="icon_desc" class="description">Choose an icon for this profile</p>';
-        return $output;
-    }
-
-    private function handleProfileAction()
-    {
-        if (!wp_verify_nonce($_POST['_wpnonce'], 'html_social_share_profiles')) {
-            return;
-        }
-
-        $action = $_POST['action'];
-
-        if ($action === 'add') {
-            $data = [
-                'network' => sanitize_text_field($_POST['network']),
-                'handle' => sanitize_text_field($_POST['handle']),
-                'url' => esc_url_raw($_POST['url']),
-                'icon' => sanitize_text_field($_POST['icon'])
-            ];
-            $this->profileManager->createProfile($data);
-        } elseif ($action === 'delete' && isset($_POST['profile_id'])) {
-            $this->profileManager->deleteProfile((int)$_POST['profile_id']);
-        }
+        $this->renderShortcodeGeneratorInterface($generatedShortcode, $errors);
     }
 
     public function handleLivePreview()
     {
-        check_ajax_referer('hssb_live_preview');
-
-        // Get current settings from POST data
-        $enabledNetworks = isset($_POST['enabled_networks']) ? $_POST['enabled_networks'] : [];
-        $iconset = sanitize_text_field($_POST['iconset'] ?? 'default');
-
-        // Update iconset temporarily
-        if (method_exists($this->settingsPage, 'getShareRenderer')) {
-            $renderer = $this->settingsPage->getShareRenderer();
-            if ($renderer && method_exists($renderer, 'setIconset')) {
-                $mappings = [
-                    'default' => 'default/square',
-                    'square' => 'flat/square',
-                    'circle' => 'flat/circle',
-                    'minimal' => 'prajin/square'
-                ];
-                $path = $mappings[$iconset] ?? 'default/square';
-                $renderer->setIconset($path);
+        try {
+            if (!wp_verify_nonce($_POST['_wpnonce'] ?? '', 'hssb_live_preview')) {
+                wp_send_json_error(['message' => __('Security check failed', 'html-social-share')]);
+                return;
             }
+
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => __('Insufficient permissions', 'html-social-share')]);
+                return;
+            }
+
+            $enabledNetworks = array_map([SecurityUtils::class, 'sanitizeKey'], $_POST['enabled_networks'] ?? []);
+            $iconset = SecurityUtils::sanitizeKey($_POST['iconset'] ?? 'default');
+
+            $previewHtml = $this->generatePreviewHtml($enabledNetworks, $iconset);
+
+            wp_send_json_success(['html' => $previewHtml]);
+
+        } catch (\Throwable $e) {
+            error_log('HTML Social Share: Live preview error - ' . $e->getMessage());
+            wp_send_json_error(['message' => __('Preview generation failed', 'html-social-share')]);
+        }
+    }
+
+    public function showAdminNotices()
+    {
+        $screen = get_current_screen();
+        if (!$screen || strpos($screen->id, 'html-social-share') === false) {
+            return;
         }
 
-        // Generate preview HTML
+        $notices = get_transient('hssb_admin_notices');
+        if ($notices && is_array($notices)) {
+            foreach ($notices as $notice) {
+                $type = SecurityUtils::sanitizeKey($notice['type'] ?? 'info');
+                $message = SecurityUtils::escapeHtml($notice['message'] ?? '');
+                echo '<div class="notice notice-' . $type . ' is-dismissible"><p>' . $message . '</p></div>';
+            }
+            delete_transient('hssb_admin_notices');
+        }
+    }
+
+    public function enqueueAdminAssets($hook)
+    {
+        if (strpos($hook, 'html-social-share') === false) {
+            return;
+        }
+
+        try {
+            $version = defined('HTML_SOCIAL_SHARE_VERSION') ? HTML_SOCIAL_SHARE_VERSION : '1.0.0';
+
+            wp_enqueue_style(
+                'html-social-share-admin',
+                HTML_SOCIAL_SHARE_ASSETS_URL . 'admin.css',
+                [],
+                $version
+            );
+
+            wp_enqueue_script(
+                'html-social-share-admin',
+                HTML_SOCIAL_SHARE_JS_URL . 'admin.js',
+                ['jquery'],
+                $version,
+                true
+            );
+
+            wp_localize_script('html-social-share-admin', 'hssbAdmin', [
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('hssb_live_preview'),
+                'strings' => [
+                    'copied' => __('Copied!', 'html-social-share'),
+                    'error' => __('Error occurred', 'html-social-share'),
+                ]
+            ]);
+
+        } catch (\Throwable $e) {
+            error_log('HTML Social Share: Asset enqueue error - ' . $e->getMessage());
+        }
+    }
+
+    // Helper methods
+
+    private function renderShortcodeGeneratorInterface(string $generatedShortcode, array $errors)
+    {
+        echo '<div class="wrap hssb-shortcode-generator">';
+        echo '<h1><span class="dashicons dashicons-shortcode"></span> ' . SecurityUtils::escapeHtml(__('Shortcode Generator', 'html-social-share')) . '</h1>';
+
+        if (!empty($errors)) {
+            echo '<div class="notice notice-error"><ul>';
+            foreach ($errors as $error) {
+                echo '<li>' . SecurityUtils::escapeHtml($error) . '</li>';
+            }
+            echo '</ul></div>';
+        }
+
+        echo '<form method="post">';
+        wp_nonce_field('html_social_share_shortcode');
+
+        echo '<table class="form-table">';
+        echo '<tr><th>' . __('Networks', 'html-social-share') . '</th><td>';
+
+        $networks = $this->getAvailableNetworks();
+        foreach ($networks as $key => $network) {
+            $checked = in_array($key, $_POST['networks'] ?? []) ? 'checked' : '';
+            echo '<label><input type="checkbox" name="networks[]" value="' . esc_attr($key) . '" ' . $checked . '> ' . esc_html($network['label']) . '</label><br>';
+        }
+
+        echo '</td></tr>';
+        echo '<tr><th>' . __('Style', 'html-social-share') . '</th><td>';
+        echo '<select name="style">';
+
+        $styles = $this->getAvailableStyles();
+        foreach ($styles as $value => $label) {
+            $selected = ($_POST['style'] ?? 'default') === $value ? 'selected' : '';
+            echo '<option value="' . esc_attr($value) . '" ' . $selected . '>' . esc_html($label) . '</option>';
+        }
+
+        echo '</select>';
+        echo '</td></tr></table>';
+
+        echo '<button type="submit" name="generate" class="button button-primary">' . __('Generate Shortcode', 'html-social-share') . '</button>';
+        echo '</form>';
+
+        if (!empty($generatedShortcode)) {
+            echo '<h3>' . __('Generated Shortcode', 'html-social-share') . '</h3>';
+            echo '<code>' . esc_html($generatedShortcode) . '</code>';
+        }
+
+        echo '</div>';
+    }
+
+    private function validateShortcodeRequest(array $postData): array
+    {
+        $errors = [];
+
+        if (!wp_verify_nonce($postData['_wpnonce'] ?? '', 'html_social_share_shortcode')) {
+            $errors[] = __('Security check failed', 'html-social-share');
+            return ['valid' => false, 'errors' => $errors];
+        }
+
+        $networks = $postData['networks'] ?? [];
+        if (empty($networks)) {
+            $errors[] = __('Please select at least one network', 'html-social-share');
+        }
+
+        $style = SecurityUtils::sanitizeKey($postData['style'] ?? 'default');
+
+        return [
+            'valid' => empty($errors),
+            'errors' => $errors,
+            'data' => [
+                'networks' => array_map([SecurityUtils::class, 'sanitizeKey'], (array)$networks),
+                'style' => $style,
+            ]
+        ];
+    }
+
+    private function generateShortcode(array $data): string
+    {
+        $shortcode = '[html_social_share';
+
+        if (!empty($data['networks'])) {
+            $shortcode .= ' networks="' . implode(',', $data['networks']) . '"';
+        }
+
+        if ($data['style'] !== 'default') {
+            $shortcode .= ' style="' . $data['style'] . '"';
+        }
+
+        $shortcode .= ']';
+
+        return $shortcode;
+    }
+
+    private function generatePreviewHtml(array $networks, string $iconset): string
+    {
         ob_start();
-        echo '<h2>Live Preview</h2>';
-        echo '<p>Preview of how share buttons will appear:</p>';
+        echo '<div class="hssb-preview">';
 
-        if (empty($enabledNetworks)) {
-            echo '<p>No networks enabled.</p>';
+        if (empty($networks)) {
+            echo '<p>' . __('No networks selected', 'html-social-share') . '</p>';
         } else {
-            echo '<div class="hssb-preview">';
-            foreach ($enabledNetworks as $network) {
-                $profile = ['handle' => '@example', 'network' => $network];
-                $html = $this->settingsPage->getShareRenderer()->render($network, $profile);
-                echo $html . ' ';
+            foreach ($networks as $network) {
+                echo '<span class="button">' . ucfirst($network) . '</span> ';
             }
-            echo '</div>';
         }
-        echo '<p><em>Note: This is a basic preview. Actual styling may vary.</em></p>';
 
-        $html = ob_get_clean();
+        echo '</div>';
+        return ob_get_clean();
+    }
 
-        wp_send_json_success(['html' => $html]);
+    private function renderErrorPage(string $title, \Throwable $e)
+    {
+        echo '<div class="wrap">';
+        echo '<h1>' . SecurityUtils::escapeHtml($title) . '</h1>';
+        echo '<div class="notice notice-error"><p>' . SecurityUtils::escapeHtml(__('An error occurred.', 'html-social-share')) . '</p></div>';
+        echo '</div>';
+    }
+
+    private function getAvailableNetworks(): array
+    {
+        return [
+            'facebook' => ['label' => __('Facebook', 'html-social-share'), 'color' => '#1877f2'],
+            'twitter' => ['label' => __('Twitter', 'html-social-share'), 'color' => '#1da1f2'],
+            'linkedin' => ['label' => __('LinkedIn', 'html-social-share'), 'color' => '#0077b5'],
+            'pinterest' => ['label' => __('Pinterest', 'html-social-share'), 'color' => '#e60023'],
+            'email' => ['label' => __('Email', 'html-social-share'), 'color' => '#666666'],
+        ];
+    }
+
+    private function getAvailableStyles(): array
+    {
+        return [
+            'default' => __('Default', 'html-social-share'),
+            'square' => __('Square', 'html-social-share'),
+            'circle' => __('Circle', 'html-social-share'),
+            'minimal' => __('Minimal', 'html-social-share'),
+        ];
     }
 }
