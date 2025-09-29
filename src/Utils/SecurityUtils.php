@@ -19,11 +19,14 @@ class SecurityUtils
      */
     public static function sanitizeTextField(string $value): string
     {
-        // Remove null bytes and control characters
-        $value = str_replace(chr(0), '', $value);
-        $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value);
+        // Remove null bytes and control characters (replace with spaces)
+        $value = str_replace(chr(0), ' ', $value);
+        $value = preg_replace('/[\x01-\x08\x0B\x0C\x0E-\x1F\x7F]/', ' ', $value);
 
-        // Strip HTML tags
+        // Remove script tags and their content
+        $value = preg_replace('/<script[^>]*>.*?<\/script>/s', '', $value);
+
+        // Strip remaining HTML tags
         $value = strip_tags($value);
 
         // Remove line breaks and normalize whitespace
@@ -41,9 +44,10 @@ class SecurityUtils
     public static function sanitizeKey(string $key): string
     {
         $key = strtolower($key);
-        // Convert hyphens to underscores, remove other special chars
-        $key = str_replace('-', '_', $key);
-        $key = preg_replace('/[^a-z0-9_]/', '', $key);
+        // Convert all non-alphanumeric characters to underscores
+        $key = preg_replace('/[^a-z0-9]+/', '_', $key);
+        // Remove multiple underscores
+        $key = preg_replace('/_+/', '_', $key);
         return trim($key, '_');
     }
 
@@ -57,11 +61,13 @@ class SecurityUtils
     {
         // Remove dangerous patterns
         $class = preg_replace('/\b(on\w+|javascript|script|alert|eval)\b/i', '', $class);
-        // Keep only valid class characters
-        $class = preg_replace('/[^A-Za-z0-9_\-\s]/', '', $class);
+        // Convert special characters to hyphens
+        $class = preg_replace('/[^A-Za-z0-9_\-\s]/', '-', $class);
+        // Collapse multiple hyphens
+        $class = preg_replace('/-+/', '-', $class);
         // Remove extra whitespace
         $class = preg_replace('/\s+/', ' ', $class);
-        return trim($class);
+        return trim($class, '- ');
     }
 
     /**
@@ -83,7 +89,7 @@ class SecurityUtils
      */
     public static function escapeHtml(string $content): string
     {
-        return htmlspecialchars($content, ENT_NOQUOTES | ENT_HTML5, 'UTF-8', false);
+        return htmlspecialchars($content, ENT_COMPAT | ENT_HTML5, 'UTF-8', false);
     }
 
     /**
@@ -256,6 +262,7 @@ class SecurityUtils
             '/\bor\b\s*1\s*=\s*1/i',
             '/\bor\b\s*true/i',
             // Additional patterns for missed cases
+            '/\/\*.*?\*\//',            // SQL comments like /* comment */
             '/\'\s*\/\*.*?\*\//i',      // Comments like admin'/*
             '/"\s*or\s*""/i',           // Double quote SQL injection
             '/\bexec\b.*?xp_/i',        // SQL Server xp_ commands
@@ -296,9 +303,23 @@ class SecurityUtils
      */
     public static function sanitizeFilename(string $filename): string
     {
-        // Remove path separators and dangerous characters
+        // Remove path traversal attempts
+        $filename = str_replace(['../', '..\\'], '', $filename);
+
+        // Use basename to get just the filename
         $filename = basename($filename);
-        $filename = preg_replace('/[^a-zA-Z0-9\.\-_]/', '', $filename);
+
+        // Remove dangerous characters
+        $filename = preg_replace('/[<>:"|?*\\\\]/', '', $filename);
+
+        // Handle reserved names on Windows
+        $basename = pathinfo($filename, PATHINFO_FILENAME);
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $reservedNames = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'];
+        if (in_array(strtoupper($basename), $reservedNames)) {
+            $basename = '_' . $basename;
+            $filename = $basename . ($extension ? '.' . $extension : '');
+        }
 
         // Ensure it doesn't start with a dot
         $filename = ltrim($filename, '.');
@@ -325,7 +346,7 @@ class SecurityUtils
             $ip,
             FILTER_VALIDATE_IP,
             FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
-        );
+        ) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
     }
 
     /**
@@ -367,7 +388,7 @@ class SecurityUtils
      */
     public static function isValidCsrfTokenFormat(string $token): bool
     {
-        return self::isValidToken($token, 32, 64);
+        return self::isValidToken($token, 8, 128);
     }
 
     /**
@@ -379,6 +400,15 @@ class SecurityUtils
      */
     public static function stripDangerousHtml(string $html, array $allowedTags = ['p', 'br', 'strong', 'em']): string
     {
+        // First, remove dangerous tags and their content
+        $dangerousTags = ['script', 'style', 'iframe', 'object', 'embed', 'applet', 'form', 'input', 'button'];
+        foreach ($dangerousTags as $tag) {
+            $html = preg_replace('/<' . $tag . '[^>]*>.*?<\/' . $tag . '>/is', '', $html);
+            // Also remove self-closing tags
+            $html = preg_replace('/<' . $tag . '[^>]*\/?>/i', '', $html);
+        }
+
+        // Then strip remaining tags, keeping only allowed ones
         $allowedTagsString = '<' . implode('><', $allowedTags) . '>';
         return strip_tags($html, $allowedTagsString);
     }
