@@ -1,35 +1,126 @@
-{
-  "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 3,
-  "name": "html-social-share/buttons",
-  "title": "HTML Social Share Buttons",
-  "category": "widgets",
-  "icon": "share",
-  "description": "Render HTML social share buttons with server-side sanitization.",
-  "supports": {
-    "html": false,
-    "align": true
-  },
-  "attributes": {
-    "networks": {
-      "type": "array",
-      "items": { "type": "string" },
-      "default": [ "facebook", "twitter", "linkedin" ]
-    },
-    "iconset": {
+{{
+
+  "$schema": "https://schemas.wp.org/trunk/block.json",  "$schema": "https://schemas.wp.org/trunk/block.json",
+
+  "apiVersion": 3,  "apiVersion": 3,
+
+  "name": "html-social-share/social-share-buttons",  "name": "html-social-share/buttons",
+
+  "version": "1.0.0",  "title": "HTML Social Share Buttons",
+
+  "title": "Social Share Buttons",  "category": "widgets",
+
+  "category": "widgets",  "icon": "share",
+
+  "icon": "share",  "description": "Render HTML social share buttons with server-side sanitization.",
+
+  "description": "Add social media sharing buttons to your content with customizable styling and network options.",  "supports": {
+
+  "example": {},    "html": false,
+
+  "supports": {    "align": true
+
+    "html": false,  },
+
+    "align": ["left", "center", "right", "wide", "full"],  "attributes": {
+
+    "spacing": {    "networks": {
+
+      "margin": true,      "type": "array",
+
+      "padding": true      "items": { "type": "string" },
+
+    },      "default": [ "facebook", "twitter", "linkedin" ]
+
+    "color": {    },
+
+      "background": true,    "iconset": {
+
+      "text": true      "type": "string",
+
+    }      "default": "default"
+
+  },    },
+
+  "attributes": {    "title": {
+
+    "profileId": {      "type": "string",
+
+      "type": "string",      "default": "Share this with your friends"
+
+      "default": ""    },
+
+    },    "alignment": {
+
+    "networks": {      "type": "string",
+
+      "type": "object",      "default": "left"
+
+      "default": {    }
+
+        "facebook": { "enabled": true },  },
+
+        "twitter": { "enabled": true },  "editorScript": "file:./editor.js",
+
+        "linkedin": { "enabled": true }  "editorStyle": "file:./editor.css",
+
+      }  "style": "file:./style.css"
+
+    },}
+
+    "displayStyle": {
       "type": "string",
-      "default": "default"
+      "default": "default",
+      "enum": ["default", "rounded", "square", "minimal"]
     },
-    "title": {
+    "buttonSize": {
       "type": "string",
-      "default": "Share this with your friends"
+      "default": "medium",
+      "enum": ["small", "medium", "large"]
+    },
+    "showLabels": {
+      "type": "boolean",
+      "default": false
+    },
+    "iconOnly": {
+      "type": "boolean",
+      "default": true
+    },
+    "customUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "customTitle": {
+      "type": "string",
+      "default": ""
+    },
+    "customDescription": {
+      "type": "string",
+      "default": ""
     },
     "alignment": {
       "type": "string",
-      "default": "left"
+      "default": "center",
+      "enum": ["left", "center", "right"]
+    },
+    "spacing": {
+      "type": "object",
+      "default": {
+        "margin": "0",
+        "padding": "0"
+      }
+    },
+    "customCss": {
+      "type": "string",
+      "default": ""
     }
   },
-  "editorScript": "file:./editor.js",
-  "editorStyle": "file:./editor.css",
-  "style": "file:./style.css"
+  "providesContext": {
+    "html-social-share/profileId": "profileId",
+    "html-social-share/networks": "networks"
+  },
+  "textdomain": "html-social-share",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
 }

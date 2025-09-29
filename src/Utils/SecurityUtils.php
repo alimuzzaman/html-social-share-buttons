@@ -44,11 +44,11 @@ class SecurityUtils
     public static function sanitizeKey(string $key): string
     {
         $key = strtolower($key);
-        // Convert all non-alphanumeric characters to underscores
-        $key = preg_replace('/[^a-z0-9]+/', '_', $key);
+        // Convert all non-alphanumeric, non-underscore, non-dash characters to underscores
+        $key = preg_replace('/[^a-z0-9_-]+/', '_', $key);
         // Remove multiple underscores
         $key = preg_replace('/_+/', '_', $key);
-        return trim($key, '_');
+        return trim($key, '_-');
     }
 
     /**

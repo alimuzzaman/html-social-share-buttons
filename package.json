@@ -1,31 +1,150 @@
 {
   "name": "html-social-share-buttons",
   "version": "1.1.0",
+  "description": "WordPress plugin for adding social sharing buttons with modern React admin interface",
+  "main": "dist/admin-ui.js",
   "type": "module",
-  "main": "test-settings-playwright.js",
   "directories": {
     "doc": "docs",
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test:playwright:settings": "node test-settings-playwright.js",
+    "build": "cross-env NODE_ENV=production webpack --mode=production",
+    "build:dev": "cross-env NODE_ENV=development webpack --mode=development",
+    "build:watch": "cross-env NODE_ENV=development webpack --mode=development --watch",
+    "build:analyze": "cross-env NODE_ENV=production ANALYZE=true webpack --mode=production",
+    "dev": "cross-env NODE_ENV=development webpack serve --mode=development",
+    "clean": "rimraf dist",
+    "lint": "eslint admin-ui/src blocks --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint admin-ui/src blocks --ext .ts,.tsx,.js,.jsx --fix",
+    "type-check": "tsc --noEmit",
+    "prettier": "prettier --write admin-ui/src blocks",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:playwright:settings": "node dev-tools/test-settings-playwright.js",
     "test:playwright:frontend": "node tests/playwright/test-frontend-playwright.js",
     "test:playwright": "npm run test:playwright:settings ; npm run test:playwright:frontend",
-    "test:e2e": "playwright test --debug",
-    "test:e2e:headed": "playwright test --headed",
-    "playground:server": "npx @wp-playground/cli@latest server --blueprint=./blueprints/test-blueprint.json --auto-mount --login"
+    "test:e2e": "playwright test --config=config/playwright.config.ts --debug",
+    "test:e2e:headed": "playwright test --config=config/playwright.config.ts --headed",
+    "playground:server": "npx @wp-playground/cli@latest server --blueprint=./build/blueprints/test-blueprint.json --auto-mount --login",
+    "prepare": "husky install"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "social",
+    "share",
+    "buttons",
+    "react",
+    "gutenberg"
+  ],
+  "author": "HTML Social Share Team",
+  "license": "GPL-2.0-or-later",
   "dependencies": {
-    "playwright": "^1.55.1"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.22.0",
+    "@babel/preset-env": "^7.22.0",
+    "@babel/preset-react": "^7.22.0",
+    "@babel/preset-typescript": "^7.22.0",
+    "@babel/plugin-proposal-class-properties": "^7.18.0",
+    "@babel/plugin-transform-runtime": "^7.22.0",
     "@playwright/test": "^1.55.1",
+    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.4.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@wordpress/babel-preset-default": "^7.32.0",
+    "@wordpress/blocks": "^12.25.0",
+    "@wordpress/components": "^25.13.0",
+    "@wordpress/data": "^9.17.0",
+    "@wordpress/element": "^5.25.0",
+    "@wordpress/i18n": "^4.48.0",
+    "@wordpress/block-editor": "^12.15.0",
+    "@wordpress/api-fetch": "^6.45.0",
+    "@wordpress/html-entities": "^3.48.0",
+    "@wordpress/compose": "^6.25.0",
+    "@wordpress/hooks": "^3.48.0",
+    "@wordpress/url": "^3.49.0",
+    "@wordpress/date": "^4.48.0",
     "@wordpress/e2e-test-utils-playwright": "^1.31.0",
-    "@wp-playground/cli": "^3.0.5"
+    "@wp-playground/cli": "^3.0.5",
+    "autoprefixer": "^10.4.0",
+    "babel-loader": "^9.1.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.8.0",
+    "css-minimizer-webpack-plugin": "^5.0.0",
+    "cssnano": "^6.0.0",
+    "eslint": "^8.44.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-react": "^7.32.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-jsx-a11y": "^6.7.0",
+    "husky": "^8.0.3",
+    "jest": "^29.6.0",
+    "jest-environment-jsdom": "^29.6.0",
+    "lint-staged": "^13.2.0",
+    "mini-css-extract-plugin": "^2.7.0",
+    "playwright": "^1.55.1",
+    "postcss": "^8.4.0",
+    "postcss-loader": "^7.3.0",
+    "prettier": "^3.0.0",
+    "react-refresh": "^0.14.0",
+    "rimraf": "^5.0.0",
+    "sass": "^1.63.0",
+    "sass-loader": "^13.3.0",
+    "style-loader": "^3.3.0",
+    "terser-webpack-plugin": "^5.3.0",
+    "typescript": "^5.1.0",
+    "webpack": "^5.88.0",
+    "webpack-bundle-analyzer": "^4.9.0",
+    "webpack-cli": "^5.1.0",
+    "webpack-dev-server": "^4.15.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss,md}": [
+      "prettier --write"
+    ]
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/admin-ui/src/setupTests.ts"
+    ],
+    "moduleNameMapping": {
+      "^@/(.*)$": "<rootDir>/admin-ui/src/$1",
+      "^@components/(.*)$": "<rootDir>/admin-ui/src/components/$1",
+      "^@utils/(.*)$": "<rootDir>/admin-ui/src/utils/$1",
+      "^@types/(.*)$": "<rootDir>/admin-ui/src/types/$1",
+      "^@contexts/(.*)$": "<rootDir>/admin-ui/src/contexts/$1"
+    },
+    "collectCoverageFrom": [
+      "admin-ui/src/**/*.{ts,tsx}",
+      "!admin-ui/src/**/*.d.ts",
+      "!admin-ui/src/index.tsx"
+    ]
   }
 }

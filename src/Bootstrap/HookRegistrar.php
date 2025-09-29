@@ -13,12 +13,9 @@ class HookRegistrar
      */
     public function register(Container $container, string $pluginFile, $activationHandler): void
     {
-        // Cron hook
-        add_action('hss_refresh_share_counts', [$activationHandler, 'handleCron']);
 
-        // AJAX endpoints
-        add_action('wp_ajax_hss_refresh_counts', [$activationHandler, 'ajaxRefreshCounts']);
-        add_action('wp_ajax_hss_flush_share_counts', [$activationHandler, 'ajaxFlushCounts']);
+
+
 
         // Frontend assets
         add_action('wp_enqueue_scripts', [$container->get('content_display'), 'enqueueFrontendStyles']);
@@ -40,6 +37,20 @@ class HookRegistrar
         if (method_exists($integrationLoader, 'init')) {
             $integrationLoader->init();
         }
+
+
+
+        // React admin interface
+        add_action('admin_init', function() use ($container) {
+            $reactAdmin = $container->get('react_admin_interface');
+            $reactAdmin->init();
+        });
+
+        // AJAX endpoints for React admin
+        add_action('wp_ajax_hss_get_posts_with_counts', function() use ($container) {
+            $reactAdmin = $container->get('react_admin_interface');
+            $reactAdmin->ajaxGetPostsWithCounts();
+        });
 
         // Activation / Deactivation
         register_activation_hook($pluginFile, [$activationHandler, 'onActivate']);

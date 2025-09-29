@@ -10,18 +10,17 @@ use HtmlSocialShare\Renderers\RenderUtils;
 
 /**
  * WordPress Admin interface with enhanced security
- * 
+ *
  * Handles admin menu registration, page rendering, and AJAX operations
  * with proper CSRF protection, input validation, and output escaping.
- * 
+ *
  * @since 3.0.0
  */
 class Admin
 {
     private $settings;
     private $profileManager;
-    private $settingsPage;
-    private $profilesPage;
+    private $reactAdminInterface;
     private $shareRenderer;
 
     public function __construct(
@@ -34,8 +33,7 @@ class Admin
         $this->shareRenderer = $shareRenderer;
 
         try {
-            $this->settingsPage = new SettingsPage($settings, $shareRenderer);
-            $this->profilesPage = new ProfilesPage($profileManager);
+            $this->reactAdminInterface = new ReactAdminInterface($settings);
         } catch (\Throwable $e) {
             error_log('HTML Social Share: Admin initialization error - ' . $e->getMessage());
             return;
@@ -50,6 +48,9 @@ class Admin
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminAssets']);
         add_action('wp_ajax_hssb_live_preview', [$this, 'handleLivePreview']);
         add_action('admin_notices', [$this, 'showAdminNotices']);
+
+        // Initialize React admin interface scripts
+        add_action('admin_enqueue_scripts', [$this->reactAdminInterface, 'enqueueScripts']);
     }
 
     public function addAdminMenu()
@@ -63,89 +64,15 @@ class Admin
                 __('HTML Social Share', 'html-social-share'),
                 __('Html Social Share', 'html-social-share'),
                 'manage_options',
-                'html-social-share',
-                [$this, 'renderSettingsPage'],
+                'html-social-share-react',
+                [$this->reactAdminInterface, 'renderAdminPage'],
                 'dashicons-share',
                 59.679861
-            );
-
-            add_submenu_page(
-                'html-social-share',
-                __('Settings', 'html-social-share'),
-                __('Settings', 'html-social-share'),
-                'manage_options',
-                'html-social-share',
-                [$this, 'renderSettingsPage']
-            );
-
-            add_submenu_page(
-                'html-social-share',
-                __('Social Profiles', 'html-social-share'),
-                __('Profiles', 'html-social-share'),
-                'manage_options',
-                'html-social-share-profiles',
-                [$this, 'renderProfilesPage']
-            );
-
-            add_submenu_page(
-                'html-social-share',
-                __('Shortcode Generator', 'html-social-share'),
-                __('Shortcode Generator', 'html-social-share'),
-                'manage_options',
-                'html-social-share-shortcode',
-                [$this, 'renderShortcodePage']
             );
 
         } catch (\Throwable $e) {
             error_log('HTML Social Share: Admin menu error - ' . $e->getMessage());
         }
-    }
-
-    public function renderSettingsPage()
-    {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Insufficient permissions.', 'html-social-share'));
-        }
-
-        try {
-            $this->settingsPage->render();
-        } catch (\Throwable $e) {
-            $this->renderErrorPage(__('Settings page error', 'html-social-share'), $e);
-        }
-    }
-
-    public function renderProfilesPage()
-    {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Insufficient permissions.', 'html-social-share'));
-        }
-
-        try {
-            $this->profilesPage->render();
-        } catch (\Throwable $e) {
-            $this->renderErrorPage(__('Profiles page error', 'html-social-share'), $e);
-        }
-    }
-
-    public function renderShortcodePage()
-    {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Insufficient permissions.', 'html-social-share'));
-        }
-
-        $generatedShortcode = '';
-        $errors = [];
-
-        if (isset($_POST['generate'])) {
-            $validation = $this->validateShortcodeRequest($_POST);
-            if ($validation['valid']) {
-                $generatedShortcode = $this->generateShortcode($validation['data']);
-            } else {
-                $errors = $validation['errors'];
-            }
-        }
-
-        $this->renderShortcodeGeneratorInterface($generatedShortcode, $errors);
     }
 
     public function handleLivePreview()
@@ -199,7 +126,7 @@ class Admin
         }
 
         try {
-            $version = defined('HTML_SOCIAL_SHARE_VERSION') ? HTML_SOCIAL_SHARE_VERSION : '1.0.0';
+            $version = '3.0.0';
 
             wp_enqueue_style(
                 'html-social-share-admin',

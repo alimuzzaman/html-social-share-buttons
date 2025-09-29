@@ -5,8 +5,10 @@ Thumbs.db
 /vendor/
 composer.phar
 
-# Node
+# Node.js and build artifacts
 /node_modules/
+/admin-ui/node_modules/
+/admin-ui/dist/
 npm-debug.log
 pnpm-lock.yaml
 package-lock.json
@@ -17,27 +19,35 @@ package-lock.json
 *.sublime-workspace
 *.sublime-project
 
-# Tests and build artifacts
+# Tests and development
+/dev-tools/
+/config/
+/build/
 /tests/
 /reports/
 /.phpunit.result.cache
+playground-pid.txt
 
 # Logs
 *.log
 
-# Temporary
+# Temporary files
 *.tmp
 *.swp
+*.cache
 
 # Coverage and output
 /coverage/
 
-# Playwright reports
+# Playwright
 /playwright-report/
+/test-results/
 
 # Environment
 .env
 .env.local
 
-# Other
-*.cache
+# Screenshots and images (temporary)
+*.png
+!assets/**/*.png
+!docs/**/*.png

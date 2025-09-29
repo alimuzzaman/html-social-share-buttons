@@ -5,13 +5,11 @@ class ShareRenderer implements ShareRendererInterface
 {
     private IconRegistryInterface $iconRegistry;
     private $settings;
-    private $shareCountManager = null;
 
-    public function __construct(IconRegistryInterface $iconRegistry, $settings = null, $shareCountManager = null)
+    public function __construct(IconRegistryInterface $iconRegistry, $settings = null)
     {
         $this->iconRegistry = $iconRegistry;
         $this->settings = $settings;
-        $this->shareCountManager = $shareCountManager;
     }
 
     public function setIconset(string $iconset): void
@@ -21,10 +19,7 @@ class ShareRenderer implements ShareRendererInterface
         }
     }
 
-    public function setShareCountManager($manager): void
-    {
-        $this->shareCountManager = $manager;
-    }
+
 
     public function render(string $network, array $profile, string $url = '#', string $title = ''): string
     {
@@ -44,18 +39,6 @@ class ShareRenderer implements ShareRendererInterface
         }
 
         $countHtml = '';
-        $enabled = $this->settings ? ($this->settings->get('share_counts_enabled', false) ?: false) : false;
-        if ($enabled && $this->shareCountManager) {
-            $postId = (int) (get_the_ID() ?: 0);
-            if ($postId > 0) {
-                $count = $this->shareCountManager->getCountForPostNetwork($postId, $network);
-                // Visible badge (aria-hidden) and separate screen-reader-only text
-                $visible = '<span class="hssb-count" aria-hidden="true">' . $this->formatCount($count) . '</span>';
-                $srText = sprintf('%s shares on %s', number_format_i18n($count), ucfirst($label));
-                $sr = '<span class="hss-sr">' . esc_html($srText) . '</span>';
-                $countHtml = $visible . $sr;
-            }
-        }
 
         // Special-case WeChat: render a QR code for privacy-friendly sharing
         if ($network === 'wechat') {

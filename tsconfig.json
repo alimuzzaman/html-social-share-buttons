@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "dom.iterable", "es6"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["admin-ui/src/*"],
+      "@components/*": ["admin-ui/src/components/*"],
+      "@utils/*": ["admin-ui/src/utils/*"],
+      "@types/*": ["admin-ui/src/types/*"],
+      "@contexts/*": ["admin-ui/src/contexts/*"]
+    },
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  },
+  "include": [
+    "admin-ui/src/**/*",
+    "blocks/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "vendor",
+    "tests",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}

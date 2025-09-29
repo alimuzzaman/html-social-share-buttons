@@ -3,26 +3,53 @@
 
 # Development and testing directories
 tests/
+dev-tools/
+config/
+build/
+playwright/
+reports/
 security/
+scripts/
+archive/
 
-# Markdown documentation files (except README)
+# Development files that shouldn't be in WP repo
 *.md
 !README.md
-
-# Development files
 .git/
 .gitignore
 .distignore
 .editorconfig
 .eslintrc*
 .stylelintrc*
+.phpcs.xml.dist
 phpcs.xml
-phpunit.xml
+phpunit.xml*
+playwright.config.ts
+mcp-config.json
 composer.json
 composer.lock
 package.json
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
+# Build directory
+build/
+
+# Development PHP files
+debug-*.php
+test-*.php
+*-test.php
+security-audit.php
+performance-test.php
+comprehensive-test.php
+method-discovery.php
+simple_test.php
+test_single.php
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-*
 
 # IDE and editor files
 .vscode/
@@ -31,13 +58,15 @@ yarn.lock
 .DS_Store
 Thumbs.db
 
-# Build and temporary files
+# Build and temporary files (but keep vendor/ for production dependencies)
 node_modules/
-vendor/
-build/
+admin-ui/
 dist/
 tmp/
 temp/
+playground-pid.txt
+*.png
+*.cache
 
 # Log files
 *.log

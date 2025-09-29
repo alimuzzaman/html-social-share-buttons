@@ -6,74 +6,71 @@ use HtmlSocialShare\Renderers\ShareUrlBuilder;
 
 /**
  * Refactored Share Renderer implementing SOLID principles
- * 
- * This class follows the Single Responsibility Principle by delegating
+ *
+ * This class follows sponsibility Principle by delegating
  * specific concerns to specialized classes:
- * - URL building -> ShareUrlBuilder  
+ * - URL building -> ShareUrlBuilder
  * - HTML rendering -> ShareButtonRenderer
  * - Icon management -> IconRegistryInterface
  * - Settings management -> SettingsInterface
  * - Share count management -> Share count manager
- * 
+ *
  * @since 3.0.0
  */
 class RefactoredShareRenderer implements ShareRendererInterface
 {
     /**
      * Icon registry for managing icons
-     * 
+     *
      * @var IconRegistryInterface
      */
     private $iconRegistry;
 
     /**
      * Settings manager
-     * 
+     *
      * @var SettingsInterface|null
      */
     private $settings;
 
     /**
      * Share count manager
-     * 
+     *
      * @var mixed|null
      */
     private $shareCountManager;
 
     /**
      * Button renderer
-     * 
+     *
      * @var ShareButtonRenderer
      */
     private $buttonRenderer;
 
     /**
      * URL builder
-     * 
+     *
      * @var ShareUrlBuilder
      */
     private $urlBuilder;
 
     /**
      * Constructor with dependency injection
-     * 
+     *
      * @param IconRegistryInterface $iconRegistry Icon registry
      * @param SettingsInterface|null $settings Settings manager (optional)
-     * @param mixed|null $shareCountManager Share count manager (optional)
      * @param ShareButtonRenderer|null $buttonRenderer Button renderer (optional)
      * @param ShareUrlBuilder|null $urlBuilder URL builder (optional)
      */
     public function __construct(
         IconRegistryInterface $iconRegistry,
         ?SettingsInterface $settings = null,
-        $shareCountManager = null,
         ?ShareButtonRenderer $buttonRenderer = null,
         ?ShareUrlBuilder $urlBuilder = null
     ) {
         $this->iconRegistry = $iconRegistry;
         $this->settings = $settings;
-        $this->shareCountManager = $shareCountManager;
-        
+
         // Use provided instances or create defaults
         $this->urlBuilder = $urlBuilder ?: ShareUrlBuilder::createWithWordPressIntegration();
         $this->buttonRenderer = $buttonRenderer ?: new ShareButtonRenderer($this->urlBuilder);
@@ -81,7 +78,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Set iconset on icon registry
-     * 
+     *
      * @param string $iconset Iconset identifier
      */
     public function setIconset(string $iconset): void
@@ -91,19 +88,11 @@ class RefactoredShareRenderer implements ShareRendererInterface
         }
     }
 
-    /**
-     * Set share count manager
-     * 
-     * @param mixed $manager Share count manager
-     */
-    public function setShareCountManager($manager): void
-    {
-        $this->shareCountManager = $manager;
-    }
+
 
     /**
      * Render share button for network and profile
-     * 
+     *
      * @param string $network Network key
      * @param array $profile Profile configuration
      * @param string $url URL to share (optional)
@@ -126,9 +115,9 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Build render configuration from inputs
-     * 
+     *
      * @param string $network Network key
-     * @param array $profile Profile configuration  
+     * @param array $profile Profile configuration
      * @param string $url URL to share
      * @param string $title Title to share
      * @return array Render configuration
@@ -160,25 +149,25 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Get icon HTML for network
-     * 
+     *
      * @param string $network Network key
      * @return string Icon HTML
      */
     protected function getIcon(string $network): string
     {
         $icon = $this->iconRegistry->getIcon($network);
-        
+
         if (!$icon) {
             error_log("RefactoredShareRenderer: No icon found for network '{$network}', using fallback");
             return '<span class="dashicons dashicons-share"></span>';
         }
-        
+
         return $icon;
     }
 
     /**
      * Get human-readable label for network
-     * 
+     *
      * @param string $network Network key
      * @return string Network label
      */
@@ -187,7 +176,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
         $labels = [
             'facebook' => 'Facebook',
             'twitter' => 'X',
-            'linkedin' => 'LinkedIn', 
+            'linkedin' => 'LinkedIn',
             'pinterest' => 'Pinterest',
             'reddit' => 'Reddit',
             'tumblr' => 'Tumblr',
@@ -203,7 +192,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Get share count for network
-     * 
+     *
      * @param string $network Network key
      * @return int Share count
      */
@@ -231,7 +220,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Check if share counts should be displayed
-     * 
+     *
      * @return bool True if share counts should be shown
      */
     protected function shouldShowShareCount(): bool
@@ -245,7 +234,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Get current URL for sharing
-     * 
+     *
      * @return string Current URL
      */
     protected function getCurrentUrl(): string
@@ -269,7 +258,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Get current title for sharing
-     * 
+     *
      * @return string Current title
      */
     protected function getCurrentTitle(): string
@@ -292,7 +281,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Get current post ID
-     * 
+     *
      * @return int Post ID or 0 if not available
      */
     protected function getCurrentPostId(): int
@@ -306,7 +295,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Factory method to create renderer with minimal dependencies
-     * 
+     *
      * @param IconRegistryInterface $iconRegistry Icon registry
      * @return RefactoredShareRenderer
      */
@@ -317,7 +306,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
 
     /**
      * Factory method to create renderer with full WordPress integration
-     * 
+     *
      * @param IconRegistryInterface $iconRegistry Icon registry
      * @param SettingsInterface $settings Settings manager
      * @param mixed $shareCountManager Share count manager
@@ -330,7 +319,7 @@ class RefactoredShareRenderer implements ShareRendererInterface
     ): self {
         return new self(
             $iconRegistry,
-            $settings, 
+            $settings,
             $shareCountManager,
             ShareButtonRenderer::createWithWordPressIntegration(),
             ShareUrlBuilder::createWithWordPressIntegration()

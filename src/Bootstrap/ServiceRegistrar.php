@@ -20,7 +20,7 @@ class ServiceRegistrar
         });
 
         $c->set('share_renderer', function ($c) {
-            return new \HtmlSocialShare\ShareRenderer($c->get('icon_registry'), $c->get('settings'), $c->get('share_counts'));
+            return new \HtmlSocialShare\ShareRenderer($c->get('icon_registry'), $c->get('settings'));
         });
 
         $c->set('icon_registry', function ($c) {
@@ -32,12 +32,10 @@ class ServiceRegistrar
         });
 
         $c->set('cache', function () {
-            return new \HtmlSocialShare\Cache();
+            return new \HtmlSocialShare\WordPressCache();
         });
 
-        $c->set('share_counts', function ($c) {
-            return new \HtmlSocialShare\ShareCounts\ShareCountManager($c->get('cache'), $c->get('settings'));
-        });
+
 
         $c->set('migration', function ($c) {
             return new \HtmlSocialShare\Migration($c->get('settings'));
@@ -70,6 +68,18 @@ class ServiceRegistrar
         // Default telemetry: no-op. Consumers may override this by setting 'telemetry' in tests or when integrating
         $c->set('telemetry', function () {
             return new NullTelemetry();
+        });
+
+
+
+        // React admin interface
+        $c->set('react_admin_interface', function ($c) {
+            return new \HtmlSocialShare\Admin\ReactAdminInterface($c->get('settings'));
+        });
+
+        // REST API service
+        $c->set('rest_api_service', function ($c) {
+            return new \HtmlSocialShare\Rest\RestApiService($c->get('settings'), $c->get('profile_manager'));
         });
     }
 }

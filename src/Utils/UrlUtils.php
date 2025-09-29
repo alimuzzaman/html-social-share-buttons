@@ -44,6 +44,9 @@ class UrlUtils
             $result = str_replace($placeholder, $encodedValue, $result);
         }
 
+        // Replace any remaining unmatched placeholders with empty strings
+        $result = preg_replace('/\{\{[^}]+\}\}/', '', $result);
+
         return $result;
     }
 
@@ -71,7 +74,24 @@ class UrlUtils
      */
     public static function isValidUrl(string $url): bool
     {
-        return filter_var($url, FILTER_VALIDATE_URL) !== false;
+        // Basic URL validation
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return false;
+        }
+
+        // Parse URL to check scheme
+        $parsed = parse_url($url);
+        if (!$parsed || !isset($parsed['scheme'])) {
+            return false;
+        }
+
+        // Only allow http and https schemes
+        $allowedSchemes = ['http', 'https'];
+        if (!in_array(strtolower($parsed['scheme']), $allowedSchemes)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -106,8 +126,15 @@ class UrlUtils
      */
     public static function getPath(string $url): string
     {
+        if (!self::isValidUrl($url)) {
+            return '';
+        }
+
         $parsed = parse_url($url);
-        return $parsed['path'] ?? '';
+        if (!isset($parsed['path']) || $parsed['path'] === '') {
+            return '/';
+        }
+        return $parsed['path'];
     }
 
     /**
@@ -236,8 +263,8 @@ class UrlUtils
     public static function normalizeUrl(string $url): string
     {
         $parsed = parse_url($url);
-        if (!$parsed) {
-            return $url;
+        if (!$parsed || !isset($parsed['scheme']) || !isset($parsed['host'])) {
+            return '';
         }
 
         // Normalize components
@@ -250,7 +277,7 @@ class UrlUtils
 
         // Normalize path - remove multiple slashes
         $path = preg_replace('#/+#', '/', $path);
-        
+
         // Remove trailing slash from path (except root)
         if ($path !== '/' && substr($path, -1) === '/') {
             $path = rtrim($path, '/');
@@ -291,8 +318,9 @@ class UrlUtils
             return false;
         }
 
-        // Convert pattern to regex
-        $regex = str_replace(['*', '.'], ['.*', '\.'], $pattern);
+        // Convert pattern to regex: escape dots first, then replace * with .*
+        $regex = preg_quote($pattern, '/');
+        $regex = str_replace('\\*', '.*', $regex);
         $regex = '/^' . $regex . '$/i';
 
         return preg_match($regex, $domain) === 1;

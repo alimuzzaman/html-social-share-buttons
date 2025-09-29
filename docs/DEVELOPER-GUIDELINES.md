@@ -52,7 +52,7 @@
 
    ```bash
    # Install WordPress test suite
-   bash bin/install-wp-tests.sh wordpress_test root '' localhost latest
+   bash build/bin/install-wp-tests.sh wordpress_test root '' localhost latest
    ```
 
 2. **Local Development:**

@@ -8,12 +8,12 @@ A lightweight, privacy-first WordPress plugin for social sharing buttons with no
 
 - **Core Architecture**: SOLID-compliant design with dependency injection
 - **Pure Function Utilities**: 60+ testable functions with no side effects
-- **Page Builder Integrations**: 
+- **Page Builder Integrations**:
   - ✅ Elementor (full widget with comprehensive controls)
   - ✅ WPBakery (enhanced element with accessibility)
   - ✅ Divi (existing integration maintained)
   - ✅ Beaver Builder (existing integration maintained)
-- **Admin Interface**: 
+- **Admin Interface**:
   - ✅ Enhanced settings page with live preview
   - ✅ Advanced icon picker with search and preview
   - ✅ Shortcode generator with copy-to-clipboard
@@ -60,7 +60,7 @@ Set up the WordPress test environment:
 
 ```bash
 # Create test database and install WordPress test suite
-bin/install-wp-tests.sh hss_test_db hss_user secret_password localhost latest
+build/bin/install-wp-tests.sh hss_test_db hss_user secret_password localhost latest
 
 # Install dependencies
 composer install
@@ -92,7 +92,7 @@ vendor/bin/phpunit tests/Unit/Utils/ArrayUtilsTest.php
 ### Pure Function Utilities
 
 - **`RenderUtils`**: 15+ pure functions for rendering and formatting
-- **`DataUtils`**: 20+ pure functions for validation and sanitization  
+- **`DataUtils`**: 20+ pure functions for validation and sanitization
 - **`ArrayUtils`**: 25+ pure functions for array processing
 
 See [`docs/PURE-FUNCTIONS-GUIDE.md`](docs/PURE-FUNCTIONS-GUIDE.md) for comprehensive usage examples.
@@ -186,9 +186,9 @@ composer run-script phpstan
 
 ---
 
-**Plugin Version**: 3.0.0  
-**WordPress Compatibility**: 5.0+  
-**PHP Compatibility**: 7.4+  
+**Plugin Version**: 3.0.0
+**WordPress Compatibility**: 5.0+
+**PHP Compatibility**: 7.4+
 **Last Updated**: December 2024
 - CI workflows in `.github/workflows` are configured to run tests in a controlled environment; they are set to manual dispatch by default.
 

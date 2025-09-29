@@ -3,17 +3,17 @@ namespace HtmlSocialShare\Utils;
 
 /**
  * Pure string and text processing functions
- * 
+ *
  * This class contains only pure functions for string manipulation,
  * text processing, and formatting operations without side effects.
- * 
+ *
  * @since 3.0.0
  */
 class StringUtils
 {
     /**
      * Truncate string to specified length with ellipsis
-     * 
+     *
      * @param string $text Text to truncate
      * @param int $length Maximum length
      * @param string $ellipsis Ellipsis string
@@ -25,40 +25,40 @@ class StringUtils
         if (empty($text) || $length <= 0) {
             return '';
         }
-        
+
         // If text is shorter than target length, return as-is
         if (mb_strlen($text) < $length) {
             return $text;
         }
-        
+
         // If text length equals target and no ellipsis needed
         if (mb_strlen($text) == $length && empty($ellipsis)) {
             return $text;
         }
-        
+
         // Calculate available space for text after ellipsis
         $availableLength = $length - mb_strlen($ellipsis);
-        
+
         // If no space available for text, return ellipsis or empty
         if ($availableLength <= 0) {
             return $availableLength == 0 ? $ellipsis : '';
         }
-        
+
         $truncated = mb_substr($text, 0, $availableLength);
-        
+
         if (!$breakWords) {
             $lastSpace = mb_strrpos($truncated, ' ');
             if ($lastSpace !== false) {
                 $truncated = mb_substr($truncated, 0, $lastSpace);
             }
         }
-        
+
         return $truncated . $ellipsis;
     }
 
     /**
      * Convert string to slug format
-     * 
+     *
      * @param string $text Text to convert
      * @param string $separator Separator character
      * @return string Slug format string
@@ -67,20 +67,20 @@ class StringUtils
     {
         // Convert to lowercase
         $text = mb_strtolower($text);
-        
+
         // Remove accents and special characters
         $text = self::removeAccents($text);
-        
+
         // Replace spaces and special characters with separator
         $text = preg_replace('/[^a-z0-9]+/', $separator, $text);
-        
+
         // Remove leading/trailing separators
         return trim($text, $separator);
     }
 
     /**
      * Remove accents from text
-     * 
+     *
      * @param string $text Text with accents
      * @return string Text without accents
      */
@@ -101,13 +101,13 @@ class StringUtils
             'Ñ' => 'N', 'ñ' => 'n',
             'Ç' => 'C', 'ç' => 'c'
         ];
-        
+
         return strtr($text, $accents);
     }
 
     /**
      * Convert string to camelCase
-     * 
+     *
      * @param string $text Text to convert
      * @param string $separator Current separator
      * @return string CamelCase string
@@ -116,17 +116,17 @@ class StringUtils
     {
         $words = explode($separator, $text);
         $result = array_shift($words); // First word stays lowercase
-        
+
         foreach ($words as $word) {
             $result .= ucfirst(strtolower($word));
         }
-        
+
         return $result;
     }
 
     /**
      * Convert string to PascalCase
-     * 
+     *
      * @param string $text Text to convert
      * @param string $separator Current separator
      * @return string PascalCase string
@@ -135,17 +135,17 @@ class StringUtils
     {
         $words = explode($separator, $text);
         $result = '';
-        
+
         foreach ($words as $word) {
             $result .= ucfirst(strtolower($word));
         }
-        
+
         return $result;
     }
 
     /**
      * Convert camelCase/PascalCase to snake_case
-     * 
+     *
      * @param string $text Text to convert
      * @return string Snake case string
      */
@@ -162,7 +162,7 @@ class StringUtils
 
     /**
      * Extract hashtags from text
-     * 
+     *
      * @param string $text Text containing hashtags
      * @return array Array of hashtags (without #)
      */
@@ -177,7 +177,7 @@ class StringUtils
 
     /**
      * Extract mentions from text
-     * 
+     *
      * @param string $text Text containing mentions
      * @return array Array of mentions (without @)
      */
@@ -191,32 +191,32 @@ class StringUtils
 
     /**
      * Clean text by removing extra whitespace and line breaks
-     * 
+     *
      * @param string $text Text to clean
      * @param bool $preserveLineBreaks Whether to preserve line breaks
      * @return string Cleaned text
      */
     public static function cleanText(string $text, bool $preserveLineBreaks = false): string
     {
-        // Remove control characters first
-        $text = preg_replace('/[\x00-\x1F\x7F]/', '', $text);
-        
         if ($preserveLineBreaks) {
-            // Replace multiple spaces with single space, but preserve line breaks
+            // Remove control characters but preserve line breaks (\n and \r)
+            $text = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
+            // Replace multiple spaces/tabs with single space, but preserve line breaks
             $text = preg_replace('/[ \t]+/', ' ', $text);
             $text = preg_replace('/\n[ \t]*/', "\n", $text);
             $text = preg_replace('/\n{3,}/', "\n\n", $text);
         } else {
-            // Replace all whitespace with single spaces
+            // Replace all whitespace with single spaces, then remove remaining control characters
             $text = preg_replace('/\s+/', ' ', $text);
+            $text = preg_replace('/[\x00-\x1F\x7F]/', '', $text);
         }
-        
+
         return trim($text);
     }
 
     /**
      * Wrap long words in text
-     * 
+     *
      * @param string $text Text to wrap
      * @param int $maxWordLength Maximum word length
      * @param string $break Break character
@@ -226,7 +226,7 @@ class StringUtils
     {
         $words = explode(' ', $text);
         $result = [];
-        
+
         foreach ($words as $word) {
             if (mb_strlen($word) > $maxWordLength) {
                 $wrapped = '';
@@ -242,28 +242,27 @@ class StringUtils
                 $result[] = $word;
             }
         }
-        
+
         return implode(' ', $result);
     }
 
     /**
      * Count words in text
-     * 
+     *
      * @param string $text Text to count
      * @return int Word count
      */
     public static function wordCount(string $text): int
     {
-        $text = self::cleanText($text);
-        if (empty($text)) {
+        if (empty(trim($text))) {
             return 0;
         }
-        return count(explode(' ', $text));
+        return str_word_count($text);
     }
 
     /**
      * Calculate reading time estimate
-     * 
+     *
      * @param string $text Text to analyze
      * @param int $wordsPerMinute Average reading speed
      * @return int Reading time in minutes
@@ -276,7 +275,7 @@ class StringUtils
 
     /**
      * Generate excerpt from text
-     * 
+     *
      * @param string $text Full text
      * @param int $length Maximum length in characters
      * @param string $more More text indicator
@@ -290,7 +289,7 @@ class StringUtils
 
     /**
      * Check if string contains only ASCII characters
-     * 
+     *
      * @param string $text Text to check
      * @return bool True if ASCII only
      */
@@ -301,7 +300,7 @@ class StringUtils
 
     /**
      * Check if string is valid UTF-8
-     * 
+     *
      * @param string $text Text to check
      * @return bool True if valid UTF-8
      */
@@ -312,7 +311,7 @@ class StringUtils
 
     /**
      * Convert string to title case
-     * 
+     *
      * @param string $text Text to convert
      * @return string Title case text
      */
@@ -324,7 +323,7 @@ class StringUtils
 
     /**
      * Parse template variables in text
-     * 
+     *
      * @param string $template Template text with variables
      * @param array $variables Variable values
      * @param string $prefix Variable prefix (e.g., '{{')
@@ -337,13 +336,13 @@ class StringUtils
             $placeholder = $prefix . $key . $suffix;
             $template = str_replace($placeholder, (string) $value, $template);
         }
-        
+
         return $template;
     }
 
     /**
      * Extract template variables from text
-     * 
+     *
      * @param string $template Template text
      * @param string $prefix Variable prefix
      * @param string $suffix Variable suffix
@@ -354,16 +353,16 @@ class StringUtils
         $escapedPrefix = preg_quote($prefix, '/');
         $escapedSuffix = preg_quote($suffix, '/');
         $pattern = '/' . $escapedPrefix . '([a-zA-Z0-9_]+)' . $escapedSuffix . '/';
-        
+
         $matches = [];
         preg_match_all($pattern, $template, $matches);
-        
+
         return array_unique($matches[1] ?? []);
     }
 
     /**
      * Mask sensitive information in string
-     * 
+     *
      * @param string $text Text to mask
      * @param string $pattern Pattern to match (regex)
      * @param string $replacement Replacement pattern
@@ -376,7 +375,7 @@ class StringUtils
 
     /**
      * Generate random string
-     * 
+     *
      * @param int $length String length
      * @param string $chars Character set
      * @return string Random string
@@ -385,17 +384,17 @@ class StringUtils
     {
         $result = '';
         $charsLength = strlen($chars);
-        
+
         for ($i = 0; $i < $length; $i++) {
             $result .= $chars[random_int(0, $charsLength - 1)];
         }
-        
+
         return $result;
     }
 
     /**
      * Check if string starts with prefix
-     * 
+     *
      * @param string $text Text to check
      * @param string $prefix Prefix to check for
      * @param bool $caseSensitive Whether comparison is case sensitive
@@ -407,13 +406,13 @@ class StringUtils
             $text = mb_strtolower($text);
             $prefix = mb_strtolower($prefix);
         }
-        
+
         return mb_substr($text, 0, mb_strlen($prefix)) === $prefix;
     }
 
     /**
      * Check if string ends with suffix
-     * 
+     *
      * @param string $text Text to check
      * @param string $suffix Suffix to check for
      * @param bool $caseSensitive Whether comparison is case sensitive
@@ -425,13 +424,13 @@ class StringUtils
             $text = mb_strtolower($text);
             $suffix = mb_strtolower($suffix);
         }
-        
+
         return mb_substr($text, -mb_strlen($suffix)) === $suffix;
     }
 
     /**
      * Check if string contains substring
-     * 
+     *
      * @param string $text Text to check
      * @param string $substring Substring to look for
      * @param bool $caseSensitive Whether comparison is case sensitive
@@ -443,13 +442,13 @@ class StringUtils
             $text = mb_strtolower($text);
             $substring = mb_strtolower($substring);
         }
-        
+
         return mb_strpos($text, $substring) !== false;
     }
 
     /**
      * Split string by delimiter with limit and trim
-     * 
+     *
      * @param string $text Text to split
      * @param string $delimiter Delimiter to split by
      * @param int $limit Maximum parts (0 = no limit)
@@ -463,11 +462,11 @@ class StringUtils
         } else {
             $parts = explode($delimiter, $text);
         }
-        
+
         if ($trimParts) {
             $parts = array_map('trim', $parts);
         }
-        
+
         return array_filter($parts, function($part) {
             return $part !== '';
         });
@@ -475,7 +474,7 @@ class StringUtils
 
     /**
      * Pad string to specified length with character
-     * 
+     *
      * @param string $text Text to pad
      * @param int $length Target length
      * @param string $char Padding character
@@ -488,9 +487,9 @@ class StringUtils
         if ($currentLength >= $length) {
             return $text;
         }
-        
+
         $padLength = $length - $currentLength;
-        
+
         switch ($side) {
             case 'left':
                 return str_repeat($char, $padLength) . $text;

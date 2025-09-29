@@ -45,7 +45,7 @@ job-references:
             phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
             phpcs
             rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest
+            bash build/bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest
             phpunit
             WP_MULTISITE=1 phpunit
 
@@ -68,12 +68,12 @@ jobs:
             phpcs
             SKIP_DB_CREATE=false
             rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest $SKIP_DB_CREATE
+            bash build/bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest $SKIP_DB_CREATE
             phpunit
             WP_MULTISITE=1 phpunit
             SKIP_DB_CREATE=true
             rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 trunk $SKIP_DB_CREATE
+            bash build/bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 trunk $SKIP_DB_CREATE
             phpunit
             WP_MULTISITE=1 phpunit
             SKIP_DB_CREATE=true

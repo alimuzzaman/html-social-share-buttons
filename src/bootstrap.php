@@ -9,10 +9,10 @@ use HtmlSocialShare\Utils\DataUtils;
 
 /**
  * Bootstrap class that creates the service container and wires WordPress hooks.
- * 
+ *
  * Handles plugin initialization, service registration, and lifecycle events
  * with proper error handling and telemetry integration.
- * 
+ *
  * @package HtmlSocialShare
  * @since 3.0.0
  */
@@ -73,9 +73,12 @@ class Bootstrap
             // Initialize admin and content display to ensure hooks are registered
             $this->container->get('admin');
             $this->container->get('content_display');
-            
+
+            // Initialize REST API service
+            $this->container->get('rest_api_service')->init();
+
             $this->initialized = true;
-            
+
             // Fire initialization complete action
             do_action('hss_bootstrap_initialized', $this->container);
         } catch (\Exception $e) {
@@ -95,41 +98,10 @@ class Bootstrap
     }
 
     // --- Hook handlers with enhanced error handling ---
-    
-    public function handleCron(): void
-    {
-        try {
-            $shareCountManager = $this->container->get('share_counts');
-            if (method_exists($shareCountManager, 'refreshCounts')) {
-                $shareCountManager->refreshCounts();
-                
-                // Track successful cron execution
-                $this->trackTelemetryEvent('cron_executed', ['success' => true]);
-            }
-        } catch (\Exception $e) {
-            error_log('HSS Cron Error: ' . $e->getMessage());
-            $this->trackTelemetryEvent('cron_executed', ['success' => false, 'error' => $e->getMessage()]);
-        }
-    }
 
-    public function ajaxRefreshCounts(): void
-    {
-        if (!$this->validateAjaxRequest('hss_refresh_counts', '_hss_nonce')) {
-            return;
-        }
 
-        try {
-            $shareCountManager = $this->container->get('share_counts');
-            if (method_exists($shareCountManager, 'refreshCounts')) {
-                $shareCountManager->refreshCounts();
-                wp_send_json_success(['message' => 'Refresh completed']);
-            } else {
-                wp_send_json_error(['message' => 'Share count manager not available'], 500);
-            }
-        } catch (\Exception $e) {
-            wp_send_json_error(['message' => $e->getMessage()], 500);
-        }
-    }
+
+
 
     public function ajaxFlushCounts(): void
     {
@@ -138,7 +110,7 @@ class Bootstrap
         }
 
         $requestData = self::sanitizeFlushRequest($_POST);
-        
+
         try {
             $shareCountManager = $this->container->get('share_counts');
             if (method_exists($shareCountManager, 'flushCache')) {
@@ -156,9 +128,7 @@ class Bootstrap
     {
         try {
             $this->runMigrations();
-            $this->installSchemas();
-            $this->scheduleCronJobs();
-            
+
             $this->trackTelemetryEvent('plugin_activated', [
                 'plugin_file' => $this->pluginFile,
                 'time' => time()
@@ -175,8 +145,6 @@ class Bootstrap
     public function onDeactivate(): void
     {
         try {
-            $this->unscheduleCronJobs();
-            
             $this->trackTelemetryEvent('plugin_deactivated', [
                 'plugin_file' => $this->pluginFile,
                 'time' => time()
@@ -190,7 +158,7 @@ class Bootstrap
     }
 
     // --- Private helper methods with side effects ---
-    
+
     private function runMigrations(): void
     {
         $migration = $this->container->get('migration');
@@ -198,31 +166,13 @@ class Bootstrap
             $migration->run();
         }
     }
-    
-    private function installSchemas(): void
-    {
-        $shareCountManager = $this->container->get('share_counts');
-        if ($shareCountManager && method_exists($shareCountManager, 'installSchema')) {
-            $shareCountManager->installSchema();
-        }
-    }
-    
-    private function scheduleCronJobs(): void
-    {
-        $shareCountManager = $this->container->get('share_counts');
-        if ($shareCountManager && method_exists($shareCountManager, 'scheduleCron')) {
-            $shareCountManager->scheduleCron();
-        }
-    }
-    
-    private function unscheduleCronJobs(): void
-    {
-        $shareCountManager = $this->container->get('share_counts');
-        if ($shareCountManager && method_exists($shareCountManager, 'unscheduleCron')) {
-            $shareCountManager->unscheduleCron();
-        }
-    }
-    
+
+
+
+
+
+
+
     private function validateAjaxRequest(string $action, string $nonceField): bool
     {
         if (!current_user_can('manage_options')) {
@@ -234,10 +184,10 @@ class Bootstrap
             wp_send_json_error(['message' => 'invalid nonce'], 403);
             return false;
         }
-        
+
         return true;
     }
-    
+
     private function trackTelemetryEvent(string $event, array $data = []): void
     {
         try {
@@ -251,7 +201,7 @@ class Bootstrap
     }
 
     // --- Pure helper functions ---
-    
+
     /**
      * Pure function to validate plugin file path
      *
@@ -260,9 +210,9 @@ class Bootstrap
      */
     public static function isValidPluginFile(string $pluginFile): bool
     {
-        return !empty($pluginFile) && 
-               is_string($pluginFile) && 
-               strlen($pluginFile) > 4 && 
+        return !empty($pluginFile) &&
+               is_string($pluginFile) &&
+               strlen($pluginFile) > 4 &&
                str_ends_with($pluginFile, '.php');
     }
 
@@ -280,9 +230,9 @@ class Bootstrap
             $postIds = array_filter($postIds, function($id) { return $id > 0; });
             $postIds = empty($postIds) ? null : array_values($postIds);
         }
-        
+
         $removeDb = !empty($postData['remove_db']);
-        
+
         return [
             'post_ids' => $postIds,
             'remove_db' => $removeDb,
@@ -299,7 +249,7 @@ class Bootstrap
     {
         $errors = [];
         $requiredServices = ['settings', 'admin', 'content_display', 'share_renderer'];
-        
+
         foreach ($requiredServices as $service) {
             try {
                 $container->get($service);
@@ -307,7 +257,7 @@ class Bootstrap
                 $errors[] = "Required service '{$service}' not available: " . $e->getMessage();
             }
         }
-        
+
         return [
             'success' => empty($errors),
             'errors' => $errors,

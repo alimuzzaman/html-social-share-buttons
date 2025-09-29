@@ -33,7 +33,7 @@ Unit tests verify individual pieces of your plugin—functions or classes—in i
 
 - Run the installer script to spin up a temporary WordPress install and test database:
   ```bash
-  bash bin/install-wp-tests.sh wordpress_test root '' localhost latest
+  bash build/bin/install-wp-tests.sh wordpress_test root '' localhost latest
   ```
   - `wordpress_test`: test database name (all data removed on each run)
   - `root` and `''`: MySQL user and password
