@@ -41,8 +41,10 @@ class SecurityUtils
     public static function sanitizeKey(string $key): string
     {
         $key = strtolower($key);
-        $key = preg_replace('/[^a-z0-9_\-]/', '', $key);
-        return trim($key, '-_');
+        // Convert hyphens to underscores, remove other special chars
+        $key = str_replace('-', '_', $key);
+        $key = preg_replace('/[^a-z0-9_]/', '', $key);
+        return trim($key, '_');
     }
 
     /**

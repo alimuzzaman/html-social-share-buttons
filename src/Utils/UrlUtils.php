@@ -248,6 +248,9 @@ class UrlUtils
         $query = $parsed['query'] ?? null;
         $fragment = $parsed['fragment'] ?? null;
 
+        // Normalize path - remove multiple slashes
+        $path = preg_replace('#/+#', '/', $path);
+        
         // Remove trailing slash from path (except root)
         if ($path !== '/' && substr($path, -1) === '/') {
             $path = rtrim($path, '/');

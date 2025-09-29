@@ -22,11 +22,29 @@ class StringUtils
      */
     public static function truncate(string $text, int $length, string $ellipsis = '...', bool $breakWords = false): string
     {
-        if (mb_strlen($text) <= $length) {
+        if (empty($text) || $length <= 0) {
+            return '';
+        }
+        
+        // If text is shorter than target length, return as-is
+        if (mb_strlen($text) < $length) {
             return $text;
         }
         
-        $truncated = mb_substr($text, 0, $length - mb_strlen($ellipsis));
+        // If text length equals target and no ellipsis needed
+        if (mb_strlen($text) == $length && empty($ellipsis)) {
+            return $text;
+        }
+        
+        // Calculate available space for text after ellipsis
+        $availableLength = $length - mb_strlen($ellipsis);
+        
+        // If no space available for text, return ellipsis or empty
+        if ($availableLength <= 0) {
+            return $availableLength == 0 ? $ellipsis : '';
+        }
+        
+        $truncated = mb_substr($text, 0, $availableLength);
         
         if (!$breakWords) {
             $lastSpace = mb_strrpos($truncated, ' ');
@@ -133,8 +151,13 @@ class StringUtils
      */
     public static function toSnakeCase(string $text): string
     {
+        // Convert spaces to underscores first
+        $text = str_replace(' ', '_', $text);
+        // Convert camelCase to snake_case
         $result = preg_replace('/([A-Z])/', '_$1', $text);
-        return strtolower(ltrim($result, '_'));
+        $result = strtolower(ltrim($result, '_'));
+        // Remove multiple underscores
+        return preg_replace('/_+/', '_', $result);
     }
 
     /**
@@ -148,7 +171,8 @@ class StringUtils
         $pattern = '/#([a-zA-Z0-9_]+)/';
         $matches = [];
         preg_match_all($pattern, $text, $matches);
-        return $matches[1] ?? [];
+        // Return unique hashtags only
+        return array_unique($matches[1] ?? []);
     }
 
     /**
@@ -174,6 +198,9 @@ class StringUtils
      */
     public static function cleanText(string $text, bool $preserveLineBreaks = false): string
     {
+        // Remove control characters first
+        $text = preg_replace('/[\x00-\x1F\x7F]/', '', $text);
+        
         if ($preserveLineBreaks) {
             // Replace multiple spaces with single space, but preserve line breaks
             $text = preg_replace('/[ \t]+/', ' ', $text);
@@ -291,22 +318,8 @@ class StringUtils
      */
     public static function toTitleCase(string $text): string
     {
-        // Handle common small words that shouldn't be capitalized
-        $smallWords = ['a', 'an', 'and', 'as', 'at', 'but', 'by', 'for', 'in', 'of', 'on', 'or', 'the', 'to', 'up'];
-        
-        $words = explode(' ', mb_strtolower($text));
-        $result = [];
-        
-        foreach ($words as $index => $word) {
-            // Always capitalize first and last word, and words not in small words list
-            if ($index === 0 || $index === count($words) - 1 || !in_array($word, $smallWords, true)) {
-                $result[] = ucfirst($word);
-            } else {
-                $result[] = $word;
-            }
-        }
-        
-        return implode(' ', $result);
+        // Simple title case - capitalize first letter of each word
+        return mb_convert_case($text, MB_CASE_TITLE, 'UTF-8');
     }
 
     /**
