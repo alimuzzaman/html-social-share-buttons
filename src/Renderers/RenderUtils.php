@@ -1,6 +1,10 @@
 <?php
 namespace HtmlSocialShare\Renderers;
 
+use HtmlSocialShare\Utils\SecurityUtils;
+use HtmlSocialShare\Utils\UrlUtils;
+use HtmlSocialShare\Utils\StringUtils;
+
 /**
  * Pure function utilities for URL generation and content formatting
  * 
@@ -19,6 +23,10 @@ class RenderUtils
      */
     public static function formatCount(int $count): string
     {
+        if ($count < 0) {
+            return '0';
+        }
+        
         if ($count < 1000) {
             return (string) $count;
         }
@@ -52,44 +60,60 @@ class RenderUtils
             return '#';
         }
 
+        // Validate inputs for security
+        $url = SecurityUtils::sanitizeUrl($url);
+        $title = SecurityUtils::sanitizeTextField($title);
+
+        if (!$url) {
+            return '#';
+        }
+
         // Standard replacements
         $replacements = [
-            '{url}' => urlencode($url),
-            '{title}' => urlencode($title),
-            '{encoded_url}' => urlencode($url),
-            '{encoded_title}' => urlencode($title),
+            '{url}' => $url,
+            '{title}' => $title,
+            '{encoded_url}' => rawurlencode($url),
+            '{encoded_title}' => rawurlencode($title),
         ];
 
-        // Merge with custom replacements
-        $replacements = array_merge($replacements, $customReplacements);
+        // Add sanitized custom replacements
+        foreach ($customReplacements as $key => $value) {
+            $sanitizedKey = SecurityUtils::sanitizeKey($key);
+            $sanitizedValue = SecurityUtils::sanitizeTextField((string) $value);
+            $replacements['{' . $sanitizedKey . '}'] = $sanitizedValue;
+            $replacements['{encoded_' . $sanitizedKey . '}'] = rawurlencode($sanitizedValue);
+        }
 
-        return str_replace(array_keys($replacements), array_values($replacements), $template);
+        $result = UrlUtils::buildShareUrl($template, $replacements);
+        
+        // Validate result URL
+        return SecurityUtils::sanitizeUrl($result) ?: '#';
     }
 
     /**
-     * Sanitize HTML attributes
+     * Sanitize HTML attributes (wrapper for SecurityUtils)
      * 
      * @param mixed $value Value to sanitize
      * @return string Sanitized value
      */
     public static function sanitizeAttribute($value): string
     {
-        return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        return SecurityUtils::escapeAttribute((string) $value);
     }
 
     /**
-     * Sanitize HTML content
+     * Sanitize HTML content (wrapper for SecurityUtils)
      * 
      * @param mixed $value Value to sanitize
      * @return string Sanitized value
      */
     public static function sanitizeContent($value): string
     {
-        return htmlspecialchars((string)$value, ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        return SecurityUtils::escapeHtml((string) $value);
     }
 
     /**
-     * Build HTML attributes string from array
+     * Build HTML attributes string from array with security
      * 
      * @param array $attributes Key-value pairs of attributes
      * @return string HTML attributes string
@@ -103,10 +127,16 @@ class RenderUtils
                 continue;
             }
             
+            // Validate key
+            $sanitizedKey = SecurityUtils::sanitizeKey((string) $key);
+            if (!$sanitizedKey) {
+                continue;
+            }
+            
             if ($value === true) {
-                $parts[] = self::sanitizeAttribute($key);
+                $parts[] = self::sanitizeAttribute($sanitizedKey);
             } else {
-                $parts[] = self::sanitizeAttribute($key) . '="' . self::sanitizeAttribute($value) . '"';
+                $parts[] = self::sanitizeAttribute($sanitizedKey) . '="' . self::sanitizeAttribute($value) . '"';
             }
         }
         
@@ -126,7 +156,8 @@ class RenderUtils
         string $handle = '',
         int $shareCount = 0
     ): array {
-        $networkLabel = ucfirst($network);
+        $networkLabel = StringUtils::toTitleCase(SecurityUtils::sanitizeTextField($network));
+        $handle = SecurityUtils::sanitizeTextField($handle);
         
         $ariaLabel = "Share on {$networkLabel}";
         if (!empty($handle)) {
@@ -138,7 +169,8 @@ class RenderUtils
         return [
             'aria-label' => $ariaLabel,
             'title' => $title,
-            'role' => 'button'
+            'role' => 'button',
+            'tabindex' => '0'
         ];
     }
 
@@ -151,7 +183,8 @@ class RenderUtils
      */
     public static function generateShareCountScreenReaderText(int $count, string $network): string
     {
-        $networkLabel = ucfirst($network);
+        $networkLabel = StringUtils::toTitleCase(SecurityUtils::sanitizeTextField($network));
+        $count = max(0, $count); // Ensure non-negative
         
         if ($count === 0) {
             return "No shares on {$networkLabel}";
@@ -165,7 +198,7 @@ class RenderUtils
     }
 
     /**
-     * Generate CSS classes for share button
+     * Generate CSS classes for share button with security
      * 
      * @param string $network Network name
      * @param array $modifiers CSS modifier classes
@@ -177,9 +210,14 @@ class RenderUtils
         array $modifiers = [],
         bool $selected = false
     ): string {
+        $sanitizedNetwork = SecurityUtils::sanitizeKey($network);
+        if (!$sanitizedNetwork) {
+            $sanitizedNetwork = 'unknown';
+        }
+        
         $classes = [
             'hssb-share',
-            "hssb-{$network}"
+            "hssb-{$sanitizedNetwork}"
         ];
         
         if ($selected) {
@@ -187,14 +225,17 @@ class RenderUtils
         }
         
         foreach ($modifiers as $modifier) {
-            $classes[] = "hssb-{$modifier}";
+            $sanitizedModifier = SecurityUtils::sanitizeKey((string) $modifier);
+            if ($sanitizedModifier) {
+                $classes[] = "hssb-{$sanitizedModifier}";
+            }
         }
         
-        return implode(' ', array_map([self::class, 'sanitizeAttribute'], $classes));
+        return implode(' ', array_map([SecurityUtils::class, 'escapeAttribute'], $classes));
     }
 
     /**
-     * Validate URL template
+     * Validate URL template with enhanced security
      * 
      * @param string $template URL template
      * @return bool True if template is valid
@@ -205,34 +246,27 @@ class RenderUtils
             return false;
         }
 
-        // Must contain at least {url} placeholder
-        if (strpos($template, '{url}') === false && strpos($template, '{encoded_url}') === false) {
+        // Check for XSS patterns
+        if (SecurityUtils::hasXssPatterns($template)) {
             return false;
         }
 
-        // Must be a valid URL structure
-        return filter_var(
-            str_replace(['{url}', '{title}', '{encoded_url}', '{encoded_title}'], 
-                       ['http://example.com', 'title', 'http://example.com', 'title'], 
-                       $template),
-            FILTER_VALIDATE_URL
-        ) !== false;
+        return UrlUtils::isValidUrlTemplate($template);
     }
 
     /**
-     * Extract domain from URL
+     * Extract domain from URL (wrapper for UrlUtils)
      * 
      * @param string $url URL to parse
      * @return string|null Domain or null if invalid
      */
     public static function extractDomain(string $url): ?string
     {
-        $parsed = parse_url($url);
-        return $parsed['host'] ?? null;
+        return UrlUtils::extractDomain($url);
     }
 
     /**
-     * Generate unique ID for element
+     * Generate unique ID for element with security
      * 
      * @param string $prefix ID prefix
      * @param string $suffix Additional suffix
@@ -240,40 +274,47 @@ class RenderUtils
      */
     public static function generateUniqueId(string $prefix = 'hssb', string $suffix = ''): string
     {
-        $id = $prefix . '-' . uniqid();
+        $sanitizedPrefix = SecurityUtils::sanitizeKey($prefix) ?: 'hssb';
+        $id = $sanitizedPrefix . '-' . uniqid();
         
         if (!empty($suffix)) {
-            $id .= '-' . self::sanitizeAttribute($suffix);
+            $sanitizedSuffix = SecurityUtils::sanitizeKey($suffix);
+            if ($sanitizedSuffix) {
+                $id .= '-' . $sanitizedSuffix;
+            }
         }
         
         return $id;
     }
 
     /**
-     * Parse network configuration from string
+     * Parse network configuration from string with validation
      * 
      * @param string $networkString Network string (e.g., "facebook|square" or "facebook")
      * @return array Network configuration
      */
     public static function parseNetworkString(string $networkString): array
     {
-        $parts = explode('|', $networkString, 2);
+        $parts = explode('|', SecurityUtils::sanitizeTextField($networkString), 2);
+        
+        $network = SecurityUtils::sanitizeKey(trim($parts[0]));
+        $iconset = isset($parts[1]) ? SecurityUtils::sanitizeKey(trim($parts[1])) : 'default';
         
         return [
-            'network' => trim($parts[0]),
-            'iconset' => isset($parts[1]) ? trim($parts[1]) : 'default'
+            'network' => $network ?: 'unknown',
+            'iconset' => $iconset ?: 'default'
         ];
     }
 
     /**
-     * Normalize network name
+     * Normalize network name with security
      * 
      * @param string $network Network name
      * @return string Normalized network name
      */
     public static function normalizeNetworkName(string $network): string
     {
-        return strtolower(trim($network));
+        return SecurityUtils::sanitizeKey(strtolower(trim($network)));
     }
 
     /**
@@ -284,6 +325,40 @@ class RenderUtils
      */
     public static function isSafeCssClass(string $str): bool
     {
-        return preg_match('/^[a-zA-Z0-9_-]+$/', $str) === 1;
+        return SecurityUtils::isAlphanumeric($str, true, true);
+    }
+
+    /**
+     * Validate share button configuration
+     * 
+     * @param array $config Button configuration
+     * @return array Validation result with 'valid' boolean and 'errors' array
+     */
+    public static function validateButtonConfig(array $config): array
+    {
+        $errors = [];
+        
+        if (empty($config['network'])) {
+            $errors[] = "Network is required";
+        } elseif (!self::normalizeNetworkName($config['network'])) {
+            $errors[] = "Invalid network name: {$config['network']}";
+        }
+        
+        if (!empty($config['url']) && !SecurityUtils::sanitizeUrl($config['url'])) {
+            $errors[] = "Invalid URL: {$config['url']}";
+        }
+        
+        if (!empty($config['url_template']) && !self::isValidUrlTemplate($config['url_template'])) {
+            $errors[] = "Invalid URL template";
+        }
+        
+        if (isset($config['count']) && (!is_int($config['count']) || $config['count'] < 0)) {
+            $errors[] = "Share count must be non-negative integer";
+        }
+        
+        return [
+            'valid' => empty($errors),
+            'errors' => $errors
+        ];
     }
 }

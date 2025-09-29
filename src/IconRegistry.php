@@ -1,30 +1,53 @@
 <?php
 namespace HtmlSocialShare;
 
+use HtmlSocialShare\Utils\SecurityUtils;
+use HtmlSocialShare\Utils\ArrayUtils;
+use HtmlSocialShare\Utils\StringUtils;
+use HtmlSocialShare\Svg\SanitizerInterface;
+
+/**
+ * Icon registry with enhanced security and pure functions
+ * 
+ * Manages icon sets, custom icons, and SVG rendering with proper sanitization
+ * and caching. Separates pure icon processing from WordPress-specific I/O.
+ * 
+ * @package HtmlSocialShare
+ * @since 3.0.0
+ */
 class IconRegistry implements IconRegistryInterface
 {
     private Settings $settings;
+    private ?SanitizerInterface $svgSanitizer;
     private array $loadedIcons = [];
     private string $currentIconset = 'builtin';
     private array $iconCSS = [];
+    private array $cache = [];
 
-    public function __construct(Settings $settings)
+    public function __construct(Settings $settings, ?SanitizerInterface $svgSanitizer = null)
     {
         $this->settings = $settings;
+        $this->svgSanitizer = $svgSanitizer;
         $this->currentIconset = $this->settings->get('iconset', 'builtin');
         $this->loadIcons();
     }
 
     /**
-     * Set the current iconset
+     * Set the current iconset with validation
      *
-     * @param string $iconset
+     * @param string $iconset Iconset identifier
      * @return void
+     * @throws \InvalidArgumentException If iconset is invalid
      */
     public function setIconset(string $iconset): void
     {
+        if (!self::isValidIconsetId($iconset)) {
+            throw new \InvalidArgumentException("Invalid iconset ID: {$iconset}");
+        }
+
         $this->currentIconset = $iconset;
         $this->settings->set('iconset', $iconset);
+        $this->clearCache();
         $this->loadIcons();
     }
 
