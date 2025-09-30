@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormField, Button, TextInput } from '../ui';
 import { useNotifications } from '../../contexts';
 import { useNetworks } from '../../hooks/useNetworks';
-import { NetworkConfig } from '../../types';
+import { useSettings } from '../../hooks';
+import { NetworkConfig, CustomNetwork } from '../../types';
 import {
 	Facebook,
 	Twitter,
@@ -154,17 +155,15 @@ const SortableNetworkItem: React.FC< SortableNetworkItemProps > = ( {
 			className={ `flex items-center px-3 py-2 bg-white border border-gray-200 rounded cursor-move transition-all duration-200 hover:shadow-sm hover:border-gray-300 ${
 				isDragging ? 'opacity-50' : ''
 			}` }
+			{ ...attributes }
+			{ ...listeners }
 		>
 			<div
 				className="w-4 h-4 rounded mr-2 flex-shrink-0"
 				style={ { backgroundColor: network.color } }
 			/>
 			<span className="text-sm flex-1">{ network.label }</span>
-			<div
-				{ ...attributes }
-				{ ...listeners }
-				className="cursor-grab active:cursor-grabbing ml-2"
-			>
+			<div className="ml-2">
 				<GripVertical size={ 14 } className="text-gray-400" />
 			</div>
 		</div>
@@ -173,6 +172,7 @@ const SortableNetworkItem: React.FC< SortableNetworkItemProps > = ( {
 
 export const NetworksTab: React.FC = () => {
 	const { networks: apiNetworks, updateNetwork } = useNetworks();
+	const { settings, updateSetting, saveSettings } = useSettings();
 	const { showSuccess, showError } = useNotifications();
 
 	// Keep local state for immediate UI updates and form handling
@@ -182,8 +182,47 @@ export const NetworksTab: React.FC = () => {
 		'twitter',
 		'linkedin',
 	] );
-	const [ isSaving, setIsSaving ] = useState( false ); // Use API networks if available, otherwise fall back to local defaults
+	const [ customNetworks, setCustomNetworks ] = useState< CustomNetwork[] >(
+		settings?.custom_networks ?? []
+	);
+	const [ isSaving, setIsSaving ] = useState( false );
+	const [ showCustomNetworkForm, setShowCustomNetworkForm ] = useState(
+		false
+	);
+	const [ customNetworkForm, setCustomNetworkForm ] = useState( {
+		name: '',
+		label: '',
+		share_url: '',
+		color: '#666666',
+		icon_class: '',
+	} );
+
+	// Use API networks if available, otherwise fall back to local defaults
 	const networks = apiNetworks.length > 0 ? apiNetworks : localNetworks;
+
+	// Helper to normalize CustomNetwork -> NetworkConfig for rendering
+	const customAsNetworkConfig = ( c: CustomNetwork ): NetworkConfig => ( {
+		id: c.id,
+		name: c.name,
+		label: c.label,
+		share_url: c.share_url,
+		requires_handle: false,
+		icon_class: c.icon_class || 'fas fa-share',
+		color: c.color || '#666666',
+		enabled: c.enabled,
+	} );
+
+	const allNetworks: NetworkConfig[] = [
+		...networks,
+		...( ( settings?.custom_networks ?? customNetworks ).map( customAsNetworkConfig ) ),
+	];
+
+	// Keep local customNetworks in sync with settings when available
+	useEffect( () => {
+		if ( settings ) {
+			setCustomNetworks( settings.custom_networks ?? [] );
+		}
+	}, [ settings ] );
 
 	const sensors = useSensors(
 		useSensor( PointerSensor ),
@@ -230,18 +269,86 @@ export const NetworksTab: React.FC = () => {
 			showError( 'Failed to update network label', 'Please try again.' );
 		}
 	};
+
+	const handleAddCustomNetwork = async () => {
+		if (
+			! customNetworkForm.name.trim() ||
+			! customNetworkForm.share_url.trim()
+		) {
+			showError(
+				'Please fill in all required fields',
+				'Name and Share URL are required.'
+			);
+			return;
+		}
+
+		const newCustom: CustomNetwork = {
+			id: `custom-${ Date.now() }`,
+			name: customNetworkForm.name.trim(),
+			label: customNetworkForm.label.trim() || customNetworkForm.name.trim(),
+			share_url: customNetworkForm.share_url.trim(),
+			color: customNetworkForm.color,
+			icon_class: customNetworkForm.icon_class.trim() || 'fas fa-share',
+			enabled: true,
+		};
+
+		// Update settings so custom networks persist
+		const updatedCustoms = [ ...( settings?.custom_networks ?? customNetworks ), newCustom ];
+		setCustomNetworks( updatedCustoms );
+		updateSetting( 'custom_networks', updatedCustoms );
+		// Add to enabled list and order by default
+		const updatedEnabled = [ ...( settings?.enabled_networks ?? enabledNetworks ), newCustom.id ];
+		updateSetting( 'enabled_networks', updatedEnabled );
+		updateSetting( 'network_order', [ ...( settings?.network_order ?? [] ), ...updatedEnabled ] );
+		setCustomNetworkForm( {
+			name: '',
+			label: '',
+			share_url: '',
+			color: '#666666',
+			icon_class: '',
+		} );
+		setShowCustomNetworkForm( false );
+		try {
+			await saveSettings();
+			showSuccess( 'Custom network added successfully!' );
+		} catch ( e ) {
+			showError( 'Failed to save custom network', 'Please try again.' );
+		}
+	};
+
+	const handleDeleteCustomNetwork = async ( networkId: string ) => {
+		const updatedCustoms = ( settings?.custom_networks ?? customNetworks ).filter( ( n ) => n.id !== networkId );
+		updateSetting( 'custom_networks', updatedCustoms );
+		const updatedEnabled = ( settings?.enabled_networks ?? enabledNetworks ).filter( ( id ) => id !== networkId );
+		updateSetting( 'enabled_networks', updatedEnabled );
+		const updatedOrder = ( settings?.network_order ?? enabledNetworks ).filter( ( id ) => id !== networkId );
+		updateSetting( 'network_order', updatedOrder );
+		setCustomNetworks( updatedCustoms );
+		setEnabledNetworks( updatedEnabled );
+		try {
+			await saveSettings();
+			showSuccess( 'Custom network removed successfully!' );
+		} catch ( e ) {
+			showError( 'Failed to remove custom network', 'Please try again.' );
+		}
+	};
+
 	const handleSave = async () => {
 		setIsSaving( true );
 		try {
-			// Save enabled networks configuration
-			const networkUpdates = networks.map(
+			// Update settings to persist enabled networks and order
+			updateSetting( 'enabled_networks', enabledNetworks );
+			updateSetting( 'network_order', enabledNetworks );
+			updateSetting( 'custom_networks', settings?.custom_networks ?? customNetworks );
+
+			// If API is available, save individual network enabled state via useNetworks API
+			const networkUpdates = allNetworks.map(
 				( network: NetworkConfig ) => ( {
 					...network,
 					enabled: enabledNetworks.includes( network.id ),
 				} )
 			);
 
-			// If API is available, save via API
 			if ( apiNetworks.length > 0 ) {
 				await Promise.all(
 					networkUpdates.map( ( network: NetworkConfig ) =>
@@ -251,6 +358,9 @@ export const NetworksTab: React.FC = () => {
 					)
 				);
 			}
+
+			// Persist via central settings endpoint
+			await saveSettings();
 
 			showSuccess( 'Network settings saved successfully!' );
 		} catch ( error ) {
@@ -275,7 +385,7 @@ export const NetworksTab: React.FC = () => {
 					</h3>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-						{ networks.map( ( network: NetworkConfig ) => {
+						{ allNetworks.map( ( network: NetworkConfig ) => {
 							const isEnabled = enabledNetworks.includes(
 								network.id
 							);
@@ -295,7 +405,10 @@ export const NetworksTab: React.FC = () => {
 										)
 									}
 									onKeyDown={ ( e ) => {
-										if ( e.key === 'Enter' || e.key === ' ' ) {
+										if (
+											e.key === 'Enter' ||
+											e.key === ' '
+										) {
 											e.preventDefault();
 											handleNetworkToggle(
 												network.id,
@@ -360,6 +473,13 @@ export const NetworksTab: React.FC = () => {
 										<div className="flex-1">
 											<h4 className="font-medium text-gray-800">
 												{ network.name }
+												{ network.id.startsWith(
+													'custom-'
+												) && (
+													<span className="ml-2 text-xs text-orange-600 font-normal">
+														Custom
+													</span>
+												) }
 											</h4>
 											{ isEnabled && (
 												<span className="text-xs text-blue-600 font-medium">
@@ -367,6 +487,20 @@ export const NetworksTab: React.FC = () => {
 												</span>
 											) }
 										</div>
+										{ network.id.startsWith( 'custom-' ) && (
+											<button
+												onClick={ ( e ) => {
+													e.stopPropagation();
+													handleDeleteCustomNetwork(
+														network.id
+													);
+												} }
+												className="ml-2 text-red-500 hover:text-red-700 p-1"
+												title="Remove custom network"
+											>
+												×
+											</button>
+										) }
 									</div>
 
 									{ isEnabled && (
@@ -410,9 +544,9 @@ export const NetworksTab: React.FC = () => {
 								items={ enabledNetworks }
 								strategy={ verticalListSortingStrategy }
 							>
-								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+								<div className="flex flex-col space-y-2">
 									{ enabledNetworks.map( ( networkId ) => {
-										const network = networks.find(
+										const network = allNetworks.find(
 											( n: NetworkConfig ) =>
 												n.id === networkId
 										);
@@ -431,6 +565,179 @@ export const NetworksTab: React.FC = () => {
 							</SortableContext>
 						</DndContext>
 					</div>
+
+					<div className="mt-6 p-4 bg-gray-50 rounded-lg">
+						<div className="flex justify-between items-center mb-3">
+							<h4 className="font-medium text-gray-800">
+								Custom Networks
+							</h4>
+							<Button
+								onClick={ () =>
+									setShowCustomNetworkForm(
+										! showCustomNetworkForm
+									)
+								}
+								variant="secondary"
+								size="small"
+							>
+								{ showCustomNetworkForm
+									? 'Cancel'
+									: 'Add Custom Network' }
+							</Button>
+						</div>
+						<p className="text-sm text-gray-600 mb-3">
+							Create your own custom social networks with custom
+							share URLs and branding.
+						</p>
+
+						{ showCustomNetworkForm && (
+							<div className="bg-white p-4 rounded border border-gray-200">
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<FormField
+										label="Network Name"
+										description="Display name for the network"
+									>
+										<TextInput
+											value={ customNetworkForm.name }
+											onChange={ ( value ) =>
+												setCustomNetworkForm( ( prev ) => ( {
+													...prev,
+													name: value,
+												} ) )
+											}
+											placeholder="e.g., My Custom Network"
+										/>
+									</FormField>
+
+									<FormField
+										label="Button Label"
+										description="Text shown on the share button"
+									>
+										<TextInput
+											value={ customNetworkForm.label }
+											onChange={ ( value ) =>
+												setCustomNetworkForm( ( prev ) => ( {
+													...prev,
+													label: value,
+												} ) )
+											}
+											placeholder="e.g., Share"
+										/>
+									</FormField>
+
+									<FormField
+										label="Share URL"
+										description="URL template with {url} and {title} placeholders"
+									>
+										<TextInput
+											value={ customNetworkForm.share_url }
+											onChange={ ( value ) =>
+												setCustomNetworkForm( ( prev ) => ( {
+													...prev,
+													share_url: value,
+												} ) )
+											}
+											placeholder="https://example.com/share?url={url}&title={title}"
+										/>
+									</FormField>
+
+									<FormField
+										label="Brand Color"
+										description="Hex color for the network button"
+									>
+										<TextInput
+											value={ customNetworkForm.color }
+											onChange={ ( value ) =>
+												setCustomNetworkForm( ( prev ) => ( {
+													...prev,
+													color: value,
+												} ) )
+											}
+											placeholder="#666666"
+										/>
+									</FormField>
+
+									<div className="md:col-span-2">
+										<FormField
+											label="Icon Class (Optional)"
+											description="FontAwesome icon class (e.g., fab fa-share)"
+										>
+											<TextInput
+												value={ customNetworkForm.icon_class }
+												onChange={ ( value ) =>
+													setCustomNetworkForm( ( prev ) => ( {
+														...prev,
+														icon_class: value,
+													} ) )
+												}
+												placeholder="fab fa-share"
+											/>
+										</FormField>
+									</div>
+								</div>
+
+								<div className="flex justify-end mt-4">
+									<Button
+										onClick={ handleAddCustomNetwork }
+										variant="primary"
+									>
+										Add Network
+									</Button>
+								</div>
+							</div>
+						) }
+
+						{ customNetworks.length > 0 && (
+							<div className="mt-4">
+								<h5 className="text-sm font-medium text-gray-700 mb-2">
+									Your Custom Networks ({ customNetworks.length })
+								</h5>
+								<div className="space-y-2">
+									{ customNetworks.map( ( network ) => (
+										<div
+											key={ network.id }
+											className="flex items-center justify-between p-2 bg-white rounded border border-gray-200"
+										>
+											<div className="flex items-center">
+												<div
+													className="w-6 h-6 rounded flex items-center justify-center mr-3"
+													style={ {
+														backgroundColor:
+															network.color,
+													} }
+												>
+													<span className="text-white text-xs">
+														{ network.name.charAt( 0 ) }
+													</span>
+												</div>
+												<div>
+													<span className="font-medium text-sm">
+														{ network.name }
+													</span>
+													<p className="text-xs text-gray-500">
+														{ network.share_url }
+													</p>
+												</div>
+											</div>
+											<Button
+												onClick={ () =>
+													handleDeleteCustomNetwork(
+														network.id
+													)
+												}
+												variant="secondary"
+												size="small"
+												className="text-red-600 hover:text-red-700"
+											>
+												Remove
+											</Button>
+										</div>
+									) ) }
+								</div>
+							</div>
+						) }
+					</div>
+
 				</div>
 
 				<div className="mt-8 pt-4 border-t border-gray-200">
