@@ -15,22 +15,30 @@ export const Tabs: React.FC<TabsProps> = ({
   className = ''
 }) => {
   return (
-    <div className={`wp-tabs ${className}`}>
-      <nav className="nav-tab-wrapper wp-clearfix" role="tablist">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            role="tab"
-            aria-selected={activeTab === tab.id}
-            className={`nav-tab ${activeTab === tab.id ? 'nav-tab-active' : ''}`}
-            onClick={() => onTabChange(tab.id)}
-          >
-            {tab.icon && (
-              <span className={`dashicons ${tab.icon} mr-1`} aria-hidden="true" />
-            )}
-            {tab.title}
-          </button>
-        ))}
+    <div className={className}>
+      <nav className="border-b border-gray-200 mb-6" role="tablist">
+        <div className="flex space-x-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              className={`px-4 py-2 text-sm font-medium rounded-t-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                activeTab === tab.id
+                  ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-b-2 border-transparent'
+              }`}
+              onClick={() => onTabChange(tab.id)}
+            >
+              {tab.icon && (
+                <span className="mr-2" aria-hidden="true">
+                  {tab.icon}
+                </span>
+              )}
+              {tab.title}
+            </button>
+          ))}
+        </div>
       </nav>
     </div>
   );
@@ -55,7 +63,7 @@ export const TabPanel: React.FC<TabPanelProps> = ({
     <div
       role="tabpanel"
       aria-labelledby={`tab-${id}`}
-      className={`tab-panel ${className}`}
+      className={`mt-6 ${className}`}
     >
       {children}
     </div>
