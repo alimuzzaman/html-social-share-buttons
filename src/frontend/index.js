@@ -8,6 +8,6 @@
 import './wechat-toggle.js';
 
 // Initialize frontend functionality when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('HTML Social Share Buttons frontend loaded');
-});
+document.addEventListener( 'DOMContentLoaded', function () {
+	console.log( 'HTML Social Share Buttons frontend loaded' );
+} );
