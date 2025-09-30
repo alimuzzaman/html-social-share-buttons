@@ -77,7 +77,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 <p className="text-red-600 mb-4">
                   An error occurred while rendering this component. Please try refreshing the page or contact support if the problem persists.
                 </p>
-                
+
                 {process.env.NODE_ENV === 'development' && this.state.error && (
                   <details className="bg-red-100 p-3 rounded border text-sm">
                     <summary className="cursor-pointer font-medium text-red-800 mb-2">
@@ -101,7 +101,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                     </div>
                   </details>
                 )}
-                
+
                 <div className="flex space-x-3 mt-4">
                   <button
                     onClick={this.handleReset}
