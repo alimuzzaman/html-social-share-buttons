@@ -122,7 +122,7 @@ class ContentDisplay
 
         wp_enqueue_style(
             'html-social-share-frontend',
-            $this->getAssetUrl('frontend.css'),
+            HTML_SOCIAL_SHARE_BUILD_URL . 'style-index.css',
             [],
             $this->getVersion()
         );
@@ -292,7 +292,7 @@ class ContentDisplay
     {
         wp_enqueue_script(
             'html-social-share-wechat-toggle',
-            $this->getAssetUrl('wechat-toggle.js'),
+            HTML_SOCIAL_SHARE_BUILD_URL . 'frontend.js',
             [],
             $this->getVersion(),
             true

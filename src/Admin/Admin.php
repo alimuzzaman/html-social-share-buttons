@@ -126,10 +126,10 @@ class Admin
         }
 
         try {
-            // Load admin CSS from assets directory (static files)
+            // Load admin CSS from build directory
             wp_enqueue_style(
                 'html-social-share-admin',
-                HTML_SOCIAL_SHARE_ASSETS_URL . 'admin.css',
+                HTML_SOCIAL_SHARE_BUILD_URL . 'index.css',
                 [],
                 '3.0.0'
             );
