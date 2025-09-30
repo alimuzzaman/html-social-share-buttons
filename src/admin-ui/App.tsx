@@ -4,108 +4,121 @@ import { TabConfig } from './types';
 
 // Import tab components
 import {
-  GeneralTab,
-  NetworksTab,
-  ProfilesTab,
-  IntegrationsTab,
-  AppearanceTab,
-  PlacementTab,
-  ShortcodeTab
+	GeneralTab,
+	NetworksTab,
+	ProfilesTab,
+	IntegrationsTab,
+	AppearanceTab,
+	PlacementTab,
+	ShortcodeTab,
+	AdvancedTab,
 } from './components/tabs';
 
 const tabs: TabConfig[] = [
-  {
-    id: 'general',
-    title: 'General',
-    icon: 'dashicons-admin-settings',
-    description: 'Basic plugin settings and display options'
-  },
-  {
-    id: 'networks',
-    title: 'Networks',
-    icon: 'dashicons-share',
-    description: 'Configure social media networks and sharing options'
-  },
-  {
-    id: 'profiles',
-    title: 'Profiles',
-    icon: 'dashicons-groups',
-    description: 'Manage button profiles and configurations'
-  },
-  {
-    id: 'integrations',
-    title: 'Integrations',
-    icon: 'dashicons-admin-plugins',
-    description: 'Third-party plugin integrations'
-  },
-  {
-    id: 'appearance',
-    title: 'Appearance',
-    icon: 'dashicons-art',
-    description: 'Style and appearance customization'
-  },
-  {
-    id: 'placement',
-    title: 'Placement',
-    icon: 'dashicons-location',
-    description: 'Configure where buttons appear'
-  },
-  {
-    id: 'shortcode',
-    title: 'Shortcode',
-    icon: 'dashicons-editor-code',
-    description: 'Generate and customize shortcodes'
-  }
+	{
+		id: 'general',
+		title: 'General',
+		icon: 'dashicons-admin-settings',
+		description: 'Basic plugin settings and display options',
+	},
+	{
+		id: 'networks',
+		title: 'Networks',
+		icon: 'dashicons-share',
+		description: 'Configure social media networks and sharing options',
+	},
+	{
+		id: 'profiles',
+		title: 'Profiles',
+		icon: 'dashicons-groups',
+		description: 'Manage button profiles and configurations',
+	},
+	{
+		id: 'integrations',
+		title: 'Integrations',
+		icon: 'dashicons-admin-plugins',
+		description: 'Third-party plugin integrations',
+	},
+	{
+		id: 'appearance',
+		title: 'Appearance',
+		icon: 'dashicons-art',
+		description: 'Style and appearance customization',
+	},
+	{
+		id: 'placement',
+		title: 'Placement',
+		icon: 'dashicons-location',
+		description: 'Configure where buttons appear',
+	},
+	{
+		id: 'shortcode',
+		title: 'Shortcode',
+		icon: 'dashicons-editor-code',
+		description: 'Generate and customize shortcodes',
+	},
+	{
+		id: 'advanced',
+		title: 'Advanced',
+		icon: 'dashicons-admin-tools',
+		description: 'Advanced settings and performance options',
+	},
 ];
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('general');
+	const [ activeTab, setActiveTab ] = useState( 'general' );
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'general':
-        return <GeneralTab />;
-      case 'networks':
-        return <NetworksTab />;
-      case 'profiles':
-        return <ProfilesTab />;
-      case 'integrations':
-        return <IntegrationsTab />;
-      case 'appearance':
-        return <AppearanceTab />;
-      case 'placement':
-        return <PlacementTab />;
-      case 'shortcode':
-        return <ShortcodeTab />;
-      default:
-        return <GeneralTab />;
-    }
-  };
+	const renderTabContent = () => {
+		switch ( activeTab ) {
+			case 'general':
+				return <GeneralTab />;
+			case 'networks':
+				return <NetworksTab />;
+			case 'profiles':
+				return <ProfilesTab />;
+			case 'integrations':
+				return <IntegrationsTab />;
+			case 'appearance':
+				return <AppearanceTab />;
+			case 'placement':
+				return <PlacementTab />;
+			case 'shortcode':
+				return <ShortcodeTab />;
+			case 'advanced':
+				return <AdvancedTab />;
+			default:
+				return <GeneralTab />;
+		}
+	};
 
-  return (
-    <div className="wrap html-social-share-admin">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-        HTML Social Share Buttons
-      </h1>
+	return (
+		<div className="wrap html-social-share-admin">
+			<h1 className="text-2xl font-semibold text-gray-900 mb-2">
+				HTML Social Share Buttons
+			</h1>
 
-      <hr className="border-t border-gray-200 my-6" />
+			<hr className="border-t border-gray-200 my-6" />
 
-      <div className="html-social-share-tabs-wrapper">
-        <Tabs
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          className="mb-6"
-        />
+			<div className="html-social-share-tabs-wrapper">
+				<Tabs
+					tabs={ tabs }
+					activeTab={ activeTab }
+					onTabChange={ setActiveTab }
+					className="mb-6"
+				/>
 
-        <div className="tab-content">
-          {tabs.map((tab) => (
-            <TabPanel key={tab.id} id={tab.id} activeTab={activeTab}>
-              {renderTabContent()}
-            </TabPanel>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+				<div className="tab-content">
+					{ tabs.map( ( tab ) => (
+						<TabPanel
+							key={ tab.id }
+							id={ tab.id }
+							activeTab={ activeTab }
+						>
+							{ renderTabContent() }
+						</TabPanel>
+					) ) }
+				</div>
+			</div>
+		</div>
+	);
 };
