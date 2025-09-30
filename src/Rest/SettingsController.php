@@ -165,16 +165,11 @@ class SettingsController extends WP_REST_Controller
                     'cache_duration' => $this->settings->get('cache_duration', 3600),
                     'debug_mode' => $this->settings->get('debug_mode', false),
                 ],
-                'advanced' => [
-                    'google_analytics' => $this->settings->get('google_analytics', false),
-                    'auto_hide_buttons' => $this->settings->get('auto_hide_buttons', false),
-                    'use_port_in_url' => $this->settings->get('use_port_in_url', false),
-                    'nofollow_links' => $this->settings->get('nofollow_links', true),
-                    'cache_enabled' => $this->settings->get('cache_enabled', true),
-                    'cache_duration' => $this->settings->get('cache_duration', 3600),
-                    'debug_mode' => $this->settings->get('debug_mode', false),
-                ],
             ];
+
+            // Include profiles and default profile at top-level for the admin UI
+            $settings['profiles'] = $this->profileManager->listProfiles();
+            $settings['default_profile'] = $this->settings->get('default_profile', '');
 
             return new WP_REST_Response($settings, 200);
         } catch (\Exception $e) {
@@ -193,10 +188,52 @@ class SettingsController extends WP_REST_Controller
 
             // Process each settings category
             foreach ($params as $category => $settings) {
-                if (!is_array($settings)) {
+                // Handle profiles as an atomic array of profile objects
+                if ($category === 'profiles') {
+                    $sanitizedProfiles = [];
+                    if (is_array($settings)) {
+                        foreach ($settings as $profile) {
+                            if (!is_array($profile)) {
+                                continue;
+                            }
+                            $sanitizedProfiles[] = [
+                                'id' => sanitize_text_field($profile['id'] ?? ''),
+                                'name' => sanitize_text_field($profile['name'] ?? ''),
+                                'networks' => is_array($profile['networks']) ? array_map('sanitize_text_field', $profile['networks']) : [],
+                                'display_settings' => is_array($profile['display_settings']) ? [
+                                    'style' => sanitize_text_field($profile['display_settings']['style'] ?? ''),
+                                    'size' => sanitize_text_field($profile['display_settings']['size'] ?? ''),
+                                    'text_labels' => (bool)($profile['display_settings']['text_labels'] ?? false),
+                                    'icon_only' => (bool)($profile['display_settings']['icon_only'] ?? false),
+                                ] : [],
+                            ];
+                        }
+                    }
+                    $this->settings->set('profiles', $sanitizedProfiles);
+                    $updated['profiles'] = $sanitizedProfiles;
                     continue;
                 }
 
+                // Handle scalar top-level settings (e.g. default_profile)
+                if (!is_array($settings)) {
+                    $sanitized_value = $this->sanitize_setting_value($category, $settings);
+                    $this->settings->set($category, $sanitized_value);
+                    $updated[$category] = $sanitized_value;
+                    continue;
+                }
+
+                // Distinguish associative nested objects from sequential arrays
+                $keys = array_keys($settings);
+                $is_assoc = $keys !== range(0, count($settings) - 1);
+
+                if (!$is_assoc) {
+                    // Sequential arrays are stored as-is (e.g. an array of strings)
+                    $this->settings->set($category, $settings);
+                    $updated[$category] = $settings;
+                    continue;
+                }
+
+                // Otherwise, iterate nested associative properties and persist them by key
                 foreach ($settings as $key => $value) {
                     $sanitized_value = $this->sanitize_setting_value($key, $value);
                     $this->settings->set($key, $sanitized_value);
