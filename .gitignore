@@ -10,6 +10,7 @@ composer.phar
 npm-debug.log
 pnpm-lock.yaml
 package-lock.json
+/build/
 
 # Editor/IDE
 /.vscode/
