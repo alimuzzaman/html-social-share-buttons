@@ -1,9 +1,8 @@
 // Tab Component exports
-export { GeneralTab } from './GeneralTab';
+export { DisplayTab } from './DisplayTab';
 export { NetworksTab } from './NetworksTab';
 export { ProfilesTab } from './ProfilesTab';
 export { IntegrationsTab } from './IntegrationsTab';
-export { AppearanceTab } from './AppearanceTab';
-export { PlacementTab } from './PlacementTab';
+export { AppearanceTab as DesignTab } from './AppearanceTab';
 export { ShortcodeTab } from './ShortcodeTab';
 export { AdvancedTab } from './AdvancedTab';

@@ -1,13 +1,26 @@
 // Types for the HTML Social Share Buttons admin interface
 
+export type BetterLinksCustomTracking = Record< string, string >;
+
 export interface PluginSettings {
-	// General Settings
+	// Display & Placement
 	show_on_front_page: boolean;
 	show_on_posts: boolean;
 	show_on_pages: boolean;
 	show_on_archives: boolean;
+	auto_placement: boolean;
+	placement_position: 'before' | 'after' | 'both' | 'left' | 'right';
+	placement_post_types: string[];
+	exclude_pages: string;
+
+	// Design Defaults
 	default_style: string;
 	default_size: string;
+	title: string;
+	icon_style: 'default' | 'outline' | 'rounded' | 'square';
+	button_size: 'small' | 'medium' | 'large';
+	button_spacing: number;
+	custom_css: string;
 
 	// Network Settings
 	enabled_networks: string[];
@@ -21,22 +34,15 @@ export interface PluginSettings {
 	// Integrations
 	betterlinks_enabled: boolean;
 	betterlinks_api_key: string;
+	betterlinks_shorten_urls: boolean;
+	betterlinks_add_tracking: boolean;
+	betterlinks_custom_tracking: BetterLinksCustomTracking;
+	betterlinks_available?: boolean;
+	betterlinks_pro?: boolean;
+	betterlinks_version?: string | null;
 	elementor_enabled: boolean;
 	divi_enabled: boolean;
 	beaver_builder_enabled: boolean;
-
-	// Appearance
-	title: string;
-	icon_style: 'default' | 'outline' | 'rounded' | 'square';
-	button_size: 'small' | 'medium' | 'large';
-	button_spacing: number;
-	custom_css: string;
-
-	// Placement
-	auto_placement: boolean;
-	placement_position: 'before' | 'after' | 'both' | 'left' | 'right';
-	placement_post_types: string[];
-	exclude_pages: string;
 
 	// Advanced
 	google_analytics: boolean;
@@ -92,7 +98,7 @@ export interface NetworkConfig {
 export interface TabConfig {
 	id: string;
 	title: string;
-	icon: string;
+	icon?: React.ReactNode;
 	description?: string;
 }
 

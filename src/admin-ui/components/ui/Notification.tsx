@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';
 
@@ -41,6 +41,13 @@ export const Notification: React.FC< NotificationProps > = ( {
 } ) => {
 	const [ isVisible, setIsVisible ] = useState( true );
 
+	const handleDismiss = useCallback( () => {
+		setIsVisible( false );
+		if ( onDismiss ) {
+			onDismiss();
+		}
+	}, [ onDismiss ] );
+
 	useEffect( () => {
 		if ( autoHide && autoHideDelay > 0 ) {
 			const timer = setTimeout( () => {
@@ -50,13 +57,6 @@ export const Notification: React.FC< NotificationProps > = ( {
 			return () => clearTimeout( timer );
 		}
 	}, [ autoHide, autoHideDelay, handleDismiss ] );
-
-	const handleDismiss = () => {
-		setIsVisible( false );
-		if ( onDismiss ) {
-			onDismiss();
-		}
-	};
 
 	if ( ! isVisible ) {
 		return null;
@@ -133,7 +133,7 @@ export const Notification: React.FC< NotificationProps > = ( {
 	return (
 		<div className={ `rounded-lg border p-4 ${ styles.container }` }>
 			<div className="flex">
-				<div className={ `flex-shrink-0 ${ styles.icon }` }>
+				<div className={ `flex-shrink-0 self-start ${ styles.icon }` }>
 					{ icons[ type ] }
 				</div>
 				<div className="ml-3 flex-1">

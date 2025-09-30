@@ -186,9 +186,8 @@ export const NetworksTab: React.FC = () => {
 		settings?.custom_networks ?? []
 	);
 	const [ isSaving, setIsSaving ] = useState( false );
-	const [ showCustomNetworkForm, setShowCustomNetworkForm ] = useState(
-		false
-	);
+	const [ showCustomNetworkForm, setShowCustomNetworkForm ] =
+		useState( false );
 	const [ customNetworkForm, setCustomNetworkForm ] = useState( {
 		name: '',
 		label: '',
@@ -214,7 +213,9 @@ export const NetworksTab: React.FC = () => {
 
 	const allNetworks: NetworkConfig[] = [
 		...networks,
-		...( ( settings?.custom_networks ?? customNetworks ).map( customAsNetworkConfig ) ),
+		...( settings?.custom_networks ?? customNetworks ).map(
+			customAsNetworkConfig
+		),
 	];
 
 	// Keep local customNetworks in sync with settings when available
@@ -285,7 +286,8 @@ export const NetworksTab: React.FC = () => {
 		const newCustom: CustomNetwork = {
 			id: `custom-${ Date.now() }`,
 			name: customNetworkForm.name.trim(),
-			label: customNetworkForm.label.trim() || customNetworkForm.name.trim(),
+			label:
+				customNetworkForm.label.trim() || customNetworkForm.name.trim(),
 			share_url: customNetworkForm.share_url.trim(),
 			color: customNetworkForm.color,
 			icon_class: customNetworkForm.icon_class.trim() || 'fas fa-share',
@@ -293,13 +295,22 @@ export const NetworksTab: React.FC = () => {
 		};
 
 		// Update settings so custom networks persist
-		const updatedCustoms = [ ...( settings?.custom_networks ?? customNetworks ), newCustom ];
+		const updatedCustoms = [
+			...( settings?.custom_networks ?? customNetworks ),
+			newCustom,
+		];
 		setCustomNetworks( updatedCustoms );
 		updateSetting( 'custom_networks', updatedCustoms );
 		// Add to enabled list and order by default
-		const updatedEnabled = [ ...( settings?.enabled_networks ?? enabledNetworks ), newCustom.id ];
+		const updatedEnabled = [
+			...( settings?.enabled_networks ?? enabledNetworks ),
+			newCustom.id,
+		];
 		updateSetting( 'enabled_networks', updatedEnabled );
-		updateSetting( 'network_order', [ ...( settings?.network_order ?? [] ), ...updatedEnabled ] );
+		updateSetting( 'network_order', [
+			...( settings?.network_order ?? [] ),
+			...updatedEnabled,
+		] );
 		setCustomNetworkForm( {
 			name: '',
 			label: '',
@@ -317,11 +328,17 @@ export const NetworksTab: React.FC = () => {
 	};
 
 	const handleDeleteCustomNetwork = async ( networkId: string ) => {
-		const updatedCustoms = ( settings?.custom_networks ?? customNetworks ).filter( ( n ) => n.id !== networkId );
+		const updatedCustoms = (
+			settings?.custom_networks ?? customNetworks
+		).filter( ( n ) => n.id !== networkId );
 		updateSetting( 'custom_networks', updatedCustoms );
-		const updatedEnabled = ( settings?.enabled_networks ?? enabledNetworks ).filter( ( id ) => id !== networkId );
+		const updatedEnabled = (
+			settings?.enabled_networks ?? enabledNetworks
+		).filter( ( id ) => id !== networkId );
 		updateSetting( 'enabled_networks', updatedEnabled );
-		const updatedOrder = ( settings?.network_order ?? enabledNetworks ).filter( ( id ) => id !== networkId );
+		const updatedOrder = (
+			settings?.network_order ?? enabledNetworks
+		).filter( ( id ) => id !== networkId );
 		updateSetting( 'network_order', updatedOrder );
 		setCustomNetworks( updatedCustoms );
 		setEnabledNetworks( updatedEnabled );
@@ -339,7 +356,10 @@ export const NetworksTab: React.FC = () => {
 			// Update settings to persist enabled networks and order
 			updateSetting( 'enabled_networks', enabledNetworks );
 			updateSetting( 'network_order', enabledNetworks );
-			updateSetting( 'custom_networks', settings?.custom_networks ?? customNetworks );
+			updateSetting(
+				'custom_networks',
+				settings?.custom_networks ?? customNetworks
+			);
 
 			// If API is available, save individual network enabled state via useNetworks API
 			const networkUpdates = allNetworks.map(
@@ -487,7 +507,9 @@ export const NetworksTab: React.FC = () => {
 												</span>
 											) }
 										</div>
-										{ network.id.startsWith( 'custom-' ) && (
+										{ network.id.startsWith(
+											'custom-'
+										) && (
 											<button
 												onClick={ ( e ) => {
 													e.stopPropagation();
@@ -600,10 +622,12 @@ export const NetworksTab: React.FC = () => {
 										<TextInput
 											value={ customNetworkForm.name }
 											onChange={ ( value ) =>
-												setCustomNetworkForm( ( prev ) => ( {
-													...prev,
-													name: value,
-												} ) )
+												setCustomNetworkForm(
+													( prev ) => ( {
+														...prev,
+														name: value,
+													} )
+												)
 											}
 											placeholder="e.g., My Custom Network"
 										/>
@@ -616,10 +640,12 @@ export const NetworksTab: React.FC = () => {
 										<TextInput
 											value={ customNetworkForm.label }
 											onChange={ ( value ) =>
-												setCustomNetworkForm( ( prev ) => ( {
-													...prev,
-													label: value,
-												} ) )
+												setCustomNetworkForm(
+													( prev ) => ( {
+														...prev,
+														label: value,
+													} )
+												)
 											}
 											placeholder="e.g., Share"
 										/>
@@ -630,12 +656,16 @@ export const NetworksTab: React.FC = () => {
 										description="URL template with {url} and {title} placeholders"
 									>
 										<TextInput
-											value={ customNetworkForm.share_url }
+											value={
+												customNetworkForm.share_url
+											}
 											onChange={ ( value ) =>
-												setCustomNetworkForm( ( prev ) => ( {
-													...prev,
-													share_url: value,
-												} ) )
+												setCustomNetworkForm(
+													( prev ) => ( {
+														...prev,
+														share_url: value,
+													} )
+												)
 											}
 											placeholder="https://example.com/share?url={url}&title={title}"
 										/>
@@ -648,10 +678,12 @@ export const NetworksTab: React.FC = () => {
 										<TextInput
 											value={ customNetworkForm.color }
 											onChange={ ( value ) =>
-												setCustomNetworkForm( ( prev ) => ( {
-													...prev,
-													color: value,
-												} ) )
+												setCustomNetworkForm(
+													( prev ) => ( {
+														...prev,
+														color: value,
+													} )
+												)
 											}
 											placeholder="#666666"
 										/>
@@ -663,12 +695,16 @@ export const NetworksTab: React.FC = () => {
 											description="FontAwesome icon class (e.g., fab fa-share)"
 										>
 											<TextInput
-												value={ customNetworkForm.icon_class }
+												value={
+													customNetworkForm.icon_class
+												}
 												onChange={ ( value ) =>
-													setCustomNetworkForm( ( prev ) => ( {
-														...prev,
-														icon_class: value,
-													} ) )
+													setCustomNetworkForm(
+														( prev ) => ( {
+															...prev,
+															icon_class: value,
+														} )
+													)
 												}
 												placeholder="fab fa-share"
 											/>
@@ -690,7 +726,8 @@ export const NetworksTab: React.FC = () => {
 						{ customNetworks.length > 0 && (
 							<div className="mt-4">
 								<h5 className="text-sm font-medium text-gray-700 mb-2">
-									Your Custom Networks ({ customNetworks.length })
+									Your Custom Networks (
+									{ customNetworks.length })
 								</h5>
 								<div className="space-y-2">
 									{ customNetworks.map( ( network ) => (
@@ -707,7 +744,9 @@ export const NetworksTab: React.FC = () => {
 													} }
 												>
 													<span className="text-white text-xs">
-														{ network.name.charAt( 0 ) }
+														{ network.name.charAt(
+															0
+														) }
 													</span>
 												</div>
 												<div>
@@ -737,7 +776,6 @@ export const NetworksTab: React.FC = () => {
 							</div>
 						) }
 					</div>
-
 				</div>
 
 				<div className="mt-8 pt-4 border-t border-gray-200">

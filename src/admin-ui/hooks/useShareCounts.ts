@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import apiFetch from '@wordpress/api-fetch';
 
 interface ShareCountData {
@@ -15,7 +15,7 @@ export const useShareCounts = ( postIds: number[] ) => {
 	const [ loading, setLoading ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
 
-	const fetchShareCounts = async () => {
+	const fetchShareCounts = useCallback( async () => {
 		if ( postIds.length === 0 ) {
 			setShareCounts( [] );
 			return;
@@ -55,7 +55,7 @@ export const useShareCounts = ( postIds: number[] ) => {
 		} finally {
 			setLoading( false );
 		}
-	};
+	}, [ postIds ] );
 
 	useEffect( () => {
 		fetchShareCounts();

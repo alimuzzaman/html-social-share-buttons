@@ -12,7 +12,6 @@ import { Profile, ProfileNetwork } from '../../types';
 import { useNotifications } from '../../contexts';
 import { useSettings } from '../../hooks';
 
-
 // Icons are provided by the plugin author and placed in assets/iconset. Use localized pluginUrl at runtime.
 const pluginUrl =
 	typeof window !== 'undefined' &&
@@ -36,7 +35,9 @@ const availableNetworks = [
 
 export const ProfilesTab: React.FC = () => {
 	const { settings, updateSetting, saveSettings } = useSettings();
-	const [ editingProfile, setEditingProfile ] = useState< Profile | null >( null );
+	const [ editingProfile, setEditingProfile ] = useState< Profile | null >(
+		null
+	);
 	const [ isCreating, setIsCreating ] = useState( false );
 	const [ loading, setLoading ] = useState( false );
 	const profiles = settings?.profiles ?? [];
@@ -62,7 +63,7 @@ export const ProfilesTab: React.FC = () => {
 			},
 		};
 		// Add immediately to settings so it's persisted when saved
-		updateSetting('profiles', [ ...profiles, newProfile ] );
+		updateSetting( 'profiles', [ ...profiles, newProfile ] );
 		setEditingProfile( newProfile );
 		setIsCreating( true );
 	};
@@ -148,7 +149,10 @@ export const ProfilesTab: React.FC = () => {
 			await saveSettings();
 			showSuccess( 'Default profile updated' );
 		} catch ( e ) {
-			showError( 'Failed to update default profile', 'Please try again.' );
+			showError(
+				'Failed to update default profile',
+				'Please try again.'
+			);
 		}
 	};
 
@@ -161,7 +165,7 @@ export const ProfilesTab: React.FC = () => {
 
 	const updateNetworkSetting = (
 		networkId: string,
-		settings: Partial< ProfileNetwork >
+		networkSettings: Partial< ProfileNetwork >
 	) => {
 		if ( ! editingProfile ) {
 			return;
@@ -173,7 +177,7 @@ export const ProfilesTab: React.FC = () => {
 				...editingProfile.networks,
 				[ networkId ]: {
 					...editingProfile.networks[ networkId ],
-					...settings,
+					...networkSettings,
 				},
 			},
 		} );
@@ -205,7 +209,9 @@ export const ProfilesTab: React.FC = () => {
 						<FormField label="Default Profile">
 							<Select
 								value={ defaultProfileId }
-								onChange={ ( id ) => handleDefaultProfileChange( id ) }
+								onChange={ ( id ) =>
+									handleDefaultProfileChange( id )
+								}
 								options={ [
 									{ value: '', label: 'No default profile' },
 									...profiles.map( ( profile ) => ( {
@@ -485,8 +491,11 @@ export const ProfilesTab: React.FC = () => {
 													profile.networks
 												)
 													.filter(
-														( [ , settings ] ) =>
-															settings.enabled
+														( [
+															,
+															networkSettings,
+														] ) =>
+															networkSettings.enabled
 													)
 													.map( ( [ networkId ] ) => {
 														const network =

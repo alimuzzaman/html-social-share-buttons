@@ -3,6 +3,7 @@ namespace HtmlSocialShare\Rest;
 
 use HtmlSocialShare\SettingsInterface;
 use HtmlSocialShare\ProfileManagerInterface;
+use HtmlSocialShare\Integrations\BetterLinks\BetterLinksIntegration;
 use WP_REST_Controller;
 use WP_REST_Server;
 use WP_REST_Request;
@@ -131,6 +132,7 @@ class SettingsController extends WP_REST_Controller
                     'custom_networks' => $this->settings->get('custom_networks', []),
                 ],
                 'appearance' => [
+                    'title' => $this->settings->get('title', 'Share this with your friends'),
                     'icon_style' => $this->settings->get('icon_style', 'default'),
                     'button_size' => $this->settings->get('button_size', 'medium'),
                     'button_spacing' => $this->settings->get('button_spacing', 5),
@@ -140,15 +142,26 @@ class SettingsController extends WP_REST_Controller
                     'auto_placement' => $this->settings->get('auto_placement', false),
                     'placement_position' => $this->settings->get('placement_position', 'after'),
                     'placement_post_types' => $this->settings->get('placement_post_types', ['post']),
+                    'exclude_pages' => $this->settings->get('exclude_pages', ''),
                 ],
                 'integrations' => [
                     'betterlinks_enabled' => $this->settings->get('betterlinks_enabled', false),
                     'betterlinks_api_key' => $this->settings->get('betterlinks_api_key', ''),
+                    'betterlinks_shorten_urls' => $this->settings->get('betterlinks_shorten_urls', true),
+                    'betterlinks_add_tracking' => $this->settings->get('betterlinks_add_tracking', true),
+                    'betterlinks_custom_tracking' => $this->settings->get('betterlinks_custom_tracking', []),
+                    'betterlinks_available' => BetterLinksIntegration::isAvailable(),
+                    'betterlinks_pro' => BetterLinksIntegration::isProAvailable(),
+                    'betterlinks_version' => BetterLinksIntegration::getVersion(),
                     'elementor_enabled' => $this->settings->get('elementor_enabled', false),
                     'divi_enabled' => $this->settings->get('divi_enabled', false),
                     'beaver_builder_enabled' => $this->settings->get('beaver_builder_enabled', false),
                 ],
                 'advanced' => [
+                    'google_analytics' => $this->settings->get('google_analytics', false),
+                    'auto_hide_buttons' => $this->settings->get('auto_hide_buttons', false),
+                    'use_port_in_url' => $this->settings->get('use_port_in_url', false),
+                    'nofollow_links' => $this->settings->get('nofollow_links', true),
                     'cache_enabled' => $this->settings->get('cache_enabled', true),
                     'cache_duration' => $this->settings->get('cache_duration', 3600),
                     'debug_mode' => $this->settings->get('debug_mode', false),
@@ -207,6 +220,7 @@ class SettingsController extends WP_REST_Controller
                 'show_on_archives' => false,
                 'default_style' => 'default',
                 'default_size' => 'medium',
+                'title' => 'Share this with your friends',
                 'enabled_networks' => ['facebook', 'twitter', 'linkedin'],
                 'network_order' => [],
                 'custom_networks' => [],
@@ -217,11 +231,19 @@ class SettingsController extends WP_REST_Controller
                 'auto_placement' => false,
                 'placement_position' => 'after',
                 'placement_post_types' => ['post'],
+                'exclude_pages' => '',
                 'betterlinks_enabled' => false,
                 'betterlinks_api_key' => '',
+                'betterlinks_shorten_urls' => true,
+                'betterlinks_add_tracking' => true,
+                'betterlinks_custom_tracking' => [],
                 'elementor_enabled' => false,
                 'divi_enabled' => false,
                 'beaver_builder_enabled' => false,
+                'google_analytics' => false,
+                'auto_hide_buttons' => false,
+                'use_port_in_url' => false,
+                'nofollow_links' => true,
                 'cache_enabled' => true,
                 'cache_duration' => 3600,
                 'debug_mode' => false,
@@ -468,9 +490,15 @@ class SettingsController extends WP_REST_Controller
             case 'show_on_archives':
             case 'auto_placement':
             case 'betterlinks_enabled':
+            case 'betterlinks_shorten_urls':
+            case 'betterlinks_add_tracking':
             case 'elementor_enabled':
             case 'divi_enabled':
             case 'beaver_builder_enabled':
+            case 'google_analytics':
+            case 'auto_hide_buttons':
+            case 'use_port_in_url':
+            case 'nofollow_links':
             case 'cache_enabled':
             case 'debug_mode':
                 return (bool) $value;
@@ -484,6 +512,23 @@ class SettingsController extends WP_REST_Controller
             case 'custom_networks':
             case 'placement_post_types':
                 return is_array($value) ? array_map('sanitize_text_field', $value) : [];
+
+            case 'betterlinks_custom_tracking':
+                if (!is_array($value)) {
+                    return [];
+                }
+
+                $sanitized = [];
+                foreach ($value as $key => $trackingValue) {
+                    $sanitizedKey = sanitize_key($key);
+                    if ($sanitizedKey === '') {
+                        continue;
+                    }
+
+                    $sanitized[$sanitizedKey] = sanitize_text_field($trackingValue);
+                }
+
+                return $sanitized;
 
             case 'custom_css':
                 return wp_strip_all_tags($value);

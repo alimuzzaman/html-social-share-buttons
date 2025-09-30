@@ -16,7 +16,7 @@ export const Tabs: React.FC< TabsProps > = ( {
 } ) => {
 	return (
 		<div className={ className }>
-			<nav className="border-b border-gray-200 mb-6" role="tablist">
+			<div className="border-b border-gray-200 mb-6" role="tablist">
 				<div className="flex space-x-1">
 					{ tabs.map( ( tab ) => (
 						<button
@@ -39,7 +39,7 @@ export const Tabs: React.FC< TabsProps > = ( {
 						</button>
 					) ) }
 				</div>
-			</nav>
+			</div>
 		</div>
 	);
 };
@@ -52,7 +52,7 @@ export const VerticalTabs: React.FC< TabsProps > = ( {
 } ) => {
 	return (
 		<div className={ `flex ${ className }` }>
-			<nav className="w-64 border-r border-gray-200 pr-4" role="tablist">
+			<div className="w-64 border-r border-gray-200 pr-4" role="tablist">
 				<div className="flex flex-col space-y-1">
 					{ tabs.map( ( tab ) => (
 						<button
@@ -75,7 +75,7 @@ export const VerticalTabs: React.FC< TabsProps > = ( {
 						</button>
 					) ) }
 				</div>
-			</nav>
+			</div>
 			<div className="flex-1 pl-6">
 				{ /* Content will be rendered by parent component */ }
 			</div>

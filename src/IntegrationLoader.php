@@ -265,7 +265,15 @@ class IntegrationLoader
     {
         add_action('init', function() {
             $integration = new \HtmlSocialShare\Integrations\BetterLinks\BetterLinksIntegration();
-            $settings = $this->container->get('settings')->get('betterlinks', []);
+            $settingsService = $this->container->get('settings');
+            $settings = [
+                'betterlinks_enabled' => (bool) $settingsService->get('betterlinks_enabled', false),
+                'betterlinks_api_key' => (string) $settingsService->get('betterlinks_api_key', ''),
+                'betterlinks_shorten_urls' => (bool) $settingsService->get('betterlinks_shorten_urls', true),
+                'betterlinks_add_tracking' => (bool) $settingsService->get('betterlinks_add_tracking', true),
+                'betterlinks_custom_tracking' => (array) $settingsService->get('betterlinks_custom_tracking', []),
+            ];
+
             $urlFilter = new \HtmlSocialShare\Integrations\BetterLinks\BetterLinksUrlFilter($integration, $settings);
             $urlFilter->register();
         });

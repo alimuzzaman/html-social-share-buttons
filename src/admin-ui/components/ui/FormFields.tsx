@@ -16,10 +16,10 @@ export const FormField: React.FC< FormFieldWrapperProps > = ( {
 	return (
 		<div className={ `mb-4 ${ className } ${ error ? 'has-error' : '' }` }>
 			<div className="block text-sm font-medium text-gray-700 mb-1">
-				<label className="block text-sm font-medium text-gray-700">
+				<div className="block text-sm font-medium text-gray-700">
 					{ label }
 					{ required && <span className="text-red-500 ml-1">*</span> }
-				</label>
+				</div>
 			</div>
 
 			<div className="block w-full">{ children }</div>
@@ -102,6 +102,7 @@ interface CheckboxProps {
 	label: string;
 	disabled?: boolean;
 	className?: string;
+	id?: string;
 }
 
 export const Checkbox: React.FC< CheckboxProps > = ( {
@@ -110,12 +111,15 @@ export const Checkbox: React.FC< CheckboxProps > = ( {
 	label,
 	disabled = false,
 	className = '',
+	id,
 } ) => {
 	return (
 		<label
+			htmlFor={ id }
 			className={ `flex items-center cursor-pointer space-x-2 ${ className }` }
 		>
 			<input
+				id={ id }
 				type="checkbox"
 				checked={ checked }
 				onChange={ ( e ) => onChange( e.target.checked ) }

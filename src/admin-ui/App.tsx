@@ -4,90 +4,90 @@ import { TabConfig } from './types';
 
 // Import tab components
 import {
-	GeneralTab,
+	DisplayTab,
 	NetworksTab,
 	ProfilesTab,
 	IntegrationsTab,
-	AppearanceTab,
-	PlacementTab,
+	DesignTab,
 	ShortcodeTab,
 	AdvancedTab,
 } from './components/tabs';
+import {
+	Home,
+	Share,
+	Users,
+	Palette,
+	Plug,
+	Code,
+	Settings,
+} from 'lucide-react';
 
 const tabs: TabConfig[] = [
 	{
-		id: 'general',
-		title: 'General',
-		icon: 'dashicons-admin-settings',
-		description: 'Basic plugin settings and display options',
+		id: 'display',
+		title: 'Display',
+		icon: <Home className="w-4 h-4" />,
+		description: 'Configure where buttons appear by default',
 	},
 	{
 		id: 'networks',
 		title: 'Networks',
-		icon: 'dashicons-share',
-		description: 'Configure social media networks and sharing options',
+		icon: <Share className="w-4 h-4" />,
+		description: 'Enable networks, reorder cards, and add customs',
 	},
 	{
 		id: 'profiles',
 		title: 'Profiles',
-		icon: 'dashicons-groups',
+		icon: <Users className="w-4 h-4" />,
 		description: 'Manage button profiles and configurations',
+	},
+	{
+		id: 'design',
+		title: 'Design',
+		icon: <Palette className="w-4 h-4" />,
+		description: 'Style, defaults, and custom CSS',
 	},
 	{
 		id: 'integrations',
 		title: 'Integrations',
-		icon: 'dashicons-admin-plugins',
-		description: 'Third-party plugin integrations',
-	},
-	{
-		id: 'appearance',
-		title: 'Appearance',
-		icon: 'dashicons-art',
-		description: 'Style and appearance customization',
-	},
-	{
-		id: 'placement',
-		title: 'Placement',
-		icon: 'dashicons-location',
-		description: 'Configure where buttons appear',
+		icon: <Plug className="w-4 h-4" />,
+		description: 'BetterLinks and page builder integrations',
 	},
 	{
 		id: 'shortcode',
 		title: 'Shortcode',
-		icon: 'dashicons-editor-code',
+		icon: <Code className="w-4 h-4" />,
 		description: 'Generate and customize shortcodes',
 	},
 	{
 		id: 'advanced',
 		title: 'Advanced',
-		icon: 'dashicons-admin-tools',
+		icon: <Settings className="w-4 h-4" />,
 		description: 'Advanced settings and performance options',
 	},
 ];
 
 export const App: React.FC = () => {
-	const [ activeTab, setActiveTab ] = useState( 'general' );
+	const [ activeTab, setActiveTab ] = useState( 'display' );
 
 	const renderTabContent = () => {
 		switch ( activeTab ) {
-			case 'general':
-				return <GeneralTab />;
+			case 'display':
+				return <DisplayTab />;
 			case 'networks':
 				return <NetworksTab />;
 			case 'profiles':
 				return <ProfilesTab />;
+			case 'design':
+				return <DesignTab />;
 			case 'integrations':
 				return <IntegrationsTab />;
-			case 'appearance':
-				return <AppearanceTab />;
-			case 'placement':
-				return <PlacementTab />;
 			case 'shortcode':
 				return <ShortcodeTab />;
 			case 'advanced':
 				return <AdvancedTab />;
 			default:
-				return <GeneralTab />;
+				return <DisplayTab />;
 		}
 	};
 

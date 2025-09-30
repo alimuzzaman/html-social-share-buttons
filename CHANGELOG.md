@@ -17,6 +17,7 @@ All notable changes to this project are documented in this file.
 ### Changed
 - [PHASE3-124] Convert admin React UI to Tailwind-first implementation and fix admin stylesheet enqueue (timestamp: 2025-09-30 15:30:00)
 - [PHASE3-125] Prefer lucide-react icons for available social networks in the Networks admin tab with fallbacks to plugin iconset assets and initial-letter placeholders (timestamp: 2025-09-30 15:45:00)
+- [PHASE3-126] Reorganize admin UI tabs: rename General to Display, Appearance to Design, Placement to Display (merged), update icons to Lucide React (timestamp: 2025-10-01 12:00:00)
 - Reworked the block preview to use `ServerSideRender` in editor for accurate live previews.
 - Sanitized SVG handling and improved accessibility (ARIA labels, roles, keyboard support) across share buttons.
 - Implemented local QR generation with graceful fallback to Google Chart API when local image extensions are unavailable.

@@ -238,6 +238,7 @@ interface ValidatedCheckboxProps {
 	disabled?: boolean;
 	helpText?: string;
 	className?: string;
+	id?: string;
 }
 
 export const ValidatedCheckbox: React.FC< ValidatedCheckboxProps > = ( {
@@ -248,10 +249,12 @@ export const ValidatedCheckbox: React.FC< ValidatedCheckboxProps > = ( {
 	disabled,
 	helpText,
 	className,
+	id,
 } ) => {
 	return (
 		<div className={ `space-y-1 ${ className || '' }` }>
 			<label
+				htmlFor={ id }
 				className={ `flex items-center ${
 					disabled
 						? 'cursor-not-allowed opacity-50'
@@ -259,6 +262,7 @@ export const ValidatedCheckbox: React.FC< ValidatedCheckboxProps > = ( {
 				}` }
 			>
 				<input
+					id={ id }
 					type="checkbox"
 					checked={ checked }
 					onChange={ ( e ) => onChange( e.target.checked ) }

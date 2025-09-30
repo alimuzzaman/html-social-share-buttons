@@ -1,71 +1,102 @@
 import React, { useState } from 'react';
 import { Tabs } from './ui';
-import { GeneralTab } from './tabs/GeneralTab';
-import { NetworksTab } from './tabs/NetworksTab';
+import {
+	DisplayTab,
+	NetworksTab,
+	ProfilesTab,
+	IntegrationsTab,
+	DesignTab,
+	AdvancedTab,
+	ShortcodeTab,
+} from './tabs';
 import { TabConfig } from '../types';
+import {
+	Home,
+	Share,
+	Users,
+	Palette,
+	Plug,
+	Settings,
+	Code,
+} from 'lucide-react';
 
 /**
  * Main React admin interface for HTML Social Share Buttons settings
  */
 export const ReactAdminInterface: React.FC = () => {
-	const [ activeTab, setActiveTab ] = useState( 'general' );
+	const [ activeTab, setActiveTab ] = useState( 'display' );
 
 	// Tab configuration
 	const tabs: TabConfig[] = [
 		{
-			id: 'general',
-			title: 'General Settings',
-			icon: 'admin-settings',
-			description: 'Configure basic plugin settings and display options',
+			id: 'display',
+			title: 'Display',
+			icon: <Home className="w-4 h-4" />,
+			description:
+				'Decide where share buttons appear and which content types they follow',
 		},
 		{
 			id: 'networks',
-			title: 'Social Networks',
-			icon: 'share',
-			description: 'Manage available social networks and their settings',
+			title: 'Networks',
+			icon: <Share className="w-4 h-4" />,
+			description:
+				'Enable networks, reorder cards, and manage custom sharing targets',
 		},
 		{
 			id: 'profiles',
 			title: 'Profiles',
-			icon: 'admin-users',
-			description: 'Create and manage social sharing profiles',
+			icon: <Users className="w-4 h-4" />,
+			description:
+				'Create reusable sharing presets for different contexts',
 		},
 		{
-			id: 'placement',
-			title: 'Placement',
-			icon: 'admin-appearance',
-			description: 'Control where and how buttons appear on your site',
+			id: 'design',
+			title: 'Design',
+			icon: <Palette className="w-4 h-4" />,
+			description:
+				'Set default button styles, spacing, and custom CSS overrides',
 		},
 		{
-			id: 'styling',
-			title: 'Styling',
-			icon: 'admin-customizer',
-			description: 'Customize the appearance of your share buttons',
+			id: 'integrations',
+			title: 'Integrations',
+			icon: <Plug className="w-4 h-4" />,
+			description:
+				'BetterLinks, page builders, and other plugin integrations',
 		},
 		{
 			id: 'advanced',
 			title: 'Advanced',
-			icon: 'admin-generic',
-			description: 'Advanced settings and integrations',
+			icon: <Settings className="w-4 h-4" />,
+			description:
+				'Analytics, link behavior, caching, and debugging tools',
+		},
+		{
+			id: 'shortcode',
+			title: 'Shortcode',
+			icon: <Code className="w-4 h-4" />,
+			description:
+				'Dynamic shortcode generation based on current settings',
 		},
 	];
 
 	const renderTabContent = () => {
 		switch ( activeTab ) {
-			case 'general':
-				return <GeneralTab />;
+			case 'display':
+				return <DisplayTab />;
 			case 'networks':
 				return <NetworksTab />;
 			case 'profiles':
-				return <div>Profiles tab content coming soon...</div>;
-			case 'placement':
-				return <div>Placement tab content coming soon...</div>;
-			case 'styling':
-				return <div>Styling tab content coming soon...</div>;
+				return <ProfilesTab />;
+			case 'design':
+				return <DesignTab />;
+			case 'integrations':
+				return <IntegrationsTab />;
 			case 'advanced':
-				return <div>Advanced tab content coming soon...</div>;
+				return <AdvancedTab />;
+			case 'shortcode':
+				return <ShortcodeTab />;
 			default:
-				return <GeneralTab />;
+				return <DisplayTab />;
 		}
 	};
 
