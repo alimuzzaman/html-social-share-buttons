@@ -188,11 +188,11 @@ export const ProfilesTab: React.FC = () => {
   return (
     <LoadingOverlay isLoading={loading} message="Saving profile...">
       <div className="profiles-tab">
-        <div className="wp-admin-card p-6">
+        <div className="bg-white border border-gray-200 rounded shadow-sm p-6">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-xl font-semibold">Social Sharing Profiles</h2>
-              <p className="text-wp-gray-600">
+              <p className="text-gray-600">
                 Create different profiles for different types of content or pages.
               </p>
             </div>

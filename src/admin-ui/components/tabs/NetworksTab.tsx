@@ -118,16 +118,16 @@ export const NetworksTab: React.FC = () => {
 
   return (
     <div className="networks-tab">
-      <div className="wp-admin-card p-6">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-6">
         <h2 className="text-xl font-semibold mb-4">Social Networks</h2>
-        <p className="text-wp-gray-600 mb-6">
+        <p className="text-gray-600 mb-6">
           Choose which social networks to make available for sharing and customize their appearance.
         </p>
 
 
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-wp-gray-800 mb-3">Available Networks</h3>
+          <h3 className="text-lg font-medium text-gray-800 mb-3">Available Networks</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {networks.map((network: NetworkConfig) => {
@@ -136,8 +136,8 @@ export const NetworksTab: React.FC = () => {
               return (
                 <div
                   key={network.id}
-                  className={`wp-network-card border rounded-lg p-4 ${
-                    isEnabled ? 'border-wp-blue-500 bg-wp-blue-50' : 'border-wp-gray-200'
+                  className={`transition-all duration-200 border rounded-lg p-4 ${
+                    isEnabled ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
                   }`}
                 >
                   <div className="flex items-center mb-3">

@@ -65,7 +65,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       // Default error UI - using WordPress admin styling
       return (
         <div className="error-boundary">
-          <div className="wp-admin-card p-6 border-l-4 border-red-500 bg-red-50">
+          <div className="bg-white border border-gray-200 rounded shadow-sm p-6 border-l-4 border-red-500 bg-red-50">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <i className="fas fa-exclamation-triangle text-red-400 text-xl" />
