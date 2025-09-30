@@ -4,8 +4,8 @@ import { __ } from '@wordpress/i18n';
 /**
  * WordPress components that create the necessary UI elements for the block
  */
-import Edit from './edit';
-import save from './save';
+import Edit from './edit.js';
+import save from './save.js';
 import metadata from './block.json';
 
 /**
