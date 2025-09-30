@@ -1,55 +1,3 @@
-<<<<<<< Updated upstream
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
-}
-
-interface State {
-  hasError: boolean;
-  error?: Error;
-  errorInfo?: ErrorInfo;
-}
-
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error details
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
-    // Update state with error info
-    this.setState({
-      error,
-      errorInfo
-    });
-    
-    // Call custom error handler if provided
-    if (this.props.onError) {
-      this.props.onError(error, errorInfo);
-    }
-  }
-
-  private handleReset = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
-  };
-
-  render() {
-    if (this.state.hasError) {
-      // Custom fallback UI
-      if (this.props.fallback) {
-        return this.props.fallback;
-=======
 import React, { Component, ReactNode } from 'react';
 
 interface ErrorBoundaryState {
@@ -112,12 +60,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       // Use custom fallback if provided
       if (this.props.fallback) {
         return this.props.fallback(this.state.error, this.state.errorInfo!);
->>>>>>> Stashed changes
       }
 
-      // Default error UI
+      // Default error UI - using WordPress admin styling
       return (
-<<<<<<< Updated upstream
         <div className="error-boundary">
           <div className="wp-admin-card p-6 border-l-4 border-red-500 bg-red-50">
             <div className="flex items-start">
@@ -173,44 +119,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               </div>
             </div>
           </div>
-=======
-        <div className="error-boundary bg-red-50 border border-red-200 rounded-lg p-6 m-4">
-          <div className="flex items-center mb-4">
-            <div className="text-red-500 mr-3">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <h2 className="text-lg font-semibold text-red-800">Something went wrong</h2>
-          </div>
-
-          <p className="text-red-700 mb-4">
-            An error occurred while rendering this component. Please try refreshing the page or contact support if the problem persists.
-          </p>
-
-          <details className="mb-4">
-            <summary className="text-sm text-red-600 cursor-pointer hover:text-red-800">
-              Show error details
-            </summary>
-            <div className="mt-2 p-3 bg-red-100 rounded text-sm text-red-800 font-mono whitespace-pre-wrap">
-              <strong>Error:</strong> {this.state.error.message}
-              {this.state.errorInfo && (
-                <>
-                  <br /><br />
-                  <strong>Stack trace:</strong>
-                  {this.state.errorInfo.componentStack}
-                </>
-              )}
-            </div>
-          </details>
-
-          <button
-            onClick={this.handleReset}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            Try Again
-          </button>
->>>>>>> Stashed changes
         </div>
       );
     }
