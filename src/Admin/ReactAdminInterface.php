@@ -76,7 +76,7 @@ class ReactAdminInterface
         // Enqueue the React app
         wp_enqueue_script(
             'hss-admin-react',
-            $this->getAssetUrl('admin-interface.umd.js'),
+            $this->getAssetUrl('admin.js'),
             $dependencies,
             $version,
             true
@@ -162,7 +162,7 @@ class ReactAdminInterface
      */
     private function getAssetFile(): array
     {
-        $assetFilePath = plugin_dir_path(__FILE__) . '../../assets/js/admin-ui/admin-interface.asset.php';
+        $assetFilePath = plugin_dir_path(__FILE__) . '../../build/admin.asset.php';
 
         if (file_exists($assetFilePath)) {
             return include $assetFilePath;
@@ -179,7 +179,7 @@ class ReactAdminInterface
      */
     private function getAssetUrl(string $filename): string
     {
-        return plugin_dir_url(__FILE__) . '../../assets/js/admin-ui/' . $filename;
+        return plugin_dir_url(__FILE__) . '../../build/' . $filename;
     }
 
     /**

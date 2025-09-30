@@ -5,12 +5,12 @@
 tests/
 dev-tools/
 config/
-build/
 playwright/
 reports/
 security/
 scripts/
 archive/
+src/
 
 # Development files that shouldn't be in WP repo
 *.md
@@ -32,8 +32,8 @@ package.json
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
-# Build directory
-build/
+webpack.config.js
+webpack.config.cjs
 
 # Development PHP files
 debug-*.php
@@ -60,12 +60,10 @@ Thumbs.db
 
 # Build and temporary files (but keep vendor/ for production dependencies)
 node_modules/
-admin-ui/
 dist/
 tmp/
 temp/
 playground-pid.txt
-*.png
 *.cache
 
 # Log files

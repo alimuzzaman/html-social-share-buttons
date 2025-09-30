@@ -1,0 +1,1 @@
+!function(){"use strict";var t=window.React;window.ReactJSXRuntime,(0,t.createContext)(void 0),(0,t.createContext)(void 0),(0,t.createContext)(void 0),t.Component,window.wp.i18n,window.wp.components,window.wp.apiFetch}();

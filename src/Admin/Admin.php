@@ -126,20 +126,26 @@ class Admin
         }
 
         try {
-            $version = '3.0.0';
-
+            // Load admin CSS from assets directory (static files)
             wp_enqueue_style(
                 'html-social-share-admin',
                 HTML_SOCIAL_SHARE_ASSETS_URL . 'admin.css',
                 [],
-                $version
+                '3.0.0'
             );
+
+            // Load admin JS from build directory with proper asset file handling
+            $asset_file = HTML_SOCIAL_SHARE_BUILD_DIR . 'admin.asset.php';
+            $asset_data = file_exists($asset_file) ? include $asset_file : [
+                'dependencies' => ['jquery'],
+                'version' => '3.0.0'
+            ];
 
             wp_enqueue_script(
                 'html-social-share-admin',
-                HTML_SOCIAL_SHARE_JS_URL . 'admin.js',
-                ['jquery'],
-                $version,
+                HTML_SOCIAL_SHARE_BUILD_URL . 'admin.js',
+                $asset_data['dependencies'],
+                $asset_data['version'],
                 true
             );
 
