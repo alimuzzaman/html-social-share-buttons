@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { App } from './App'
+import { MainAdminInterface } from './components/MainAdminInterface'
 import './index.css'
 
 // Mount the React app when DOM is ready
@@ -11,11 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const root = ReactDOM.createRoot(container)
     root.render(
       <React.StrictMode>
-        <App />
+        <MainAdminInterface />
       </React.StrictMode>,
     )
   }
 })
 
 // Export for potential external use
-export { App }
+export { MainAdminInterface }

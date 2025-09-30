@@ -1,14 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import apiFetch from '@wordpress/api-fetch';
 import { PluginSettings, SaveSettingsResponse } from '../types';
-
-// WordPress API fetch function (should be available in WordPress admin)
-declare const wp: {
-  apiFetch: (options: {
-    path: string;
-    method?: string;
-    data?: any;
-  }) => Promise<any>;
-};
 
 /**
  * Hook for managing plugin settings state and API interactions
@@ -26,10 +18,10 @@ export const useSettings = () => {
       setLoading(true);
       setError(null);
 
-      const response = await wp.apiFetch({
+      const response = await apiFetch({
         path: '/html-social-share/v1/settings',
         method: 'GET',
-      });
+      }) as any;
 
       // Flatten the response structure to match our PluginSettings interface
       const flatSettings: PluginSettings = {
@@ -159,11 +151,11 @@ export const useSettings = () => {
         },
       };
 
-      const response = await wp.apiFetch({
+      const response = await apiFetch({
         path: '/html-social-share/v1/settings',
         method: 'POST',
         data: apiData,
-      });
+      }) as any;
 
       setIsDirty(false);
 
@@ -187,7 +179,7 @@ export const useSettings = () => {
       setSaving(true);
       setError(null);
 
-      await wp.apiFetch({
+      await apiFetch({
         path: '/html-social-share/v1/settings/reset',
         method: 'POST',
       });

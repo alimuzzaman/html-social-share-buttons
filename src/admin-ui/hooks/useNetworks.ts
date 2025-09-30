@@ -1,14 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import apiFetch from '@wordpress/api-fetch';
 import { NetworkConfig } from '../types';
-
-// WordPress API fetch function
-declare const wp: {
-  apiFetch: (options: {
-    path: string;
-    method?: string;
-    data?: any;
-  }) => Promise<any>;
-};
 
 /**
  * Hook for managing network configurations
@@ -24,13 +16,13 @@ export const useNetworks = () => {
       setLoading(true);
       setError(null);
 
-      const response = await wp.apiFetch({
+      const response = await apiFetch({
         path: '/html-social-share/v1/networks',
         method: 'GET',
-      });
+      }) as Record<string, NetworkConfig>;
 
       // Convert response object to array
-      const networksArray = Object.values(response) as NetworkConfig[];
+      const networksArray = Object.values(response);
       setNetworks(networksArray);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load networks');
@@ -43,7 +35,7 @@ export const useNetworks = () => {
   // Update a network configuration
   const updateNetwork = useCallback(async (networkId: string, updates: Partial<NetworkConfig>) => {
     try {
-      await wp.apiFetch({
+      await apiFetch({
         path: `/html-social-share/v1/networks/${networkId}`,
         method: 'POST',
         data: updates,
