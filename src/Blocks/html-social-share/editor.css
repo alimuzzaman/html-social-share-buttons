@@ -1,0 +1,238 @@
+/* Editor-specific styles for Social Share Buttons block *//* Gutenberg Block Editor Styles */
+
+.wp-block-html-social-share-buttons {
+
+.wp-block-html-social-share-buttons {    border: 1px dashed #ccc;
+
+  .social-share-block-wrapper {    padding: 20px;
+
+    border: 1px solid #e2e4e7;    margin: 20px 0;
+
+    border-radius: 6px;}
+
+    padding: 20px;
+
+    background: #fff;.share-title {
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);    font-weight: bold;
+
+  }    margin-bottom: 10px;
+
+}
+
+  .social-share-block-header {
+
+    display: flex;.share-buttons {
+
+    justify-content: space-between;    display: flex;
+
+    align-items: center;    gap: 10px;
+
+    margin-bottom: 15px;    flex-wrap: wrap;
+
+    padding-bottom: 10px;}
+
+    border-bottom: 1px solid #e2e4e7;
+
+.hssb-share {
+
+    .social-share-block-title {    display: inline-flex;
+
+      margin: 0;    align-items: center;
+
+      font-size: 14px;    padding: 8px 12px;
+
+      font-weight: 600;    background: #f0f0f0;
+
+      color: #1e1e1e;    border-radius: 4px;
+
+      display: flex;    text-decoration: none;
+
+      align-items: center;    color: #333;
+
+      gap: 8px;}
+
+
+
+      i {.hssb-share .dashicons {
+
+        color: #1e73be;    margin-right: 5px;
+
+      }}
+    }
+
+    .social-share-block-subtitle {
+      font-size: 12px;
+      color: #757575;
+      font-style: italic;
+    }
+  }
+
+  .social-share-block-preview {
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .social-share-preview-placeholder {
+    text-align: center;
+    color: #757575;
+    font-style: italic;
+    padding: 20px;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  /* Preview button styles */
+  .social-share-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    &.social-share-align-left {
+      justify-content: flex-start;
+    }
+
+    &.social-share-align-center {
+      justify-content: center;
+    }
+
+    &.social-share-align-right {
+      justify-content: flex-end;
+    }
+
+    .social-share-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      background: #1e73be;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      opacity: 0.8; /* Slightly faded for preview */
+
+      &:hover {
+        opacity: 1;
+        transform: translateY(-1px);
+      }
+
+      i {
+        font-size: 16px;
+      }
+
+      .social-share-label {
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+
+    /* Size variations */
+    &.social-share-small .social-share-button {
+      padding: 6px 10px;
+      font-size: 12px;
+
+      i {
+        font-size: 14px;
+      }
+    }
+
+    &.social-share-large .social-share-button {
+      padding: 12px 16px;
+      font-size: 16px;
+
+      i {
+        font-size: 18px;
+      }
+    }
+
+    /* Style variations */
+    &.social-share-rounded .social-share-button {
+      border-radius: 20px;
+    }
+
+    &.social-share-square .social-share-button {
+      border-radius: 0;
+    }
+
+    &.social-share-minimal .social-share-button {
+      background: transparent;
+      color: #666;
+      border: 1px solid #ddd;
+
+      &:hover {
+        background: #f8f9fa;
+        border-color: #1e73be;
+        color: #1e73be;
+      }
+    }
+
+    /* Network-specific colors (preview only) */
+    .social-share-facebook {
+      background-color: #1877f2;
+    }
+
+    .social-share-twitter {
+      background-color: #1da1f2;
+    }
+
+    .social-share-linkedin {
+      background-color: #0077b5;
+    }
+
+    .social-share-pinterest {
+      background-color: #bd081c;
+    }
+
+    .social-share-reddit {
+      background-color: #ff4500;
+    }
+
+    .social-share-whatsapp {
+      background-color: #25d366;
+    }
+
+    .social-share-telegram {
+      background-color: #0088cc;
+    }
+
+    .social-share-email {
+      background-color: #666;
+    }
+  }
+}
+
+/* Inspector Controls Styling */
+.components-panel__body .social-share-icon {
+  width: 16px;
+  margin-right: 8px;
+  color: #666;
+}
+
+.components-base-control__help {
+  font-size: 12px;
+  font-style: italic;
+  color: #757575;
+  margin-top: 4px;
+}
+
+/* Block inserter preview styling */
+.block-editor-block-preview__container .wp-block-html-social-share-buttons {
+  .social-share-block-wrapper {
+    border: none;
+    box-shadow: none;
+    padding: 10px;
+  }
+
+  .social-share-block-header {
+    display: none;
+  }
+}

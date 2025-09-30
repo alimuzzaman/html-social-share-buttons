@@ -1,0 +1,316 @@
+/* Frontend styles for Social Share Buttons block */
+
+.wp-block-html-social-share-buttons {
+  margin: 1.5em 0;
+
+  /* Alignment classes */
+  &.align-left {
+    text-align: left;
+  }
+
+  &.align-center {
+    text-align: center;
+  }
+
+  &.align-right {
+    text-align: right;
+  }
+
+  &.align-wide,
+  &.align-full {
+    width: 100%;
+  }
+
+  /* Main buttons container */
+  .social-share-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+
+    /* Alignment variations */
+    &.social-share-align-left {
+      justify-content: flex-start;
+    }
+
+    &.social-share-align-center {
+      justify-content: center;
+    }
+
+    &.social-share-align-right {
+      justify-content: flex-end;
+    }
+
+    /* Individual button styling */
+    .social-share-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 4px;
+      background: #1e73be;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+        color: white;
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      &:focus {
+        outline: 2px solid #005cbb;
+        outline-offset: 2px;
+      }
+
+      /* Icon styling */
+      i {
+        font-size: 16px;
+        line-height: 1;
+      }
+
+      /* Label styling */
+      .social-share-label {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1;
+      }
+
+      /* Share count styling (if enabled) */
+      .social-share-count {
+        font-size: 11px;
+        opacity: 0.8;
+        margin-left: 4px;
+      }
+    }
+
+    /* Size variations */
+    &.social-share-small .social-share-button {
+      padding: 7px 10px;
+      font-size: 12px;
+
+      i {
+        font-size: 14px;
+      }
+
+      .social-share-label {
+        font-size: 11px;
+      }
+    }
+
+    &.social-share-large .social-share-button {
+      padding: 14px 18px;
+      font-size: 16px;
+
+      i {
+        font-size: 18px;
+      }
+
+      .social-share-label {
+        font-size: 14px;
+      }
+    }
+
+    /* Style variations */
+    &.social-share-rounded .social-share-button {
+      border-radius: 25px;
+    }
+
+    &.social-share-square .social-share-button {
+      border-radius: 0;
+    }
+
+    &.social-share-minimal .social-share-button {
+      background: transparent;
+      color: #666;
+      border: 1px solid #ddd;
+
+      &:hover {
+        background: #f8f9fa;
+        border-color: #1e73be;
+        color: #1e73be;
+        transform: translateY(-1px);
+      }
+    }
+
+    /* Network-specific brand colors */
+    .social-share-facebook {
+      background-color: #1877f2;
+
+      &:hover {
+        background-color: #166fe5;
+      }
+    }
+
+    .social-share-twitter {
+      background-color: #1da1f2;
+
+      &:hover {
+        background-color: #1a91da;
+      }
+    }
+
+    .social-share-linkedin {
+      background-color: #0077b5;
+
+      &:hover {
+        background-color: #006ba1;
+      }
+    }
+
+    .social-share-pinterest {
+      background-color: #bd081c;
+
+      &:hover {
+        background-color: #a50719;
+      }
+    }
+
+    .social-share-reddit {
+      background-color: #ff4500;
+
+      &:hover {
+        background-color: #e03d00;
+      }
+    }
+
+    .social-share-whatsapp {
+      background-color: #25d366;
+
+      &:hover {
+        background-color: #20bc5a;
+      }
+    }
+
+    .social-share-telegram {
+      background-color: #0088cc;
+
+      &:hover {
+        background-color: #0077b3;
+      }
+    }
+
+    .social-share-email {
+      background-color: #666;
+
+      &:hover {
+        background-color: #555;
+      }
+    }
+
+    .social-share-print {
+      background-color: #333;
+
+      &:hover {
+        background-color: #222;
+      }
+    }
+
+    .social-share-copy {
+      background-color: #28a745;
+
+      &:hover {
+        background-color: #218838;
+      }
+    }
+  }
+
+  /* Loading state */
+  &.social-share-loading .social-share-button {
+    opacity: 0.6;
+    cursor: wait;
+    pointer-events: none;
+  }
+
+  /* Error state */
+  &.social-share-error .social-share-button {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Mobile responsive design */
+  @media (max-width: 768px) {
+    .social-share-buttons {
+      gap: 6px;
+
+      .social-share-button {
+        padding: 8px 10px;
+        font-size: 12px;
+
+        i {
+          font-size: 14px;
+        }
+
+        .social-share-label {
+          display: none; /* Hide labels on mobile for better spacing */
+        }
+      }
+
+      &.social-share-small .social-share-button {
+        padding: 6px 8px;
+      }
+
+      &.social-share-large .social-share-button {
+        padding: 10px 12px;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .social-share-buttons {
+      justify-content: center !important; /* Center on very small screens */
+
+      .social-share-button {
+        flex-grow: 1;
+        justify-content: center;
+        min-width: 44px; /* Touch-friendly minimum size */
+      }
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .social-share-buttons .social-share-button {
+      border: 2px solid currentColor;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .social-share-buttons .social-share-button {
+      transition: none;
+
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    display: none;
+  }
+}
+
+/* RTL support */
+[dir="rtl"] .wp-block-html-social-share-buttons {
+  .social-share-buttons .social-share-button {
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+}
