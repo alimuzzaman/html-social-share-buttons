@@ -1,30 +1,28 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* WordPress Admin Interface Base Styles */
 @layer base {
   .hss-admin-interface {
-    @apply font-wp text-wp-gray;
+    @apply font-sans text-gray-900;
   }
 
   /* WordPress-like form elements */
   .wp-input {
-    @apply px-3 py-2 border border-gray-300 rounded bg-white text-wp-gray;
-    @apply focus:outline-none focus:ring-1 focus:ring-wp-blue;
+    @apply px-3 py-2 border border-gray-300 rounded bg-white text-gray-900;
+    @apply focus:outline-none focus:ring-1 focus:ring-blue-500;
   }
 
   .wp-button {
     @apply px-4 py-2 rounded font-medium transition-colors;
-    @apply focus:outline-none focus:ring-1 focus:ring-wp-blue;
+    @apply focus:outline-none focus:ring-1 focus:ring-blue-500;
   }
 
   .wp-button-primary {
-    @apply px-4 py-2 rounded font-medium transition-colors bg-wp-blue text-white hover:bg-wp-blue-700;
+    @apply px-4 py-2 rounded font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700;
   }
 
   .wp-button-secondary {
-    @apply px-4 py-2 rounded font-medium transition-colors bg-white border border-gray-300 text-wp-gray hover:bg-gray-50;
+    @apply px-4 py-2 rounded font-medium transition-colors bg-white border border-gray-300 text-gray-900 hover:bg-gray-50;
   }
 }
 
@@ -55,7 +53,7 @@
   }
 
   .wp-form-field-label {
-    @apply block text-sm font-medium text-wp-gray mb-1;
+    @apply block text-sm font-medium text-gray-700 mb-1;
   }
 
   .wp-form-field-input {
@@ -63,11 +61,11 @@
   }
 
   .wp-text-input {
-    @apply px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-wp-blue focus:border-wp-blue;
+    @apply px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500;
   }
 
   .wp-select {
-    @apply px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-wp-blue focus:border-wp-blue;
+    @apply px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500;
   }
 
   .wp-checkbox {
@@ -87,7 +85,7 @@
   }
 
   .wp-tabs .nav-tab-active {
-    @apply text-wp-blue border-wp-blue;
+    @apply text-blue-600 border-blue-600;
   }
 
   .wp-network-card {
@@ -103,18 +101,18 @@
   }
 
   .wp-notice-success {
-    @apply border-wp-success bg-green-50;
+    @apply border-green-500 bg-green-50;
   }
 
   .wp-notice-warning {
-    @apply border-wp-warning bg-yellow-50;
+    @apply border-yellow-500 bg-yellow-50;
   }
 
   .wp-notice-error {
-    @apply border-wp-error bg-red-50;
+    @apply border-red-500 bg-red-50;
   }
 
   .wp-notice-info {
-    @apply border-wp-blue bg-blue-50;
+    @apply border-blue-500 bg-blue-50;
   }
 }
