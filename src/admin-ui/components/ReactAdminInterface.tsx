@@ -70,24 +70,23 @@ export const ReactAdminInterface: React.FC = () => {
   };
 
   return (
-    <div className="html-social-share-admin">
-      <div className="wrap">
-        <h1 className="wp-heading-inline">HTML Social Share Buttons</h1>
-        <p className="description">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">HTML Social Share Buttons</h1>
+        <p className="text-gray-600 text-lg">
           Configure social sharing buttons for your WordPress site.
         </p>
+      </div>
 
-        <div className="html-social-share-admin-content mt-4">
-          <Tabs
-            tabs={tabs}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            className="mb-6"
-          />
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <Tabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
 
-          <div className="tab-content">
-            {renderTabContent()}
-          </div>
+        <div className="p-6">
+          {renderTabContent()}
         </div>
       </div>
     </div>
