@@ -1,4 +1,4 @@
 /**
  * Admin UI Entry Point
  */
-import './admin-ui/index.ts';
+import './admin-ui/main.tsx';
