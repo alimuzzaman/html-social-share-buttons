@@ -61,6 +61,12 @@ This document outlines the tasks needed to fully implement Tailwind CSS in the H
 - Add proper focus states and accessibility
 - Implement smooth transitions
 
+**Network Icons**
+- Prefer `lucide-react` for small, tree-shakable social network icons in the admin UI where possible. Fall back to:
+  1. plugin iconset assets under `assets/iconset/<set>/<network>.png` (loaded via `hssAdminConfig.pluginUrl`), then
+  2. an initial-letter placeholder when no icon asset is available.
+- Implement this in `src/admin-ui/components/tabs/NetworksTab.tsx` and use the `AdminIcon` wrapper for other admin icons.
+
 #### Task 1.4: Update Main Admin Interface
 **File**: `src/admin-ui/components/ReactAdminInterface.tsx`
 **Current Issues**:
