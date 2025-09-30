@@ -1,7 +1,7 @@
 /**
  * WordPress scripts configuration for multiple entry points
  */
-const defaultConfig = require('@wordpress/scripts/config/webpack.config');
+const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
 module.exports = {
 	...defaultConfig,
