@@ -1,13 +1,9 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import {
-  CheckboxControl,
-  Button,
-  Flex,
-  FlexItem,
-  FlexBlock
-} from '@wordpress/components'
-import { RefreshCw, Settings } from 'lucide-react'
+import { RefreshCw, Settings as LucideSettings } from 'lucide-react'
+import { RefreshIcon, SettingsIcon } from './ui/Icons'
+import { Button, Checkbox } from './ui'
+import { AdminIcon } from './ui/Icons'
 
 interface RefreshControlsProps {
   selectedPosts: number[]
@@ -33,47 +29,49 @@ export const RefreshControls: React.FC<RefreshControlsProps> = ({
   }
 
   return (
-    <div className="hss-refresh-controls">
-      <Flex>
-        <FlexItem>
-          <CheckboxControl
-            label={__('Select All Posts', 'html-social-share-buttons')}
+    <div className="hss-refresh-controls bg-white border border-gray-200 rounded-lg p-4 mb-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Checkbox
             checked={selectedPosts.length > 0}
             onChange={handleSelectAll}
+            label={__('Select All Posts', 'html-social-share-buttons')}
           />
-        </FlexItem>
 
-        <FlexBlock />
+          {selectedPosts.length > 0 && (
+            <p className="text-sm text-gray-600">
+              {__(`${selectedPosts.length} posts selected for refresh`, 'html-social-share-buttons')}
+            </p>
+          )}
+        </div>
 
-        <FlexItem>
+        <div className="flex items-center space-x-3">
           <Button
-            variant="secondary"
             onClick={onBulkRefresh}
             disabled={refreshing || selectedPosts.length === 0}
-            icon={<RefreshCw size={16} />}
+            loading={refreshing}
+            variant="secondary"
+            className="flex items-center space-x-2"
           >
-            {refreshing
-              ? __('Refreshing...', 'html-social-share-buttons')
-              : __('Refresh Selected', 'html-social-share-buttons')
-            }
+            <AdminIcon candidates={["update","refresh","arrowClockwise","redo"]} lucide={<RefreshCw size={16} />} size={16} />
+            <span>
+              {refreshing
+                ? __('Refreshing...', 'html-social-share-buttons')
+                : __('Refresh Selected', 'html-social-share-buttons')
+              }
+            </span>
           </Button>
-        </FlexItem>
 
-        <FlexItem>
           <Button
             variant="primary"
-            icon={<Settings size={16} />}
+            className="flex items-center space-x-2"
+            onClick={() => { /* open settings - noop for now */ }}
           >
-            {__('Settings', 'html-social-share-buttons')}
+            <AdminIcon candidates={["settings","cog","gear"]} lucide={<LucideSettings size={16} />} size={16} />
+            <span>{__('Settings', 'html-social-share-buttons')}</span>
           </Button>
-        </FlexItem>
-      </Flex>
-
-      {selectedPosts.length > 0 && (
-        <p className="hss-selection-info">
-          {__(`${selectedPosts.length} posts selected for refresh`, 'html-social-share-buttons')}
-        </p>
-      )}
+        </div>
+      </div>
     </div>
   )
 }

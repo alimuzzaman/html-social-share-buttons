@@ -84,11 +84,11 @@ export const App: React.FC = () => {
 
   return (
     <div className="wrap html-social-share-admin">
-      <h1 className="wp-heading-inline">
+      <h1 className="text-2xl font-semibold text-gray-900 mb-2">
         HTML Social Share Buttons
       </h1>
 
-      <hr className="wp-header-end" />
+      <hr className="border-t border-gray-200 my-6" />
 
       <div className="html-social-share-tabs-wrapper">
         <Tabs

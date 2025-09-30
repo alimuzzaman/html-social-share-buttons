@@ -4,6 +4,11 @@ import { Profile, ProfileNetwork } from '../../types';
 import { useNotifications } from '../../contexts';
 import { useFormValidation, validationRules } from '../../utils/validation';
 
+// Icons are provided by the plugin author and placed in assets/iconset. Use localized pluginUrl at runtime.
+const pluginUrl = (typeof window !== 'undefined' && (window as any).hssAdminConfig && (window as any).hssAdminConfig.pluginUrl) ? (window as any).hssAdminConfig.pluginUrl : '';
+
+const getNetworkIconUrl = (networkId: string) => `${pluginUrl}assets/iconset/default_square/${networkId}.png`;
+
 // Default networks available for profiles
 const availableNetworks = [
   { id: 'facebook', name: 'Facebook', icon: 'fab fa-facebook-f' },
@@ -14,42 +19,8 @@ const availableNetworks = [
   { id: 'whatsapp', name: 'WhatsApp', icon: 'fab fa-whatsapp' },
 ];
 
-// Sample profiles for demo (will be replaced with API data)
-const sampleProfiles: Profile[] = [
-  {
-    id: '1',
-    name: 'Default Profile',
-    networks: {
-      facebook: { enabled: true },
-      twitter: { enabled: true, handle: '@example' },
-      linkedin: { enabled: true },
-    },
-    display_settings: {
-      style: 'default',
-      size: 'medium',
-      text_labels: false,
-      icon_only: true,
-    },
-  },
-  {
-    id: '2',
-    name: 'Blog Posts',
-    networks: {
-      facebook: { enabled: true },
-      twitter: { enabled: true, handle: '@blogexample' },
-      pinterest: { enabled: true },
-    },
-    display_settings: {
-      style: 'rounded',
-      size: 'large',
-      text_labels: true,
-      icon_only: false,
-    },
-  },
-];
-
 export const ProfilesTab: React.FC = () => {
-  const [profiles, setProfiles] = useState<Profile[]>(sampleProfiles);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -203,7 +174,7 @@ export const ProfilesTab: React.FC = () => {
 
           {editingProfile ? (
             // Profile Editor
-            <div className="bg-wp-gray-50 p-6 rounded-lg mb-6">
+            <div className="bg-gray-50 p-6 rounded-lg mb-6">
               <h3 className="text-lg font-medium mb-4">
                 {isCreating ? 'Create New Profile' : 'Edit Profile'}
               </h3>
@@ -295,10 +266,10 @@ export const ProfilesTab: React.FC = () => {
                       const networkSettings = editingProfile.networks[network.id] || { enabled: false };
 
                       return (
-                        <div key={network.id} className="border border-wp-gray-200 rounded p-3">
+                        <div key={network.id} className="border border-gray-200 rounded p-3">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center">
-                              <i className={`${network.icon} mr-2 text-wp-gray-600`}></i>
+                              <img src={getNetworkIconUrl(network.id)} alt={`${network.name} icon`} className="mr-2 w-5 h-5" />
                               <span className="font-medium">{network.name}</span>
                             </div>
                             <Checkbox
@@ -326,7 +297,7 @@ export const ProfilesTab: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 mt-6 pt-4 border-t border-wp-gray-200">
+              <div className="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200">
                 <Button onClick={handleCancelEdit} variant="secondary">
                   Cancel
                 </Button>
@@ -339,11 +310,11 @@ export const ProfilesTab: React.FC = () => {
             // Profiles List
             <div className="space-y-4">
               {profiles.map((profile) => (
-                <div key={profile.id} className="border border-wp-gray-200 rounded-lg p-4">
+                <div key={profile.id} className="border border-gray-200 rounded-lg p-4 transition-all duration-200 hover:shadow-md hover:border-gray-300">
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="font-medium text-lg">{profile.name}</h3>
-                      <p className="text-sm text-wp-gray-600 mt-1">
+                      <p className="text-sm text-gray-600 mt-1">
                         {Object.values(profile.networks).filter(n => n.enabled).length} networks enabled
                       </p>
                       <div className="flex items-center mt-2 space-x-2">
@@ -352,7 +323,7 @@ export const ProfilesTab: React.FC = () => {
                           .map(([networkId]) => {
                             const network = availableNetworks.find(n => n.id === networkId);
                             return network ? (
-                              <i key={networkId} className={`${network.icon} text-wp-gray-500`} title={network.name}></i>
+                              <img key={networkId} src={getNetworkIconUrl(networkId)} alt={network.name} title={network.name} className="w-5 h-5" />
                             ) : null;
                           })}
                       </div>
@@ -362,6 +333,7 @@ export const ProfilesTab: React.FC = () => {
                         onClick={() => handleEditProfile(profile)}
                         variant="secondary"
                         size="small"
+                        className="transition-all duration-200 hover:shadow-sm"
                       >
                         Edit
                       </Button>
@@ -369,7 +341,7 @@ export const ProfilesTab: React.FC = () => {
                         onClick={() => handleDeleteProfile(profile.id)}
                         variant="secondary"
                         size="small"
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200 hover:shadow-sm"
                       >
                         Delete
                       </Button>
@@ -379,7 +351,7 @@ export const ProfilesTab: React.FC = () => {
               ))}
 
               {profiles.length === 0 && (
-                <div className="text-center py-8 text-wp-gray-500">
+                <div className="text-center py-8 text-gray-500">
                   <p>No profiles created yet.</p>
                   <p className="text-sm mt-1">Create your first profile to get started.</p>
                 </div>

@@ -10,15 +10,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'wp-blue': '#007cba',
-        'wp-blue-700': '#005a87',
-        'wp-gray': '#23282d',
-        'wp-success': '#46b450',
-        'wp-warning': '#ffb900',
-        'wp-error': '#dc3232',
+        'primary': '#007cba',
+        'primary-700': '#005a87',
+        'muted': '#23282d',
+        'success': '#46b450',
+        'warning': '#ffb900',
+        'danger': '#dc3232',
       },
       fontFamily: {
-        'wp': ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell', '"Helvetica Neue"', 'sans-serif'],
+        'system': ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell', '"Helvetica Neue"', 'sans-serif'],
       },
     },
   },

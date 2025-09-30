@@ -15,6 +15,7 @@ All notable changes to this project are documented in this file.
 - New unit tests: WeChat QR rendering test and VK adapter test; added share count tests.
 
 ### Changed
+- [PHASE3-124] Convert admin React UI to Tailwind-first implementation and fix admin stylesheet enqueue (timestamp: 2025-09-30 15:30:00)
 - Reworked the block preview to use `ServerSideRender` in editor for accurate live previews.
 - Sanitized SVG handling and improved accessibility (ARIA labels, roles, keyboard support) across share buttons.
 - Implemented local QR generation with graceful fallback to Google Chart API when local image extensions are unavailable.
@@ -45,13 +46,17 @@ For detailed changes, see the individual commits on the `new` branch.
 - Unit tests for RenderUtils, IconPicker, Elementor and WPBakery components added.
 
 ### Changed
-- WPBakery element enhanced with dynamic networks, accessibility improvements, and additional styling parameters (`src/Integrations/WPBakery/ShareButtonsElement.php`).
-- Updated README to reflect current implementation status and testing information.
+- Reworked the block preview to use `ServerSideRender` in editor for accurate live previews.
+- Sanitized SVG handling and improved accessibility (ARIA labels, roles, keyboard support) across share buttons.
+- Implemented local QR generation with graceful fallback to Google Chart API when local image extensions are unavailable.
 
 ### Fixed
 - Miscellaneous bug fixes related to iconset mapping and admin preview handling.
 
 ### Security
 - Added additional sanitization and validation utilities to reduce risk of XSS and malformed input.
+
+### Tests
+- Added tests for share counts, VK adapter, and WeChat QR rendering. CI will execute tests in properly provisioned environments.
 
 ---

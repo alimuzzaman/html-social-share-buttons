@@ -113,7 +113,7 @@ export const GeneralTab: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-wp-gray-800 mb-3">Default Appearance</h3>
+            <h3 className="text-lg font-medium text-gray-800 mb-3">Default Appearance</h3>
 
             <FormField
               label="Default Style"
@@ -139,9 +139,9 @@ export const GeneralTab: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-wp-gray-200">
+        <div className="mt-8 pt-4 border-t border-gray-200">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-wp-gray-600">
+            <p className="text-sm text-gray-600">
               These settings will be applied as defaults for new button instances.
             </p>
             <Button

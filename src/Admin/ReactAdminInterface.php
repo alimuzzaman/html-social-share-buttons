@@ -85,7 +85,7 @@ class ReactAdminInterface
         // Enqueue styles
         wp_enqueue_style(
             'hss-admin-react-style',
-            $this->getAssetUrl('index.css'),
+            $this->getAssetUrl('admin.css'),
             ['wp-components'],
             $version
         );

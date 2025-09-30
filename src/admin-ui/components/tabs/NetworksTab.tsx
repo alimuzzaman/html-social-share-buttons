@@ -61,6 +61,16 @@ const defaultNetworks: NetworkConfig[] = [
   }
 ];
 
+const networkIconMap: Record<string, string | undefined> = {
+  facebook: 'facebook',
+  twitter: 'twitter',
+  linkedin: 'linkedin',
+  pinterest: 'pinterest',
+  // reddit, whatsapp - no default asset in this iconset; fallback to initial letter
+};
+
+const pluginUrl = (typeof window !== 'undefined' && (window as any).hssAdminConfig && (window as any).hssAdminConfig.pluginUrl) ? (window as any).hssAdminConfig.pluginUrl : '';
+
 export const NetworksTab: React.FC = () => {
   const { networks: apiNetworks, updateNetwork, loading } = useNetworksContext();
   const { showSuccess, showError } = useNotifications();
@@ -136,8 +146,8 @@ export const NetworksTab: React.FC = () => {
               return (
                 <div
                   key={network.id}
-                  className={`transition-all duration-200 border rounded-lg p-4 ${
-                    isEnabled ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                  className={`transition-all duration-200 border rounded-lg p-4 cursor-pointer hover:shadow-md ${
+                    isEnabled ? 'border-blue-500 bg-blue-50 hover:bg-blue-100' : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center mb-3">
@@ -145,10 +155,26 @@ export const NetworksTab: React.FC = () => {
                       className="w-8 h-8 rounded flex items-center justify-center mr-3"
                       style={{ backgroundColor: network.color }}
                     >
-                      <i className={`${network.icon_class} text-white text-sm`} />
+                      {(() => {
+                        const imgSrc = `${pluginUrl}assets/iconset/default_square/${network.id}.png`;
+                        return (
+                          <img
+                            src={imgSrc}
+                            alt={`${network.name} icon`}
+                            className="w-5 h-5"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).style.display = 'none';
+                              const placeholder = document.createElement('span');
+                              placeholder.className = 'inline-flex items-center justify-center w-5 h-5 rounded-full bg-white text-xs text-gray-700';
+                              placeholder.textContent = network.name.charAt(0);
+                              e.currentTarget.parentElement?.appendChild(placeholder);
+                            }}
+                          />
+                        );
+                      })()}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-wp-gray-800">{network.name}</h4>
+                      <h4 className="font-medium text-gray-800">{network.name}</h4>
                     </div>
                     <Checkbox
                       checked={isEnabled}
@@ -176,9 +202,9 @@ export const NetworksTab: React.FC = () => {
             })}
           </div>
 
-          <div className="mt-6 p-4 bg-wp-gray-50 rounded-lg">
-            <h4 className="font-medium text-wp-gray-800 mb-2">Network Order</h4>
-            <p className="text-sm text-wp-gray-600 mb-3">
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-medium text-gray-800 mb-2">Network Order</h4>
+            <p className="text-sm text-gray-600 mb-3">
               Drag and drop to reorder the networks as they will appear on your site.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -189,7 +215,7 @@ export const NetworksTab: React.FC = () => {
                 return (
                   <div
                     key={networkId}
-                    className="flex items-center px-3 py-1 bg-white border border-wp-gray-200 rounded cursor-move"
+                    className="flex items-center px-3 py-1 bg-white border border-gray-200 rounded cursor-move transition-all duration-200 hover:shadow-sm hover:border-gray-300"
                   >
                     <div
                       className="w-4 h-4 rounded mr-2"
@@ -203,9 +229,9 @@ export const NetworksTab: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-wp-gray-200">
+        <div className="mt-8 pt-4 border-t border-gray-200">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-wp-gray-600">
+            <p className="text-sm text-gray-600">
               {enabledNetworks.length} network{enabledNetworks.length !== 1 ? 's' : ''} enabled
             </p>
             <Button

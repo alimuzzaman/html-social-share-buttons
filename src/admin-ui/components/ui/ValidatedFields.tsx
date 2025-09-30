@@ -53,7 +53,7 @@ export const ValidatedTextInput: React.FC<ValidatedTextInputProps> = ({
         )}
 
         {helpText && !error && (
-          <p className="text-sm text-wp-gray-500">
+          <p className="text-sm text-gray-500">
             {helpText}
           </p>
         )}
@@ -102,9 +102,9 @@ export const ValidatedSelect: React.FC<ValidatedSelectProps> = ({
           onBlur={onBlur}
           disabled={disabled}
           className={`
-            w-full p-2 border rounded-md focus:ring-2 focus:ring-wp-blue-500 focus:border-wp-blue-500
-            ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-wp-gray-300'}
-            ${disabled ? 'bg-wp-gray-100 cursor-not-allowed' : 'bg-white'}
+            w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+            ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300'}
+            ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
           `}
         >
           {placeholder && (
@@ -127,7 +127,7 @@ export const ValidatedSelect: React.FC<ValidatedSelectProps> = ({
         )}
 
         {helpText && !error && (
-          <p className="text-sm text-wp-gray-500">
+          <p className="text-sm text-gray-500">
             {helpText}
           </p>
         )}
@@ -183,9 +183,9 @@ export const ValidatedTextArea: React.FC<ValidatedTextAreaProps> = ({
           rows={rows}
           maxLength={maxLength}
           className={`
-            w-full p-2 border rounded-md focus:ring-2 focus:ring-wp-blue-500 focus:border-wp-blue-500 resize-vertical
-            ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-wp-gray-300'}
-            ${disabled ? 'bg-wp-gray-100 cursor-not-allowed' : 'bg-white'}
+            w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical
+            ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300'}
+            ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
           `}
         />
 
@@ -199,7 +199,7 @@ export const ValidatedTextArea: React.FC<ValidatedTextAreaProps> = ({
             )}
 
             {helpText && !error && (
-              <p className="text-sm text-wp-gray-500">
+              <p className="text-sm text-gray-500">
                 {helpText}
               </p>
             )}
@@ -209,7 +209,7 @@ export const ValidatedTextArea: React.FC<ValidatedTextAreaProps> = ({
             <p className={`text-xs ml-2 ${
               remainingChars !== null && remainingChars < 10
                 ? 'text-red-600'
-                : 'text-wp-gray-400'
+                : 'text-gray-400'
             }`}>
               {remainingChars} remaining
             </p>
@@ -248,13 +248,13 @@ export const ValidatedCheckbox: React.FC<ValidatedCheckboxProps> = ({
           onChange={(e) => onChange(e.target.checked)}
           disabled={disabled}
           className={`
-            mr-2 h-4 w-4 rounded border-wp-gray-300 text-wp-blue-600
-            focus:ring-wp-blue-500 focus:ring-2 focus:ring-offset-0
+            mr-2 h-4 w-4 rounded border-gray-300 text-blue-600
+            focus:ring-blue-500 focus:ring-2 focus:ring-offset-0
             ${error ? 'border-red-500' : ''}
             ${disabled ? 'cursor-not-allowed' : ''}
           `}
         />
-        <span className="text-sm font-medium text-wp-gray-700">
+        <span className="text-sm font-medium text-gray-700">
           {label}
         </span>
       </label>
@@ -267,7 +267,7 @@ export const ValidatedCheckbox: React.FC<ValidatedCheckboxProps> = ({
       )}
 
       {helpText && !error && (
-        <p className="text-sm text-wp-gray-500 ml-6">
+        <p className="text-sm text-gray-500 ml-6">
           {helpText}
         </p>
       )}

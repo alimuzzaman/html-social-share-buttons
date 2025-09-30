@@ -3,6 +3,7 @@
 /* WordPress Admin Interface Base Styles */
 @layer base {
   .hss-admin-interface {
-    @apply font-sans text-gray-900;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    color: rgb(55 65 81); /* text-gray-700 */
   }
 }
