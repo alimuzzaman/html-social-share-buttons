@@ -33,7 +33,6 @@ export interface PluginSettings {
 
 	// Integrations
 	betterlinks_enabled: boolean;
-	betterlinks_api_key: string;
 	betterlinks_shorten_urls: boolean;
 	betterlinks_add_tracking: boolean;
 	betterlinks_custom_tracking: BetterLinksCustomTracking;

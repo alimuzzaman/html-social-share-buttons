@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-	FormField,
-	TextInput,
 	Checkbox,
 	Button,
 	LoadingOverlay,
@@ -25,7 +23,6 @@ export const IntegrationsTab: React.FC = () => {
 		Partial< PluginSettings >
 	>( {
 		betterlinks_enabled: false,
-		betterlinks_api_key: '',
 		elementor_enabled: false,
 		divi_enabled: false,
 		beaver_builder_enabled: false,
@@ -36,7 +33,6 @@ export const IntegrationsTab: React.FC = () => {
 		if ( apiSettings ) {
 			setLocalSettings( {
 				betterlinks_enabled: apiSettings.betterlinks_enabled ?? false,
-				betterlinks_api_key: apiSettings.betterlinks_api_key ?? '',
 				elementor_enabled: apiSettings.elementor_enabled ?? false,
 				divi_enabled: apiSettings.divi_enabled ?? false,
 				beaver_builder_enabled:
@@ -126,28 +122,8 @@ export const IntegrationsTab: React.FC = () => {
 
 							{ settings.betterlinks_enabled && (
 								<div className="mt-4">
-									<FormField
-										label="API Key"
-										description="Enter your BetterLinks API key to enable integration"
-									>
-										<TextInput
-											type="password"
-											value={
-												settings.betterlinks_api_key ||
-												''
-											}
-											onChange={ ( value ) =>
-												updateSetting(
-													'betterlinks_api_key',
-													value
-												)
-											}
-											placeholder="Enter BetterLinks API key"
-										/>
-									</FormField>
-									<p className="text-xs text-gray-500 mt-2">
-										You can find your API key in BetterLinks
-										settings under the API section.
+									<p className="text-sm text-gray-600">
+										BetterLinks integration is enabled. Share URLs will be automatically shortened and tracked.
 									</p>
 								</div>
 							) }

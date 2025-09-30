@@ -70,8 +70,6 @@ export const useSettings = () => {
 				// Integrations
 				betterlinks_enabled:
 					integrationsResponse.betterlinks_enabled ?? false,
-				betterlinks_api_key:
-					integrationsResponse.betterlinks_api_key ?? '',
 				betterlinks_shorten_urls:
 					integrationsResponse.betterlinks_shorten_urls ?? true,
 				betterlinks_add_tracking:
@@ -187,7 +185,6 @@ export const useSettings = () => {
 					},
 					integrations: {
 						betterlinks_enabled: settings.betterlinks_enabled,
-						betterlinks_api_key: settings.betterlinks_api_key,
 						betterlinks_shorten_urls:
 							settings.betterlinks_shorten_urls,
 						betterlinks_add_tracking:

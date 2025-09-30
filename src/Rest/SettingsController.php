@@ -146,7 +146,6 @@ class SettingsController extends WP_REST_Controller
                 ],
                 'integrations' => [
                     'betterlinks_enabled' => $this->settings->get('betterlinks_enabled', false),
-                    'betterlinks_api_key' => $this->settings->get('betterlinks_api_key', ''),
                     'betterlinks_shorten_urls' => $this->settings->get('betterlinks_shorten_urls', true),
                     'betterlinks_add_tracking' => $this->settings->get('betterlinks_add_tracking', true),
                     'betterlinks_custom_tracking' => $this->settings->get('betterlinks_custom_tracking', []),
@@ -233,7 +232,6 @@ class SettingsController extends WP_REST_Controller
                 'placement_post_types' => ['post'],
                 'exclude_pages' => '',
                 'betterlinks_enabled' => false,
-                'betterlinks_api_key' => '',
                 'betterlinks_shorten_urls' => true,
                 'betterlinks_add_tracking' => true,
                 'betterlinks_custom_tracking' => [],

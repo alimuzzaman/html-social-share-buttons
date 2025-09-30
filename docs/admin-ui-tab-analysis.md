@@ -9,7 +9,7 @@ _Date: 2025-10-01_
 | general | General | Display Options, Default Appearance | show_on_front_page, show_on_posts, show_on_pages, show_on_archives, default_style, default_size |
 | networks | Networks | Available Networks grid, Network Order drag list, Custom Networks | enabled_networks, network_order, per-network labels, custom_networks CRUD |
 | profiles | Profiles | Profile list, Editor, Default profile selector | profiles array, default_profile, per-profile networks + display_settings |
-| integrations | Integrations | BetterLinks panel, Page Builder toggles, Status summary | betterlinks_enabled, betterlinks_api_key, elementor_enabled, divi_enabled, beaver_builder_enabled |
+| integrations | Integrations | BetterLinks panel, Page Builder toggles, Status summary | betterlinks_enabled, elementor_enabled, divi_enabled, beaver_builder_enabled |
 | appearance | Appearance | Button Style, Custom Styling, Preview | title, icon_style, button_size, button_spacing, custom_css |
 | placement | Placement | Auto placement, Content Types, Manual placement info | auto_placement, placement_position, placement_post_types, exclude_pages |
 | advanced | Advanced | Analytics & Tracking, Performance & Debug | google_analytics, auto_hide_buttons, use_port_in_url, nofollow_links, cache_enabled, cache_duration, debug_mode |
@@ -29,7 +29,7 @@ _Date: 2025-10-01_
   - profiles[], default_profile
   - display_settings.{style,size,text_labels,icon_only}
 - **Integrations**
-  - betterlinks_enabled, betterlinks_api_key
+  - betterlinks_enabled
   - elementor_enabled, divi_enabled, beaver_builder_enabled
 - **Advanced**
   - google_analytics, auto_hide_buttons, use_port_in_url, nofollow_links
