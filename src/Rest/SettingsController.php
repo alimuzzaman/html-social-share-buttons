@@ -165,6 +165,15 @@ class SettingsController extends WP_REST_Controller
                     'cache_duration' => $this->settings->get('cache_duration', 3600),
                     'debug_mode' => $this->settings->get('debug_mode', false),
                 ],
+                'advanced' => [
+                    'google_analytics' => $this->settings->get('google_analytics', false),
+                    'auto_hide_buttons' => $this->settings->get('auto_hide_buttons', false),
+                    'use_port_in_url' => $this->settings->get('use_port_in_url', false),
+                    'nofollow_links' => $this->settings->get('nofollow_links', true),
+                    'cache_enabled' => $this->settings->get('cache_enabled', true),
+                    'cache_duration' => $this->settings->get('cache_duration', 3600),
+                    'debug_mode' => $this->settings->get('debug_mode', false),
+                ],
             ];
 
             return new WP_REST_Response($settings, 200);
@@ -553,7 +562,74 @@ class SettingsController extends WP_REST_Controller
                     'default_size' => ['type' => 'string'],
                 ],
             ],
-            // Add other schema definitions as needed
+            'networks' => [
+                'type' => 'object',
+                'properties' => [
+                    'enabled_networks' => [
+                        'type' => 'array',
+                        'items' => [ 'type' => 'string' ],
+                    ],
+                    'network_order' => [
+                        'type' => 'array',
+                        'items' => [ 'type' => 'string' ],
+                    ],
+                    'custom_networks' => [
+                        'type' => 'array',
+                        'items' => [ 'type' => 'object' ],
+                    ],
+                ],
+            ],
+            'appearance' => [
+                'type' => 'object',
+                'properties' => [
+                    'title' => ['type' => 'string'],
+                    'icon_style' => ['type' => 'string'],
+                    'button_size' => ['type' => 'string'],
+                    'button_spacing' => ['type' => 'integer'],
+                    'custom_css' => ['type' => 'string'],
+                ],
+            ],
+            'placement' => [
+                'type' => 'object',
+                'properties' => [
+                    'auto_placement' => ['type' => 'boolean'],
+                    'placement_position' => ['type' => 'string'],
+                    'placement_post_types' => [
+                        'type' => 'array',
+                        'items' => [ 'type' => 'string' ],
+                    ],
+                    'exclude_pages' => ['type' => 'string'],
+                ],
+            ],
+            'integrations' => [
+                'type' => 'object',
+                'properties' => [
+                    'betterlinks_enabled' => ['type' => 'boolean'],
+                    'betterlinks_shorten_urls' => ['type' => 'boolean'],
+                    'betterlinks_add_tracking' => ['type' => 'boolean'],
+                    'betterlinks_custom_tracking' => [
+                        'type' => 'object',
+                    ],
+                    'elementor_enabled' => ['type' => 'boolean'],
+                    'divi_enabled' => ['type' => 'boolean'],
+                    'beaver_builder_enabled' => ['type' => 'boolean'],
+                ],
+            ],
+            'advanced' => [
+                'type' => 'object',
+                'properties' => [
+                    'google_analytics' => ['type' => 'boolean'],
+                    'auto_hide_buttons' => ['type' => 'boolean'],
+                    'use_port_in_url' => ['type' => 'boolean'],
+                    'nofollow_links' => ['type' => 'boolean'],
+                    'cache_enabled' => ['type' => 'boolean'],
+                    'cache_duration' => ['type' => 'integer'],
+                    'debug_mode' => ['type' => 'boolean'],
+                ],
+            ],
+            'profiles' => [
+                'type' => 'object',
+            ],
         ];
     }
 
