@@ -6,3 +6,4 @@ export { IntegrationsTab } from './IntegrationsTab';
 export { AppearanceTab } from './AppearanceTab';
 export { PlacementTab } from './PlacementTab';
 export { ShortcodeTab } from './ShortcodeTab';
+export { AdvancedTab } from './AdvancedTab';

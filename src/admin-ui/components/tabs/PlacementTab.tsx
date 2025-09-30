@@ -263,8 +263,8 @@ export const PlacementTab: React.FC = () => {
 							<p className="text-sm text-gray-600">
 								{ /* eslint-disable-next-line react/no-unescaped-entities */ }
 								{ settings.auto_placement
-									? "Auto-placement is enabled"
-									: "Auto-placement is disabled" }
+									? 'Auto-placement is enabled'
+									: 'Auto-placement is disabled' }
 								.
 								{
 									( settings.placement_post_types || [] )
