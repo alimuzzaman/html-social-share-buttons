@@ -7,11 +7,11 @@ use HtmlSocialShare\Utils\SecurityUtils;
 
 /**
  * Settings management with validation and caching
- * 
+ *
  * Handles core settings, profiles, and icons with proper validation,
  * sanitization, and caching. Separates pure validation functions from
  * WordPress-specific storage operations.
- * 
+ *
  * @package HtmlSocialShare
  * @since 3.0.0
  */
@@ -132,7 +132,7 @@ class Settings implements SettingsInterface
 
         $profiles = $this->getProfilesData();
         $profile = $profiles[$profileId] ?? null;
-        
+
         return $profile ? self::sanitizeProfileData($profile) : null;
     }
 
@@ -145,13 +145,13 @@ class Settings implements SettingsInterface
     {
         $profiles = $this->getProfilesData();
         $sanitizedProfiles = [];
-        
+
         foreach ($profiles as $profileId => $profile) {
             if (self::isValidProfileId($profileId)) {
                 $sanitizedProfiles[$profileId] = self::sanitizeProfileData($profile);
             }
         }
-        
+
         return $sanitizedProfiles;
     }
 
@@ -177,7 +177,7 @@ class Settings implements SettingsInterface
         }
 
         $sanitizedProfile = self::sanitizeProfileData($profileData);
-        
+
         $profiles = $this->getProfilesData();
         $profiles[$profileId] = $sanitizedProfile;
         $this->setProfilesData($profiles);
@@ -211,7 +211,7 @@ class Settings implements SettingsInterface
 
         $icons = $this->getIconsData();
         $icon = $icons[$type][$iconId] ?? null;
-        
+
         return $icon ? self::sanitizeIconData($icon) : null;
     }
 
@@ -224,7 +224,7 @@ class Settings implements SettingsInterface
     {
         $icons = $this->getIconsData();
         $sanitizedIcons = [];
-        
+
         foreach ($icons as $type => $iconSet) {
             if (self::isValidIconType($type) && is_array($iconSet)) {
                 $sanitizedIcons[$type] = [];
@@ -235,7 +235,7 @@ class Settings implements SettingsInterface
                 }
             }
         }
-        
+
         return $sanitizedIcons;
     }
 
@@ -254,7 +254,7 @@ class Settings implements SettingsInterface
         if (!self::isValidIconId($iconId)) {
             throw new \InvalidArgumentException("Invalid icon ID: {$iconId}");
         }
-        
+
         if (!self::isValidIconType($type)) {
             throw new \InvalidArgumentException("Invalid icon type: {$type}");
         }
@@ -266,7 +266,7 @@ class Settings implements SettingsInterface
         }
 
         $sanitizedIcon = self::sanitizeIconData($iconData);
-        
+
         $icons = $this->getIconsData();
         $icons[$type][$iconId] = $sanitizedIcon;
         $this->setIconsData($icons);
@@ -509,7 +509,7 @@ class Settings implements SettingsInterface
         if (empty($key)) {
             return false;
         }
-        
+
         // Allow dot notation for nested keys
         return preg_match('/^[a-zA-Z0-9_][a-zA-Z0-9_\.]*$/', $key) === 1;
     }
@@ -567,16 +567,16 @@ class Settings implements SettingsInterface
     public static function validateIconData(array $icon): array
     {
         $errors = [];
-        
+
         // Check required fields
         if (empty($icon['name'])) {
             $errors[] = "Missing required field: name";
         }
-        
+
         if (empty($icon['svg']) && empty($icon['image'])) {
             $errors[] = "Icon must have either 'svg' or 'image' field";
         }
-        
+
         // Validate SVG if provided
         if (!empty($icon['svg'])) {
             if (!is_string($icon['svg'])) {
@@ -585,14 +585,14 @@ class Settings implements SettingsInterface
                 $errors[] = "SVG contains potentially dangerous content";
             }
         }
-        
+
         // Validate image URL if provided
         if (!empty($icon['image'])) {
             if (!SecurityUtils::sanitizeUrl($icon['image'])) {
                 $errors[] = "Invalid image URL";
             }
         }
-        
+
         return [
             'valid' => empty($errors),
             'errors' => $errors
@@ -619,36 +619,36 @@ class Settings implements SettingsInterface
     public static function sanitizeIconData(array $icon): array
     {
         $sanitized = [];
-        
+
         // Sanitize name
         if (isset($icon['name'])) {
             $sanitized['name'] = SecurityUtils::sanitizeTextField($icon['name']);
         }
-        
+
         // Sanitize SVG (basic cleaning - full sanitization should use SanitizerInterface)
         if (isset($icon['svg'])) {
             $sanitized['svg'] = SecurityUtils::stripDangerousHtml($icon['svg'], []);
         }
-        
+
         // Sanitize image URL
         if (isset($icon['image'])) {
             $sanitized['image'] = SecurityUtils::sanitizeUrl($icon['image']);
         }
-        
+
         // Sanitize optional fields
         if (isset($icon['description'])) {
             $sanitized['description'] = SecurityUtils::sanitizeTextField($icon['description']);
         }
-        
+
         if (isset($icon['category'])) {
             $sanitized['category'] = SecurityUtils::sanitizeKey($icon['category']);
         }
-        
+
         if (isset($icon['tags'])) {
             $tags = is_array($icon['tags']) ? $icon['tags'] : [];
             $sanitized['tags'] = array_map([SecurityUtils::class, 'sanitizeKey'], $tags);
         }
-        
+
         return $sanitized;
     }
 
@@ -677,9 +677,16 @@ class Settings implements SettingsInterface
                 'cache_enabled' => true,
                 'cache_ttl' => 3600,
                 'lazy_load' => false
+            ],
+            'opengraph' => [
+                'enabled' => false,
+                'front_page' => true,
+                'archive_pages' => false,
+                'twitter_card' => true,
+                'default_image' => ''
             ]
         ];
-        
+
         return ArrayUtils::deepMerge($defaults, $data);
     }
 
@@ -697,28 +704,28 @@ class Settings implements SettingsInterface
         $integerKeys = ['performance.cache_ttl'];
         $urlKeys = ['display.custom_css_url'];
         $keyKeys = ['theme', 'display.style', 'display.size', 'display.shape'];
-        
+
         if (in_array($key, $booleanKeys, true)) {
             return DataUtils::sanitizeBoolean($value);
         }
-        
+
         if (in_array($key, $integerKeys, true)) {
             return DataUtils::sanitizeInteger($value);
         }
-        
+
         if (in_array($key, $urlKeys, true)) {
             return SecurityUtils::sanitizeUrl((string) $value);
         }
-        
+
         if (in_array($key, $keyKeys, true)) {
             return SecurityUtils::sanitizeKey((string) $value);
         }
-        
+
         // Default text sanitization
         if (is_string($value)) {
             return SecurityUtils::sanitizeTextField($value);
         }
-        
+
         return $value;
     }
 }

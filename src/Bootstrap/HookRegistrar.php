@@ -52,6 +52,10 @@ class HookRegistrar
             $reactAdmin->ajaxGetPostsWithCounts();
         });
 
+        // Open Graph Meta Tags
+        $openGraphMetaTags = $container->get('opengraph_meta_tags');
+        $openGraphMetaTags->init();
+
         // Activation / Deactivation
         register_activation_hook($pluginFile, [$activationHandler, 'onActivate']);
         register_deactivation_hook($pluginFile, [$activationHandler, 'onDeactivate']);

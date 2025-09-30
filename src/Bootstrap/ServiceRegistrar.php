@@ -81,5 +81,10 @@ class ServiceRegistrar
         $c->set('rest_api_service', function ($c) {
             return new \HtmlSocialShare\Rest\RestApiService($c->get('settings'), $c->get('profile_manager'));
         });
+
+        // Open Graph Meta Tags service
+        $c->set('opengraph_meta_tags', function ($c) {
+            return new \HtmlSocialShare\OpenGraphMetaTags($c->get('settings'));
+        });
     }
 }
