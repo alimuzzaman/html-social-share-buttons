@@ -24,6 +24,7 @@ if (!defined('ABSPATH')) {
 define('HTML_SOCIAL_SHARE_PLUGIN_FILE', __FILE__);
 define('HTML_SOCIAL_SHARE_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('HTML_SOCIAL_SHARE_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('HTML_SOCIAL_SHARE_VERSION', '3.0.0');
 
 // Additional helper constants for assets and URLs
 define('HTML_SOCIAL_SHARE_ASSETS_DIR', HTML_SOCIAL_SHARE_PLUGIN_DIR . 'assets/');

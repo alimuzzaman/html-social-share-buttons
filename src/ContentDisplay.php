@@ -72,7 +72,7 @@ class ContentDisplay
 
         $positions = $this->settings->get('positions', ['after_post']);
         $shareButtons = $this->renderShareButtons($post);
-        
+
         if (empty($shareButtons)) {
             return $content;
         }
@@ -94,7 +94,7 @@ class ContentDisplay
 
         $positions = $this->settings->get('positions', ['after_post']);
         $floatingPositions = self::extractFloatingPositions($positions);
-        
+
         if (empty($floatingPositions)) {
             return;
         }
@@ -105,7 +105,7 @@ class ContentDisplay
         }
 
         $style = $this->settings->get('style', 'minimal');
-        
+
         foreach ($floatingPositions as $position) {
             $this->renderFloatingButton($shareButtons, $position, $style);
         }
@@ -138,7 +138,7 @@ class ContentDisplay
     }
 
     // --- Private methods with side effects ---
-    
+
     /**
      * Render share buttons for a specific post
      *
@@ -148,7 +148,7 @@ class ContentDisplay
     private function renderShareButtons(object $post): string
     {
         $enabledNetworks = $this->settings->get('enabled_networks', ['facebook', 'twitter']);
-        
+
         if (empty($enabledNetworks)) {
             return '';
         }
@@ -159,7 +159,7 @@ class ContentDisplay
             $profile = $this->getOrCreateProfile($network);
             $shareUrl = self::generateShareUrl($network, $post, $profile);
             $buttonHtml = $this->shareRenderer->render($network, $profile, $shareUrl);
-            
+
             if (!empty($buttonHtml)) {
                 $shareButtons[] = $buttonHtml;
             }
@@ -171,7 +171,7 @@ class ContentDisplay
 
         return $this->wrapShareButtons($shareButtons);
     }
-    
+
     /**
      * Get profile for network or create default one
      *
@@ -181,14 +181,14 @@ class ContentDisplay
     private function getOrCreateProfile(string $network): array
     {
         $profile = $this->profileManager->getProfile($network);
-        
+
         if (!$profile) {
             $profile = self::createDefaultProfile($network);
         }
-        
+
         return $profile;
     }
-    
+
     /**
      * Wrap share buttons in container with styling
      *
@@ -200,7 +200,7 @@ class ContentDisplay
         $title = $this->settings->get('title', 'Share this with your friends');
         $style = $this->settings->get('style', 'minimal');
         $classes = 'hss-share-buttons hss-style-' . esc_attr($style);
-        
+
         $output = sprintf(
             '<div class="%s"><h3 class="hss-title">%s</h3><div class="hss-buttons">%s</div></div>',
             $classes,
@@ -216,7 +216,7 @@ class ContentDisplay
 
         return $output;
     }
-    
+
     /**
      * Format icon CSS for inline inclusion
      *
@@ -230,7 +230,7 @@ class ContentDisplay
             foreach ($iconCSS as $cssClass => $imageUrl) {
                 $css .= sprintf(
                     '.%s{background-image:url(%s);background-size:contain;background-repeat:no-repeat;background-position:center;} ',
-                    esc_attr($cssClass), 
+                    esc_attr($cssClass),
                     esc_url($imageUrl)
                 );
             }
@@ -239,10 +239,10 @@ class ContentDisplay
         } elseif (is_string($iconCSS)) {
             return $iconCSS;
         }
-        
+
         return '';
     }
-    
+
     /**
      * Check if content should be excluded from share buttons
      *
@@ -252,14 +252,14 @@ class ContentDisplay
     private function isContentExcluded(object $post): bool
     {
         $exclusions = $this->settings->get('exclusions', [
-            'ids' => [], 
-            'slugs' => [], 
+            'ids' => [],
+            'slugs' => [],
             'titles' => []
         ]);
-        
+
         return self::isPostExcluded($post, $exclusions);
     }
-    
+
     /**
      * Render floating button for specific position
      *
@@ -269,14 +269,14 @@ class ContentDisplay
      */
     private function renderFloatingButton(string $shareButtons, string $position, string $style): void
     {
-        $classes = sprintf('hss-share-buttons hss-pos-float-%s hss-style-%s', 
-            esc_attr($position), 
+        $classes = sprintf('hss-share-buttons hss-pos-float-%s hss-style-%s',
+            esc_attr($position),
             esc_attr($style)
         );
-        
+
         echo sprintf('<div class="%s">%s</div>', $classes, $shareButtons);
     }
-    
+
     /**
      * Enqueue floating-specific styles
      */
@@ -284,7 +284,7 @@ class ContentDisplay
     {
         wp_add_inline_style('wp-block-library', self::getFloatingButtonsCSS());
     }
-    
+
     /**
      * Enqueue WeChat enhancement script
      */
@@ -298,7 +298,7 @@ class ContentDisplay
             true
         );
     }
-    
+
     /**
      * Get asset URL with fallback
      *
@@ -310,10 +310,10 @@ class ContentDisplay
         if (defined('HTML_SOCIAL_SHARE_ASSETS_URL')) {
             return HTML_SOCIAL_SHARE_ASSETS_URL . $filename;
         }
-        
+
         return plugin_dir_url(__FILE__) . '../assets/' . $filename;
     }
-    
+
     /**
      * Get plugin version
      *
@@ -325,7 +325,7 @@ class ContentDisplay
     }
 
     // --- Pure helper functions ---
-    
+
     /**
      * Check if we should display share buttons in current context
      *
@@ -335,7 +335,7 @@ class ContentDisplay
     {
         return is_singular() && in_the_loop() && !is_feed() && !is_preview();
     }
-    
+
     /**
      * Check if we should enqueue frontend styles
      *
@@ -345,7 +345,7 @@ class ContentDisplay
     {
         return !is_admin() && !wp_is_json_request() && !is_feed();
     }
-    
+
     /**
      * Validate WordPress post object
      *
@@ -354,14 +354,14 @@ class ContentDisplay
      */
     public static function isValidPost($post): bool
     {
-        return is_object($post) && 
-               isset($post->ID) && 
-               is_numeric($post->ID) && 
+        return is_object($post) &&
+               isset($post->ID) &&
+               is_numeric($post->ID) &&
                $post->ID > 0 &&
                isset($post->post_status) &&
                $post->post_status === 'publish';
     }
-    
+
     /**
      * Apply content positions to wrap content with share buttons
      *
@@ -375,18 +375,18 @@ class ContentDisplay
         if (empty($shareButtons) || empty($positions)) {
             return $content;
         }
-        
+
         if (in_array('before_post', $positions)) {
             $content = $shareButtons . $content;
         }
-        
+
         if (in_array('after_post', $positions)) {
             $content .= $shareButtons;
         }
-        
+
         return $content;
     }
-    
+
     /**
      * Extract floating positions from position array
      *
@@ -397,7 +397,7 @@ class ContentDisplay
     {
         return array_intersect($positions, ['left', 'right']);
     }
-    
+
     /**
      * Check if positions include floating options
      *
@@ -408,7 +408,7 @@ class ContentDisplay
     {
         return !empty(self::extractFloatingPositions($positions));
     }
-    
+
     /**
      * Check if post should be excluded based on exclusion rules
      *
@@ -422,24 +422,24 @@ class ContentDisplay
         if (isset($exclusions['ids']) && in_array($post->ID, (array)$exclusions['ids'])) {
             return true;
         }
-        
+
         // Check slug exclusions
         if (isset($exclusions['slugs']) && isset($post->post_name)) {
             if (in_array($post->post_name, (array)$exclusions['slugs'])) {
                 return true;
             }
         }
-        
+
         // Check title exclusions
         if (isset($exclusions['titles']) && isset($post->post_title)) {
             if (in_array($post->post_title, (array)$exclusions['titles'])) {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Create default profile for network
      *
@@ -461,7 +461,7 @@ class ContentDisplay
             'meta' => []
         ];
     }
-    
+
     /**
      * Get default URL template for network
      *
@@ -487,10 +487,10 @@ class ContentDisplay
             'threads' => 'https://threads.net/intent/post?text={title}%20{url}',
             'vk' => 'https://vk.com/share.php?url={url}&title={title}'
         ];
-        
+
         return $templates[$network] ?? 'https://example.com/share?url={url}&title={title}';
     }
-    
+
     /**
      * Generate share URL for network and post
      *
@@ -502,7 +502,7 @@ class ContentDisplay
     public static function generateShareUrl(string $network, object $post, array $profile): string
     {
         $template = $profile['url_template'] ?? self::getDefaultUrlTemplate($network);
-        
+
         $replacements = [
             '{url}' => urlencode(get_permalink($post)),
             '{title}' => urlencode(get_the_title($post)),
@@ -512,10 +512,10 @@ class ContentDisplay
             '{site_name}' => urlencode(get_bloginfo('name')),
             '{author}' => urlencode(get_the_author_meta('display_name', $post->post_author ?? 0))
         ];
-        
+
         return str_replace(array_keys($replacements), array_values($replacements), $template);
     }
-    
+
     /**
      * Get CSS for floating buttons
      *
@@ -546,19 +546,19 @@ class ContentDisplay
             .hss-pos-float-right {
                 right: 20px;
             }
-            .hss-pos-float-left .hss-title, 
+            .hss-pos-float-left .hss-title,
             .hss-pos-float-right .hss-title {
                 font-size: 14px;
                 margin: 0 0 8px 0;
                 text-align: center;
             }
-            .hss-pos-float-left .hss-buttons, 
+            .hss-pos-float-left .hss-buttons,
             .hss-pos-float-right .hss-buttons {
                 display: flex;
                 flex-direction: column;
                 gap: 4px;
             }
-            .hss-pos-float-left .hss-button, 
+            .hss-pos-float-left .hss-button,
             .hss-pos-float-right .hss-button {
                 display: block;
                 width: 40px;
@@ -569,7 +569,7 @@ class ContentDisplay
                 text-decoration: none;
                 transition: all 0.2s ease;
             }
-            .hss-pos-float-left .hss-button:hover, 
+            .hss-pos-float-left .hss-button:hover,
             .hss-pos-float-right .hss-button:hover {
                 transform: scale(1.1);
             }
