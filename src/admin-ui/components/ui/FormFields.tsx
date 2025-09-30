@@ -14,20 +14,20 @@ export const FormField: React.FC<FormFieldWrapperProps> = ({
   children
 }) => {
   return (
-    <div className={`wp-form-field ${className} ${error ? 'has-error' : ''}`}>
-      <div className="wp-form-field-label">
+    <div className={`mb-4 ${className} ${error ? 'has-error' : ''}`}>
+      <div className="block text-sm font-medium text-gray-700 mb-1">
         <label className="form-label">
           {label}
           {required && <span className="required text-red-500 ml-1">*</span>}
         </label>
       </div>
 
-      <div className="wp-form-field-input">
+      <div className="block w-full">
         {children}
       </div>
 
       {description && (
-        <p className="description text-sm text-wp-gray-600 mt-1">
+        <p className="description text-sm text-gray-600 mt-1">
           {description}
         </p>
       )}
@@ -68,7 +68,7 @@ export const TextInput: React.FC<TextInputProps> = ({
       onBlur={onBlur}
       placeholder={placeholder}
       disabled={disabled}
-      className={`wp-text-input ${className}`}
+      className={`px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${className}`}
     />
   );
 };
@@ -93,7 +93,7 @@ export const Select: React.FC<SelectProps> = ({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className={`wp-select ${className}`}
+      className={`px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${className}`}
     >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
@@ -120,13 +120,13 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   className = ''
 }) => {
   return (
-    <label className={`wp-checkbox-label ${className}`}>
+    <label className={`flex items-center cursor-pointer ${className}`}>
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
         disabled={disabled}
-        className="wp-checkbox"
+        className="mr-2"
       />
       <span className="checkbox-text">{label}</span>
     </label>
@@ -153,32 +153,32 @@ export const Button: React.FC<ButtonProps> = ({
   className = ''
 }) => {
   const getButtonClasses = () => {
-    let classes = 'wp-button';
+    let classes = 'px-4 py-2 rounded font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500';
 
     // Variant classes
     switch (variant) {
       case 'primary':
-        classes += ' button-primary';
+        classes += ' bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400';
         break;
       case 'secondary':
-        classes += ' button-secondary';
+        classes += ' bg-white border border-gray-300 text-gray-900 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400';
         break;
       case 'tertiary':
-        classes += ' button-tertiary';
+        classes += ' bg-transparent text-blue-600 hover:bg-blue-50 disabled:text-blue-400';
         break;
     }
 
     // Size classes
     switch (size) {
       case 'small':
-        classes += ' button-small';
+        classes += ' px-3 py-1.5 text-sm';
         break;
       case 'large':
-        classes += ' button-large';
+        classes += ' px-6 py-3 text-lg';
         break;
       case 'medium':
       default:
-        // Default size
+        // Default size already included
         break;
     }
 
