@@ -20,7 +20,7 @@ class IconRegistry implements IconRegistryInterface
     private Settings $settings;
     private ?SanitizerInterface $svgSanitizer;
     private array $loadedIcons = [];
-    private string $currentIconset = 'builtin';
+    private string $currentIconset = 'default_square';
     private array $iconCSS = [];
     private array $cache = [];
 
@@ -28,7 +28,7 @@ class IconRegistry implements IconRegistryInterface
     {
         $this->settings = $settings;
         $this->svgSanitizer = $svgSanitizer;
-        $this->currentIconset = $this->settings->get('iconset', 'builtin');
+        $this->currentIconset = $this->settings->get('iconset', 'default_square');
         $this->loadIcons();
     }
 
@@ -70,23 +70,12 @@ class IconRegistry implements IconRegistryInterface
     {
         $this->loadedIcons = [];
 
-        // For builtin iconset, use SVG icons
-        if ($this->currentIconset === 'builtin') {
-            $this->loadBuiltinIcons();
-            return;
-        }
-
         // Load iconsets from assets/iconset directory
         $iconsetData = $this->loadIconsetFromDirectory($this->currentIconset);
 
         if (!$iconsetData) {
             // Fallback to default_square if current iconset doesn't exist
             $iconsetData = $this->loadIconsetFromDirectory('default_square');
-            if (!$iconsetData) {
-                // Ultimate fallback to builtin SVG
-                $this->loadBuiltinIcons();
-                return;
-            }
         }
 
         if ($iconsetData && isset($iconsetData['icons'])) {
@@ -236,18 +225,7 @@ class IconRegistry implements IconRegistryInterface
             );
         }
 
-        // Fallback to builtin SVG
-        $svgContent = $this->getBuiltinSvg($network);
-
-        if ($svgContent) {
-            return sprintf(
-                '<svg class="hss-icon hss-icon-%s" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">%s</svg>',
-                esc_attr($network),
-                $svgContent
-            );
-        }
-
-        // Fallback to dashicon
+        // No SVG fallback allowed - return dashicon
         return sprintf(
             '<span class="dashicons dashicons-%s" aria-hidden="true"></span>',
             esc_attr($network === 'email' ? 'email' : 'share')

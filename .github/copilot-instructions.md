@@ -30,6 +30,8 @@ Icon policy (explicit)
 - Admin UI should prefer icons from `@wordpress/icons` when available.
 - If a matching `@wordpress/icons` export is not available, fall back to `lucide-react` imports (tree-shakable; include only imports used).
 - Do NOT add new generic icon libraries for iconsets that are plugin assets. The plugin author will upload hand-picked icons into `assets/iconset/` — access those at runtime via `hssAdminConfig.pluginUrl + 'assets/iconset/<set>/<name>.png'` rather than bundling them.
+- **CRITICAL**: Frontend share buttons MUST load icons ONLY from `assets/iconset/` directory. NEVER use inline SVG, embedded icons, or any other icon sources for frontend display. Always ensure the IconRegistry loads PNG images from assets/iconset and renders them via CSS background-image, never as inline SVG elements.
+- If frontend is showing SVG icons instead of PNG from assets/iconset, this is a BUG that must be fixed immediately. Check IconRegistry.php and ensure it's not falling back to builtin SVG mode.
 
 Files & locations to inspect first (fast ramp)
 - `src/admin-ui/` — React app and components (start here)

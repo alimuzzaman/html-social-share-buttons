@@ -662,6 +662,7 @@ class Settings implements SettingsInterface
     {
         $defaults = [
             'version' => '3.0.0',
+            'iconset' => 'default_square',
             'theme' => 'default',
             'display' => [
                 'style' => 'buttons',
