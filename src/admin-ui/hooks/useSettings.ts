@@ -24,77 +24,57 @@ export const useSettings = () => {
 			} ) ) as any;
 
 			// Flatten the response structure to match our PluginSettings interface
-			const networksResponse = response.networks ?? {};
-			const integrationsResponse = response.integrations ?? {};
-			const appearanceResponse = response.appearance ?? {};
-			const placementResponse = response.placement ?? {};
-			const advancedResponse = response.advanced ?? {};
-
 			const flatSettings: PluginSettings = {
-				// Display & Placement
+				// General settings
 				show_on_front_page:
 					response.general?.show_on_front_page ?? true,
 				show_on_posts: response.general?.show_on_posts ?? true,
 				show_on_pages: response.general?.show_on_pages ?? false,
 				show_on_archives: response.general?.show_on_archives ?? false,
-				auto_placement: placementResponse.auto_placement ?? false,
-				placement_position:
-					placementResponse.placement_position ?? 'after',
-				placement_post_types:
-					placementResponse.placement_post_types ?? [ 'post' ],
-				exclude_pages: placementResponse.exclude_pages ?? '',
-
-				// Design Defaults
 				default_style: response.general?.default_style ?? 'default',
 				default_size: response.general?.default_size ?? 'medium',
-				title:
-					appearanceResponse.title ?? 'Share this with your friends',
-				icon_style: appearanceResponse.icon_style ?? 'default',
-				button_size: appearanceResponse.button_size ?? 'medium',
-				button_spacing: appearanceResponse.button_spacing ?? 5,
-				custom_css: appearanceResponse.custom_css ?? '',
 
-				// Network Settings
-				enabled_networks: networksResponse.enabled_networks ?? [
+				// Network settings
+				enabled_networks: response.networks?.enabled_networks ?? [
 					'facebook',
 					'twitter',
 					'linkedin',
 				],
-				network_order: networksResponse.network_order ?? [],
-				custom_networks: networksResponse.custom_networks ?? [],
+				network_order: response.networks?.network_order ?? [],
+				custom_networks: response.networks?.custom_networks ?? [],
 
-				// Profile Settings
+				// Profile settings (from API if present)
 				profiles: response.profiles ?? [],
 				default_profile: response.default_profile ?? '',
 
 				// Integrations
 				betterlinks_enabled:
-					integrationsResponse.betterlinks_enabled ?? false,
-				betterlinks_shorten_urls:
-					integrationsResponse.betterlinks_shorten_urls ?? true,
-				betterlinks_add_tracking:
-					integrationsResponse.betterlinks_add_tracking ?? true,
-				betterlinks_custom_tracking:
-					integrationsResponse.betterlinks_custom_tracking ?? {},
-				betterlinks_available:
-					integrationsResponse.betterlinks_available ?? false,
-				betterlinks_pro: integrationsResponse.betterlinks_pro ?? false,
-				betterlinks_version:
-					integrationsResponse.betterlinks_version ?? null,
+					response.integrations?.betterlinks_enabled ?? false,
+				betterlinks_api_key:
+					response.integrations?.betterlinks_api_key ?? '',
 				elementor_enabled:
-					integrationsResponse.elementor_enabled ?? false,
-				divi_enabled: integrationsResponse.divi_enabled ?? false,
+					response.integrations?.elementor_enabled ?? false,
+				divi_enabled: response.integrations?.divi_enabled ?? false,
 				beaver_builder_enabled:
-					integrationsResponse.beaver_builder_enabled ?? false,
+					response.integrations?.beaver_builder_enabled ?? false,
+
+				// Appearance
+				icon_style: response.appearance?.icon_style ?? 'default',
+				button_size: response.appearance?.button_size ?? 'medium',
+				button_spacing: response.appearance?.button_spacing ?? 5,
+				custom_css: response.appearance?.custom_css ?? '',
+
+				// Placement
+				auto_placement: response.placement?.auto_placement ?? false,
+				placement_position:
+					response.placement?.placement_position ?? 'after',
+				placement_post_types: response.placement
+					?.placement_post_types ?? [ 'post' ],
 
 				// Advanced
-				google_analytics: advancedResponse.google_analytics ?? false,
-				auto_hide_buttons: advancedResponse.auto_hide_buttons ?? false,
-				use_port_in_url: advancedResponse.use_port_in_url ?? false,
-				nofollow_links: advancedResponse.nofollow_links ?? true,
-				cache_enabled: advancedResponse.cache_enabled ?? true,
-				cache_duration: advancedResponse.cache_duration ?? 3600,
-				debug_mode: advancedResponse.debug_mode ?? false,
+				cache_enabled: response.advanced?.cache_enabled ?? true,
+				cache_duration: response.advanced?.cache_duration ?? 3600,
+				debug_mode: response.advanced?.debug_mode ?? false,
 			};
 
 			setSettings( flatSettings );
@@ -171,7 +151,6 @@ export const useSettings = () => {
 						custom_networks: settings.custom_networks,
 					},
 					appearance: {
-						title: settings.title,
 						icon_style: settings.icon_style,
 						button_size: settings.button_size,
 						button_spacing: settings.button_spacing,
@@ -181,30 +160,20 @@ export const useSettings = () => {
 						auto_placement: settings.auto_placement,
 						placement_position: settings.placement_position,
 						placement_post_types: settings.placement_post_types,
-						exclude_pages: settings.exclude_pages,
 					},
 					integrations: {
 						betterlinks_enabled: settings.betterlinks_enabled,
-						betterlinks_shorten_urls:
-							settings.betterlinks_shorten_urls,
-						betterlinks_add_tracking:
-							settings.betterlinks_add_tracking,
-						betterlinks_custom_tracking:
-							settings.betterlinks_custom_tracking,
+						betterlinks_api_key: settings.betterlinks_api_key,
 						elementor_enabled: settings.elementor_enabled,
 						divi_enabled: settings.divi_enabled,
 						beaver_builder_enabled: settings.beaver_builder_enabled,
 					},
 					advanced: {
-						google_analytics: settings.google_analytics,
-						auto_hide_buttons: settings.auto_hide_buttons,
-						use_port_in_url: settings.use_port_in_url,
-						nofollow_links: settings.nofollow_links,
 						cache_enabled: settings.cache_enabled,
 						cache_duration: settings.cache_duration,
 						debug_mode: settings.debug_mode,
 					},
-					// Persist profiles and the default profile
+					// Persist profiles and the default profile (newly added)
 					profiles: settings.profiles,
 					default_profile: settings.default_profile,
 				};
