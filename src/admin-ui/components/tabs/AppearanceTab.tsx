@@ -9,6 +9,7 @@ import {
 } from '../ui';
 import { PluginSettings } from '../../types';
 import { useNotifications, useSettingsContext } from '../../contexts';
+import { useIconsets } from '../../hooks';
 
 export const AppearanceTab: React.FC = () => {
 	const {
@@ -18,11 +19,13 @@ export const AppearanceTab: React.FC = () => {
 		saving,
 	} = useSettingsContext();
 	const { showSuccess, showError } = useNotifications();
+	const { iconsets, loading: iconsetsLoading } = useIconsets();
 
 	const [ localSettings, setLocalSettings ] = useState<
 		Partial< PluginSettings >
 	>( {
 		title: 'Share this with your friends',
+		iconset: 'default_square',
 		default_style: 'default',
 		default_size: 'medium',
 		icon_style: 'default',
@@ -35,6 +38,7 @@ export const AppearanceTab: React.FC = () => {
 		if ( apiSettings ) {
 			setLocalSettings( {
 				title: apiSettings.title ?? 'Share this with your friends',
+				iconset: apiSettings.iconset ?? 'default_square',
 				default_style: apiSettings.default_style ?? 'default',
 				default_size: apiSettings.default_size ?? 'medium',
 				icon_style: apiSettings.icon_style ?? 'default',
@@ -120,6 +124,29 @@ export const AppearanceTab: React.FC = () => {
 									updateSetting( 'title', value )
 								}
 								placeholder="Share this with your friends"
+							/>
+						</FormField>
+
+						<FormField
+							label="Icon Set"
+							description="Choose the icon set for social share buttons"
+						>
+							<Select
+								value={ settings.iconset || 'default_square' }
+								onChange={ ( value ) =>
+									updateSetting( 'iconset', value )
+								}
+								options={
+									iconsets
+										? Object.entries( iconsets ).map(
+												( [ key, iconset ] ) => ( {
+													value: key,
+													label: iconset.label,
+												} )
+										  )
+										: []
+								}
+								disabled={ iconsetsLoading }
 							/>
 						</FormField>
 

@@ -263,9 +263,14 @@ class ContentDisplay
     {
         if (is_array($iconCSS)) {
             $css = '<style class="hss-iconset-inline">';
+            // Screen reader only styling
+            $css .= '.hssb-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;} ';
+            // Base icon styling
+            $css .= '.hss-icon{display:inline-block;width:24px;height:24px;background-size:contain;background-repeat:no-repeat;background-position:center;vertical-align:middle;} ';
+            // Individual icon background images
             foreach ($iconCSS as $cssClass => $imageUrl) {
                 $css .= sprintf(
-                    '.%s{background-image:url(%s);background-size:contain;background-repeat:no-repeat;background-position:center;} ',
+                    '.%s{background-image:url(%s);} ',
                     esc_attr($cssClass),
                     esc_url($imageUrl)
                 );

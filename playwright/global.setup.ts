@@ -1,30 +1,26 @@
-import { spawn } from 'child_process';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const { spawn } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
-const __filename = fileURLToPath( import.meta.url );
-const __dirname = path.dirname( __filename );
-
-export default async function globalSetup() {
-	console.log( 'Starting WordPress Playground server...' );
+async function globalSetup() {
+	console.log('Starting WordPress Playground server...');
 	// Launch the Playground server
 	const playgroundBin = path.join(
 		__dirname,
 		'..',
 		'node_modules',
 		'.bin',
-		'wp-playground.cmd'
+		'wp-playground-cli'
 	);
 	const playgroundProcess = spawn(
-		'cmd',
+		playgroundBin,
 		[
-			'/c',
-			playgroundBin,
 			'server',
-			'--blueprint=./blueprints/test-blueprint.json',
+			'--blueprint=./build/blueprints/test-blueprint.json',
+			'--auto-mount',
+			'--login'
 		],
-		{ stdio: [ 'ignore', 'pipe', 'pipe' ] }
+		{ stdio: ['ignore', 'pipe', 'pipe'] }
 	);
 
 	console.log(
@@ -34,37 +30,39 @@ export default async function globalSetup() {
 
 	// Listen for stdout to capture the resolved URL
 	let serverUrl = '';
-	playgroundProcess.stdout.on( 'data', ( chunk: Buffer ) => {
-		const line = String( chunk );
-		console.log( 'Playground output:', line.trim() );
-		const match = line.match( /http:\/\/localhost:\d+/ );
-		if ( match ) {
-			serverUrl = match[ 0 ];
+	playgroundProcess.stdout.on('data', (chunk: Buffer) => {
+		const line = String(chunk);
+		console.log('Playground output:', line.trim());
+		const match = line.match(/http:\/\/localhost:\d+/);
+		if (match) {
+			serverUrl = match[0];
 			fs.writeFileSync(
-				path.join( __dirname, '..', 'playground-url.txt' ),
+				path.join(__dirname, '..', 'playground-url.txt'),
 				serverUrl
 			);
-			console.log( 'Server URL captured:', serverUrl );
+			console.log('Server URL captured:', serverUrl);
 		}
-	} );
+	});
 
 	// Persist the PID for teardown
 	fs.writeFileSync(
-		path.join( __dirname, '..', 'playground-pid.txt' ),
-		String( playgroundProcess.pid )
+		path.join(__dirname, '..', 'playground-pid.txt'),
+		String(playgroundProcess.pid)
 	);
-	console.log( 'PID and URL files written.' );
+	console.log('PID and URL files written.');
 
 	// Wait for the server to be ready
-	await new Promise( ( resolve ) => {
+	await new Promise<void>((resolve) => {
 		const checkReady = () => {
-			if ( serverUrl ) {
-				console.log( 'Playground server is ready.' );
+			if (serverUrl) {
+				console.log('Playground server is ready.');
 				resolve();
 			} else {
-				setTimeout( checkReady, 100 );
+				setTimeout(checkReady, 100);
 			}
 		};
 		checkReady();
-	} );
+	});
 }
+
+module.exports = globalSetup;

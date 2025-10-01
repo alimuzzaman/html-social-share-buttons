@@ -4,6 +4,7 @@ namespace HtmlSocialShare\Rest;
 use HtmlSocialShare\SettingsInterface;
 use HtmlSocialShare\ProfileManagerInterface;
 use HtmlSocialShare\Integrations\BetterLinks\BetterLinksIntegration;
+use HtmlSocialShare\IconRegistryInterface;
 use WP_REST_Controller;
 use WP_REST_Server;
 use WP_REST_Request;
@@ -26,13 +27,17 @@ class SettingsController extends WP_REST_Controller
     /** @var ProfileManagerInterface */
     private ProfileManagerInterface $profileManager;
 
+    /** @var IconRegistryInterface */
+    private IconRegistryInterface $iconRegistry;
+
     /** @var string REST API namespace */
     protected $namespace = 'html-social-share/v1';
 
-    public function __construct(SettingsInterface $settings, ProfileManagerInterface $profileManager)
+    public function __construct(SettingsInterface $settings, ProfileManagerInterface $profileManager, IconRegistryInterface $iconRegistry)
     {
         $this->settings = $settings;
         $this->profileManager = $profileManager;
+        $this->iconRegistry = $iconRegistry;
     }
 
     /**
@@ -109,6 +114,13 @@ class SettingsController extends WP_REST_Controller
             'permission_callback' => [$this, 'check_admin_permissions'],
             'args' => $this->get_network_schema(),
         ]);
+
+        // Iconsets endpoint
+        register_rest_route($this->namespace, '/iconsets', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [$this, 'get_iconsets'],
+            'permission_callback' => [$this, 'check_admin_permissions'],
+        ]);
     }
 
     /**
@@ -133,6 +145,7 @@ class SettingsController extends WP_REST_Controller
                 ],
                 'appearance' => [
                     'title' => $this->settings->get('title', 'Share this with your friends'),
+                    'iconset' => $this->settings->get('iconset', 'default_square'),
                     'icon_style' => $this->settings->get('icon_style', 'default'),
                     'button_size' => $this->settings->get('button_size', 'medium'),
                     'button_spacing' => $this->settings->get('button_spacing', 5),
@@ -511,6 +524,19 @@ class SettingsController extends WP_REST_Controller
             ], 200);
         } catch (\Exception $e) {
             return new WP_Error('update_network_failed', $e->getMessage(), ['status' => 500]);
+        }
+    }
+
+    /**
+     * Get available iconsets
+     */
+    public function get_iconsets(WP_REST_Request $request)
+    {
+        try {
+            $iconsets = $this->iconRegistry->getAvailableIconsets();
+            return new WP_REST_Response($iconsets, 200);
+        } catch (\Exception $e) {
+            return new WP_Error('get_iconsets_failed', $e->getMessage(), ['status' => 500]);
         }
     }
 

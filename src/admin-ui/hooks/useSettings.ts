@@ -59,6 +59,7 @@ export const useSettings = () => {
 					response.integrations?.beaver_builder_enabled ?? false,
 
 				// Appearance
+				iconset: response.appearance?.iconset ?? 'default_square',
 				icon_style: response.appearance?.icon_style ?? 'default',
 				button_size: response.appearance?.button_size ?? 'medium',
 				button_spacing: response.appearance?.button_spacing ?? 5,
@@ -151,6 +152,8 @@ export const useSettings = () => {
 						custom_networks: settings.custom_networks,
 					},
 					appearance: {
+						title: settings.title,
+						iconset: settings.iconset,
 						icon_style: settings.icon_style,
 						button_size: settings.button_size,
 						button_spacing: settings.button_spacing,

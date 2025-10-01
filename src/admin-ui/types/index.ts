@@ -17,6 +17,7 @@ export interface PluginSettings {
 	default_style: string;
 	default_size: string;
 	title: string;
+	iconset: string;
 	icon_style: 'default' | 'outline' | 'rounded' | 'square';
 	button_size: 'small' | 'medium' | 'large';
 	button_spacing: number;
@@ -33,6 +34,7 @@ export interface PluginSettings {
 
 	// Integrations
 	betterlinks_enabled: boolean;
+	betterlinks_api_key?: string;
 	betterlinks_shorten_urls: boolean;
 	betterlinks_add_tracking: boolean;
 	betterlinks_custom_tracking: BetterLinksCustomTracking;

@@ -3,6 +3,7 @@ namespace HtmlSocialShare\Rest;
 
 use HtmlSocialShare\SettingsInterface;
 use HtmlSocialShare\ProfileManagerInterface;
+use HtmlSocialShare\IconRegistryInterface;
 
 /**
  * REST API Service for registering REST endpoints
@@ -13,13 +14,15 @@ class RestApiService
 {
     private SettingsInterface $settings;
     private ProfileManagerInterface $profileManager;
+    private IconRegistryInterface $iconRegistry;
     private SettingsController $settingsController;
 
-    public function __construct(SettingsInterface $settings, ProfileManagerInterface $profileManager)
+    public function __construct(SettingsInterface $settings, ProfileManagerInterface $profileManager, IconRegistryInterface $iconRegistry)
     {
         $this->settings = $settings;
         $this->profileManager = $profileManager;
-        $this->settingsController = new SettingsController($settings, $profileManager);
+        $this->iconRegistry = $iconRegistry;
+        $this->settingsController = new SettingsController($settings, $profileManager, $iconRegistry);
     }
 
     /**

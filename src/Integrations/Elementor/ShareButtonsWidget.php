@@ -345,7 +345,36 @@ class ShareButtonsWidget extends Widget_Base
             echo $buttonHtml . ' ';
         }
 
-        echo '</div></div>';
+        echo '</div>';
+
+        // Output icon CSS
+        $iconCSS = $this->shareRenderer->getIconCSS();
+        if (!empty($iconCSS)) {
+            $this->outputIconCSS($iconCSS);
+        }
+
+        echo '</div>';
+    }
+
+    /**
+     * Output icon CSS
+     *
+     * @param array $iconCSS Icon CSS data
+     * @return void
+     */
+    private function outputIconCSS(array $iconCSS): void
+    {
+        echo '<style class="hss-iconset-inline">';
+        echo '.hssb-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;} ';
+        echo '.hss-icon{display:inline-block;width:24px;height:24px;background-size:contain;background-repeat:no-repeat;background-position:center;vertical-align:middle;} ';
+        foreach ($iconCSS as $cssClass => $imageUrl) {
+            printf(
+                '.%s{background-image:url(%s);} ',
+                esc_attr($cssClass),
+                esc_url($imageUrl)
+            );
+        }
+        echo '</style>';
     }
 
     /**
