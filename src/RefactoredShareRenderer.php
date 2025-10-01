@@ -88,6 +88,16 @@ class RefactoredShareRenderer implements ShareRendererInterface
         }
     }
 
+    /**
+     * Get CSS for all icons from the icon registry
+     *
+     * @return array
+     */
+    public function getIconCSS(): array
+    {
+        return $this->iconRegistry->getIconCSS();
+    }
+
 
 
     /**

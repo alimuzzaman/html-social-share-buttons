@@ -19,7 +19,15 @@ class ShareRenderer implements ShareRendererInterface
         }
     }
 
-
+    /**
+     * Get CSS for all icons from the icon registry
+     *
+     * @return array
+     */
+    public function getIconCSS(): array
+    {
+        return $this->iconRegistry->getIconCSS();
+    }
 
     public function render(string $network, array $profile, string $url = '#', string $title = ''): string
     {
