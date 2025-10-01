@@ -127,9 +127,18 @@ class ProfileManager implements ProfileManagerInterface
         // Ensure uniqueness
         $counter = 1;
         $id = $baseId;
+
+        // Maximum attempts to find a unique id to prevent infinite loops
+        $maxAttempts = 1000;
+
         while ($this->settings->getProfile($id)) {
             $id = $baseId . '_' . $counter;
             $counter++;
+
+            if ($counter > $maxAttempts) {
+                error_log("HSS ProfileManager: Unable to generate a unique profile id after {$maxAttempts} attempts for base '{$baseId}'");
+                throw new \RuntimeException('Unable to generate unique profile id for new profile');
+            }
         }
 
         return $id;

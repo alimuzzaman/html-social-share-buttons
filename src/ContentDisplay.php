@@ -20,6 +20,9 @@ class ContentDisplay
     private ShareRenderer $shareRenderer;
     private bool $initialized = false;
 
+    // Re-entrancy guard to prevent infinite recursion when filters call the_content
+    private bool $isRenderingContent = false;
+
     public function __construct(Settings $settings, ProfileManager $profileManager, ShareRenderer $shareRenderer)
     {
         $this->settings = $settings;
@@ -55,30 +58,41 @@ class ContentDisplay
      */
     public function addShareButtonsToContent(string $content): string
     {
-        // Validate context using pure functions
-        if (!self::shouldDisplayInContent()) {
+        // Prevent re-entrant calls which can cause infinite recursion and memory growth
+        if ($this->isRenderingContent) {
             return $content;
         }
 
-        global $post;
-        if (!self::isValidPost($post)) {
-            return $content;
+        // Use guard to ensure we always reset state even if an exception occurs
+        $this->isRenderingContent = true;
+        try {
+            // Validate context using pure functions
+            if (!self::shouldDisplayInContent()) {
+                return $content;
+            }
+
+            global $post;
+            if (!self::isValidPost($post)) {
+                return $content;
+            }
+
+            // Check exclusions using pure function
+            if ($this->isContentExcluded($post)) {
+                return $content;
+            }
+
+            $positions = $this->settings->get('positions', ['after_post']);
+            $shareButtons = $this->renderShareButtons($post);
+
+            if (empty($shareButtons)) {
+                return $content;
+            }
+
+            // Apply positions using pure function
+            return self::applyContentPositions($content, $shareButtons, $positions);
+        } finally {
+            $this->isRenderingContent = false;
         }
-
-        // Check exclusions using pure function
-        if ($this->isContentExcluded($post)) {
-            return $content;
-        }
-
-        $positions = $this->settings->get('positions', ['after_post']);
-        $shareButtons = $this->renderShareButtons($post);
-
-        if (empty($shareButtons)) {
-            return $content;
-        }
-
-        // Apply positions using pure function
-        return self::applyContentPositions($content, $shareButtons, $positions);
     }
 
     /**
@@ -86,28 +100,38 @@ class ContentDisplay
      */
     public function addFloatingShareButtons(): void
     {
-        global $post;
-
-        if (!self::isValidPost($post) || !self::shouldDisplayInContent() || $this->isContentExcluded($post)) {
+        // Prevent re-entrant rendering for floating buttons
+        if ($this->isRenderingContent) {
             return;
         }
 
-        $positions = $this->settings->get('positions', ['after_post']);
-        $floatingPositions = self::extractFloatingPositions($positions);
+        $this->isRenderingContent = true;
+        try {
+            global $post;
 
-        if (empty($floatingPositions)) {
-            return;
-        }
+            if (!self::isValidPost($post) || !self::shouldDisplayInContent() || $this->isContentExcluded($post)) {
+                return;
+            }
 
-        $shareButtons = $this->renderShareButtons($post);
-        if (empty($shareButtons)) {
-            return;
-        }
+            $positions = $this->settings->get('positions', ['after_post']);
+            $floatingPositions = self::extractFloatingPositions($positions);
 
-        $style = $this->settings->get('style', 'minimal');
+            if (empty($floatingPositions)) {
+                return;
+            }
 
-        foreach ($floatingPositions as $position) {
-            $this->renderFloatingButton($shareButtons, $position, $style);
+            $shareButtons = $this->renderShareButtons($post);
+            if (empty($shareButtons)) {
+                return;
+            }
+
+            $style = $this->settings->get('style', 'minimal');
+
+            foreach ($floatingPositions as $position) {
+                $this->renderFloatingButton($shareButtons, $position, $style);
+            }
+        } finally {
+            $this->isRenderingContent = false;
         }
     }
 
@@ -151,6 +175,18 @@ class ContentDisplay
 
         if (empty($enabledNetworks)) {
             return '';
+        }
+
+        // Defensive cap: avoid rendering an excessive number of networks which can cause memory exhaustion
+        $maxNetworks = (int) $this->settings->get('performance.max_networks', 50);
+        if ($maxNetworks <= 0) {
+            $maxNetworks = 50; // sensible default
+        }
+
+        if (count($enabledNetworks) > $maxNetworks) {
+            // Trim to safe size and log for diagnostics
+            error_log('HSS Performance: enabled_networks exceeds safe limit; trimming to ' . $maxNetworks);
+            $enabledNetworks = array_slice($enabledNetworks, 0, $maxNetworks);
         }
 
         $shareButtons = [];

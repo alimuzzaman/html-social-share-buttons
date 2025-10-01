@@ -412,4 +412,68 @@ class SecurityUtils
         $allowedTagsString = '<' . implode('><', $allowedTags) . '>';
         return strip_tags($html, $allowedTagsString);
     }
+
+    /**
+     * Generic input sanitizer used across the codebase for backward compatibility.
+     *
+     * @param string $value Raw input
+     * @return string Sanitized input
+     */
+    public static function sanitizeInput(string $value): string
+    {
+        // Reuse the more specific sanitizer which already handles tags, control
+        // characters and whitespace normalization.
+        return self::sanitizeTextField($value);
+    }
+
+    /**
+     * Escape a value for safe output in HTML or JSON responses.
+     *
+     * @param string $value Raw value
+     * @return string Escaped output
+     */
+    public static function escapeOutput(string $value): string
+    {
+        // For HTML contexts use escapeHtml which uses htmlspecialchars
+        return self::escapeHtml($value);
+    }
+
+    /**
+     * Retrieve the client's IP address (best-effort, considers proxy headers).
+     *
+     * @return string Client IP address or empty string when not found/invalid
+     */
+    public static function getClientIp(): string
+    {
+        $keys = [
+            'HTTP_CLIENT_IP',
+            'HTTP_X_REAL_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'REMOTE_ADDR',
+        ];
+
+        foreach ($keys as $key) {
+            if (empty($_SERVER[$key])) {
+                continue;
+            }
+
+            $value = $_SERVER[$key];
+
+            // HTTP_X_FORWARDED_FOR can contain a comma-separated list of IPs
+            if ($key === 'HTTP_X_FORWARDED_FOR') {
+                $parts = array_map('trim', explode(',', $value));
+            } else {
+                $parts = [$value];
+            }
+
+            foreach ($parts as $ip) {
+                // Validate IP (allow IPv4 and IPv6)
+                if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                    return $ip;
+                }
+            }
+        }
+
+        return '';
+    }
 }

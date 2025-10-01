@@ -7,7 +7,7 @@ use Exception;
 
 /**
  * Enhanced Null Telemetry implementation with comprehensive tracking capabilities.
- * 
+ *
  * Provides a safe no-op telemetry service that can optionally log events for debugging
  * while maintaining production safety with:
  * - Event validation and sanitization
@@ -30,6 +30,18 @@ class NullTelemetry implements TelemetryInterface
     /** @var int Maximum events to track in memory */
     private const MAX_EVENTS_IN_MEMORY = 100;
 
+    /** @var array<string, array{start:float,name:string}> Active timers */
+    private array $timers = [];
+
+    /** @var array<string,mixed> User context for subsequent events */
+    private array $userContext = [];
+
+    /** @var array<string,mixed> Request/contextual data for subsequent events */
+    private array $requestContext = [];
+
+    /** @var bool Whether telemetry is enabled */
+    private bool $enabled;
+
     /**
      * Initialize null telemetry with optional debug capabilities.
      *
@@ -42,28 +54,48 @@ class NullTelemetry implements TelemetryInterface
             'log_errors' => false,
             'track_performance' => false,
             'max_payload_size' => 1024,
+            'enabled' => true,
         ], $config);
         
         $this->debugLogging = (bool) ($this->config['debug_logging'] ?? false);
+        $this->enabled = (bool) ($this->config['enabled'] ?? true);
     }
     
     /**
      * Track telemetry event with validation but no actual transmission.
      *
+     * Implements TelemetryInterface::track
+     *
      * @param string $event Event name to track
      * @param array $payload Event data payload
-     * @param array $context Optional context information
-     * @return bool Always returns true for null implementation
+     * @return void
      */
-    public function track(string $event, array $payload = [], array $context = []): bool
+    public function track(string $event, array $payload = []): void
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         try {
+            // Extract any explicit context passed in the payload
+            $context = [];
+            if (isset($payload['_context']) && is_array($payload['_context'])) {
+                $context = $payload['_context'];
+                unset($payload['_context']);
+            } elseif (isset($payload['context']) && is_array($payload['context'])) {
+                $context = $payload['context'];
+                unset($payload['context']);
+            } else {
+                // Merge user/request context if no explicit context provided
+                $context = array_merge($this->userContext, $this->requestContext);
+            }
+
             // Validate event name
             if (!$this->isValidEventName($event)) {
                 if ($this->config['log_errors']) {
                     error_log("HSS Telemetry: Invalid event name: {$event}");
                 }
-                return false;
+                return;
             }
             
             // Sanitize and validate payload
@@ -86,81 +118,215 @@ class NullTelemetry implements TelemetryInterface
             if ($this->config['track_performance']) {
                 $this->trackPerformanceMetrics($event, $context);
             }
-            
-            return true;
-            
+
+            // Note: null implementation intentionally does not transmit events externally
         } catch (Exception $e) {
             if ($this->config['log_errors']) {
                 error_log("HSS Telemetry: Event tracking failed for {$event}: {$e->getMessage()}");
             }
-            return false;
+            // Swallow exceptions to avoid interfering with primary application flow
         }
     }
     
     /**
-     * Track error events with enhanced context.
+     * Track an error event with context.
      *
-     * @param string $error Error message or identifier
-     * @param array $context Error context information
-     * @param string $level Error level (error, warning, info)
-     * @return bool Success status
+     * Implements TelemetryInterface::trackError
+     *
+     * @param string $error Error identifier or message
+     * @param \Throwable|string $exception Exception or error message
+     * @param array $context Additional error context
+     * @return void
      */
-    public function trackError(string $error, array $context = [], string $level = 'error'): bool
+    public function trackError(string $error, $exception, array $context = []): void
     {
+        $exceptionStr = $exception instanceof \Throwable ? $exception->getMessage() : (string) $exception;
         $payload = [
             'error' => SecurityUtils::sanitizeInput($error),
-            'level' => $this->validateErrorLevel($level),
+            'exception' => SecurityUtils::sanitizeInput($exceptionStr),
+            'level' => isset($context['level']) ? $this->validateErrorLevel((string) $context['level']) : 'error',
             'timestamp' => time(),
             'memory_usage' => memory_get_usage(true),
         ];
-        
-        return $this->track('error_occurred', $payload, $context);
+
+        if (!empty($context)) {
+            $payload['context'] = $context;
+        }
+
+        $this->track('error_occurred', $payload);
     }
     
     /**
-     * Track performance timing events.
+     * Track a performance metric.
      *
-     * @param string $operation Operation name
-     * @param float $duration Duration in seconds
-     * @param array $context Additional context
-     * @return bool Success status
+     * Implements TelemetryInterface::trackMetric
+     *
+     * @param string $metric Metric name (e.g., 'render_time', 'api_response_time')
+     * @param float $value Metric value
+     * @param string $unit Unit of measurement (e.g., 'ms', 'seconds', 'bytes')
+     * @param array $tags Optional metric tags
+     * @return void
      */
-    public function trackTiming(string $operation, float $duration, array $context = []): bool
+    public function trackMetric(string $metric, float $value, string $unit = '', array $tags = []): void
+    {
+        $payload = [
+            'metric' => SecurityUtils::sanitizeInput($metric),
+            'value' => $value,
+            'unit' => SecurityUtils::sanitizeInput($unit),
+            'tags' => $tags,
+            'timestamp' => microtime(true),
+        ];
+
+        $this->track('metric_recorded', $payload);
+    }
+
+    /**
+     * Start a named timer and return a timer ID.
+     *
+     * Implements TelemetryInterface::startTimer
+     *
+     * @param string $name Timer name
+     * @return string Timer ID for stopping
+     */
+    public function startTimer(string $name): string
+    {
+        $id = bin2hex(random_bytes(8));
+        $this->timers[$id] = ['start' => microtime(true), 'name' => $name];
+        return $id;
+    }
+
+    /**
+     * Stop timing identified by timer ID and return elapsed milliseconds.
+     *
+     * Implements TelemetryInterface::stopTimer
+     *
+     * @param string $timerId Timer ID from startTimer()
+     * @return float Elapsed time in milliseconds
+     */
+    public function stopTimer(string $timerId): float
+    {
+        if (!isset($this->timers[$timerId])) {
+            return 0.0;
+        }
+
+        $meta = $this->timers[$timerId];
+        $start = $meta['start'];
+        $name = $meta['name'] ?? 'timer';
+        $elapsedMs = (microtime(true) - $start) * 1000.0;
+
+        // Clean up timer
+        unset($this->timers[$timerId]);
+
+        // Optionally record metric
+        $this->trackMetric($name, $elapsedMs, 'ms');
+
+        return $elapsedMs;
+    }
+
+    /**
+     * Set user context for subsequent events.
+     *
+     * Implements TelemetryInterface::setUserContext
+     *
+     * @param array $context User context (user_id, role, etc.)
+     * @return void
+     */
+    public function setUserContext(array $context): void
+    {
+        $this->userContext = $context;
+    }
+
+    /**
+     * Set request context for subsequent events.
+     *
+     * Implements TelemetryInterface::setRequestContext
+     *
+     * @param array $context Request context (url, method, user_agent, etc.)
+     * @return void
+     */
+    public function setRequestContext(array $context): void
+    {
+        $this->requestContext = $context;
+    }
+
+    /**
+     * Clear all context data.
+     *
+     * Implements TelemetryInterface::clearContext
+     *
+     * @return void
+     */
+    public function clearContext(): void
+    {
+        $this->userContext = [];
+        $this->requestContext = [];
+    }
+
+    /**
+     * Check if telemetry is enabled.
+     *
+     * Implements TelemetryInterface::isEnabled
+     *
+     * @return bool True if enabled
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * Enable or disable telemetry.
+     *
+     * Implements TelemetryInterface::setEnabled
+     *
+     * @param bool $enabled Whether to enable telemetry
+     * @return void
+     */
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
+    }
+
+    /**
+     * Backwards-compatible convenience method: track an error with level.
+     *
+     * Kept for compatibility with older callers in the class; simply forwards
+     * to the interface-compatible trackError implementation.
+     *
+     * @param string $error
+     * @param array $context
+     * @param string $level
+     * @return void
+     */
+    public function trackErrorWithLevel(string $error, array $context = [], string $level = 'error'): void
+    {
+        $context['level'] = $level;
+        $this->trackError($error, (string) ($context['exception'] ?? ''), $context);
+    }
+
+    /**
+     * Backwards-compatible convenience method: track a timing event.
+     *
+     * @param string $operation
+     * @param float $duration
+     * @param array $context
+     * @return void
+     */
+    public function trackTiming(string $operation, float $duration, array $context = []): void
     {
         $payload = [
             'operation' => SecurityUtils::sanitizeInput($operation),
             'duration_seconds' => round($duration, 4),
             'memory_peak' => memory_get_peak_usage(true),
         ];
-        
-        return $this->track('performance_timing', $payload, $context);
+
+        if (!empty($context)) {
+            $payload['context'] = $context;
+        }
+
+        $this->track('performance_timing', $payload);
     }
-    
-    /**
-     * Start timing measurement for an operation.
-     *
-     * @param string $operation Operation identifier
-     * @return float Start time for use with endTiming()
-     */
-    public function startTiming(string $operation): float
-    {
-        return microtime(true);
-    }
-    
-    /**
-     * End timing measurement and track the result.
-     *
-     * @param string $operation Operation identifier
-     * @param float $startTime Start time from startTiming()
-     * @param array $context Additional context
-     * @return bool Success status
-     */
-    public function endTiming(string $operation, float $startTime, array $context = []): bool
-    {
-        $duration = microtime(true) - $startTime;
-        return $this->trackTiming($operation, $duration, $context);
-    }
-    
+
     /**
      * Get basic telemetry statistics.
      *
@@ -180,12 +346,11 @@ class NullTelemetry implements TelemetryInterface
     /**
      * Clear telemetry statistics and counters.
      *
-     * @return bool Success status
+     * @return void
      */
-    public function clearStats(): bool
+    public function clearStats(): void
     {
         $this->eventCounters = [];
-        return true;
     }
     
     // PURE FUNCTIONS FOR VALIDATION AND PROCESSING

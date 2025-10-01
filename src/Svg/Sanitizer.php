@@ -444,7 +444,9 @@ class Sanitizer implements SanitizerInterface
     {
         // Check if element is allowed
         if (!in_array($element->tagName, self::ALLOWED_ELEMENTS, true)) {
-            $element->parentNode?->removeChild($element);
+            if ($element->parentNode) {
+                $element->parentNode->removeChild($element);
+            }
             return;
         }
         

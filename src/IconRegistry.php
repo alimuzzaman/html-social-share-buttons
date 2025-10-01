@@ -150,6 +150,14 @@ class IconRegistry implements IconRegistryInterface
         $icons = [];
         $files = scandir($iconsetPath);
 
+        // Defensive cap: avoid scanning extremely large directories
+        $maxFiles = 200;
+        if (is_array($files) && count($files) > $maxFiles) {
+            error_log('HSS IconRegistry: Large iconset directory detected (' . count($files) . " files); limiting processed files to {$maxFiles}");
+            // Keep only first $maxFiles (scandir returns sorted list; maintain deterministic behavior)
+            $files = array_slice($files, 0, $maxFiles);
+        }
+
         foreach ($files as $file) {
             if (pathinfo($file, PATHINFO_EXTENSION) === 'png') {
                 $network = $networkMapping[$file] ?? null;
