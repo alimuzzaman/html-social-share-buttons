@@ -39,6 +39,13 @@ class ServiceRegistrar
             );
         });
 
+        $c->set('legacy_content_filter', function ($c) {
+            return new \HtmlSocialShare\Frontend\LegacyContentFilter(
+                $c->get('legacy_button_renderer'),
+                $c->get('settings')
+            );
+        });
+
         $c->set('settings', function () {
             return new \HtmlSocialShare\Settings();
         });

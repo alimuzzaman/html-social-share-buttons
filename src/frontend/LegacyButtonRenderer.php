@@ -34,6 +34,8 @@ class LegacyButtonRenderer
 
         // Register footer hooks for CSS injection
         add_action('wp_footer', [$this, 'renderFooterStyles'], 999);
+        add_action('wp_footer', [$this, 'renderFooterButtons'], 10);
+        add_action('wp_footer', [$this, 'renderAnalyticsScript'], 10);
     }
 
     /**
@@ -362,6 +364,99 @@ class LegacyButtonRenderer
 
         // Render icon styles
         $this->renderIconStyles();
+    }
+
+    /**
+     * Render floating buttons in footer (called via wp_footer hook)
+     */
+    public function renderFooterButtons(): void
+    {
+        if (is_admin() || $this->isExcluded()) {
+            return;
+        }
+
+        $showIn = $this->settings->get('show_in', []);
+        
+        // Get icon settings
+        $options = [
+            'iconset' => $this->settings->get('iconset', 'default'),
+            'iconset_type' => $this->settings->get('iconset_type', 'square'),
+            'icons' => $this->getEnabledIcons(),
+        ];
+
+        // Left floating button
+        if (!empty($showIn['show_left']) || !empty($showIn['floating_left'])) {
+            $leftOptions = array_merge($options, [
+                'class' => 'left',
+                'show_on' => 'show_left'
+            ]);
+            echo $this->render($leftOptions);
+        }
+
+        // Right floating button
+        if (!empty($showIn['show_right']) || !empty($showIn['floating_right'])) {
+            $rightOptions = array_merge($options, [
+                'class' => 'right',
+                'show_on' => 'show_right'
+            ]);
+            echo $this->render($rightOptions);
+        }
+    }
+
+    /**
+     * Render Google Analytics tracking script (called via wp_footer hook)
+     */
+    public function renderAnalyticsScript(): void
+    {
+        if (is_admin() || $this->isExcluded()) {
+            return;
+        }
+
+        $gaEnabled = $this->settings->get('g_analytics', false) 
+                  || $this->settings->get('google_analytics', false);
+
+        if (!$gaEnabled) {
+            return;
+        }
+
+        $this->renderAnalyticsTracking(true);
+    }
+
+    /**
+     * Get enabled icons from settings
+     *
+     * @return array
+     */
+    private function getEnabledIcons(): array
+    {
+        // Try to get from legacy option format first
+        $legacyIcons = $this->settings->get('icons', null);
+        
+        if (is_array($legacyIcons)) {
+            return $legacyIcons;
+        }
+
+        // Try new format
+        $enabledNetworks = $this->settings->get('enabled_networks', []);
+        
+        if (is_array($enabledNetworks)) {
+            $icons = [];
+            foreach ($enabledNetworks as $network) {
+                $icons[$network] = 1;
+            }
+            return $icons;
+        }
+
+        // Default icons
+        return [
+            'facebook' => 1,
+            'twitter' => 1,
+            'linkedin' => 1,
+            'googleplus' => 1,
+            'bookmark' => 1,
+            'pinterest' => 1,
+            'mail' => 1,
+        ];
     }
 
     /**

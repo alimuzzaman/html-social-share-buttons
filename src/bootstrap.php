@@ -77,6 +77,9 @@ class Bootstrap
             // Initialize REST API service
             $this->container->get('rest_api_service')->init();
 
+            // Initialize legacy content filter for backward compatibility
+            $this->container->get('legacy_content_filter');
+
             $this->initialized = true;
 
             // Fire initialization complete action

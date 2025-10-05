@@ -1,9 +1,48 @@
 Copilot / Coding Agent Instructions
 
 - Preserve existing rules:
-  - Remember to use GitHub MCP for Git/GitHub related works in future.
+  - **Always use GitHub MCP tools for Git/GitHub operations** - Never use terminal git commands directly. Use MCP tools like `mcp_github_github_push_files`, `mcp_github_github_create_branch`, `mcp_github_github_get_commit`, etc.
   - Always use pnpm instead of npm.
   - Always prioritise @wordpress/* packages when they provide appropriate functionality or integrations for WordPress admin UI work.
+
+## GitHub MCP Usage Guidelines
+
+When working with Git/GitHub operations in this repository:
+
+### ✅ DO use GitHub MCP tools:
+- `mcp_github_github_push_files` - Push multiple files in a single commit
+- `mcp_github_github_create_branch` - Create new branches
+- `mcp_github_github_list_commits` - View commit history
+- `mcp_github_github_get_commit` - Get commit details
+- `mcp_github_github_create_or_update_file` - Update single files
+- `mcp_github_github_list_branches` - List repository branches
+- Pull request tools via `activate_github_tools_pull_request_management`
+- Issue management tools via `activate_github_tools_issue_management`
+
+### ❌ DON'T use terminal git commands:
+- Avoid `git commit`, `git push`, `git branch`, etc.
+- GitHub MCP provides safer, more reliable operations
+- MCP tools handle authentication and error handling automatically
+
+### Commit workflow:
+1. Make changes to files using `create_file`, `replace_string_in_file`, etc.
+2. Update `CHANGELOG.md` with detailed change description
+3. Use `mcp_github_github_push_files` to commit all changes at once
+4. Include descriptive commit message following format: `[TASK-ID] Brief description`
+
+### Example MCP commit:
+```json
+{
+  "owner": "alimuzzaman",
+  "repo": "html-social-share-buttons",
+  "branch": "new-compatibility",
+  "files": [
+    {"path": "src/NewFile.php", "content": "..."},
+    {"path": "CHANGELOG.md", "content": "..."}
+  ],
+  "message": "[LEGACY-204] Implement content filter hooks"
+}
+```
 
 Quick summary (big picture)
 - This repository is a WordPress plugin with a PHP backend and a React-based admin UI under `src/admin-ui`.
