@@ -84,21 +84,56 @@ class Migration
 
     /**
      * Migrate core settings from legacy format
+     * 
+     * Maps all 12 legacy zm_shbt_fld keys to new hss_core structure:
+     * - title → title (flat key, displayed in appearance group)
+     * - excludes → exclude_pages
+     * - g_analytics → google_analytics
+     * - auto_hide_btn → auto_hide_buttons
+     * - use_port → use_port_in_url
+     * - nofollow → nofollow_links
+     * - iconset → icon_style
+     * - show_left → floating_left (derived from positions)
+     * - show_right → floating_right (derived from positions)
+     * - show_before_post → before_content (derived from positions)
+     * - show_after_post → after_content (derived from positions)
+     * - icons → enabled_networks
      *
      * @param array $legacy
      * @return void
      */
     private function migrateCoreSettings(array $legacy): void
     {
+        // Legacy key mapping to new flat keys (Settings uses flat keys internally)
         $coreSettings = [
+            // Version tracking
             'version' => '3.0.0',
+            
+            // Appearance settings (legacy: title, iconset)
             'title' => $legacy['title'] ?? 'Share this with your friends',
-            'positions' => $this->normalizePositions($legacy),
-            'auto_hide' => !empty($legacy['auto_hide_btn']),
-            'use_port' => !empty($legacy['use_port']),
-            'google_analytics' => !empty($legacy['g_analytics']),
-            'nofollow' => !empty($legacy['nofollow']),
+            'icon_style' => $legacy['iconset'] ?? 'default',
+            'iconset' => $legacy['iconset'] ?? 'default', // Keep for backward compat
+            
+            // Network settings (legacy: icons array)
             'enabled_networks' => $this->getEnabledNetworks($legacy),
+            
+            // Placement settings (legacy: excludes, show_left, show_right, show_before_post, show_after_post)
+            'exclude_pages' => $legacy['excludes'] ?? '',
+            'floating_left' => !empty($legacy['show_left']),
+            'floating_right' => !empty($legacy['show_right']),
+            'before_content' => !empty($legacy['show_before_post']),
+            'after_content' => !empty($legacy['show_after_post']),
+            
+            // Advanced settings (legacy: g_analytics, auto_hide_btn, use_port, nofollow)
+            'google_analytics' => !empty($legacy['g_analytics']),
+            'auto_hide_buttons' => !empty($legacy['auto_hide_btn']),
+            'use_port_in_url' => !empty($legacy['use_port']),
+            'nofollow_links' => !empty($legacy['nofollow']),
+            
+            // Legacy positions format for backward compat
+            'positions' => $this->normalizePositions($legacy),
+            
+            // Exclusions (keep old format too)
             'exclusions' => $this->normalizeExclusions($legacy)
         ];
 
@@ -107,7 +142,7 @@ class Migration
             $this->settings->set($key, $value);
         }
 
-        error_log('HSS Migration: Core settings migrated: ' . json_encode($coreSettings));
+        error_log('HSS Migration: Core settings migrated - ' . count($coreSettings) . ' keys mapped from legacy zm_shbt_fld');
     }
 
     /**
@@ -144,6 +179,10 @@ class Migration
 
     /**
      * Get enabled networks from legacy format
+     * 
+     * Legacy 'icons' key can be:
+     * - Array of network IDs: ["facebook", "twitter", ...]
+     * - Associative array: ["facebook" => 1, "twitter" => 1, ...]
      *
      * @param array $legacy
      * @return array
@@ -152,7 +191,7 @@ class Migration
     {
         $networks = [];
 
-        // Check if icons array exists (newer legacy format)
+        // Check if icons array exists (primary legacy format)
         if (!empty($legacy['icons']) && is_array($legacy['icons'])) {
             // Map legacy network names to standard names
             $networkMapping = [
@@ -160,16 +199,22 @@ class Migration
                 'twitter' => 'twitter',
                 'linkedin' => 'linkedin',
                 'googlepluse' => 'googleplus',
+                'google_plus' => 'googleplus',
                 'pinterest' => 'pinterest',
                 'mail' => 'email',
                 'whatsapp' => 'whatsapp',
                 'telegram' => 'telegram',
                 'reddit' => 'reddit',
-                'tumblr' => 'tumblr'
+                'tumblr' => 'tumblr',
+                'bookmark' => 'bookmark'
             ];
 
-            foreach ($legacy['icons'] as $icon) {
-                if (isset($networkMapping[$icon])) {
+            foreach ($legacy['icons'] as $key => $value) {
+                // Handle both array formats
+                $icon = is_numeric($key) ? $value : $key;
+                
+                // Only include if value is truthy (for associative arrays) or if it's a simple array
+                if ((is_numeric($key) || !empty($value)) && isset($networkMapping[$icon])) {
                     $networks[] = $networkMapping[$icon];
                 }
             }
@@ -193,7 +238,7 @@ class Migration
             $networks = ['facebook', 'twitter', 'linkedin'];
         }
 
-        return $networks;
+        return array_values(array_unique($networks)); // Remove duplicates and reindex
     }
 
     /**
@@ -316,21 +361,39 @@ class Migration
 
     /**
      * Initialize with default settings if no legacy options found
+     * Sets all keys that would have been migrated from legacy options
      *
      * @return void
      */
     private function initializeDefaults(): void
     {
-        // Set default core settings
+        // Set default core settings matching the 12 legacy keys
         $defaults = [
             'version' => '3.0.0',
+            
+            // Appearance (legacy: title, iconset)
             'title' => 'Share this with your friends',
-            'positions' => ['after_post'],
-            'auto_hide' => false,
-            'use_port' => false,
-            'google_analytics' => false,
-            'nofollow' => true,
+            'icon_style' => 'default',
+            'iconset' => 'default',
+            
+            // Networks (legacy: icons)
             'enabled_networks' => ['facebook', 'twitter', 'linkedin'],
+            
+            // Placement (legacy: excludes, show_left, show_right, show_before_post, show_after_post)
+            'exclude_pages' => '',
+            'floating_left' => false,
+            'floating_right' => false,
+            'before_content' => false,
+            'after_content' => true, // Default: show after post
+            
+            // Advanced (legacy: g_analytics, auto_hide_btn, use_port, nofollow)
+            'google_analytics' => false,
+            'auto_hide_buttons' => false,
+            'use_port_in_url' => false,
+            'nofollow_links' => true,
+            
+            // Legacy format for backward compat
+            'positions' => ['after_post'],
             'exclusions' => ['ids' => [], 'slugs' => [], 'titles' => []]
         ];
 
@@ -352,7 +415,7 @@ class Migration
             'initialized' => true
         ]);
 
-        error_log('HSS Migration: Initialized with default settings');
+        error_log('HSS Migration: Initialized with default settings (no legacy options found)');
     }
 
     /**

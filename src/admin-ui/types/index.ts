@@ -12,6 +12,11 @@ export interface PluginSettings {
 	placement_position: 'before' | 'after' | 'both' | 'left' | 'right';
 	placement_post_types: string[];
 	exclude_pages: string;
+	// Legacy placement options (from zm_shbt_fld)
+	floating_left: boolean;
+	floating_right: boolean;
+	before_content: boolean;
+	after_content: boolean;
 
 	// Design Defaults
 	default_style: string;

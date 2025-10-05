@@ -121,4 +121,7 @@ function html_social_share_register_missing_classes_notice(): void
 // Ensure Bootstrap is instantiated (do not keep a local reference)
 html_social_share_get_container();
 
+// Load legacy compatibility functions
+require_once HTML_SOCIAL_SHARE_PLUGIN_DIR . 'src/Compatibility.php';
+
 // Bootstrap performs initialization and hook wiring; container is available

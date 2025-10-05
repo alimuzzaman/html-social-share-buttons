@@ -27,6 +27,11 @@ export const PlacementTab: React.FC = () => {
 		placement_position: 'after',
 		placement_post_types: [ 'post', 'page' ],
 		exclude_pages: '',
+		// Legacy placement options
+		floating_left: false,
+		floating_right: false,
+		before_content: false,
+		after_content: true,
 	} );
 
 	// Sync with API settings
@@ -40,6 +45,11 @@ export const PlacementTab: React.FC = () => {
 					'page',
 				],
 				exclude_pages: apiSettings.exclude_pages ?? '',
+				// Legacy placement options
+				floating_left: apiSettings.floating_left ?? false,
+				floating_right: apiSettings.floating_right ?? false,
+				before_content: apiSettings.before_content ?? false,
+				after_content: apiSettings.after_content ?? true,
 			} );
 		}
 	}, [ apiSettings ] );
@@ -228,6 +238,82 @@ export const PlacementTab: React.FC = () => {
 									);
 								} ) }
 							</div>
+						</div>
+					</div>
+
+					{ /* Legacy Placement Options */ }
+					<div className="mt-8 border-t border-gray-200 pt-6">
+						<h3 className="text-lg font-medium text-gray-800 mb-3">
+							Legacy Placement Options
+						</h3>
+						<p className="text-sm text-gray-600 mb-4">
+							Individual controls for specific placement locations (backward compatibility with v2.x)
+						</p>
+
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<FormField
+								label="Show Before Post Content"
+								description="Display share buttons before the main content"
+							>
+								<Checkbox
+									checked={ settings.before_content || false }
+									onChange={ ( checked ) =>
+										updateSetting(
+											'before_content',
+											checked
+										)
+									}
+									label="Enable before content placement"
+								/>
+							</FormField>
+
+							<FormField
+								label="Show After Post Content"
+								description="Display share buttons after the main content"
+							>
+								<Checkbox
+									checked={ settings.after_content || false }
+									onChange={ ( checked ) =>
+										updateSetting(
+											'after_content',
+											checked
+										)
+									}
+									label="Enable after content placement"
+								/>
+							</FormField>
+
+							<FormField
+								label="Floating Left Side"
+								description="Show floating buttons on the left side of the screen"
+							>
+								<Checkbox
+									checked={ settings.floating_left || false }
+									onChange={ ( checked ) =>
+										updateSetting(
+											'floating_left',
+											checked
+										)
+									}
+									label="Enable left floating buttons"
+								/>
+							</FormField>
+
+							<FormField
+								label="Floating Right Side"
+								description="Show floating buttons on the right side of the screen"
+							>
+								<Checkbox
+									checked={ settings.floating_right || false }
+									onChange={ ( checked ) =>
+										updateSetting(
+											'floating_right',
+											checked
+										)
+									}
+									label="Enable right floating buttons"
+								/>
+							</FormField>
 						</div>
 					</div>
 

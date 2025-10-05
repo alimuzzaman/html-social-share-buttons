@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Full Backward Compatibility:** Implemented complete migration system for legacy v2.x settings to v3.0+ schema
+  - All 12 legacy option keys (`zm_shbt_fld`) automatically migrated to new `hss_core` structure
+  - Migration mapping: title, excludes→exclude_pages, g_analytics→google_analytics, auto_hide_btn→auto_hide_buttons, use_port→use_port_in_url, nofollow→nofollow_links, iconset→icon_style, show_left→floating_left, show_right→floating_right, show_before_post→before_content, show_after_post→after_content, icons→enabled_networks
+  - Legacy options preserved in database for rollback safety
+- **React Admin UI Enhancements:**
+  - Added "Legacy Placement Options" section in Placement Tab with individual toggles for backward compatibility
+  - Extended TypeScript interfaces to include all legacy placement options (floating_left, floating_right, before_content, after_content)
+  - Updated REST API schema to validate and sanitize legacy placement fields
+- **Documentation:**
+  - Created comprehensive `docs/advanced-settings-reference.md` with migration guide, setting locations, SEO implications, and developer reference
+  - Updated `docs/first-design-release.md` with complete implementation roadmap and testing checklist
+- **Testing:**
+  - Created unit test suite (`tests/php/unit/MigrationTest.php`) verifying all 12 legacy keys migrate correctly
+  - Tests cover migration success, missing key defaults, network name normalization, and duplicate migration prevention
 - Added support for new social networks: Mastodon, Bluesky, Threads, VK, WeChat, Instagram Direct, and Messenger.
 - Gutenberg block integration with server-side rendering and full editor controls.
 - Server-side share count system with caching and DB storage (`ShareCountManager`), including adapters for Facebook, Pinterest, VK, X (placeholder), LinkedIn (placeholder), and a generic adapter.

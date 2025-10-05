@@ -156,6 +156,11 @@ class SettingsController extends WP_REST_Controller
                     'placement_position' => $this->settings->get('placement_position', 'after'),
                     'placement_post_types' => $this->settings->get('placement_post_types', ['post']),
                     'exclude_pages' => $this->settings->get('exclude_pages', ''),
+                    // Legacy placement options
+                    'floating_left' => $this->settings->get('floating_left', false),
+                    'floating_right' => $this->settings->get('floating_right', false),
+                    'before_content' => $this->settings->get('before_content', false),
+                    'after_content' => $this->settings->get('after_content', true),
                 ],
                 'integrations' => [
                     'betterlinks_enabled' => $this->settings->get('betterlinks_enabled', false),
@@ -290,6 +295,11 @@ class SettingsController extends WP_REST_Controller
                 'placement_position' => 'after',
                 'placement_post_types' => ['post'],
                 'exclude_pages' => '',
+                // Legacy placement options
+                'floating_left' => false,
+                'floating_right' => false,
+                'before_content' => false,
+                'after_content' => true,
                 'betterlinks_enabled' => false,
                 'betterlinks_shorten_urls' => true,
                 'betterlinks_add_tracking' => true,
@@ -571,6 +581,11 @@ class SettingsController extends WP_REST_Controller
             case 'nofollow_links':
             case 'cache_enabled':
             case 'debug_mode':
+            // Legacy placement booleans
+            case 'floating_left':
+            case 'floating_right':
+            case 'before_content':
+            case 'after_content':
                 return (bool) $value;
 
             case 'button_spacing':
@@ -662,6 +677,11 @@ class SettingsController extends WP_REST_Controller
                         'items' => [ 'type' => 'string' ],
                     ],
                     'exclude_pages' => ['type' => 'string'],
+                    // Legacy placement options (from zm_shbt_fld)
+                    'floating_left' => ['type' => 'boolean'],
+                    'floating_right' => ['type' => 'boolean'],
+                    'before_content' => ['type' => 'boolean'],
+                    'after_content' => ['type' => 'boolean'],
                 ],
             ],
             'integrations' => [
