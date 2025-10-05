@@ -1,60 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-	Button,
-	Checkbox,
-	FormField,
-	LoadingOverlay,
-	Select,
-	TextInput,
-} from '../ui';
+import React, { useEffect, useState } from 'react';
+import { Button, Checkbox, FormField, LoadingOverlay } from '../ui';
 import { PluginSettings } from '../../types';
 import { useSettingsContext, useNotifications } from '../../contexts';
 
-type DisplaySettings = Pick<
+type LegacyDisplaySettings = Pick<
 	PluginSettings,
-	| 'show_on_front_page'
-	| 'show_on_posts'
-	| 'show_on_pages'
-	| 'show_on_archives'
-	| 'auto_placement'
-	| 'placement_position'
-	| 'placement_post_types'
-	| 'exclude_pages'
+	'floating_left' | 'floating_right' | 'before_content' | 'after_content'
 >;
 
-const defaultDisplaySettings: DisplaySettings = {
-	show_on_front_page: true,
-	show_on_posts: true,
-	show_on_pages: false,
-	show_on_archives: false,
-	auto_placement: false,
-	placement_position: 'after',
-	placement_post_types: [ 'post' ],
-	exclude_pages: '',
+const defaultLegacyDisplaySettings: LegacyDisplaySettings = {
+	floating_left: true, // Legacy default: show_left was true
+	floating_right: false,
+	before_content: false,
+	after_content: true, // Legacy default: show_after_post was true
 };
-
-const positionOptions = [
-	{ value: 'before', label: 'Before Content' },
-	{ value: 'after', label: 'After Content' },
-	{ value: 'both', label: 'Before and After Content' },
-	{ value: 'left', label: 'Floating Left Side' },
-	{ value: 'right', label: 'Floating Right Side' },
-];
-
-const availablePostTypes = [
-	{ id: 'post', name: 'Posts', description: 'Standard blog posts' },
-	{ id: 'page', name: 'Pages', description: 'Static pages' },
-	{
-		id: 'product',
-		name: 'Products',
-		description: 'WooCommerce products',
-	},
-	{
-		id: 'custom',
-		name: 'Custom Post Types',
-		description: 'Other registered post types',
-	},
-];
 
 export const DisplayTab: React.FC = () => {
 	const {
@@ -65,70 +24,36 @@ export const DisplayTab: React.FC = () => {
 	} = useSettingsContext();
 	const { showSuccess, showError } = useNotifications();
 
-	const [ localSettings, setLocalSettings ] = useState< DisplaySettings >(
-		defaultDisplaySettings
-	);
+	const [ localSettings, setLocalSettings ] =
+		useState< LegacyDisplaySettings >( defaultLegacyDisplaySettings );
 
 	useEffect( () => {
 		if ( apiSettings ) {
 			setLocalSettings( {
-				show_on_front_page:
-					apiSettings.show_on_front_page ??
-					defaultDisplaySettings.show_on_front_page,
-				show_on_posts:
-					apiSettings.show_on_posts ??
-					defaultDisplaySettings.show_on_posts,
-				show_on_pages:
-					apiSettings.show_on_pages ??
-					defaultDisplaySettings.show_on_pages,
-				show_on_archives:
-					apiSettings.show_on_archives ??
-					defaultDisplaySettings.show_on_archives,
-				auto_placement:
-					apiSettings.auto_placement ??
-					defaultDisplaySettings.auto_placement,
-				placement_position:
-					apiSettings.placement_position ??
-					defaultDisplaySettings.placement_position,
-				placement_post_types: apiSettings.placement_post_types?.length
-					? apiSettings.placement_post_types
-					: defaultDisplaySettings.placement_post_types,
-				exclude_pages:
-					apiSettings.exclude_pages ??
-					defaultDisplaySettings.exclude_pages,
+				floating_left:
+					apiSettings.floating_left ??
+					defaultLegacyDisplaySettings.floating_left,
+				floating_right:
+					apiSettings.floating_right ??
+					defaultLegacyDisplaySettings.floating_right,
+				before_content:
+					apiSettings.before_content ??
+					defaultLegacyDisplaySettings.before_content,
+				after_content:
+					apiSettings.after_content ??
+					defaultLegacyDisplaySettings.after_content,
 			} );
 		}
 	}, [ apiSettings ] );
 
-	const selectedPostTypes = useMemo(
-		() => new Set( localSettings.placement_post_types ),
-		[ localSettings.placement_post_types ]
-	);
-
-	const updateLocal = < K extends keyof DisplaySettings >(
+	const updateLocal = < K extends keyof LegacyDisplaySettings >(
 		key: K,
-		value: DisplaySettings[ K ]
+		value: LegacyDisplaySettings[ K ]
 	) => {
 		setLocalSettings( ( prev ) => ( {
 			...prev,
 			[ key ]: value,
 		} ) );
-	};
-
-	const handlePostTypeToggle = ( postType: string, enabled: boolean ) => {
-		const currentTypes = localSettings.placement_post_types ?? [];
-		if ( enabled ) {
-			const nextTypes = Array.from(
-				new Set( [ ...currentTypes, postType ] )
-			);
-			updateLocal( 'placement_post_types', nextTypes );
-			return;
-		}
-
-		updateLocal(
-			'placement_post_types',
-			currentTypes.filter( ( type ) => type !== postType )
-		);
 	};
 
 	const handleSave = async () => {
@@ -150,217 +75,86 @@ export const DisplayTab: React.FC = () => {
 			message="Saving display settings..."
 		>
 			<div className="bg-white border border-gray-200 rounded shadow-sm p-6">
-				<h2 className="text-xl font-semibold mb-4">
+				<h2 className="text-xl font-semibold text-gray-900 mb-2">
 					Display &amp; Placement
 				</h2>
-				<p className="text-gray-600 mb-6">
-					Control where social share buttons automatically appear
-					across your site.
+				<p className="text-sm text-gray-600 mb-6">
+					Choose where social share buttons should appear on your
+					site.
 				</p>
 
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-					<section>
-						<h3 className="text-lg font-medium text-gray-800 mb-3">
-							Display Locations
-						</h3>
-						<div className="space-y-4">
-							<FormField
-								label="Show on Front Page"
-								description="Display buttons on the site homepage"
-							>
-								<Checkbox
-									checked={ localSettings.show_on_front_page }
-									onChange={ ( checked ) =>
-										updateLocal(
-											'show_on_front_page',
-											checked
-										)
-									}
-									label="Enable on front page"
-								/>
-							</FormField>
-
-							<FormField
-								label="Show on Posts"
-								description="Automatically append share buttons to posts"
-							>
-								<Checkbox
-									checked={ localSettings.show_on_posts }
-									onChange={ ( checked ) =>
-										updateLocal( 'show_on_posts', checked )
-									}
-									label="Enable on posts"
-								/>
-							</FormField>
-
-							<FormField
-								label="Show on Pages"
-								description="Include share buttons on static pages"
-							>
-								<Checkbox
-									checked={ localSettings.show_on_pages }
-									onChange={ ( checked ) =>
-										updateLocal( 'show_on_pages', checked )
-									}
-									label="Enable on pages"
-								/>
-							</FormField>
-
-							<FormField
-								label="Show on Archives"
-								description="Display share buttons on archive and taxonomy listings"
-							>
-								<Checkbox
-									checked={ localSettings.show_on_archives }
-									onChange={ ( checked ) =>
-										updateLocal(
-											'show_on_archives',
-											checked
-										)
-									}
-									label="Enable on archives"
-								/>
-							</FormField>
-						</div>
-					</section>
-
-					<section>
-						<h3 className="text-lg font-medium text-gray-800 mb-3">
+				<div className="space-y-6">
+					<div>
+						<h3 className="text-lg font-medium text-gray-900 mb-4">
 							Automatic Placement
 						</h3>
+						<p className="text-sm text-gray-600 mb-4">
+							Enable automatic placement to display share buttons
+							without editing templates.
+						</p>
+
 						<div className="space-y-4">
 							<FormField
-								label="Enable Auto Placement"
-								description="Automatically attach buttons without editing templates"
+								label="Show on Left Side"
+								description="Display floating share buttons on the left side of the page"
 							>
 								<Checkbox
-									checked={ localSettings.auto_placement }
+									checked={ localSettings.floating_left }
 									onChange={ ( checked ) =>
-										updateLocal( 'auto_placement', checked )
+										updateLocal( 'floating_left', checked )
 									}
-									label="Enable automatic placement"
+									label="Enable left floating buttons"
 								/>
 							</FormField>
 
-							{ localSettings.auto_placement && (
-								<div className="space-y-4">
-									<FormField
-										label="Placement Position"
-										description="Choose where to output buttons relative to content"
-									>
-										<Select
-											value={
-												localSettings.placement_position
-											}
-											onChange={ ( value ) =>
-												updateLocal(
-													'placement_position',
-													value as DisplaySettings[ 'placement_position' ]
-												)
-											}
-											options={ positionOptions }
-										/>
-									</FormField>
+							<FormField
+								label="Show on Right Side"
+								description="Display floating share buttons on the right side of the page"
+							>
+								<Checkbox
+									checked={ localSettings.floating_right }
+									onChange={ ( checked ) =>
+										updateLocal( 'floating_right', checked )
+									}
+									label="Enable right floating buttons"
+								/>
+							</FormField>
 
-									<FormField
-										label="Exclude Pages"
-										description="Comma-separated list of IDs, slugs, or titles to skip"
-									>
-										<TextInput
-											value={
-												localSettings.exclude_pages ||
-												''
-											}
-											onChange={ ( value ) =>
-												updateLocal(
-													'exclude_pages',
-													value
-												)
-											}
-											placeholder="1, about-us, landing-page"
-										/>
-									</FormField>
+							<FormField
+								label="Show Before Post"
+								description="Display share buttons before post content"
+							>
+								<Checkbox
+									checked={ localSettings.before_content }
+									onChange={ ( checked ) =>
+										updateLocal( 'before_content', checked )
+									}
+									label="Enable before content placement"
+								/>
+							</FormField>
 
-									<div>
-										<h4 className="font-medium text-gray-800 mb-2">
-											Content Types
-										</h4>
-										<p className="text-sm text-gray-600 mb-3">
-											Select the content types that should
-											render buttons automatically.
-										</p>
-
-										<div className="space-y-3">
-											{ availablePostTypes.map(
-												( postType ) => {
-													const isEnabled =
-														selectedPostTypes.has(
-															postType.id
-														);
-
-													return (
-														<div
-															key={ postType.id }
-															className="flex items-start space-x-3 p-3 border border-gray-200 rounded hover:bg-gray-50"
-														>
-															<Checkbox
-																checked={
-																	isEnabled
-																}
-																onChange={ (
-																	checked
-																) =>
-																	handlePostTypeToggle(
-																		postType.id,
-																		checked
-																	)
-																}
-																label=""
-																className="mt-1"
-															/>
-															<div className="flex-1">
-																<h5 className="font-medium text-gray-800">
-																	{
-																		postType.name
-																	}
-																</h5>
-																<p className="text-sm text-gray-600">
-																	{
-																		postType.description
-																	}
-																</p>
-															</div>
-														</div>
-													);
-												}
-											) }
-										</div>
-									</div>
-								</div>
-							) }
+							<FormField
+								label="Show After Post"
+								description="Display share buttons after post content"
+							>
+								<Checkbox
+									checked={ localSettings.after_content }
+									onChange={ ( checked ) =>
+										updateLocal( 'after_content', checked )
+									}
+									label="Enable after content placement"
+								/>
+							</FormField>
 						</div>
-					</section>
-				</div>
+					</div>
 
-				<div className="mt-8 pt-4 border-t border-gray-200">
-					<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-						<p className="text-sm text-gray-600">
-							{ localSettings.auto_placement
-								? 'Auto-placement is enabled.'
-								: 'Auto-placement is disabled.' }{ ' ' }
-							{ localSettings.placement_post_types.length }{ ' ' }
-							content type
-							{ localSettings.placement_post_types.length !== 1
-								? 's'
-								: '' }{ ' ' }
-							targeted.
-						</p>
+					<div className="flex justify-end pt-6 border-t border-gray-200">
 						<Button
 							onClick={ handleSave }
-							loading={ saving }
-							variant="primary"
+							disabled={ saving }
+							className="px-6 py-2"
 						>
-							Save Changes
+							{ saving ? 'Saving...' : 'Save Settings' }
 						</Button>
 					</div>
 				</div>

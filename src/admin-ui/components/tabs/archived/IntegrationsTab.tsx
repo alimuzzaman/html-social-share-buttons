@@ -123,7 +123,9 @@ export const IntegrationsTab: React.FC = () => {
 							{ settings.betterlinks_enabled && (
 								<div className="mt-4">
 									<p className="text-sm text-gray-600">
-										BetterLinks integration is enabled. Share URLs will be automatically shortened and tracked.
+										BetterLinks integration is enabled.
+										Share URLs will be automatically
+										shortened and tracked.
 									</p>
 								</div>
 							) }

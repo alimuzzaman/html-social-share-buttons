@@ -65,43 +65,47 @@ export const useSettings = () => {
 				button_spacing: response.appearance?.button_spacing ?? 5,
 				custom_css: response.appearance?.custom_css ?? '',
 
-			// Appearance (continued)
-			title: response.appearance?.title ?? 'Share this with your friends',
+				// Appearance (continued)
+				title:
+					response.appearance?.title ??
+					'Share this with your friends',
 
-			// Placement
-			auto_placement: response.placement?.auto_placement ?? false,
-			placement_position:
-				response.placement?.placement_position ?? 'after',
-			placement_post_types: response.placement
-				?.placement_post_types ?? [ 'post' ],
-			exclude_pages: response.placement?.exclude_pages ?? '',
-			// Legacy placement options
-			floating_left: response.placement?.floating_left ?? false,
-			floating_right: response.placement?.floating_right ?? false,
-			before_content: response.placement?.before_content ?? false,
-			after_content: response.placement?.after_content ?? true,
+				// Placement
+				auto_placement: response.placement?.auto_placement ?? false,
+				placement_position:
+					response.placement?.placement_position ?? 'after',
+				placement_post_types: response.placement
+					?.placement_post_types ?? [ 'post' ],
+				exclude_pages: response.placement?.exclude_pages ?? '',
+				// Legacy placement options
+				floating_left: response.placement?.floating_left ?? false,
+				floating_right: response.placement?.floating_right ?? false,
+				before_content: response.placement?.before_content ?? false,
+				after_content: response.placement?.after_content ?? true,
 
-			// Integrations (continued)
-			betterlinks_shorten_urls:
-				response.integrations?.betterlinks_shorten_urls ?? true,
-			betterlinks_add_tracking:
-				response.integrations?.betterlinks_add_tracking ?? true,
-			betterlinks_custom_tracking:
-				response.integrations?.betterlinks_custom_tracking ?? {},
-			betterlinks_available:
-				response.integrations?.betterlinks_available ?? false,
-			betterlinks_pro: response.integrations?.betterlinks_pro ?? false,
-			betterlinks_version:
-				response.integrations?.betterlinks_version ?? null,
+				// Integrations (continued)
+				betterlinks_shorten_urls:
+					response.integrations?.betterlinks_shorten_urls ?? true,
+				betterlinks_add_tracking:
+					response.integrations?.betterlinks_add_tracking ?? true,
+				betterlinks_custom_tracking:
+					response.integrations?.betterlinks_custom_tracking ?? {},
+				betterlinks_available:
+					response.integrations?.betterlinks_available ?? false,
+				betterlinks_pro:
+					response.integrations?.betterlinks_pro ?? false,
+				betterlinks_version:
+					response.integrations?.betterlinks_version ?? null,
 
-			// Advanced
-			google_analytics: response.advanced?.google_analytics ?? false,
-			auto_hide_buttons: response.advanced?.auto_hide_buttons ?? false,
-			use_port_in_url: response.advanced?.use_port_in_url ?? false,
-			nofollow_links: response.advanced?.nofollow_links ?? true,
-			cache_enabled: response.advanced?.cache_enabled ?? true,
-			cache_duration: response.advanced?.cache_duration ?? 3600,
-			debug_mode: response.advanced?.debug_mode ?? false,
+				// Advanced
+				google_analytics: response.advanced?.google_analytics ?? false,
+				auto_hide_buttons:
+					response.advanced?.auto_hide_buttons ?? false,
+				use_port_in_url: response.advanced?.use_port_in_url ?? false,
+				nofollow_links: response.advanced?.nofollow_links ?? true,
+				cache_enabled: response.advanced?.cache_enabled ?? true,
+				cache_duration: response.advanced?.cache_duration ?? 3600,
+				debug_mode: response.advanced?.debug_mode ?? false,
 			};
 
 			setSettings( flatSettings );
@@ -190,17 +194,19 @@ export const useSettings = () => {
 						placement_position: settings.placement_position,
 						placement_post_types: settings.placement_post_types,
 					},
-				integrations: {
-					betterlinks_enabled: settings.betterlinks_enabled,
-					betterlinks_api_key: settings.betterlinks_api_key,
-					betterlinks_shorten_urls: settings.betterlinks_shorten_urls,
-					betterlinks_add_tracking: settings.betterlinks_add_tracking,
-					betterlinks_custom_tracking:
-						settings.betterlinks_custom_tracking,
-					elementor_enabled: settings.elementor_enabled,
-					divi_enabled: settings.divi_enabled,
-					beaver_builder_enabled: settings.beaver_builder_enabled,
-				},
+					integrations: {
+						betterlinks_enabled: settings.betterlinks_enabled,
+						betterlinks_api_key: settings.betterlinks_api_key,
+						betterlinks_shorten_urls:
+							settings.betterlinks_shorten_urls,
+						betterlinks_add_tracking:
+							settings.betterlinks_add_tracking,
+						betterlinks_custom_tracking:
+							settings.betterlinks_custom_tracking,
+						elementor_enabled: settings.elementor_enabled,
+						divi_enabled: settings.divi_enabled,
+						beaver_builder_enabled: settings.beaver_builder_enabled,
+					},
 					advanced: {
 						cache_enabled: settings.cache_enabled,
 						cache_duration: settings.cache_duration,

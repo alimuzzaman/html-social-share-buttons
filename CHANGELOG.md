@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+
+### Changed
+- **[MIGRATE-051] Display Tab Simplification:** Simplified DisplayTab to legacy 4-checkbox layout matching v2.x behavior
+  - Removed complex display locations (show_on_front_page, show_on_posts, show_on_pages, show_on_archives)
+  - Removed auto_placement toggle and placement_position dropdown
+  - Removed post type selection and exclude pages field
+  - Now shows only 4 legacy checkboxes: floating_left, floating_right, before_content, after_content
+  - Updated component to use LegacyDisplaySettings type
+  - Simplified state management by removing useMemo and post type toggle logic
+  - Reduced admin.js bundle size from 91 KiB to 88.1 KiB
+  - Maintained modern UI components (FormField, Checkbox, Button, LoadingOverlay)
+
 ### Added
 - **[LEGACY-204] Content Filter Hooks:** Implemented automatic before/after post placement
   - Created `LegacyContentFilter` class handling `the_content` filter
