@@ -87,7 +87,65 @@ if (!function_exists('zm_sh_curentPageURL')) {
  */
 if (!function_exists('zm_sh_shortcode_cb')) {
     function zm_sh_shortcode_cb($atts = array()) {
-        return zm_sh_btn($atts);
+        try {
+            // Get the service container
+            $container = html_social_share_get_container();
+            $legacyRenderer = $container->get('legacy_button_renderer');
+
+            // Check if excluded
+            global $post;
+            if (!empty($post->ID)) {
+                $settings = $container->get('settings');
+                $excludes = $settings->get('excludes', '');
+                $excludes = array_map('trim', explode(',', $excludes));
+                
+                if (in_array($post->ID, $excludes, true)) {
+                    return '';
+                }
+
+                $disableShare = get_post_meta($post->ID, '_zm_sh_disable_share', true);
+                if ($disableShare === 'on') {
+                    return '';
+                }
+            }
+
+            // Parse shortcode attributes
+            $atts = shortcode_atts(array(
+                'title'         => '',
+                'iconset'       => 'default',
+                'url'           => '%%permalink%%',
+                'icons'         => 'facebook,twitter,linkedin,googleplus,bookmark,pinterest,mail',
+                'iconset_type'  => 'square',
+                'class'         => 'in_shortcode',
+                'nofollow'      => false,
+            ), $atts, 'zm_sh_btn');
+
+            // Sanitize all user inputs
+            $atts['title'] = sanitize_text_field($atts['title']);
+            $atts['iconset'] = sanitize_key($atts['iconset']);
+            $atts['url'] = ($atts['url'] === '%%permalink%%') ? '%%permalink%%' : esc_url_raw($atts['url']);
+            $atts['iconset_type'] = sanitize_key($atts['iconset_type']);
+            $atts['class'] = sanitize_html_class($atts['class']);
+
+            // Parse icons list
+            if (is_string($atts['icons'])) {
+                $icons = explode(',', $atts['icons']);
+                $icons = array_map('trim', $icons);
+                $icons = array_map('sanitize_key', $icons);
+                $atts['icons'] = array_flip($icons);
+                // Set all to 1 (enabled)
+                foreach ($atts['icons'] as $key => $value) {
+                    $atts['icons'][$key] = 1;
+                }
+            }
+
+            // Render the buttons
+            return $legacyRenderer->render($atts);
+
+        } catch (\Exception $e) {
+            error_log('HTML Social Share Shortcode Error: ' . $e->getMessage());
+            return '';
+        }
     }
 }
 
