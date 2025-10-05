@@ -3,21 +3,13 @@ import { Tabs } from './ui';
 import {
 	DisplayTab,
 	NetworksTab,
-	ProfilesTab,
-	IntegrationsTab,
 	DesignTab,
-	AdvancedTab,
-	ShortcodeTab,
 } from './tabs';
 import { TabConfig } from '../types';
 import {
 	Home,
 	Share,
-	Users,
 	Palette,
-	Plug,
-	Settings,
-	Code,
 } from 'lucide-react';
 
 /**
@@ -40,42 +32,14 @@ export const ReactAdminInterface: React.FC = () => {
 			title: 'Networks',
 			icon: <Share className="w-4 h-4" />,
 			description:
-				'Enable networks, reorder cards, and manage custom sharing targets',
-		},
-		{
-			id: 'profiles',
-			title: 'Profiles',
-			icon: <Users className="w-4 h-4" />,
-			description:
-				'Create reusable sharing presets for different contexts',
+				'Enable and disable social networks for sharing',
 		},
 		{
 			id: 'design',
 			title: 'Design',
 			icon: <Palette className="w-4 h-4" />,
 			description:
-				'Set default button styles, spacing, and custom CSS overrides',
-		},
-		{
-			id: 'integrations',
-			title: 'Integrations',
-			icon: <Plug className="w-4 h-4" />,
-			description:
-				'BetterLinks, page builders, and other plugin integrations',
-		},
-		{
-			id: 'advanced',
-			title: 'Advanced',
-			icon: <Settings className="w-4 h-4" />,
-			description:
-				'Analytics, link behavior, caching, and debugging tools',
-		},
-		{
-			id: 'shortcode',
-			title: 'Shortcode',
-			icon: <Code className="w-4 h-4" />,
-			description:
-				'Dynamic shortcode generation based on current settings',
+				'Select button style and configure basic settings',
 		},
 	];
 
@@ -85,16 +49,8 @@ export const ReactAdminInterface: React.FC = () => {
 				return <DisplayTab />;
 			case 'networks':
 				return <NetworksTab />;
-			case 'profiles':
-				return <ProfilesTab />;
 			case 'design':
 				return <DesignTab />;
-			case 'integrations':
-				return <IntegrationsTab />;
-			case 'advanced':
-				return <AdvancedTab />;
-			case 'shortcode':
-				return <ShortcodeTab />;
 			default:
 				return <DisplayTab />;
 		}

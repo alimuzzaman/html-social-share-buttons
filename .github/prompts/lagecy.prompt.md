@@ -389,7 +389,7 @@ Before starting any work, read and understand:
 - **Estimated Time**: 360 minutes
 - **Status**: ✅ COMPLETED
 - **Completion Date**: 2025-10-05
-- **Commit Hash**: (Part of LEGACY-002 commit 8e36858)
+- **Commit Hash**: e6859bf
 - **Implementation**:
   ✅ Register zm_sh_btn shortcode
   ✅ Implement parameter parsing
@@ -405,7 +405,7 @@ Before starting any work, read and understand:
 - **Estimated Time**: 300 minutes
 - **Status**: ✅ COMPLETED
 - **Completion Date**: 2025-10-05
-- **Commit Hash**: (Part of widget implementation)
+- **Commit Hash**: 6feab32
 - **Implementation**:
   ✅ Create widget class extending WP_Widget
   ✅ Implement widget() method
@@ -437,7 +437,7 @@ Before starting any work, read and understand:
 - **Estimated Time**: 300 minutes
 - **Status**: ✅ COMPLETED
 - **Completion Date**: 2025-10-05
-- **Commit Hash**: 4be36e6a9e3b9d65cdfd64203d2ff15a3d0e9827
+- **Commit Hash**: b7bec8c
 - **Implementation**:
   ✅ Add the_content filter hooks in LegacyContentFilter class
   ✅ Implement placement condition logic (show_before_post, show_after_post)
