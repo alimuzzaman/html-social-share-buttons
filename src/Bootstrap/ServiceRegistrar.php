@@ -27,6 +27,18 @@ class ServiceRegistrar
             return new \HtmlSocialShare\IconRegistry($c->get('settings'));
         });
 
+        $c->set('networks', function () {
+            return new \HtmlSocialShare\Networks();
+        });
+
+        $c->set('legacy_button_renderer', function ($c) {
+            return new \HtmlSocialShare\Frontend\LegacyButtonRenderer(
+                $c->get('icon_registry'),
+                $c->get('settings'),
+                $c->get('networks')
+            );
+        });
+
         $c->set('settings', function () {
             return new \HtmlSocialShare\Settings();
         });

@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 /**
  * Legacy zm_sh_btn() function compatibility
  *
- * Maps the legacy zm_sh_btn() function to the new ShareRenderer
+ * Maps the legacy zm_sh_btn() function to the new LegacyButtonRenderer
  *
  * @param array $options Legacy options array
  * @return string HTML output for share buttons
@@ -28,14 +28,11 @@ if (!function_exists('zm_sh_btn')) {
             // Get the service container
             $container = html_social_share_get_container();
 
-            // Get the share renderer from the container
-            $shareRenderer = $container->get('share_renderer');
+            // Get the legacy button renderer from the container
+            $legacyRenderer = $container->get('legacy_button_renderer');
 
-            // Convert legacy options to new format
-            $newOptions = convert_legacy_options_to_new($options);
-
-            // Render the buttons
-            return $shareRenderer->render($newOptions);
+            // Render the buttons using legacy renderer
+            return $legacyRenderer->render($options);
 
         } catch (\Exception $e) {
             // Log error but don't break the site

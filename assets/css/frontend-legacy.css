@@ -1,0 +1,129 @@
+/**
+ * Legacy Frontend Styles
+ * 
+ * Pure CSS styles for HTML Social Share Buttons v3.x legacy mode.
+ * Maintains backward compatibility with v2.x visual appearance.
+ * 
+ * @package HtmlSocialShare
+ * @since 3.0.0
+ */
+
+/* Base button container */
+.zmshbt {
+    display: block;
+}
+
+/* Floating left/right positioning */
+.zmshbt.left,
+.zmshbt.right {
+    top: 30%;
+    z-index: 9999;
+    position: fixed;
+    
+    -moz-transition: all 0.25s linear 0.5s;
+    -webkit-transition: all 0.25s linear 0.5s;
+    transition: all 0.25s linear 0.5s;
+}
+
+/* Left floating button */
+.zmshbt.left {
+    left: -25px;
+}
+
+.zmshbt.left:hover {
+    left: 0;
+}
+
+/* Right floating button */
+.zmshbt.right {
+    right: -25px;
+}
+
+.zmshbt.right:hover {
+    right: 0;
+}
+
+/* Inline widget/shortcode display */
+.zmshbt.in_widget a,
+.zmshbt.in_shortcode a {
+    display: inline-block;
+    margin: 5px;
+}
+
+/* Base icon link styles */
+.zmshbt a {
+    width: 32px;
+    height: 32px;
+    display: block;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 10px;
+    
+    -moz-transition: all 0.25s linear;
+    -webkit-transition: all 0.25s linear;
+    transition: all 0.25s linear;
+}
+
+/* Icon hover effect */
+.zmshbt a:hover,
+.zmshbt a:active {
+    -moz-transform: scale(1.5);
+    -ms-transform: scale(1.5);
+    -o-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    transform: scale(1.5);
+}
+
+/* Title heading */
+.zmshbt + h3,
+h3 + .zmshbt {
+    margin-bottom: 1em;
+}
+
+/* Content placement */
+.zmshbt.in_widget,
+.zmshbt.in_shortcode {
+    display: block;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .zmshbt.left,
+    .zmshbt.right {
+        top: auto;
+        bottom: 20px;
+        position: fixed;
+    }
+    
+    .zmshbt.left {
+        left: 10px;
+    }
+    
+    .zmshbt.right {
+        right: 10px;
+    }
+    
+    .zmshbt a {
+        width: 28px;
+        height: 28px;
+        margin: 5px;
+    }
+}
+
+/* Hide on very small screens */
+@media (max-width: 480px) {
+    .zmshbt.left,
+    .zmshbt.right {
+        display: none;
+    }
+}
+
+/* Print styles - hide share buttons */
+@media print {
+    .zmshbt {
+        display: none !important;
+    }
+}
