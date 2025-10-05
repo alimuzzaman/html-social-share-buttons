@@ -255,8 +255,13 @@ function convert_legacy_options_to_new($legacyOptions = array()) {
  */
 if (!function_exists('zm_sh_register_widgets')) {
     function zm_sh_register_widgets() {
-        // Legacy widget is handled by the new widget system
-        // This function exists for backward compatibility only
+        try {
+            $container = html_social_share_get_container();
+            $legacyWidget = $container->get('legacy_widget');
+            register_widget($legacyWidget);
+        } catch (\Exception $e) {
+            error_log('HTML Social Share Legacy Widget Registration Error: ' . $e->getMessage());
+        }
     }
 }
 
@@ -369,8 +374,8 @@ add_action('plugins_loaded', function() {
         add_shortcode('zm_sh_btn', 'zm_sh_shortcode_cb');
     }
 
-    // Register legacy widget if not already registered
-    if (!class_exists('zm_html_share_widget')) {
-        // Legacy widget compatibility is handled by the new widget system
+    // Register legacy widget
+    if (function_exists('zm_sh_register_widgets')) {
+        add_action('widgets_init', 'zm_sh_register_widgets');
     }
 }, 20);

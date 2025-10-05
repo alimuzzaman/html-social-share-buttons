@@ -73,6 +73,10 @@ class ServiceRegistrar
             return new \HtmlSocialShare\Widget\Widget($c->get('share_renderer'), $c->get('settings'));
         });
 
+        $c->set('legacy_widget', function ($c) {
+            return new \HtmlSocialShare\Widget\LegacyWidget($c->get('legacy_button_renderer'), $c->get('settings'));
+        });
+
         $c->set('svg_sanitizer', function () {
             return new \HtmlSocialShare\Svg\Sanitizer();
         });
