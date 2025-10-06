@@ -14,23 +14,13 @@ import { useIconsets } from '../../hooks';
 
 type LegacyDesignSettings = Pick<
 	PluginSettings,
-	| 'title'
-	| 'exclude_pages'
-	| 'iconset'
-	| 'google_analytics'
-	| 'auto_hide_buttons'
-	| 'use_port_in_url'
-	| 'nofollow_links'
+	'title' | 'exclude_pages' | 'iconset'
 >;
 
 const defaultLegacyDesignSettings: LegacyDesignSettings = {
 	title: 'Share this with your friends',
 	exclude_pages: '',
 	iconset: 'default_square',
-	google_analytics: false,
-	auto_hide_buttons: false,
-	use_port_in_url: false,
-	nofollow_links: false,
 };
 
 export const AppearanceTab: React.FC = () => {
@@ -56,18 +46,6 @@ export const AppearanceTab: React.FC = () => {
 					defaultLegacyDesignSettings.exclude_pages,
 				iconset:
 					apiSettings.iconset ?? defaultLegacyDesignSettings.iconset,
-				google_analytics:
-					apiSettings.google_analytics ??
-					defaultLegacyDesignSettings.google_analytics,
-				auto_hide_buttons:
-					apiSettings.auto_hide_buttons ??
-					defaultLegacyDesignSettings.auto_hide_buttons,
-				use_port_in_url:
-					apiSettings.use_port_in_url ??
-					defaultLegacyDesignSettings.use_port_in_url,
-				nofollow_links:
-					apiSettings.nofollow_links ??
-					defaultLegacyDesignSettings.nofollow_links,
 			} );
 		}
 	}, [ apiSettings ] );
@@ -164,66 +142,6 @@ export const AppearanceTab: React.FC = () => {
 									}
 									placeholder="1, about-us, contact, privacy-policy"
 									rows={ 3 }
-								/>
-							</FormField>
-						</div>
-					</section>
-
-					<section>
-						<h3 className="text-lg font-medium text-gray-900 mb-4">
-							Advanced Options
-						</h3>
-
-						<div className="space-y-4">
-							<FormField
-								label="Google Analytics"
-								description="Track social shares with Google Analytics"
-							>
-								<Checkbox
-									checked={ localSettings.google_analytics }
-									onChange={ ( checked ) =>
-										updateLocal( 'google_analytics', checked )
-									}
-									label="Enable Google Analytics tracking"
-								/>
-							</FormField>
-
-							<FormField
-								label="Auto Hide Buttons"
-								description="Automatically hide floating buttons until user hovers over them"
-							>
-								<Checkbox
-									checked={ localSettings.auto_hide_buttons }
-									onChange={ ( checked ) =>
-										updateLocal( 'auto_hide_buttons', checked )
-									}
-									label="Auto-hide floating buttons on page load"
-								/>
-							</FormField>
-
-							<FormField
-								label="Use Port in URL"
-								description="Include port number in share URLs (e.g., :443 for SSL)"
-							>
-								<Checkbox
-									checked={ localSettings.use_port_in_url }
-									onChange={ ( checked ) =>
-										updateLocal( 'use_port_in_url', checked )
-									}
-									label="Include port in URLs"
-								/>
-							</FormField>
-
-							<FormField
-								label="Nofollow Links"
-								description="Add rel='nofollow' attribute to all social share links"
-							>
-								<Checkbox
-									checked={ localSettings.nofollow_links }
-									onChange={ ( checked ) =>
-										updateLocal( 'nofollow_links', checked )
-									}
-									label="Make all social links nofollow"
 								/>
 							</FormField>
 						</div>

@@ -41,7 +41,7 @@ export const Tabs: React.FC< TabsProps > = ( {
 								<span
 									className={ `${
 										activeTab === tab.id
-											? 'border-b-4 border-blue-600 pb-1'
+											? ''
 											: ''
 									}` }
 								>
