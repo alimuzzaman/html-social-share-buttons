@@ -193,6 +193,11 @@ export const useSettings = () => {
 						auto_placement: settings.auto_placement,
 						placement_position: settings.placement_position,
 						placement_post_types: settings.placement_post_types,
+						exclude_pages: settings.exclude_pages,
+						floating_left: settings.floating_left,
+						floating_right: settings.floating_right,
+						before_content: settings.before_content,
+						after_content: settings.after_content,
 					},
 					integrations: {
 						betterlinks_enabled: settings.betterlinks_enabled,
@@ -208,6 +213,10 @@ export const useSettings = () => {
 						beaver_builder_enabled: settings.beaver_builder_enabled,
 					},
 					advanced: {
+						google_analytics: settings.google_analytics,
+						auto_hide_buttons: settings.auto_hide_buttons,
+						use_port_in_url: settings.use_port_in_url,
+						nofollow_links: settings.nofollow_links,
 						cache_enabled: settings.cache_enabled,
 						cache_duration: settings.cache_duration,
 						debug_mode: settings.debug_mode,
