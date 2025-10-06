@@ -127,6 +127,20 @@ export const NetworksList: React.FC< NetworksListProps > = ( {
 									}.png` }
 									alt={ `${ activeNetwork.name } icon` }
 									className="w-5 h-5"
+									onError={ ( e ) => {
+										const target = e.currentTarget as HTMLImageElement;
+										target.style.display = 'none';
+										const placeholder = document.createElement(
+											'span'
+										);
+										placeholder.className =
+											'inline-flex items-center justify-center w-5 h-5 rounded-full bg-white text-xs text-gray-700 font-semibold';
+										placeholder.textContent =
+											activeNetwork.name.charAt( 0 );
+										target.parentElement?.appendChild(
+											placeholder
+										);
+									} }
 								/>
 							</div>
 							<div className="flex-1">
