@@ -6,8 +6,34 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 - **Component Decomposition Rule Added**: Updated `.github/copilot-instructions.md` with new architectural rule requiring components over 200-300 lines to be decomposed into smaller, focused components with single responsibilities. This improves maintainability, testability, and reduces risk of file corruption during edits.
+- **Networks Tab Drag-and-Drop UX Improvements**: Enhanced drag-and-drop experience in Networks tab
+  - Implemented DragOverlay for proper z-index handling and visual separation of dragged items
+  - Added activation constraint (8px distance) to prevent accidental drag triggers
+  - Improved drag feedback: dragging item shows 40% opacity, overlay shows full opacity with shadow-2xl
+  - Added smooth scale animations (1.01x hover, 1.05x during drag)
+  - Enhanced cursor feedback: cursor-grab (rest) → cursor-grabbing (active drag)
+  - Improved transitions with custom 200ms ease for smoother animations
+  - Overlay displays with border-2 border-blue-500 and shadow-2xl for clear visual hierarchy
+  - Fixed icon rendering in drag overlay with proper error handling
+
+### Improved
+- **Settings API Response**: REST API now returns fresh settings from database after save
+  - `POST /html-social-share/v1/settings` returns complete settings object in response
+  - Frontend verifies saved settings by updating local state with DB data
+  - Ensures UI always reflects actual saved values, preventing desync issues
+- **Iconsets Data Loading**: Moved iconsets from REST API to localized script data
+  - Iconsets now passed via `hssAdminConfig.iconsets` instead of separate API call
+  - Eliminates unnecessary HTTP request since iconsets are static after page load
+  - `useIconsets` hook now reads from window config instead of calling API
+  - ReactAdminInterface receives IconRegistry dependency to provide iconsets
+  - Updated ServiceRegistrar to pass iconRegistry to Admin constructor
 
 ### Fixed
+- **Dependency Injection Fix**: Fixed fatal error in ReactAdminInterface constructor
+  - ServiceRegistrar now passes both SettingsInterface and IconRegistryInterface to ReactAdminInterface constructor
+  - Resolved "Too few arguments to function HtmlSocialShare\Admin\ReactAdminInterface::__construct()" error
+  - Build now completes successfully without runtime errors
+- **[MIGRATE-057] Settings Save Issue:** Fixed placement settings not persisting on save
 - **[MIGRATE-057] Settings Save Issue:** Fixed placement settings not persisting on save
   - Added floating_left, floating_right, before_content, after_content, exclude_pages to placement section in useSettings.ts saveSettings()
   - Added google_analytics, auto_hide_buttons, use_port_in_url, nofollow_links to advanced section in saveSettings()
