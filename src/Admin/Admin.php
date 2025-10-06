@@ -4,6 +4,7 @@ namespace HtmlSocialShare\Admin;
 use HtmlSocialShare\SettingsInterface;
 use HtmlSocialShare\ProfileManagerInterface;
 use HtmlSocialShare\ShareRendererInterface;
+use HtmlSocialShare\IconRegistryInterface;
 use HtmlSocialShare\Utils\SecurityUtils;
 use HtmlSocialShare\Utils\ArrayUtils;
 use HtmlSocialShare\Renderers\RenderUtils;
@@ -22,18 +23,21 @@ class Admin
     private $profileManager;
     private $reactAdminInterface;
     private $shareRenderer;
+    private $iconRegistry;
 
     public function __construct(
         SettingsInterface $settings,
         ProfileManagerInterface $profileManager,
-        ShareRendererInterface $shareRenderer
+        ShareRendererInterface $shareRenderer,
+        IconRegistryInterface $iconRegistry
     ) {
         $this->settings = $settings;
         $this->profileManager = $profileManager;
         $this->shareRenderer = $shareRenderer;
+        $this->iconRegistry = $iconRegistry;
 
         try {
-            $this->reactAdminInterface = new ReactAdminInterface($settings);
+            $this->reactAdminInterface = new ReactAdminInterface($settings, $iconRegistry);
         } catch (\Throwable $e) {
             error_log('HTML Social Share: Admin initialization error - ' . $e->getMessage());
             return;

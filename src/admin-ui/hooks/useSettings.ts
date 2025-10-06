@@ -226,19 +226,145 @@ export const useSettings = () => {
 					default_profile: settings.default_profile,
 				};
 
-				const response = ( await apiFetch( {
-					path: '/html-social-share/v1/settings',
-					method: 'POST',
-					data: apiData,
-				} ) ) as any;
+			const response = ( await apiFetch( {
+				path: '/html-social-share/v1/settings',
+				method: 'POST',
+				data: apiData,
+			} ) ) as SaveSettingsResponse;
 
-				setIsDirty( false );
+			// Verify saved settings by updating local state with fresh data from DB
+			if ( response.success && response.settings ) {
+				// Flatten the response structure like in loadSettings
+				const flatSettings: PluginSettings = {
+					// General settings
+					show_on_front_page:
+						response.settings.general?.show_on_front_page ?? true,
+					show_on_posts:
+						response.settings.general?.show_on_posts ?? true,
+					show_on_pages:
+						response.settings.general?.show_on_pages ?? false,
+					show_on_archives:
+						response.settings.general?.show_on_archives ?? false,
+					default_style:
+						response.settings.general?.default_style ??
+						'default',
+					default_size:
+						response.settings.general?.default_size ?? 'medium',
 
-				return {
-					success: response.success ?? true,
-					message: response.message ?? 'Settings saved successfully',
-					updated_settings: response.updated ?? {},
+					// Network settings
+					enabled_networks:
+						response.settings.networks?.enabled_networks ?? [],
+					network_order:
+						response.settings.networks?.network_order ?? [],
+					custom_networks:
+						response.settings.networks?.custom_networks ?? [],
+
+					// Profile settings
+					profiles: response.settings.profiles ?? [],
+					default_profile:
+						response.settings.default_profile ?? '',
+
+					// Integrations
+					betterlinks_enabled:
+						response.settings.integrations
+							?.betterlinks_enabled ?? false,
+					betterlinks_api_key:
+						response.settings.integrations?.betterlinks_api_key ??
+						'',
+					elementor_enabled:
+						response.settings.integrations?.elementor_enabled ??
+						false,
+					divi_enabled:
+						response.settings.integrations?.divi_enabled ??
+						false,
+					beaver_builder_enabled:
+						response.settings.integrations
+							?.beaver_builder_enabled ?? false,
+
+					// Appearance
+					iconset:
+						response.settings.appearance?.iconset ??
+						'default_square',
+					icon_style:
+						response.settings.appearance?.icon_style ??
+						'default',
+					button_size:
+						response.settings.appearance?.button_size ??
+						'medium',
+					button_spacing:
+						response.settings.appearance?.button_spacing ?? 5,
+					custom_css:
+						response.settings.appearance?.custom_css ?? '',
+					title:
+						response.settings.appearance?.title ??
+						'Share this with your friends',
+
+					// Placement
+					auto_placement:
+						response.settings.placement?.auto_placement ??
+						false,
+					placement_position:
+						response.settings.placement?.placement_position ??
+						'after',
+					placement_post_types:
+						response.settings.placement?.placement_post_types ??
+						[ 'post' ],
+					exclude_pages:
+						response.settings.placement?.exclude_pages ?? '',
+					floating_left:
+						response.settings.placement?.floating_left ?? false,
+					floating_right:
+						response.settings.placement?.floating_right ?? false,
+					before_content:
+						response.settings.placement?.before_content ?? false,
+					after_content:
+						response.settings.placement?.after_content ?? true,
+
+					// Integrations (continued)
+					betterlinks_shorten_urls:
+						response.settings.integrations
+							?.betterlinks_shorten_urls ?? true,
+					betterlinks_add_tracking:
+						response.settings.integrations
+							?.betterlinks_add_tracking ?? true,
+					betterlinks_custom_tracking:
+						response.settings.integrations
+							?.betterlinks_custom_tracking ?? {},
+					betterlinks_available:
+						response.settings.integrations
+							?.betterlinks_available ?? false,
+					betterlinks_pro:
+						response.settings.integrations?.betterlinks_pro ??
+						false,
+					betterlinks_version:
+						response.settings.integrations
+							?.betterlinks_version ?? null,
+
+					// Advanced
+					google_analytics:
+						response.settings.advanced?.google_analytics ??
+						false,
+					auto_hide_buttons:
+						response.settings.advanced?.auto_hide_buttons ??
+						false,
+					use_port_in_url:
+						response.settings.advanced?.use_port_in_url ?? false,
+					nofollow_links:
+						response.settings.advanced?.nofollow_links ?? true,
+					cache_enabled:
+						response.settings.advanced?.cache_enabled ?? true,
+					cache_duration:
+						response.settings.advanced?.cache_duration ?? 3600,
+					debug_mode:
+						response.settings.advanced?.debug_mode ?? false,
 				};
+
+				setSettings( flatSettings );
+			}
+
+			setIsDirty( false );
+
+			return response;
 			} catch ( err ) {
 				const errorMessage =
 					err instanceof Error

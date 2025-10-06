@@ -133,7 +133,8 @@ export interface ApiResponse< T = any > {
 export interface SaveSettingsResponse {
 	success: boolean;
 	message: string;
-	updated_settings: Partial< PluginSettings >;
+	updated?: Record< string, any >;
+	settings?: any; // Fresh settings from DB after save
 }
 
 // WordPress REST API types

@@ -189,6 +189,9 @@ class SettingsController extends WP_REST_Controller
             $settings['profiles'] = $this->profileManager->listProfiles();
             $settings['default_profile'] = $this->settings->get('default_profile', '');
 
+            // Include iconsets in initial settings response (static data, no need for separate API call)
+            $settings['iconsets'] = $this->iconRegistry->getAvailableIconsets();
+
             return new WP_REST_Response($settings, 200);
         } catch (\Exception $e) {
             return new WP_Error('get_settings_failed', $e->getMessage(), ['status' => 500]);
@@ -259,10 +262,16 @@ class SettingsController extends WP_REST_Controller
                 }
             }
 
+            // Return fresh settings from DB to ensure consistency
+            $freshSettings = $this->get_settings($request);
+            if ($freshSettings instanceof WP_Error) {
+                return $freshSettings;
+            }
+
             return new WP_REST_Response([
                 'success' => true,
                 'message' => __('Settings updated successfully', 'html-social-share'),
-                'updated' => $updated,
+                'settings' => $freshSettings->data,
             ], 200);
         } catch (\Exception $e) {
             return new WP_Error('update_settings_failed', $e->getMessage(), ['status' => 500]);

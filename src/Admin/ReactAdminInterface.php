@@ -2,6 +2,7 @@
 namespace HtmlSocialShare\Admin;
 
 use HtmlSocialShare\SettingsInterface;
+use HtmlSocialShare\IconRegistryInterface;
 
 /**
  * React-based admin interface for HTML Social Share Buttons
@@ -15,13 +16,15 @@ use HtmlSocialShare\SettingsInterface;
 class ReactAdminInterface
 {
     private SettingsInterface $settings;
+    private IconRegistryInterface $iconRegistry;
 
     /** @var string Page slug for the admin page */
     private const PAGE_SLUG = 'html-social-share-react';
 
-    public function __construct(SettingsInterface $settings)
+    public function __construct(SettingsInterface $settings, IconRegistryInterface $iconRegistry)
     {
         $this->settings = $settings;
+        $this->iconRegistry = $iconRegistry;
     }
 
     /**
@@ -97,6 +100,7 @@ class ReactAdminInterface
             'currentUser' => wp_get_current_user()->ID,
             'pluginUrl' => plugin_dir_url(__FILE__),
             'adminUrl' => admin_url(),
+            'iconsets' => $this->iconRegistry->getAvailableIconsets(),
             'strings' => [
                 'loadingPosts' => __('Loading posts...', 'html-social-share-buttons'),
                 'noPostsFound' => __('No posts found.', 'html-social-share-buttons'),

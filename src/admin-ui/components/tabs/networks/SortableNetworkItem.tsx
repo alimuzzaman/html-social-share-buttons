@@ -34,21 +34,24 @@ export const SortableNetworkItem: React.FC< SortableNetworkItemProps > = ( {
 
 	const style = {
 		transform: CSS.Transform.toString( transform ),
-		transition,
+		transition: isDragging ? transition : 'transform 200ms ease',
+		opacity: isDragging ? 0.4 : 1,
 	};
 
 	return (
 		<div
 			ref={ setNodeRef }
 			style={ style }
-			className={ `flex items-center px-4 py-3 bg-white border rounded transition-all duration-200 ${ 
+			className={ `flex items-center px-4 py-3 bg-white border rounded transition-all ${ 
 				enabled ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
 			} ${
-				isDragging ? 'opacity-50 shadow-lg' : 'hover:shadow-sm hover:border-gray-300'
+				isDragging
+					? 'shadow-sm scale-105'
+					: 'hover:shadow-md hover:border-gray-300 hover:scale-[1.01]'
 			}` }
 		>
 			<div
-				className="cursor-move mr-3 text-gray-400 hover:text-gray-600"
+				className="cursor-grab active:cursor-grabbing mr-3 text-gray-400 hover:text-gray-600 transition-colors"
 				{ ...attributes }
 				{ ...listeners }
 			>

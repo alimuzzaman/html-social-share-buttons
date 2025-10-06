@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
-import apiFetch from '@wordpress/api-fetch';
+import { useState, useEffect } from 'react';
 
 /**
  * Hook for managing available iconsets
+ * Iconsets are loaded from localized script data (hssAdminConfig.iconsets)
+ * since they're static and won't change after page load
  */
 export const useIconsets = () => {
 	const [ iconsets, setIconsets ] = useState< Record<
@@ -12,18 +13,20 @@ export const useIconsets = () => {
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState< string | null >( null );
 
-	// Load iconsets from API
-	const loadIconsets = useCallback( async () => {
+	// Load iconsets from localized data on mount
+	useEffect( () => {
 		try {
-			setLoading( true );
-			setError( null );
+			const config =
+				typeof window !== 'undefined' &&
+				( window as any ).hssAdminConfig
+					? ( window as any ).hssAdminConfig
+					: null;
 
-			const response = ( await apiFetch( {
-				path: '/html-social-share/v1/iconsets',
-				method: 'GET',
-			} ) ) as any;
-
-			setIconsets( response );
+			if ( config && config.iconsets ) {
+				setIconsets( config.iconsets );
+			} else {
+				setError( 'Iconsets data not found in configuration' );
+			}
 		} catch ( err ) {
 			setError(
 				err instanceof Error ? err.message : 'Failed to load iconsets'
@@ -33,15 +36,9 @@ export const useIconsets = () => {
 		}
 	}, [] );
 
-	// Load iconsets on mount
-	useEffect( () => {
-		loadIconsets();
-	}, [ loadIconsets ] );
-
 	return {
 		iconsets,
 		loading,
 		error,
-		refreshIconsets: loadIconsets,
 	};
 };
