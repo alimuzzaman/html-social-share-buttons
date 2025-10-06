@@ -65,7 +65,12 @@ class ServiceRegistrar
         });
 
         $c->set('admin', function ($c) {
-            return new \HtmlSocialShare\Admin\Admin($c->get('settings'), $c->get('profile_manager'), $c->get('share_renderer'));
+            return new \HtmlSocialShare\Admin\Admin(
+                $c->get('settings'),
+                $c->get('profile_manager'),
+                $c->get('share_renderer'),
+                $c->get('icon_registry')
+            );
         });
 
         $c->set('content_display', function ($c) {
@@ -97,7 +102,7 @@ class ServiceRegistrar
 
         // React admin interface
         $c->set('react_admin_interface', function ($c) {
-            return new \HtmlSocialShare\Admin\ReactAdminInterface($c->get('settings'));
+            return new \HtmlSocialShare\Admin\ReactAdminInterface($c->get('settings'), $c->get('icon_registry'));
         });
 
         // REST API service
