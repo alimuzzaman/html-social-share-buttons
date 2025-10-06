@@ -4,6 +4,25 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- **[MIGRATE-057] Settings Save Issue:** Fixed placement settings not persisting on save
+  - Added floating_left, floating_right, before_content, after_content, exclude_pages to placement section in useSettings.ts saveSettings()
+  - Added google_analytics, auto_hide_buttons, use_port_in_url, nofollow_links to advanced section in saveSettings()
+  - Settings now properly save to WordPress options and persist across page reloads
+- **[MIGRATE-056] Advanced Tab Restoration:** Restored Advanced tab from archived folder
+  - Created simplified AdvancedTab.tsx with only legacy v2.x options
+  - Removed cache_enabled, cache_duration, debug_mode fields
+  - Kept only google_analytics, auto_hide_buttons, use_port_in_url, nofollow_links
+  - Added Advanced tab to ReactAdminInterface with Settings icon
+  - Updated tabs/index.ts to export AdvancedTab
+- **[MIGRATE-052] Networks Tab Redesign:** Merged Available Networks and Network Order into single unified list
+  - Removed separate "Available Networks" grid and "Network Order" DnD sections
+  - Created single vertical DnD list with inline enable/disable checkboxes
+  - Each network shows: drag handle, icon, name, enabled status, checkbox
+  - Enabled networks highlighted with blue border and background
+  - Simplified from 800 lines to 308 lines
+  - Removed custom network creation feature (can be re-added later if needed)
+  - Improved UX: drag to reorder, click checkbox to enable/disable
 
 ### Changed
 - **[MIGRATE-054] Design Tab Simplification:** Simplified Design/Appearance tab to show only legacy v2.x options
