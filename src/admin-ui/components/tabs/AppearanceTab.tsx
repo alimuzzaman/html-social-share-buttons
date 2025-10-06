@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
 	Button,
+	Checkbox,
 	FormField,
 	LoadingOverlay,
 	Select,
@@ -10,6 +11,27 @@ import {
 import { PluginSettings } from '../../types';
 import { useNotifications, useSettingsContext } from '../../contexts';
 import { useIconsets } from '../../hooks';
+
+type LegacyDesignSettings = Pick<
+	PluginSettings,
+	| 'title'
+	| 'exclude_pages'
+	| 'iconset'
+	| 'google_analytics'
+	| 'auto_hide_buttons'
+	| 'use_port_in_url'
+	| 'nofollow_links'
+>;
+
+const defaultLegacyDesignSettings: LegacyDesignSettings = {
+	title: 'Share this with your friends',
+	exclude_pages: '',
+	iconset: 'default_square',
+	google_analytics: false,
+	auto_hide_buttons: false,
+	use_port_in_url: false,
+	nofollow_links: false,
+};
 
 export const AppearanceTab: React.FC = () => {
 	const {
@@ -21,70 +43,50 @@ export const AppearanceTab: React.FC = () => {
 	const { showSuccess, showError } = useNotifications();
 	const { iconsets, loading: iconsetsLoading } = useIconsets();
 
-	const [ localSettings, setLocalSettings ] = useState<
-		Partial< PluginSettings >
-	>( {
-		title: 'Share this with your friends',
-		iconset: 'default_square',
-		default_style: 'default',
-		default_size: 'medium',
-		icon_style: 'default',
-		button_size: 'medium',
-		button_spacing: 8,
-		custom_css: '',
-	} );
+	const [ localSettings, setLocalSettings ] = useState< LegacyDesignSettings >(
+		defaultLegacyDesignSettings
+	);
 
 	useEffect( () => {
 		if ( apiSettings ) {
 			setLocalSettings( {
-				title: apiSettings.title ?? 'Share this with your friends',
-				iconset: apiSettings.iconset ?? 'default_square',
-				default_style: apiSettings.default_style ?? 'default',
-				default_size: apiSettings.default_size ?? 'medium',
-				icon_style: apiSettings.icon_style ?? 'default',
-				button_size: apiSettings.button_size ?? 'medium',
-				button_spacing: apiSettings.button_spacing ?? 8,
-				custom_css: apiSettings.custom_css ?? '',
+				title: apiSettings.title ?? defaultLegacyDesignSettings.title,
+				exclude_pages:
+					apiSettings.exclude_pages ??
+					defaultLegacyDesignSettings.exclude_pages,
+				iconset:
+					apiSettings.iconset ?? defaultLegacyDesignSettings.iconset,
+				google_analytics:
+					apiSettings.google_analytics ??
+					defaultLegacyDesignSettings.google_analytics,
+				auto_hide_buttons:
+					apiSettings.auto_hide_buttons ??
+					defaultLegacyDesignSettings.auto_hide_buttons,
+				use_port_in_url:
+					apiSettings.use_port_in_url ??
+					defaultLegacyDesignSettings.use_port_in_url,
+				nofollow_links:
+					apiSettings.nofollow_links ??
+					defaultLegacyDesignSettings.nofollow_links,
 			} );
 		}
 	}, [ apiSettings ] );
 
-	const settings = localSettings;
-
-	const defaultStyleOptions = [
-		{ value: 'default', label: 'Default' },
-		{ value: 'minimal', label: 'Minimal' },
-		{ value: 'rounded', label: 'Rounded' },
-		{ value: 'square', label: 'Square' },
-	];
-
-	const iconStyleOptions = [
-		{ value: 'default', label: 'Default' },
-		{ value: 'outline', label: 'Outline' },
-		{ value: 'rounded', label: 'Rounded' },
-		{ value: 'square', label: 'Square' },
-	];
-
-	const buttonSizeOptions = [
-		{ value: 'small', label: 'Small' },
-		{ value: 'medium', label: 'Medium' },
-		{ value: 'large', label: 'Large' },
-	];
-
-	const updateSetting = ( key: keyof PluginSettings, value: any ) => {
-		setLocalSettings( ( prev ) => ( { ...prev, [ key ]: value } ) );
+	const updateLocal = < K extends keyof LegacyDesignSettings >(
+		key: K,
+		value: LegacyDesignSettings[ K ]
+	) => {
+		setLocalSettings( ( prev ) => ( {
+			...prev,
+			[ key ]: value,
+		} ) );
 	};
 
 	const handleSave = async () => {
 		try {
-			if ( apiSettings && updateSettings && saveSettings ) {
-				await updateSettings( localSettings );
-				await saveSettings();
-				showSuccess( 'Design settings saved successfully!' );
-			} else {
-				await new Promise( ( resolve ) => setTimeout( resolve, 1000 ) );
-				showSuccess( 'Design settings saved successfully!' );
-			}
+			await updateSettings( localSettings );
+			await saveSettings();
+			showSuccess( 'Design settings saved successfully!' );
 		} catch ( error ) {
 			showError(
 				'Failed to save design settings',
@@ -99,191 +101,141 @@ export const AppearanceTab: React.FC = () => {
 			message="Saving design settings..."
 		>
 			<div className="bg-white border border-gray-200 rounded shadow-sm p-6">
-				<h2 className="text-xl font-semibold mb-4">Design Defaults</h2>
-				<p className="text-gray-600 mb-6">
-					Configure the default appearance for every set of share
-					buttons on your site.
+				<h2 className="text-xl font-semibold text-gray-900 mb-2">
+					Design &amp; Settings
+				</h2>
+				<p className="text-sm text-gray-600 mb-6">
+					Configure the appearance and basic settings for social share
+					buttons.
 				</p>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<section className="space-y-4">
-						<h3 className="text-lg font-medium text-gray-800 mb-3">
-							Global Defaults
+				<div className="space-y-6">
+					<section>
+						<h3 className="text-lg font-medium text-gray-900 mb-4">
+							Basic Settings
 						</h3>
 
-						<FormField
-							label="Share Title"
-							description="Displayed above or adjacent to button groups"
-						>
-							<TextInput
-								value={
-									settings.title ||
-									'Share this with your friends'
-								}
-								onChange={ ( value ) =>
-									updateSetting( 'title', value )
-								}
-								placeholder="Share this with your friends"
-							/>
-						</FormField>
+						<div className="space-y-4">
+							<FormField
+								label="Share Title"
+								description="Text displayed with the share buttons"
+							>
+								<TextInput
+									value={ localSettings.title }
+									onChange={ ( value ) =>
+										updateLocal( 'title', value )
+									}
+									placeholder="Share this with your friends"
+								/>
+							</FormField>
 
-						<FormField
-							label="Icon Set"
-							description="Choose the icon set for social share buttons"
-						>
-							<Select
-								value={ settings.iconset || 'default_square' }
-								onChange={ ( value ) =>
-									updateSetting( 'iconset', value )
-								}
-								options={
-									iconsets
-										? Object.entries( iconsets ).map(
-												( [ key, iconset ] ) => ( {
-													value: key,
-													label: iconset.label,
-												} )
-										  )
-										: []
-								}
-								disabled={ iconsetsLoading }
-							/>
-						</FormField>
+							<FormField
+								label="Icon Set"
+								description="Choose the icon set for social share buttons"
+							>
+								<Select
+									value={ localSettings.iconset }
+									onChange={ ( value ) =>
+										updateLocal( 'iconset', value )
+									}
+									options={
+										iconsets
+											? Object.entries( iconsets ).map(
+													( [ key, iconset ] ) => ( {
+														value: key,
+														label: iconset.label,
+													} )
+											  )
+											: []
+									}
+									disabled={ iconsetsLoading }
+								/>
+							</FormField>
 
-						<FormField
-							label="Default Button Style"
-							description="Applies to new placements and shortcode defaults"
-						>
-							<Select
-								value={ settings.default_style || 'default' }
-								onChange={ ( value ) =>
-									updateSetting( 'default_style', value )
-								}
-								options={ defaultStyleOptions }
-							/>
-						</FormField>
-
-						<FormField
-							label="Default Button Size"
-							description="Baseline size for new button groups"
-						>
-							<Select
-								value={ settings.default_size || 'medium' }
-								onChange={ ( value ) =>
-									updateSetting( 'default_size', value )
-								}
-								options={ buttonSizeOptions }
-							/>
-						</FormField>
-					</section>
-
-					<section className="space-y-4">
-						<h3 className="text-lg font-medium text-gray-800 mb-3">
-							Button Presentation
-						</h3>
-
-						<FormField
-							label="Icon Style"
-							description="Choose the core icon treatment"
-						>
-							<Select
-								value={ settings.icon_style || 'default' }
-								onChange={ ( value ) =>
-									updateSetting( 'icon_style', value )
-								}
-								options={ iconStyleOptions }
-							/>
-						</FormField>
-
-						<FormField
-							label="Rendered Button Size"
-							description="Adjusts the visual size for rendered buttons"
-						>
-							<Select
-								value={ settings.button_size || 'medium' }
-								onChange={ ( value ) =>
-									updateSetting( 'button_size', value )
-								}
-								options={ buttonSizeOptions }
-							/>
-						</FormField>
-
-						<FormField
-							label="Button Spacing"
-							description="Horizontal gap between buttons in pixels"
-						>
-							<TextInput
-								value={
-									settings.button_spacing?.toString() || '8'
-								}
-								onChange={ ( value ) =>
-									updateSetting(
-										'button_spacing',
-										parseInt( value, 10 ) || 8
-									)
-								}
-							/>
-						</FormField>
-					</section>
-				</div>
-
-				<div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-					<section className="space-y-4">
-						<h3 className="text-lg font-medium text-gray-800 mb-3">
-							Custom CSS
-						</h3>
-						<FormField
-							label="Custom CSS Overrides"
-							description="Add optional CSS rules that load with the share buttons"
-						>
-							<ValidatedTextArea
-								label=""
-								value={ settings.custom_css || '' }
-								onChange={ ( value ) =>
-									updateSetting( 'custom_css', value )
-								}
-								placeholder=".html-social-share-buttons { /* your custom styles */ }"
-								rows={ 8 }
-								className="font-mono text-sm"
-							/>
-						</FormField>
-					</section>
-
-					<section className="bg-blue-50 border border-blue-200 rounded p-4">
-						<h4 className="font-medium text-blue-800 mb-2">
-							Preview
-						</h4>
-						<p className="text-sm text-blue-600 mb-3">
-							Updated defaults apply to new placements and
-							shortcode examples. Individual instances can still
-							override them.
-						</p>
-						<div className="flex space-x-2">
-							<div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center text-white text-xs">
-								F
-							</div>
-							<div className="w-8 h-8 bg-blue-400 rounded flex items-center justify-center text-white text-xs">
-								T
-							</div>
-							<div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white text-xs">
-								L
-							</div>
+							<FormField
+								label="Exclude Pages"
+								description="Comma-separated list of page IDs, slugs, or titles to exclude from showing buttons"
+							>
+								<ValidatedTextArea
+									label=""
+									value={ localSettings.exclude_pages }
+									onChange={ ( value ) =>
+										updateLocal( 'exclude_pages', value )
+									}
+									placeholder="1, about-us, contact, privacy-policy"
+									rows={ 3 }
+								/>
+							</FormField>
 						</div>
 					</section>
-				</div>
 
-				<div className="mt-8 pt-4 border-t border-gray-200">
-					<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-						<p className="text-sm text-gray-600">
-							These design defaults apply globally and act as the
-							baseline for profiles and manual overrides.
-						</p>
+					<section>
+						<h3 className="text-lg font-medium text-gray-900 mb-4">
+							Advanced Options
+						</h3>
+
+						<div className="space-y-4">
+							<FormField
+								label="Google Analytics"
+								description="Track social shares with Google Analytics"
+							>
+								<Checkbox
+									checked={ localSettings.google_analytics }
+									onChange={ ( checked ) =>
+										updateLocal( 'google_analytics', checked )
+									}
+									label="Enable Google Analytics tracking"
+								/>
+							</FormField>
+
+							<FormField
+								label="Auto Hide Buttons"
+								description="Automatically hide floating buttons until user hovers over them"
+							>
+								<Checkbox
+									checked={ localSettings.auto_hide_buttons }
+									onChange={ ( checked ) =>
+										updateLocal( 'auto_hide_buttons', checked )
+									}
+									label="Auto-hide floating buttons on page load"
+								/>
+							</FormField>
+
+							<FormField
+								label="Use Port in URL"
+								description="Include port number in share URLs (e.g., :443 for SSL)"
+							>
+								<Checkbox
+									checked={ localSettings.use_port_in_url }
+									onChange={ ( checked ) =>
+										updateLocal( 'use_port_in_url', checked )
+									}
+									label="Include port in URLs"
+								/>
+							</FormField>
+
+							<FormField
+								label="Nofollow Links"
+								description="Add rel='nofollow' attribute to all social share links"
+							>
+								<Checkbox
+									checked={ localSettings.nofollow_links }
+									onChange={ ( checked ) =>
+										updateLocal( 'nofollow_links', checked )
+									}
+									label="Make all social links nofollow"
+								/>
+							</FormField>
+						</div>
+					</section>
+
+					<div className="flex justify-end pt-6 border-t border-gray-200">
 						<Button
 							onClick={ handleSave }
-							loading={ saving }
-							variant="primary"
+							disabled={ saving }
+							className="px-6 py-2"
 						>
-							Save Changes
+							{ saving ? 'Saving...' : 'Save Settings' }
 						</Button>
 					</div>
 				</div>

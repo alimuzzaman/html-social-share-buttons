@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import { Tabs } from './ui';
-import {
-	DisplayTab,
-	NetworksTab,
-	DesignTab,
-} from './tabs';
+import { DisplayTab, NetworksTab, DesignTab } from './tabs';
 import { TabConfig } from '../types';
-import {
-	Home,
-	Share,
-	Palette,
-} from 'lucide-react';
+import { Home, Share, Palette } from 'lucide-react';
 
 /**
  * Main React admin interface for HTML Social Share Buttons settings
@@ -31,15 +23,13 @@ export const ReactAdminInterface: React.FC = () => {
 			id: 'networks',
 			title: 'Networks',
 			icon: <Share className="w-4 h-4" />,
-			description:
-				'Enable and disable social networks for sharing',
+			description: 'Enable and disable social networks for sharing',
 		},
 		{
 			id: 'design',
 			title: 'Design',
 			icon: <Palette className="w-4 h-4" />,
-			description:
-				'Select button style and configure basic settings',
+			description: 'Select button style and configure basic settings',
 		},
 	];
 

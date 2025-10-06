@@ -40,54 +40,54 @@ Legacy v2.x had these key components:
    - Thickbox modal for code generation
    - Legacy format: `[zm_sh_btn iconset='default' iconset_type='square' icons='facebook,twitter,linkedin']`
 
-## 🔄 In Progress
-
 ### MIGRATE-051: Display Tab Simplification
-**Status:** 🔄 In Progress
+**Status:** ✅ COMPLETED (Commit: a94de0d)
 **Goal:** Replace complex auto_placement UI with simple 4 legacy checkboxes
 **Files:** `src/admin-ui/components/tabs/DisplayTab.tsx`
 
-**Required Changes:**
-1. Create `LegacyDisplaySettings` type with only 4 fields
-2. Remove `show_on_front_page`, `show_on_posts`, `show_on_pages`, `show_on_archives`
-3. Remove `auto_placement`, `placement_position`, `placement_post_types`, `exclude_pages`
-4. Keep only:
+**Completed Changes:**
+1. ✅ Created `LegacyDisplaySettings` type with only 4 fields
+2. ✅ Removed `show_on_front_page`, `show_on_posts`, `show_on_pages`, `show_on_archives`
+3. ✅ Removed `auto_placement`, `placement_position`, `placement_post_types`, `exclude_pages`
+4. ✅ Now shows only:
    - `floating_left` (default: true)
    - `floating_right` (default: false)
    - `before_content` (default: false)
    - `after_content` (default: true)
 
-**Template Structure:**
-```tsx
-type LegacyDisplaySettings = Pick<
-	PluginSettings,
-	| 'floating_left'
-	| 'floating_right'
-	| 'before_content'
-	| 'after_content'
->;
+**Results:**
+- File size reduced from 370 lines to 164 lines (55.7% reduction)
+- Bundle size reduced from 91 KiB to 88.1 KiB
+- Removed unused imports and complex state management
+- Maintained modern UI components and notification system
 
-const defaultLegacyDisplaySettings: LegacyDisplaySettings = {
-	floating_left: true,
-	floating_right: false,
-	before_content: false,
-	after_content: true,
-};
-```
+## 🔄 In Progress
 
-**UI Layout:**
-- Single column layout
-- Section: "Automatic Placement"
-- 4 checkboxes with clear labels
-- No conditional rendering or complex state
-- Save button at bottom
+### MIGRATE-054: Simplify Design Tab
+**Status:** 🔄 In Progress
+**Goal:** Keep only legacy v2.x options in Design tab
+**Files:** `src/admin-ui/components/tabs/AppearanceTab.tsx`
+
+**Required Changes:**
+1. Keep ONLY legacy options:
+   - Title (text input)
+   - Iconset (dropdown)
+   - Excludes (textarea) - may need to add
+2. Remove new options:
+   - Default Style dropdown
+   - Default Size dropdown
+   - Icon Style dropdown
+   - Button Size dropdown
+   - Button Spacing input
+   - Custom CSS textarea
 
 ## 📋 Next Tasks
 
-### MIGRATE-052: Verify Networks Tab DnD
+### MIGRATE-052: Networks Tab Verification
+**Status:** ✅ VERIFIED
 **Priority:** High
 **Files:** `src/admin-ui/components/tabs/NetworksTab.tsx`
-**Action:** Verify vertical drag-and-drop matches legacy icon ordering
+**Result:** NetworksTab already has vertical DnD using @dnd-kit with proper ordering. Meets legacy requirements.
 
 ### MIGRATE-053: Hide Profiles Tab
 **Priority:** High
@@ -126,10 +126,10 @@ const defaultLegacyDisplaySettings: LegacyDisplaySettings = {
 ## 📊 Progress Summary
 
 - **Total Tasks:** 8
-- **Completed:** 1 (12.5%)
+- **Completed:** 2 (25%)
 - **In Progress:** 1 (12.5%)
-- **Remaining:** 6 (75%)
-- **Estimated Time:** 30-42 hours total, ~25 hours remaining
+- **Remaining:** 5 (62.5%)
+- **Estimated Time:** 30-42 hours total, ~20 hours remaining
 
 ## 🎯 Success Criteria
 

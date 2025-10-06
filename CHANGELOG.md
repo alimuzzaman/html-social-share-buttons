@@ -4,6 +4,32 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+
+### Changed
+- **[MIGRATE-054] Design Tab Simplification:** Simplified Design/Appearance tab to show only legacy v2.x options
+  - Removed complex design options (default_style, default_size, icon_style, button_size, button_spacing)
+  - Removed Custom CSS textarea and preview section
+  - Now shows only 7 legacy settings:
+    - Title (text input) - "Share this with your friends"
+    - Icon Set (dropdown) - Choose button style
+    - Exclude Pages (textarea) - Comma-separated page IDs/slugs/titles
+    - Google Analytics (checkbox) - Track social shares
+    - Auto Hide Buttons (checkbox) - Auto-hide floating buttons
+    - Use Port in URL (checkbox) - Include :443 in URLs
+    - Nofollow Links (checkbox) - Add rel="nofollow" to links
+  - Updated component to use LegacyDesignSettings type
+  - Reduced file from 293 lines to 233 lines
+  - Maintained modern UI components and organized into Basic Settings and Advanced Options sections
+- **[MIGRATE-051] Display Tab Simplification:** Simplified DisplayTab to legacy 4-checkbox layout matching v2.x behavior
+  - Removed complex display locations (show_on_front_page, show_on_posts, show_on_pages, show_on_archives)
+  - Removed auto_placement toggle and placement_position dropdown
+  - Removed post type selection and exclude pages field
+  - Now shows only 4 legacy checkboxes: floating_left, floating_right, before_content, after_content
+  - Updated component to use LegacyDisplaySettings type
+  - Simplified state management by removing useMemo and post type toggle logic
+  - Reduced admin.js bundle size from 91 KiB to 88.1 KiB
+  - Maintained modern UI components (FormField, Checkbox, Button, LoadingOverlay)
+
 ### Added
 - **[LEGACY-204] Content Filter Hooks:** Implemented automatic before/after post placement
   - Created `LegacyContentFilter` class handling `the_content` filter

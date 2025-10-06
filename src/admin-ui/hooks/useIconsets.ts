@@ -5,7 +5,10 @@ import apiFetch from '@wordpress/api-fetch';
  * Hook for managing available iconsets
  */
 export const useIconsets = () => {
-	const [ iconsets, setIconsets ] = useState< Record< string, { label: string; description: string } > | null >( null );
+	const [ iconsets, setIconsets ] = useState< Record<
+		string,
+		{ label: string; description: string }
+	> | null >( null );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState< string | null >( null );
 

@@ -247,7 +247,8 @@ export const PlacementTab: React.FC = () => {
 							Legacy Placement Options
 						</h3>
 						<p className="text-sm text-gray-600 mb-4">
-							Individual controls for specific placement locations (backward compatibility with v2.x)
+							Individual controls for specific placement locations
+							(backward compatibility with v2.x)
 						</p>
 
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
