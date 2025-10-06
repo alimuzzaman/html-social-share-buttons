@@ -4,6 +4,9 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- **Component Decomposition Rule Added**: Updated `.github/copilot-instructions.md` with new architectural rule requiring components over 200-300 lines to be decomposed into smaller, focused components with single responsibilities. This improves maintainability, testability, and reduces risk of file corruption during edits.
+
 ### Fixed
 - **[MIGRATE-057] Settings Save Issue:** Fixed placement settings not persisting on save
   - Added floating_left, floating_right, before_content, after_content, exclude_pages to placement section in useSettings.ts saveSettings()
@@ -15,14 +18,15 @@ All notable changes to this project are documented in this file.
   - Kept only google_analytics, auto_hide_buttons, use_port_in_url, nofollow_links
   - Added Advanced tab to ReactAdminInterface with Settings icon
   - Updated tabs/index.ts to export AdvancedTab
-- **[MIGRATE-052] Networks Tab Redesign:** Merged Available Networks and Network Order into single unified list
-  - Removed separate "Available Networks" grid and "Network Order" DnD sections
-  - Created single vertical DnD list with inline enable/disable checkboxes
-  - Each network shows: drag handle, icon, name, enabled status, checkbox
-  - Enabled networks highlighted with blue border and background
-  - Simplified from 800 lines to 308 lines
-  - Removed custom network creation feature (can be re-added later if needed)
-  - Improved UX: drag to reorder, click checkbox to enable/disable
+- **[MIGRATE-052] Networks Tab Redesign:** Decomposed NetworksTab from monolithic 800-line component into smaller, focused components
+  - Created subdirectory `tabs/networks/` with:
+    - **SortableNetworkItem.tsx** (79 lines): Individual draggable network item with inline checkbox, icon, and enabled status indicator
+    - **NetworksList.tsx** (68 lines): DnD context wrapper with SortableContext managing vertical list drag-and-drop
+    - **defaultNetworks.ts** (57 lines): Network configuration data extracted from component
+    - **NetworksTab.tsx** (133 lines): Main orchestration component managing state and save functionality
+  - Merged "Available Networks" (grid with checkboxes) and "Network Order" (vertical DnD list) into single unified vertical DnD list with inline checkboxes
+  - Users can now drag to reorder and checkbox to enable/disable in one interface, eliminating the confusing two-section UI
+  - Component decomposition follows new architectural guidelines and improves maintainability
 
 ### Changed
 - **[MIGRATE-054] Design Tab Simplification:** Simplified Design/Appearance tab to show only legacy v2.x options

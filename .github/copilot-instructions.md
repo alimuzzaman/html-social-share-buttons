@@ -94,6 +94,13 @@ Testing & CI notes
 Behavioral testing rule (TDD-first)
 - Write unit tests first before writing code or implementing a feature. Prefer adding a failing unit test that asserts the desired behavior, then implement the minimal change to make the test pass. Update or add tests for regressions and edge cases when refactoring.
 
+Component decomposition rule (maintainability-first)
+- Always break larger components into multiple smaller ones. Components over 200-300 lines should be decomposed into smaller, focused components with single responsibilities.
+- Prefer extracting reusable UI elements (items, rows, cards, etc.) into separate component files.
+- Create a subdirectory for complex features (e.g., `tabs/networks/` for NetworksTab components).
+- Export subcomponents through an index.ts barrel file for clean imports.
+- This approach improves maintainability, testability, and reduces risk of file corruption during edits.
+
 Example quick tasks (how you would perform them)
 - Replace a WordPress class in UI with Tailwind: edit `src/admin-ui/components/App.tsx` and remove `wp-heading-inline` -> replace with `text-2xl font-semibold` (see `FormFields.tsx` for examples).
 - Add a new admin icon: prefer `AdminIcon` wrapper in `src/admin-ui/components/ui/Icons.tsx` with candidates pointing to the likely `@wordpress/icons` export; pass a `lucide` element for fallback.
