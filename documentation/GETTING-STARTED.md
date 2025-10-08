@@ -2,14 +2,24 @@
 
 ## ✅ Prerequisites Checklist
 
+
 Before starting PHASE1-001, ensure you have:
+
+### Code Quality Tools
+
+- [ ] **PHP_CodeSniffer** for WordPress standards
+    ```bash
+    composer global require "squizlabs/php_codesniffer=*"
+    composer global require "wp-coding-standards/wpcs"
+    ```
 
 ### Required Software
 
+### Required Software
 - [ ] **PHP 5.6 - 8.5+** installed (broad compatibility)
-  ```bash
-  php -v  # Should show 5.6 or higher
-  ```
+    ```bash
+    php -v  # Should show 5.6 or higher
+    ```
 
 - [ ] **Composer** installed
   ```bash
@@ -31,16 +41,11 @@ Before starting PHASE1-001, ensure you have:
 
 - [ ] **wp-env** (Required)
   ```bash
-  pnpm install -g @wordpress/env
-  ```
 
-### Code Quality Tools
-
-- [ ] **PHP_CodeSniffer** for WordPress standards
-  ```bash
-  composer global require "squizlabs/php_codesniffer=*"
-  composer global require "wp-coding-standards/wpcs"
-  ```
+Start WordPress:
+```bash
+wp-env start
+```
 
 - [ ] **PHPUnit** for unit tests
   ```bash
@@ -139,8 +144,8 @@ Create `.wp-env.json`:
 
 ```json
 {
-  "core": "WordPress/WordPress#6.4",
-  "phpVersion": "8.0",
+    "core": "WordPress/WordPress#6.4",
+    "phpVersion": "5.6",
   "plugins": [
     "."
   ],
@@ -247,7 +252,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npx wp-env start',
+    command: 'wp-env start',
     url: 'http://localhost:8888',
     reuseExistingServer: !process.env.CI,
   },
@@ -509,9 +514,9 @@ See `.github/prompts/phase1-rewrite-foundation.prompt.md` for details.
 ### Issue: wp-env won't start
 ```bash
 # Clean up and restart
-npx wp-env stop
-npx wp-env clean all
-npx wp-env start
+wp-env stop
+wp-env clean all
+wp-env start
 ```
 
 ### Issue: PHPUnit can't find WordPress tests
@@ -542,10 +547,10 @@ Edit `.wp-env.json`:
 
 ```bash
 # Start WordPress
-npx wp-env start
+wp-env start
 
 # Stop WordPress
-npx wp-env stop
+wp-env stop
 
 # Run PHPUnit tests
 composer test

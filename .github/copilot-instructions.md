@@ -46,7 +46,7 @@ Currently archived:
 ```bash
 # Setup
 pnpm install && composer install
-pnpm run wp-env start
+wp-env start
 
 # Development  
 pnpm run dev                    # Watch mode

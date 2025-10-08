@@ -1,0 +1,15 @@
+{
+  "name": "html-social-share-buttons",
+  "version": "3.0.0",
+  "description": "Lightweight social share buttons for WordPress",
+  "scripts": {
+    "test": "playwright test",
+    "test:visual": "playwright test --project=chromium",
+    "test:update": "playwright test --update-snapshots",
+    "wp-env": "wp-env"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@wordpress/env": "^9.0.0"
+  }
+}
