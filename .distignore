@@ -10,6 +10,7 @@ reports/
 security/
 scripts/
 archive/
+archive2/
 src/
 
 # Development files that shouldn't be in WP repo
