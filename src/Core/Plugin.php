@@ -90,6 +90,18 @@ class Plugin {
             $this->services['buttonRenderer'],
             $this->services['optionsManager']
         );
+        
+        // Shortcode handler
+        $this->services['shortcode'] = new \HtmlSocialShare\Frontend\Shortcode(
+            $this->services['buttonRenderer'],
+            $this->services['optionsManager']
+        );
+        
+        // Widget
+        $this->services['widget'] = new \HtmlSocialShare\Admin\Widget(
+            $this->services['buttonRenderer'],
+            $this->services['iconRegistry']
+        );
     }
     
     /**
@@ -100,6 +112,20 @@ class Plugin {
         add_action('wp_footer', [$this, 'outputCss'], 5);
         add_action('wp_footer', [$this, 'outputFixedPlacements'], 10);
         add_filter('the_content', [$this, 'filterContent'], 10);
+        
+        // Register shortcode
+        $shortcode = $this->getService('shortcode');
+        if ($shortcode) {
+            $shortcode->register();
+        }
+        
+        // Register widget
+        add_action('widgets_init', function() {
+            $widget = $this->getService('widget');
+            if ($widget) {
+                register_widget(get_class($widget));
+            }
+        });
         
         // Allow other plugins to hook in after initialization
         do_action('html_social_share_init', $this);
