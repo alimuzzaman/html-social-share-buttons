@@ -127,6 +127,11 @@ class Plugin {
             }
         });
         
+        // Register WP-CLI commands
+        if (defined('WP_CLI') && WP_CLI) {
+            \HtmlSocialShare\CLI\BuildCommand::register();
+        }
+        
         // Allow other plugins to hook in after initialization
         do_action('html_social_share_init', $this);
     }
