@@ -4,60 +4,80 @@
 
 If you're new to this project, read these files **in this order**:
 
-1. **[PACKAGE-SUMMARY.md](PACKAGE-SUMMARY.md)** ⭐
+1. **[START-HERE.md](START-HERE.md)** ⭐
+   - **Your entry point**
+   - Immediate action plan
+   - What Phase 1 achieves
+   - Pre-flight checklist
+
+2. **[GETTING-STARTED.md](GETTING-STARTED.md)** 🚀
+   - **Setup instructions**
+   - System requirements (PHP 5.6-8.5+, pnpm, wp-env)
+   - Step-by-step environment setup
+   - Verification steps
+
+3. **[PACKAGE-SUMMARY.md](PACKAGE-SUMMARY.md)** 📦
    - Overview of everything
    - What's been created
    - How to use the plan
    - Quick reference
 
-2. **[README.md](README.md)** 📖
-   - Quick start guide
-   - Task overview
-   - Success criteria
-   - How to track progress
-
-3. **[GETTING-STARTED.md](GETTING-STARTED.md)** 🚀
-   - **Setup instructions**
-   - Prerequisites checklist
-   - Step-by-step environment setup
-   - Verification steps
-
-4. **[phase1-rewrite-foundation.instructions.md](phase1-rewrite-foundation.instructions.md)** 📋
+4. **[phase1-rewrite-foundation.prompt.md](phase1-rewrite-foundation.prompt.md)** 📋
    - **The main plan** (150+ pages)
    - 33 detailed tasks
    - Implementation checklists
    - Your primary reference
 
-5. **[architecture-diagrams.md](architecture-diagrams.md)** 🏗️
+5. **[PROGRESS-TRACKER.md](PROGRESS-TRACKER.md)** ✅
+   - **Track your progress**
+   - Fillable checklist
+   - Metrics tracking
+   - Daily log template
+
+6. **[architecture-diagrams.md](architecture-diagrams.md)** 🏗️
    - Visual architecture
    - Flow diagrams
    - Before/after comparison
    - Easy to understand
 
-6. **[iconset-system-reference.md](iconset-system-reference.md)** 🎨
+7. **[iconset-system-reference.md](iconset-system-reference.md)** 🎨
    - How iconsets work
-   - Migration guide
+   - react-src → build flow
    - Build system details
    - CSS generation
 
-7. **[archive2-analysis.md](archive2-analysis.md)** ⚠️
+8. **[archive2-analysis.md](archive2-analysis.md)** ⚠️
    - What went wrong
    - What to use/avoid
    - Lessons learned
    - Critical reading
 
+9. **[DOCUMENTATION-UPDATES.md](DOCUMENTATION-UPDATES.md)** 📝
+   - Recent changes
+   - Archive policy
+   - System requirements
+   - Utility scripts guidance
+
 ## 📁 File Organization
 
 ```
-.github/prompts/
-├── INDEX.md ← YOU ARE HERE
-├── PACKAGE-SUMMARY.md ← Start here first!
-├── README.md ← Quick reference
-├── GETTING-STARTED.md ← Setup guide
-├── phase1-rewrite-foundation.instructions.md ← Main plan
-├── architecture-diagrams.md ← Visual guide
-├── iconset-system-reference.md ← Iconset details
-└── archive2-analysis.md ← What to avoid
+.github/
+├── copilot-instructions.md ← Main copilot instructions (NEW!)
+├── copilot-instructions.old.md ← Archived old version
+└── prompts/
+    ├── INDEX.md ← YOU ARE HERE
+    ├── START-HERE.md ← Entry point
+    ├── GETTING-STARTED.md ← Setup guide (UPDATED)
+    ├── PROGRESS-TRACKER.md ← Task tracker
+    ├── DOCUMENTATION-UPDATES.md ← Recent changes (NEW!)
+    ├── PACKAGE-SUMMARY.md ← Overview
+    ├── README.md ← Quick reference
+    ├── README-DIRECTORY.md ← This directory guide
+    ├── phase1-rewrite-foundation.prompt.md ← Main plan (UPDATED)
+    ├── architecture-diagrams.md ← Visual guide
+    ├── iconset-system-reference.md ← Iconset details (UPDATED)
+    ├── archive2-analysis.md ← What to avoid
+    └── archive/ ← Old prompt files (7 archived)
 ```
 
 ## 🎓 For Different Audiences
@@ -65,15 +85,19 @@ If you're new to this project, read these files **in this order**:
 ### 👨‍💻 For Developers (First Time)
 
 **Read in this order:**
-1. PACKAGE-SUMMARY.md (10 min)
-2. README.md (5 min)
-3. GETTING-STARTED.md (20 min)
-4. architecture-diagrams.md (10 min)
-5. phase1-rewrite-foundation.instructions.md (detailed read)
+1. START-HERE.md (5 min) - Entry point
+2. GETTING-STARTED.md (20 min) - Setup with PHP 5.6-8.5+, pnpm, wp-env
+3. PACKAGE-SUMMARY.md (10 min) - Overview
+4. README.md (5 min) - Quick reference
+5. architecture-diagrams.md (10 min) - Visual guide
+6. DOCUMENTATION-UPDATES.md (5 min) - Recent changes
+7. phase1-rewrite-foundation.prompt.md (detailed read)
 
 **Then:**
-- Follow GETTING-STARTED.md setup steps
+- Review `.github/copilot-instructions.md`
+- Follow GETTING-STARTED.md setup steps (use pnpm)
 - Set up environment (PHASE1-001)
+- Open PROGRESS-TRACKER.md
 - Start implementing tasks
 - Reference other docs as needed
 
@@ -81,16 +105,16 @@ If you're new to this project, read these files **in this order**:
 
 **Reference the main plan:**
 ```
-#file:.github/prompts/phase1-rewrite-foundation.instructions.md
+#file:documentation/phase1-rewrite-foundation.prompt.md
 
 Implement task PHASE1-XXX
 ```
 
 **For specific questions:**
 ```
-#file:.github/prompts/iconset-system-reference.md
-#file:.github/prompts/architecture-diagrams.md
-#file:.github/prompts/archive2-analysis.md
+#file:documentation/iconset-system-reference.md
+#file:documentation/architecture-diagrams.md
+#file:documentation/archive2-analysis.md
 ```
 
 ### 👔 For Project Managers
@@ -98,7 +122,7 @@ Implement task PHASE1-XXX
 **Read:**
 1. PACKAGE-SUMMARY.md - Overview
 2. README.md - Success criteria
-3. phase1-rewrite-foundation.instructions.md - Section: "Estimated Timeline"
+3. phase1-rewrite-foundation.prompt.md - Section: "Estimated Timeline"
 
 **Track:**
 - 33 tasks across 4 phases
@@ -124,30 +148,30 @@ Implement task PHASE1-XXX
 ### Understanding Current System
 - 📄 PACKAGE-SUMMARY.md → "Analysis Summary"
 - 📄 architecture-diagrams.md → "Current Architecture"
-- 📄 phase1-rewrite-foundation.instructions.md → Section: "Current State Analysis"
+- 📄 phase1-rewrite-foundation.prompt.md → Section: "Current State Analysis"
 
 ### Understanding New System
 - 📄 architecture-diagrams.md → "New Architecture"
-- 📄 phase1-rewrite-foundation.instructions.md → Section: "Phase 1B"
+- 📄 phase1-rewrite-foundation.prompt.md → Section: "Phase 1B"
 - 📄 PACKAGE-SUMMARY.md → "What This Plan Achieves"
 
 ### Iconset System
 - 📄 iconset-system-reference.md → Complete guide
 - 📄 architecture-diagrams.md → "Iconset System Flow"
-- 📄 phase1-rewrite-foundation.instructions.md → Section: "Phase 1C"
+- 📄 phase1-rewrite-foundation.prompt.md → Section: "Phase 1C"
 
 ### What Not to Do
 - 📄 archive2-analysis.md → Complete analysis
 - 📄 PACKAGE-SUMMARY.md → "What Phase 1 Is NOT"
-- 📄 phase1-rewrite-foundation.instructions.md → Section: "Notes"
+- 📄 phase1-rewrite-foundation.prompt.md → Section: "Notes"
 
 ### Testing Strategy
 - 📄 architecture-diagrams.md → "Test Strategy Diagram"
-- 📄 phase1-rewrite-foundation.instructions.md → Section: "Phase 1A"
+- 📄 phase1-rewrite-foundation.prompt.md → Section: "Phase 1A"
 - 📄 PACKAGE-SUMMARY.md → "Success Metrics"
 
 ### Task Details
-- 📄 phase1-rewrite-foundation.instructions.md → All task details
+- 📄 phase1-rewrite-foundation.prompt.md → All task details
 - 📄 README.md → Task overview
 - 📄 PACKAGE-SUMMARY.md → "33-Task Breakdown"
 
@@ -157,7 +181,7 @@ Implement task PHASE1-XXX
 → README.md → "Next Steps"
 
 ### "What tasks are there?"
-→ phase1-rewrite-foundation.instructions.md → Task list  
+→ phase1-rewrite-foundation.prompt.md → Task list  
 → README.md → Task overview
 
 ### "How do iconsets work?"
@@ -170,11 +194,11 @@ Implement task PHASE1-XXX
 → archive2-analysis.md
 
 ### "What's the full plan?"
-→ phase1-rewrite-foundation.instructions.md
+→ phase1-rewrite-foundation.prompt.md
 
 ### "How long will this take?"
 → PACKAGE-SUMMARY.md → "Development Workflow"  
-→ phase1-rewrite-foundation.instructions.md → "Estimated Timeline"
+→ phase1-rewrite-foundation.prompt.md → "Estimated Timeline"
 
 ### "What does success look like?"
 → PACKAGE-SUMMARY.md → "Success Metrics"  
@@ -187,7 +211,7 @@ Implement task PHASE1-XXX
 | PACKAGE-SUMMARY.md | 10 | Overview & summary | 15 min |
 | README.md | 5 | Quick reference | 10 min |
 | GETTING-STARTED.md | 8 | Setup instructions | 20 min |
-| phase1-rewrite-foundation.instructions.md | 150+ | Main implementation plan | 2-3 hours |
+| phase1-rewrite-foundation.prompt.md | 150+ | Main implementation plan | 2-3 hours |
 | architecture-diagrams.md | 8 | Visual architecture | 15 min |
 | iconset-system-reference.md | 12 | Iconset deep dive | 20 min |
 | archive2-analysis.md | 15 | What to avoid | 25 min |
@@ -208,7 +232,7 @@ Implement task PHASE1-XXX
 2. README.md (10 min)
 3. GETTING-STARTED.md (20 min)
 4. architecture-diagrams.md (15 min)
-5. phase1-rewrite-foundation.instructions.md (full read - 2-3 hours)
+5. phase1-rewrite-foundation.prompt.md (full read - 2-3 hours)
 6. iconset-system-reference.md (20 min)
 7. archive2-analysis.md (25 min)
 → **Complete understanding**
@@ -234,7 +258,7 @@ Implement task PHASE1-XXX
 
 ### Implementing a Task
 ```
-1. Read task in phase1-rewrite-foundation.instructions.md
+1. Read task in phase1-rewrite-foundation.prompt.md
 2. Check dependencies
 3. Review implementation checklist
 4. Write tests first
@@ -348,7 +372,7 @@ Use this to track overall progress:
 
 ### Can't find what you need?
 1. Check this index first
-2. Search in the main plan (phase1-rewrite-foundation.instructions.md)
+2. Search in the main plan (phase1-rewrite-foundation.prompt.md)
 3. Look at architecture-diagrams.md for visual explanation
 4. Check archive2-analysis.md for what to avoid
 
@@ -375,7 +399,7 @@ You now have **200+ pages of comprehensive, battle-tested documentation** for re
 1. PACKAGE-SUMMARY.md (overview)
 2. README.md (quick start)
 3. architecture-diagrams.md (visual guide)
-4. phase1-rewrite-foundation.instructions.md (detailed plan)
+4. phase1-rewrite-foundation.prompt.md (detailed plan)
 
 **Then build something amazing!** 🚀
 

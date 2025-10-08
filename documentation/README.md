@@ -4,7 +4,7 @@
 
 ### Current Files
 
-1. **`phase1-rewrite-foundation.instructions.md`** (Main Plan)
+1. **`phase1-rewrite-foundation.prompt.md`** (Main Plan)
    - Complete ground-up rewrite strategy
    - 33 detailed tasks across 4 sub-phases
    - 150-190 hour estimate
@@ -112,14 +112,14 @@ IconsetBuilder scans assets/iconset/
 
 Reference the prompt file:
 ```
-#file:.github/prompts/phase1-rewrite-foundation.instructions.md
+#file:documentation/phase1-rewrite-foundation.prompt.md
 
 Please implement task PHASE1-XXX
 ```
 
 ### For Human Developers
 
-1. Read the main plan: `phase1-rewrite-foundation.instructions.md`
+1. Read the main plan: `phase1-rewrite-foundation.prompt.md`
 2. Start with Phase 1A (tests first!)
 3. Follow tasks in order
 4. Check off tasks as you complete them
@@ -172,7 +172,7 @@ Wire everything together and verify parity
 
 ### Must Read
 - `docs/options.md` - Current options structure
-- `phase1-rewrite-foundation.instructions.md` - Main plan
+- `phase1-rewrite-foundation.prompt.md` - Main plan
 
 ### Background Reading
 - `archive2/docs/02-Current-State-Analysis.md` - What exists now
@@ -239,7 +239,7 @@ Phase 1 is **COMPLETE** when:
 
 ## 🎉 Next Steps
 
-1. **Read the main plan**: Start with `phase1-rewrite-foundation.instructions.md`
+1. **Read the main plan**: Start with `phase1-rewrite-foundation.prompt.md`
 2. **Set up environment**: Follow prerequisites
 3. **Start with PHASE1-001**: Test environment setup
 4. **Work sequentially**: Each task builds on previous ones

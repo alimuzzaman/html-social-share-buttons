@@ -4,7 +4,7 @@
 
 I've analyzed your codebase and created a comprehensive ground-up rewrite plan. Here's everything you now have:
 
-### 1. **Main Plan** (`phase1-rewrite-foundation.instructions.md`)
+### 1. **Main Plan** (`phase1-rewrite-foundation.prompt.md`)
    - 33 detailed tasks across 4 sub-phases
    - 150-190 hour estimate
    - Test-first approach
@@ -164,21 +164,21 @@ Request → Get Options → Get Iconset → Loop Icons → Generate HTML
 Reference the prompt file when asking for implementation:
 
 ```
-#file:.github/prompts/phase1-rewrite-foundation.instructions.md
+#file:documentation/phase1-rewrite-foundation.prompt.md
 
 Please implement task PHASE1-001: Set Up Test Environment
 ```
 
 Or for specific guidance:
 ```
-#file:.github/prompts/iconset-system-reference.md
+#file:documentation/iconset-system-reference.md
 
 How do I migrate an iconset to the new structure?
 ```
 
 ### For Human Developers
 
-1. **Read** `phase1-rewrite-foundation.instructions.md` (main plan)
+1. **Read** `phase1-rewrite-foundation.prompt.md` (main plan)
 2. **Start** with PHASE1-001 (test environment)
 3. **Work** through tasks sequentially
 4. **Update** task statuses as you progress
@@ -228,7 +228,7 @@ Phase 1 is **COMPLETE** when:
 ### Immediate Actions
 
 1. **Review the main plan**
-   - Read `phase1-rewrite-foundation.instructions.md`
+   - Read `phase1-rewrite-foundation.prompt.md`
    - Understand the 4 sub-phases
    - Review task dependencies
 
@@ -271,7 +271,7 @@ Related to: PHASE1-001"
 ## 📚 Reference Materials
 
 ### Must Read (in order)
-1. `phase1-rewrite-foundation.instructions.md` - Main plan
+1. `phase1-rewrite-foundation.prompt.md` - Main plan
 2. `README.md` - Quick reference
 3. `iconset-system-reference.md` - Iconset details
 4. `archive2-analysis.md` - What to avoid
@@ -353,7 +353,7 @@ Phase 4 (Later): Advanced Features
 
 ## 📞 Quick Links
 
-- **Main Plan**: `phase1-rewrite-foundation.instructions.md`
+- **Main Plan**: `phase1-rewrite-foundation.prompt.md`
 - **Quick Start**: `README.md`
 - **Iconset Guide**: `iconset-system-reference.md`
 - **What to Avoid**: `archive2-analysis.md`

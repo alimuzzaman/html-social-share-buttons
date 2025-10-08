@@ -1,113 +1,260 @@
-Copilot / Coding Agent Instructions
+# Copilot / Coding Agent Instructions
 
-- Preserve existing rules:
-  - **Always use GitHub MCP tools for Git/GitHub operations** - Never use terminal git commands directly. Use MCP tools like `mcp_github_github_push_files`, `mcp_github_github_create_branch`, `mcp_github_github_get_commit`, etc.
-  - Always use pnpm instead of npm.
-  - Always prioritise @wordpress/* packages when they provide appropriate functionality or integrations for WordPress admin UI work.
+## ⚠️ Critical Context: Phase 1 Ground-Up Rewrite
 
-## GitHub MCP Usage Guidelines
+**This WordPress plugin is being completely rewritten**. ALL existing code lives in `archive/` and `archive2/` directories. The root is empty except for documentation.
 
-When working with Git/GitHub operations in this repository:
+**MANDATORY FIRST STEPS:**
+1. Read `documentation/START-HERE.md` (5 min overview)
+2. Read `documentation/GETTING-STARTED.md` (setup requirements)
+3. Read `documentation/phase1-rewrite-foundation.prompt.md` (complete 33-task plan)
+4. Check `documentation/PROGRESS-TRACKER.md` (track your work)
 
-### ✅ DO use GitHub MCP tools:
-- `mcp_github_github_push_files` - Push multiple files in a single commit
-- `mcp_github_github_create_branch` - Create new branches
-- `mcp_github_github_list_commits` - View commit history
-- `mcp_github_github_get_commit` - Get commit details
-- `mcp_github_github_create_or_update_file` - Update single files
-- `mcp_github_github_list_branches` - List repository branches
-- Pull request tools via `activate_github_tools_pull_request_management`
-- Issue management tools via `activate_github_tools_issue_management`
+## 🏗️ Target Architecture (To Be Built)
 
-### ❌ DON'T use terminal git commands:
-- Avoid `git commit`, `git push`, `git branch`, etc.
-- GitHub MCP provides safer, more reliable operations
-- MCP tools handle authentication and error handling automatically
+```
+Root (currently empty - to be created):
+├── src/                         # PSR-4: HtmlSocialShare\
+│   ├── Core/Plugin.php          # Main plugin bootstrap
+│   ├── IconSystem/              # Icon registry, CSS generation
+│   ├── Renderers/               # HTML button rendering
+│   └── Options/                 # Settings management
+├── react-src/
+│   ├── admin-ui/                # React admin (Tailwind CSS)
+│   └── iconsets/{iconset}/      # CSS templates (source)
+├── build/
+│   ├── admin-ui/                # Compiled React
+│   └── iconsets/{iconset}/      # Generated CSS
+├── assets/iconset/{iconset}/    # PNG icons (author-uploaded)
+└── tests/                       # PHPUnit + Playwright
 
-### Commit workflow:
-1. Make changes to files using `create_file`, `replace_string_in_file`, etc.
-2. Update `CHANGELOG.md` with detailed change description
-3. Use `mcp_github_github_push_files` to commit all changes at once
-4. Include descriptive commit message following format: `[TASK-ID] Brief description`
-
-### Example MCP commit:
-```json
-{
-  "owner": "alimuzzaman",
-  "repo": "html-social-share-buttons",
-  "branch": "new-compatibility",
-  "files": [
-    {"path": "src/NewFile.php", "content": "..."},
-    {"path": "CHANGELOG.md", "content": "..."}
-  ],
-  "message": "[LEGACY-204] Implement content filter hooks"
-}
+Currently archived:
+├── archive/                     # v2.2.1 production code
+└── archive2/                    # Failed rewrite attempt (learn from mistakes)
 ```
 
-Quick summary (big picture)
-- This repository is a WordPress plugin with a PHP backend and a React-based admin UI under `src/admin-ui`.
-- Build artifacts are emitted to `build/` and enqueued by PHP (`src/Admin/ReactAdminInterface.php`). The admin app is localized via `hssAdminConfig` (contains `pluginUrl`, REST endpoints, nonce, etc.).
-- Frontend share button assets live under `assets/` (iconsets are uploaded/managed manually by the author). Blocks live under `src/Blocks`.
+## 🔧 System Requirements & Tools
 
-Developer workflows (must-know commands)
-- Install deps: `pnpm install`
-- Dev server (hot reload): `pnpm start` (uses `wp-scripts start`)
-- Build for production: `pnpm run build` (uses `wp-scripts build`)
-- Lint JS: `pnpm run lint` (wp-scripts lint-js), fix with `pnpm run lint:fix`
-- Test unit: `pnpm test` (wp-scripts test-unit-js) — repo currently reports no JS unit tests; use `--passWithNoTests` when required in CI.
-- E2E / Playwright: look at `playwright/` and scripts under `package.json` (e.g., `pnpm run test:e2e`).
+- **PHP**: 5.6-8.5+ (broad compatibility required)
+- **Package Manager**: `pnpm` ONLY (never npm/yarn)
+- **WordPress Test**: `wp-env` (required)
+- **Node.js**: 18+
+- **Composer**: For PSR-4 autoloading
 
-Project-specific conventions & patterns
-- Styling: Tailwind CSS (see `tailwind.config.js` and `src/admin-ui/index.css`). Use utility classes in components; avoid creating new global CSS unless necessary.
-  - Preferred input/button patterns are documented in `tasks/tailwind-implementation.md`.
-- Components: React components are organized under `src/admin-ui/components` with subfolders `ui/` and `tabs/`. Look at `FormFields.tsx`, `ValidatedFields.tsx`, `Tabs.tsx`, `ShareCountsTable.tsx` for canonical patterns.
-- Data & integration:
-  - REST calls use `rest_url('html-social-share/v1/')` and the admin app uses localized `hssAdminConfig` for endpoints and nonces (see `src/Admin/ReactAdminInterface.php`).
-  - WordPress packages used extensively: `@wordpress/components`, `@wordpress/i18n`, `@wordpress/api-fetch`, `@wordpress/element`, etc. Prefer these for WP-specific functionality where appropriate.
+### Essential Commands
 
-Icon policy (explicit)
-- Admin UI should prefer icons from `@wordpress/icons` when available.
-- If a matching `@wordpress/icons` export is not available, fall back to `lucide-react` imports (tree-shakable; include only imports used).
-- Do NOT add new generic icon libraries for iconsets that are plugin assets. The plugin author will upload hand-picked icons into `assets/iconset/` — access those at runtime via `hssAdminConfig.pluginUrl + 'assets/iconset/<set>/<name>.png'` rather than bundling them.
-- **CRITICAL**: Frontend share buttons MUST load icons ONLY from `assets/iconset/` directory. NEVER use inline SVG, embedded icons, or any other icon sources for frontend display. Always ensure the IconRegistry loads PNG images from assets/iconset and renders them via CSS background-image, never as inline SVG elements.
-- If frontend is showing SVG icons instead of PNG from assets/iconset, this is a BUG that must be fixed immediately. Check IconRegistry.php and ensure it's not falling back to builtin SVG mode.
+```bash
+# Setup
+pnpm install && composer install
+pnpm run wp-env start
 
-Files & locations to inspect first (fast ramp)
-- `src/admin-ui/` — React app and components (start here)
-- `src/admin-ui/components/ui/` — shared UI primitives (FormField, Button, LoadingSpinner, AdminIcon)
-- `src/Admin/ReactAdminInterface.php` — where assets are enqueued and `hssAdminConfig` is localized; critical for runtime paths
-- `tailwind.config.js` and `src/admin-ui/index.css` — how Tailwind is configured and included
-- `tasks/tailwind-implementation.md` — design system and Tailwind conversion decisions
-- `assets/iconset/` — icon uploads (author-managed)
-- `package.json` — build and test scripts (use pnpm)
+# Development  
+pnpm run dev                    # Watch mode
+pnpm run build                  # Production
+pnpm run build:iconsets         # Compile iconset CSS
 
-Behavioral guidance for AI edits
-- Preserve WordPress integration points: do not remove or rename localized keys (e.g., `hssAdminConfig`) or REST endpoints.
-- When adding dependencies prefer `@wordpress/*` first; add `lucide-react` as a secondary, tree-shakable fallback only when necessary.
-- For UI changes prefer adding Tailwind utility classes to components over new CSS files; match the patterns in `ui/` components.
-- When changing public PHP hooks or REST route names, update their usages in `src/admin-ui` and the localization payloads consistently.
+# Testing (TDD required!)
+composer test                   # PHP unit + integration
+pnpm test                       # JS tests
+pnpm run test:e2e              # Playwright E2E
+pnpm run test:visual           # Visual regression
 
-Testing & CI notes
-- Unit tests are JS-only through `wp-scripts`; there are currently no JS unit tests by default.
-- E2E tests use Playwright; review `playwright/` setup and `tests/playwright` scripts before adding tests.
+# Linting
+pnpm run lint:js:fix
+composer run lint:fix
+```
 
-Behavioral testing rule (TDD-first)
-- Write unit tests first before writing code or implementing a feature. Prefer adding a failing unit test that asserts the desired behavior, then implement the minimal change to make the test pass. Update or add tests for regressions and edge cases when refactoring.
+## 🎨 Icon System Architecture (CRITICAL)
 
-Component decomposition rule (maintainability-first)
-- Always break larger components into multiple smaller ones. Components over 200-300 lines should be decomposed into smaller, focused components with single responsibilities.
-- Prefer extracting reusable UI elements (items, rows, cards, etc.) into separate component files.
-- Create a subdirectory for complex features (e.g., `tabs/networks/` for NetworksTab components).
-- Export subcomponents through an index.ts barrel file for clean imports.
-- This approach improves maintainability, testability, and reduces risk of file corruption during edits.
+**The plugin uses PNG icons with CSS background-image (NO SVG in frontend):**
 
-Example quick tasks (how you would perform them)
-- Replace a WordPress class in UI with Tailwind: edit `src/admin-ui/components/App.tsx` and remove `wp-heading-inline` -> replace with `text-2xl font-semibold` (see `FormFields.tsx` for examples).
-- Add a new admin icon: prefer `AdminIcon` wrapper in `src/admin-ui/components/ui/Icons.tsx` with candidates pointing to the likely `@wordpress/icons` export; pass a `lucide` element for fallback.
-- Add a new iconset asset: upload the image to `assets/iconset/<set>/<network>.png`; the admin UI will load it via `hssAdminConfig.pluginUrl`.
+```
+Source (author creates):
+  react-src/iconsets/{iconset}/
+    ├── variables.css            # Colors, sizes
+    ├── template.css             # CSS rules
+    └── README.md
 
-When to ask maintainers for help
-- If you need to add or change a localized key in PHP (e.g., new `hssAdminConfig` field), request confirmation — those values are relied on by runtime UI code.
-- If you plan to add a third-party dependency, document size and reason, and get explicit approval — this repo prefers minimal deps.
+Build (automated):
+  pnpm run build:iconsets →
+  build/iconsets/{iconset}/style.css
 
-If anything in these instructions is unclear or missing (for example you want a strict mapping from network IDs to WP icon export names, or a preferred iconset folder name), tell me which part to expand and I will update this file.
+Runtime (author uploads):
+  assets/iconset/{iconset}/
+    ├── facebook.png
+    └── twitter.png
+
+Frontend loads: build/iconsets/{iconset}/style.css
+CSS references: assets/iconset/{iconset}/*.png
+```
+
+**Rules:**
+- Frontend icons: ONLY PNG from `assets/iconset/` via CSS background-image
+- Admin icons: Prefer `@wordpress/icons`, fallback to `lucide-react`
+- If frontend shows SVG = BUG (check IconRegistry.php)
+
+## 📋 Workflow: Task-Based Development
+
+**Phase 1 = 33 atomic tasks**. Each task = one commit.
+
+```bash
+# 1. Pick next task from phase1-rewrite-foundation.instructions.md
+# 2. Mark "IN PROGRESS" in PROGRESS-TRACKER.md
+# 3. Write tests FIRST (TDD)
+# 4. Implement per checklist
+# 5. Run tests, verify pass
+# 6. Update PROGRESS-TRACKER.md (date, commit hash)
+# 7. Update CHANGELOG.md
+# 8. Commit: [PHASE1-XXX] Description
+```
+
+## 🔄 Git Operations (GitHub MCP Tools ONLY)
+
+**NEVER use terminal git commands** (`git commit`, `git push`, etc.).
+
+Use MCP tools:
+- `mcp_gitkraken_git_add_or_commit` - Stage & commit
+- `mcp_gitkraken_git_push` - Push
+- `mcp_gitkraken_git_status` - Check status
+- `mcp_gitkraken_git_branch` - Create/list branches
+
+**Commit format**: `[PHASE1-XXX] Brief description`
+
+## 🧪 Testing Philosophy (Test-First)
+
+**Phase 1A (tasks 1-8) MUST be completed before writing ANY new code:**
+1. Document current HTML output from archived code
+2. Create visual regression baselines (Playwright screenshots)
+3. Write unit tests capturing current behavior
+4. Test all iconsets, placements, shortcodes
+
+**Why**: New code must produce IDENTICAL output to v2.2.1
+
+**Test types**:
+- Unit (PHPUnit): Individual methods, pure logic
+- Integration (PHPUnit): Database, WordPress hooks
+- E2E (Playwright): Full user workflows
+- Visual (Playwright): Pixel-perfect output matching
+
+## 🎯 Code Standards
+
+**PHP**:
+- PSR-4: `HtmlSocialShare\` namespace
+- PHP 5.6+ compatible (no typed properties, use docblocks)
+- WordPress Coding Standards
+- 80%+ test coverage
+
+**JavaScript/React**:
+- TypeScript preferred
+- Tailwind CSS (utility-first, no custom CSS unless necessary)
+- `@wordpress/components`, `@wordpress/i18n`, `@wordpress/api-fetch`
+- Components: Small (<300 lines), single responsibility
+- Decompose complex components into subdirectories (e.g., `tabs/networks/`)
+
+## 📦 Dependencies
+
+**Prefer WordPress packages first:**
+- `@wordpress/components` - UI
+- `@wordpress/icons` - Icons
+- `@wordpress/i18n` - Translations
+- `@wordpress/api-fetch` - REST calls
+
+**Fallbacks:**
+- `lucide-react` - Icons only when `@wordpress/icons` lacks it (tree-shakable)
+
+**Never add:**
+- Generic icon libraries (icons come from `assets/iconset/`)
+- Heavy frameworks duplicating WordPress functionality
+
+## 🛠️ Utility Scripts Pattern
+
+For repetitive tasks, write focused Node.js scripts in `scripts/`:
+
+```javascript
+// Example: scripts/generate-iconset-manifest.js
+// Scans assets/iconset/ and generates metadata
+
+// Example: scripts/validate-icons.js  
+// Checks all iconsets have required networks
+
+// Example: scripts/migrate-options.js
+// Tests options migration from v2.2.1 format
+```
+
+**Use for**: Bulk operations, validation, code generation, migrations
+
+## 📚 Key Reference Files
+
+**Understand current behavior (archived):**
+- `archive/html-social-share.php` - Main plugin class, hooks
+- `archive/iconsets.php` - Icon registry, CSS injection
+- `archive/shortcode.php` - Shortcode handler
+- `archive/widget.php` - Widget implementation
+- `archive/iconset/*/ssb.php` - Iconset class definitions
+
+**Phase 1 documentation (your blueprint):**
+- `documentation/phase1-rewrite-foundation.prompt.md` - 33 tasks with checklists
+- `documentation/architecture-diagrams.md` - Visual before/after
+- `documentation/iconset-system-reference.md` - Icon system deep-dive
+- `documentation/archive2-analysis.md` - What NOT to do (failed attempt)
+
+**Options structure** (must maintain compatibility):
+```php
+// Current v2.2.1 flat structure (DO NOT CHANGE)
+array(
+  'title' => 'Share this...',
+  'iconset' => 'default',
+  'show_in' => array('show_left' => 'square', ...),
+  'icons' => array('facebook' => '1', ...)
+)
+```
+
+## 🚨 Critical Rules
+
+**MUST DO:**
+- Write tests before implementation (TDD)
+- Support PHP 5.6-8.5+
+- Use `pnpm`, not npm
+- Use `wp-env` for testing
+- Use GitHub MCP tools for git
+- Maintain identical frontend HTML/CSS output
+- Commit atomically (1 task = 1 commit)
+
+**MUST NOT:**
+- Skip Phase 1A tests (tasks 1-8)
+- Change frontend output format
+- Use inline SVG for frontend icons
+- Mix archived code with new code
+- Use terminal git commands
+- Add heavy dependencies without approval
+
+## 💬 When to Ask
+
+**Ask maintainer:**
+- Need to change `hssAdminConfig` localized keys (breaks admin UI)
+- Want to add third-party dependency (document size/reason)
+- Unclear task dependencies or success criteria
+
+**Debug first:**
+- Read error messages fully
+- Check related test files
+- Consult `.github/prompts/archive2-analysis.md` for anti-patterns
+- Review similar implementations in `archive/`
+
+## 📝 Documentation Requirements
+
+**Update on every commit:**
+1. `CHANGELOG.md` - What changed, why
+2. `PROGRESS-TRACKER.md` - Task status, date, commit hash
+3. PHPDoc/JSDoc - Inline code documentation
+4. Test comments - Assertions and edge cases
+
+---
+
+**Remember**: This is a complete rewrite maintaining 100% backward compatibility. The archived v2.2.1 code still works - your job is to rebuild it with modern architecture while producing identical output. Read the Phase 1 plan, test first, commit atomically. 🚀
+
+---
+
+*Last Updated: October 8, 2025*  
+*Phase 1 Rewrite - Fresh Start*  
+*WordPress Plugin: HTML Social Share Buttons v3.0.0*

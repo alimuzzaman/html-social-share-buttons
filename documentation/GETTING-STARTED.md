@@ -6,9 +6,9 @@ Before starting PHASE1-001, ensure you have:
 
 ### Required Software
 
-- [ ] **PHP 8.0+** installed
+- [ ] **PHP 5.6 - 8.5+** installed (broad compatibility)
   ```bash
-  php -v  # Should show 8.0 or higher
+  php -v  # Should show 5.6 or higher
   ```
 
 - [ ] **Composer** installed
@@ -16,10 +16,10 @@ Before starting PHASE1-001, ensure you have:
   composer --version
   ```
 
-- [ ] **Node.js 18+** and npm
+- [ ] **Node.js 18+** and pnpm
   ```bash
   node -v  # Should show v18 or higher
-  npm -v
+  pnpm -v  # Install: npm install -g pnpm
   ```
 
 - [ ] **Git** installed
@@ -29,19 +29,10 @@ Before starting PHASE1-001, ensure you have:
 
 ### WordPress Test Environment
 
-Choose one:
-
-- [ ] **Option A: wp-env** (Recommended)
+- [ ] **wp-env** (Required)
   ```bash
-  npm install -g @wordpress/env
+  pnpm install -g @wordpress/env
   ```
-
-- [ ] **Option B: Local by Flywheel**
-  - Download from https://localwp.com/
-
-- [ ] **Option C: Docker + WordPress**
-  - Docker Desktop installed
-  - docker-compose available
 
 ### Code Quality Tools
 
@@ -511,7 +502,7 @@ This task involves:
 4. Creating fixtures
 5. Documenting patterns
 
-See `phase1-rewrite-foundation.instructions.md` for details.
+See `phase1-rewrite-foundation.prompt.md` for details.
 
 ## 🚨 Common Issues & Solutions
 
@@ -582,6 +573,6 @@ composer phpstan
 
 You're now ready to begin Phase 1 implementation!
 
-**Next:** Open `phase1-rewrite-foundation.instructions.md` and start with PHASE1-001.
+**Next:** Open `phase1-rewrite-foundation.prompt.md` and start with PHASE1-001.
 
 Good luck! 🚀

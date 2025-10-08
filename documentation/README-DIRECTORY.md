@@ -11,21 +11,30 @@ This directory contains comprehensive documentation for the complete ground-up r
 | File | Purpose | When to Read |
 |------|---------|--------------|
 | **[START-HERE.md](START-HERE.md)** | **Your entry point** | Read this first! |
+| [DOCUMENTATION-UPDATES.md](DOCUMENTATION-UPDATES.md) | Recent changes | After reading START-HERE |
 | [INDEX.md](INDEX.md) | Master navigation | Reference anytime |
 | [PACKAGE-SUMMARY.md](PACKAGE-SUMMARY.md) | Executive overview | Understanding the plan |
 | [README.md](README.md) | Quick reference | Quick lookups |
+| [README-DIRECTORY.md](README-DIRECTORY.md) | This directory guide | Understanding docs |
 | [GETTING-STARTED.md](GETTING-STARTED.md) | Setup guide | Before coding |
 | [PROGRESS-TRACKER.md](PROGRESS-TRACKER.md) | Task checklist | Track your progress |
-| [phase1-rewrite-foundation.instructions.md](phase1-rewrite-foundation.instructions.md) | Complete plan (150+ pages) | During implementation |
+| [phase1-rewrite-foundation.prompt.md](phase1-rewrite-foundation.prompt.md) | Complete plan (150+ pages) | During implementation |
 | [architecture-diagrams.md](architecture-diagrams.md) | Visual guide | Understanding architecture |
 | [iconset-system-reference.md](iconset-system-reference.md) | Iconset deep dive | Working with iconsets |
 | [archive2-analysis.md](archive2-analysis.md) | What to avoid | Before making decisions |
+
+### 📂 Related Files
+
+| File | Purpose |
+|------|---------|
+| **[../.github/copilot-instructions.md](../.github/copilot-instructions.md)** | Main copilot instructions |
+| [archive/](archive/) | Old prompt files (7 archived) |
 
 ## ⚡ Quick Links
 
 - 👉 **Getting Started:** [GETTING-STARTED.md](GETTING-STARTED.md)
 - 📋 **Track Progress:** [PROGRESS-TRACKER.md](PROGRESS-TRACKER.md)
-- 📖 **Main Plan:** [phase1-rewrite-foundation.instructions.md](phase1-rewrite-foundation.instructions.md)
+- 📖 **Main Plan:** [phase1-rewrite-foundation.prompt.md](phase1-rewrite-foundation.prompt.md)
 - 🏗️ **Architecture:** [architecture-diagrams.md](architecture-diagrams.md)
 
 ## 🎯 What This Is
@@ -37,13 +46,18 @@ A **complete, production-ready plan** for rewriting the plugin from scratch whil
 - **150-190 hours** estimated time
 - **Test-first approach** (no regressions)
 - **Modern PSR-4 architecture**
+- **PHP 5.6-8.5+ support** (broad compatibility)
+- **Use pnpm** (not npm)
+- **Use wp-env** for testing
+- **Write utility scripts** for repetitive tasks
 
 ### What Phase 1 Achieves
 ✅ Identical frontend output (HTML/CSS)  
 ✅ Modern, testable codebase  
-✅ Unified iconset system  
+✅ Unified iconset system (react-src → build)  
 ✅ Comprehensive test coverage  
 ✅ Zero breaking changes  
+✅ Archive policy (all old code in archive/)  
 
 ## 🚦 How to Use This
 
@@ -57,7 +71,7 @@ A **complete, production-ready plan** for rewriting the plugin from scratch whil
 ### For AI Coding Agents
 Reference files in your prompts:
 ```
-#file:.github/prompts/phase1-rewrite-foundation.instructions.md
+#file:documentation/phase1-rewrite-foundation.prompt.md
 
 Implement task PHASE1-XXX
 ```
@@ -77,10 +91,15 @@ Check [INDEX.md](INDEX.md) for topic-based navigation.
 
 Make sure you have:
 - [ ] Read START-HERE.md
+- [ ] Read DOCUMENTATION-UPDATES.md
+- [ ] Read `.github/copilot-instructions.md`
 - [ ] Read GETTING-STARTED.md
-- [ ] PHP 8.0+, Composer, Node.js installed
-- [ ] Test environment ready
+- [ ] PHP 5.6-8.5+, Composer, Node.js, pnpm installed
+- [ ] wp-env ready
+- [ ] Test environment working
 - [ ] PROGRESS-TRACKER.md open
+- [ ] Understand archive policy (code in archive/)
+- [ ] Ready to write utility scripts in scripts/
 
 ## 🎉 What's Included
 
@@ -123,7 +142,7 @@ Make sure you have:
 → [PROGRESS-TRACKER.md](PROGRESS-TRACKER.md)
 
 **Need task details?**  
-→ [phase1-rewrite-foundation.instructions.md](phase1-rewrite-foundation.instructions.md)
+→ [phase1-rewrite-foundation.prompt.md](phase1-rewrite-foundation.prompt.md)
 
 **Need visual explanation?**  
 → [architecture-diagrams.md](architecture-diagrams.md)

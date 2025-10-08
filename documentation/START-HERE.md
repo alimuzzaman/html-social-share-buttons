@@ -4,17 +4,35 @@
 
 I've created a **comprehensive, production-ready plan** for rewriting your HTML Social Share Buttons WordPress plugin from the ground up.
 
-### 📚 8 Complete Documents (~220 pages)
+### 📚 11 Complete Documents (~240 pages)
 
-1. **INDEX.md** - Master navigation hub
-2. **PACKAGE-SUMMARY.md** - Executive overview
-3. **README.md** - Quick reference guide
-4. **GETTING-STARTED.md** - Step-by-step setup ⭐ NEW
-5. **phase1-rewrite-foundation.instructions.md** - Complete implementation plan (150+ pages)
-6. **architecture-diagrams.md** - Visual architecture guide
-7. **iconset-system-reference.md** - Iconset system deep dive
-8. **archive2-analysis.md** - Lessons learned from first attempt
-9. **PROGRESS-TRACKER.md** - Task tracking checklist ⭐ NEW
+1. **START-HERE.md** - This file! Your entry point ⭐
+2. **INDEX.md** - Master navigation hub
+3. **GETTING-STARTED.md** - Step-by-step setup (UPDATED) ⭐
+4. **PROGRESS-TRACKER.md** - Task tracking checklist ⭐
+5. **DOCUMENTATION-UPDATES.md** - Recent changes (NEW) ⭐
+6. **PACKAGE-SUMMARY.md** - Executive overview
+7. **README.md** - Quick reference guide
+8. **README-DIRECTORY.md** - Prompts directory guide
+9. **phase1-rewrite-foundation.prompt.md** - Complete plan (150+ pages, UPDATED)
+10. **architecture-diagrams.md** - Visual architecture guide
+11. **iconset-system-reference.md** - Iconset system deep dive (UPDATED)
+12. **archive2-analysis.md** - Lessons learned from first attempt
+
+### 🎯 Plus New Copilot Instructions
+
+**`.github/copilot-instructions.md`** - Complete coding agent instructions (NEW)
+- System requirements (PHP 5.6-8.5+)
+- Package manager (pnpm only)
+- Test environment (wp-env)
+- Archive policy
+- Utility scripts guidance
+- Git operations (GitHub MCP tools)
+
+### 📦 Archived Old Files
+
+- `.github/copilot-instructions.old.md` - Old version archived
+- `documentation/archive/` - 7 old prompt files archived
 
 ## 🚀 Your Next Steps (Right Now)
 
@@ -22,7 +40,7 @@ I've created a **comprehensive, production-ready plan** for rewriting your HTML 
 
 ```bash
 # 1. Navigate to prompts directory
-cd .github/prompts/
+cd documentation/
 
 # 2. Read the getting started guide
 cat GETTING-STARTED.md
@@ -33,24 +51,35 @@ cat GETTING-STARTED.md
 
 ### Step-by-Step Guide
 
-**Step 1: Read Documentation (30 min)**
-1. Open `PACKAGE-SUMMARY.md` - Get the big picture
-2. Open `GETTING-STARTED.md` - See what you need to do
-3. Keep `PROGRESS-TRACKER.md` open - Track your progress
+**Step 1: Read Documentation (45 min)**
+1. Open `documentation/DOCUMENTATION-UPDATES.md` - See what changed ⭐ NEW
+2. Open `.github/copilot-instructions.md` - Review coding guidelines ⭐ NEW
+3. Open `documentation/PACKAGE-SUMMARY.md` - Get the big picture
+4. Open `documentation/GETTING-STARTED.md` - See setup requirements
+5. Keep `documentation/PROGRESS-TRACKER.md` open - Track your progress
 
 **Step 2: Set Up Environment (1 hour)**
 Follow every step in `GETTING-STARTED.md`:
-- Install prerequisites (PHP, Composer, Node.js)
-- Set up wp-env
+- Install prerequisites (PHP 5.6-8.5+, Composer, Node.js, pnpm)
+- Set up wp-env (required)
 - Configure PHPUnit
 - Configure Playwright
 - Verify everything works
 
-**Step 3: Start Implementation (150-190 hours)**
-1. Open `phase1-rewrite-foundation.instructions.md`
+**Step 3: Understand Archive Policy**
+- All current code is in `archive/` directory
+- Don't modify archived code
+- Test files can stay in root during testing
+- Must archive before writing production code
+- Write utility scripts in `scripts/` for repetitive tasks
+
+**Step 4: Start Implementation (150-190 hours)**
+1. Open `documentation/phase1-rewrite-foundation.prompt.md`
 2. Start with PHASE1-001
-3. Update `PROGRESS-TRACKER.md` as you go
-4. Commit after each task
+3. Update `documentation/PROGRESS-TRACKER.md` as you go
+4. Use GitHub MCP tools for git operations (not terminal)
+5. Write small Node.js utility scripts for repetitive tasks
+6. Commit after each task: `[PHASE1-XXX] Task description`
 
 ## 📊 What Phase 1 Achieves
 
@@ -76,17 +105,24 @@ Follow every step in `GETTING-STARTED.md`:
 
 ## 🎯 Key Documents Quick Reference
 
+### For Recent Changes
+👉 **DOCUMENTATION-UPDATES.md** - What changed in this update
+
+### For Coding Guidelines
+👉 **`.github/copilot-instructions.md`** - Complete instructions for AI agents
+
 ### For Getting Started
-👉 **GETTING-STARTED.md** - Your step-by-step setup guide
+👉 **GETTING-STARTED.md** - Setup with PHP 5.6-8.5+, pnpm, wp-env
 
 ### For Implementation
-👉 **phase1-rewrite-foundation.instructions.md** - The complete plan
+👉 **phase1-rewrite-foundation.prompt.md** - The complete 33-task plan
 
 ### For Tracking Progress
 👉 **PROGRESS-TRACKER.md** - Check off tasks as you go
 
 ### For Understanding
 👉 **architecture-diagrams.md** - See the before/after visually
+👉 **iconset-system-reference.md** - react-src → build flow
 
 ### For Avoiding Mistakes
 👉 **archive2-analysis.md** - Learn from past attempts
@@ -95,19 +131,19 @@ Follow every step in `GETTING-STARTED.md`:
 
 ```bash
 # Read the master index
-cat .github/prompts/INDEX.md
+cat documentation/INDEX.md
 
 # Get started
-cat .github/prompts/GETTING-STARTED.md
+cat documentation/GETTING-STARTED.md
 
 # Track progress
-open .github/prompts/PROGRESS-TRACKER.md
+open documentation/PROGRESS-TRACKER.md
 
 # Read main plan
-cat .github/prompts/phase1-rewrite-foundation.instructions.md
+cat documentation/phase1-rewrite-foundation.prompt.md
 
 # See architecture
-cat .github/prompts/architecture-diagrams.md
+cat documentation/architecture-diagrams.md
 ```
 
 ## 🎓 Learning Paths
@@ -235,13 +271,13 @@ Phase 1 is complete when:
 
 All documentation is in:
 ```
-.github/prompts/
+documentation/
 ├── INDEX.md
 ├── PACKAGE-SUMMARY.md
 ├── README.md
 ├── GETTING-STARTED.md ⭐
 ├── PROGRESS-TRACKER.md ⭐
-├── phase1-rewrite-foundation.instructions.md
+├── phase1-rewrite-foundation.prompt.md
 ├── architecture-diagrams.md
 ├── iconset-system-reference.md
 └── archive2-analysis.md
@@ -302,7 +338,7 @@ Before you begin:
 
 Good luck! The documentation has everything you need.
 
-**Start here:** `.github/prompts/GETTING-STARTED.md`
+**Start here:** `documentation/GETTING-STARTED.md`
 
 ---
 

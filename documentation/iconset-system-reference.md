@@ -39,13 +39,35 @@ iconset/
 ## 🎯 New Structure (After Phase 1)
 
 ```
-assets/iconset/
-  default_square/              # Iconset + type combined
+react-src/iconsets/            # Source files (CSS templates)
+  default_square/
+    variables.css              # Color/size variables
+    template.css               # CSS template with rules
+    README.md                  # Documentation
+  flat_square/
+    variables.css
+    template.css
+  flat_circle/
+    variables.css
+    template.css
+  long_shadow_square/
+    variables.css
+    template.css
+  long_shadow_circle/
+    variables.css
+    template.css
+  prajin_square/
+    variables.css
+    template.css
+  prajin_circle/
+    variables.css
+    template.css
+
+assets/iconset/                # Runtime PNG images (author-managed)
+  default_square/
     facebook.png
     twitter.png
     linkedin.png
-    style.css                  # Optional: custom CSS
-    metadata.json              # Optional: iconset info
   flat_square/
     *.png
   flat_circle/
@@ -59,14 +81,21 @@ assets/iconset/
   prajin_circle/
     *.png
 
-build/iconset/                 # Generated CSS output
-  default_square.css
-  flat_square.css
-  flat_circle.css
-  long_shadow_square.css
-  long_shadow_circle.css
-  prajin_square.css
-  prajin_circle.css
+build/iconsets/                # Generated CSS output
+  default_square/
+    style.css
+  flat_square/
+    style.css
+  flat_circle/
+    style.css
+  long_shadow_square/
+    style.css
+  long_shadow_circle/
+    style.css
+  prajin_square/
+    style.css
+  prajin_circle/
+    style.css
 ```
 
 ## 🔄 Key Changes
@@ -83,14 +112,28 @@ build/iconset/                 # Generated CSS output
 
 ## 🏗️ Build Process
 
-### PHP Generation
+### Node.js Build Script
 
-```php
-// IconsetBuilder scans assets/iconset/
-foreach ($iconsets as $iconset) {
-    $css = generateIconsetCss($iconset);
-    file_put_contents("build/iconset/{$iconset}.css", $css);
-}
+```javascript
+// scripts/build-iconsets.js
+// 1. Scan react-src/iconsets/ for CSS templates
+// 2. Process variables.css + template.css
+// 3. Generate build/iconsets/{iconset}/style.css
+// 4. CSS references assets/iconset/{iconset}/*.png for images
+
+const iconsets = scanDirectory('react-src/iconsets/');
+iconsets.forEach(iconset => {
+    const css = compileIconsetCss(iconset);
+    writeFile(`build/iconsets/${iconset}/style.css`, css);
+});
+```
+
+### Or PostCSS/Webpack
+
+```javascript
+// webpack.config.js or similar
+// Process CSS templates from react-src/iconsets/
+// Output to build/iconsets/
 ```
 
 ### Generated CSS Example
@@ -372,4 +415,4 @@ class IconRegistryTest extends TestCase {
 
 ---
 
-**Next Steps**: Read the main plan in `phase1-rewrite-foundation.instructions.md` for complete implementation details.
+**Next Steps**: Read the main plan in `phase1-rewrite-foundation.prompt.md` for complete implementation details.

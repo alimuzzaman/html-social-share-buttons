@@ -121,27 +121,49 @@ class zm_sh_iconset_default extends __iconset_parent_class {
 </div>
 ```
 
-### Future Iconset System (archive2/assets/iconset)
+### New Iconset System Structure
 
-**New Structure:**
+**Source Files (CSS Templates):**
+```
+react-src/iconsets/
+  default_square/
+    variables.css    # Color/size variables
+    template.css     # CSS template with rules
+    README.md        # Documentation
+  flat_circle/
+    variables.css
+    template.css
+```
+
+**Runtime Assets (PNG Images):**
 ```
 assets/iconset/
   default_square/
     facebook.png
     twitter.png
-    style.css        # Hand-crafted or auto-generated
+    linkedin.png
   flat_circle/
     facebook.png
     twitter.png
+```
+
+**Build Output:**
+```
+build/iconsets/
+  default_square/
+    style.css        # Compiled from react-src
+  flat_circle/
     style.css
 ```
 
 **Build Process:**
 ```
-1. PNG images in assets/iconset/{iconset}/
-2. Generate CSS from images + PHP code
-3. Output to build/iconset/{iconset}.css
-4. Frontend loads: build/iconset/{iconset}.css
+1. Author creates CSS templates in react-src/iconsets/{iconset}/
+2. Author uploads PNG images to assets/iconset/{iconset}/
+3. Build: pnpm run build:iconsets
+4. Output: build/iconsets/{iconset}/style.css
+5. Frontend loads CSS from build/iconsets/{iconset}/style.css
+6. CSS references PNG images from assets/iconset/{iconset}/*.png
 ```
 
 ## 🚫 What We Don't Like About archive2/
