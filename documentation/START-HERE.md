@@ -32,14 +32,14 @@ I've created a **comprehensive, production-ready plan** for rewriting your HTML 
 ### 📦 Archived Old Files
 
 - `.github/copilot-instructions.old.md` - Old version archived
-- `documentation/archive/` - 7 old prompt files archived
+- `.github/prompts/archive/` - 7 old prompt files archived
 
 ## 🚀 Your Next Steps (Right Now)
 
 ### Immediate Action Plan
 
 ```bash
-# 1. Navigate to prompts directory
+# 1. Navigate to documentation directory
 cd documentation/
 
 # 2. Read the getting started guide
@@ -52,11 +52,11 @@ cat GETTING-STARTED.md
 ### Step-by-Step Guide
 
 **Step 1: Read Documentation (45 min)**
-1. Open `documentation/DOCUMENTATION-UPDATES.md` - See what changed ⭐ NEW
+1. Open `DOCUMENTATION-UPDATES.md` - See what changed ⭐ NEW
 2. Open `.github/copilot-instructions.md` - Review coding guidelines ⭐ NEW
-3. Open `documentation/PACKAGE-SUMMARY.md` - Get the big picture
-4. Open `documentation/GETTING-STARTED.md` - See setup requirements
-5. Keep `documentation/PROGRESS-TRACKER.md` open - Track your progress
+3. Open `PACKAGE-SUMMARY.md` - Get the big picture
+4. Open `GETTING-STARTED.md` - See setup requirements
+5. Keep `PROGRESS-TRACKER.md` open - Track your progress
 
 **Step 2: Set Up Environment (1 hour)**
 Follow every step in `GETTING-STARTED.md`:
@@ -74,9 +74,9 @@ Follow every step in `GETTING-STARTED.md`:
 - Write utility scripts in `scripts/` for repetitive tasks
 
 **Step 4: Start Implementation (150-190 hours)**
-1. Open `documentation/phase1-rewrite-foundation.prompt.md`
+1. Open `phase1-rewrite-foundation.prompt.md`
 2. Start with PHASE1-001
-3. Update `documentation/PROGRESS-TRACKER.md` as you go
+3. Update `PROGRESS-TRACKER.md` as you go
 4. Use GitHub MCP tools for git operations (not terminal)
 5. Write small Node.js utility scripts for repetitive tasks
 6. Commit after each task: `[PHASE1-XXX] Task description`
@@ -140,7 +140,7 @@ cat documentation/GETTING-STARTED.md
 open documentation/PROGRESS-TRACKER.md
 
 # Read main plan
-cat documentation/phase1-rewrite-foundation.prompt.md
+cat .github/prompts/phase1-rewrite-foundation.prompt.md
 
 # See architecture
 cat documentation/architecture-diagrams.md
@@ -269,7 +269,7 @@ Phase 1 is complete when:
 
 ## 🔗 File Locations
 
-All documentation is in:
+Documentation is in:
 ```
 documentation/
 ├── INDEX.md
@@ -277,10 +277,13 @@ documentation/
 ├── README.md
 ├── GETTING-STARTED.md ⭐
 ├── PROGRESS-TRACKER.md ⭐
-├── phase1-rewrite-foundation.prompt.md
 ├── architecture-diagrams.md
 ├── iconset-system-reference.md
 └── archive2-analysis.md
+
+.github/prompts/
+├── phase1-rewrite-foundation.prompt.md ⭐
+└── archive/
 ```
 
 ## 🎁 Bonus: What's NOT in Phase 1

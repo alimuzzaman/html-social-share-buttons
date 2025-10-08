@@ -71,7 +71,7 @@ A **complete, production-ready plan** for rewriting the plugin from scratch whil
 ### For AI Coding Agents
 Reference files in your prompts:
 ```
-#file:documentation/phase1-rewrite-foundation.prompt.md
+#file:.github/prompts/phase1-rewrite-foundation.prompt.md
 
 Implement task PHASE1-XXX
 ```

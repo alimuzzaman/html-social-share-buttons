@@ -164,7 +164,7 @@ Request → Get Options → Get Iconset → Loop Icons → Generate HTML
 Reference the prompt file when asking for implementation:
 
 ```
-#file:documentation/phase1-rewrite-foundation.prompt.md
+#file:.github/prompts/phase1-rewrite-foundation.prompt.md
 
 Please implement task PHASE1-001: Set Up Test Environment
 ```

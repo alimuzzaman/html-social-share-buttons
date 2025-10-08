@@ -112,7 +112,7 @@ IconsetBuilder scans assets/iconset/
 
 Reference the prompt file:
 ```
-#file:documentation/phase1-rewrite-foundation.prompt.md
+#file:.github/prompts/phase1-rewrite-foundation.prompt.md
 
 Please implement task PHASE1-XXX
 ```

@@ -502,7 +502,7 @@ This task involves:
 4. Creating fixtures
 5. Documenting patterns
 
-See `phase1-rewrite-foundation.prompt.md` for details.
+See `.github/prompts/phase1-rewrite-foundation.prompt.md` for details.
 
 ## 🚨 Common Issues & Solutions
 
@@ -573,6 +573,6 @@ composer phpstan
 
 You're now ready to begin Phase 1 implementation!
 
-**Next:** Open `phase1-rewrite-foundation.prompt.md` and start with PHASE1-001.
+**Next:** Open `.github/prompts/phase1-rewrite-foundation.prompt.md` and start with PHASE1-001.
 
 Good luck! 🚀

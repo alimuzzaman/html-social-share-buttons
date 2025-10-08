@@ -377,7 +377,7 @@ _Repeat as needed_
 
 ## 📚 Resources Used
 
-- [ ] phase1-rewrite-foundation.prompt.md
+- [ ] .github/prompts/phase1-rewrite-foundation.prompt.md
 - [ ] GETTING-STARTED.md
 - [ ] architecture-diagrams.md
 - [ ] iconset-system-reference.md

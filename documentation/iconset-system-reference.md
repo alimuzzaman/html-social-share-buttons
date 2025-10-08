@@ -415,4 +415,4 @@ class IconRegistryTest extends TestCase {
 
 ---
 
-**Next Steps**: Read the main plan in `phase1-rewrite-foundation.prompt.md` for complete implementation details.
+**Next Steps**: Read the main plan in `.github/prompts/phase1-rewrite-foundation.prompt.md` for complete implementation details.

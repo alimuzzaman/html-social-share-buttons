@@ -65,6 +65,10 @@ If you're new to this project, read these files **in this order**:
 ├── copilot-instructions.md ← Main copilot instructions (NEW!)
 ├── copilot-instructions.old.md ← Archived old version
 └── prompts/
+    ├── phase1-rewrite-foundation.prompt.md ← Main plan (UPDATED)
+    └── archive/ ← Old prompt files (7 archived)
+
+documentation/
     ├── INDEX.md ← YOU ARE HERE
     ├── START-HERE.md ← Entry point
     ├── GETTING-STARTED.md ← Setup guide (UPDATED)
@@ -73,11 +77,9 @@ If you're new to this project, read these files **in this order**:
     ├── PACKAGE-SUMMARY.md ← Overview
     ├── README.md ← Quick reference
     ├── README-DIRECTORY.md ← This directory guide
-    ├── phase1-rewrite-foundation.prompt.md ← Main plan (UPDATED)
     ├── architecture-diagrams.md ← Visual guide
     ├── iconset-system-reference.md ← Iconset details (UPDATED)
-    ├── archive2-analysis.md ← What to avoid
-    └── archive/ ← Old prompt files (7 archived)
+    └── archive2-analysis.md ← What to avoid
 ```
 
 ## 🎓 For Different Audiences
@@ -105,7 +107,7 @@ If you're new to this project, read these files **in this order**:
 
 **Reference the main plan:**
 ```
-#file:documentation/phase1-rewrite-foundation.prompt.md
+#file:.github/prompts/phase1-rewrite-foundation.prompt.md
 
 Implement task PHASE1-XXX
 ```

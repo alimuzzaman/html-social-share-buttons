@@ -7,7 +7,7 @@
 **MANDATORY FIRST STEPS:**
 1. Read `documentation/START-HERE.md` (5 min overview)
 2. Read `documentation/GETTING-STARTED.md` (setup requirements)
-3. Read `documentation/phase1-rewrite-foundation.prompt.md` (complete 33-task plan)
+3. Read `.github/prompts/phase1-rewrite-foundation.prompt.md` (complete 33-task plan)
 4. Check `documentation/PROGRESS-TRACKER.md` (track your work)
 
 ## 🏗️ Target Architecture (To Be Built)
@@ -193,7 +193,7 @@ For repetitive tasks, write focused Node.js scripts in `scripts/`:
 - `archive/iconset/*/ssb.php` - Iconset class definitions
 
 **Phase 1 documentation (your blueprint):**
-- `documentation/phase1-rewrite-foundation.prompt.md` - 33 tasks with checklists
+- `.github/prompts/phase1-rewrite-foundation.prompt.md` - 33 tasks with checklists
 - `documentation/architecture-diagrams.md` - Visual before/after
 - `documentation/iconset-system-reference.md` - Icon system deep-dive
 - `documentation/archive2-analysis.md` - What NOT to do (failed attempt)

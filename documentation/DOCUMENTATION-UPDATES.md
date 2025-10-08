@@ -193,17 +193,17 @@ After these updates, developers should:
 
 ### Documentation (Active)
 - `.github/copilot-instructions.md` (NEW)
-- `documentation/START-HERE.md`
-- `documentation/GETTING-STARTED.md` (UPDATED)
-- `documentation/phase1-rewrite-foundation.prompt.md` (UPDATED)
-- `documentation/iconset-system-reference.md` (UPDATED)
-- `documentation/PROGRESS-TRACKER.md`
-- `documentation/INDEX.md`
-- `documentation/README-DIRECTORY.md`
+- `.github/prompts/START-HERE.md`
+- `.github/prompts/GETTING-STARTED.md` (UPDATED)
+- `.github/prompts/phase1-rewrite-foundation.prompt.md` (UPDATED)
+- `.github/prompts/iconset-system-reference.md` (UPDATED)
+- `.github/prompts/PROGRESS-TRACKER.md`
+- `.github/prompts/INDEX.md`
+- `.github/prompts/README-DIRECTORY.md`
 
 ### Documentation (Archived)
 - `.github/copilot-instructions.old.md`
-- `documentation/archive/*.prompt.md` (7 files)
+- `.github/prompts/archive/*.prompt.md` (7 files)
 
 ## 🎯 Next Steps
 
@@ -214,8 +214,8 @@ After these updates, developers should:
 
 ## 📞 Questions?
 
-- Check `documentation/START-HERE.md`
-- Review `documentation/INDEX.md` for navigation
+- Check `.github/prompts/START-HERE.md`
+- Review `.github/prompts/INDEX.md` for navigation
 - Consult `.github/copilot-instructions.md` for workflows
 
 ---
