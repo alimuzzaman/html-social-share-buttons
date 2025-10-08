@@ -16,25 +16,31 @@ If you're new to this project, read these files **in this order**:
    - Success criteria
    - How to track progress
 
-3. **[phase1-rewrite-foundation.instructions.md](phase1-rewrite-foundation.instructions.md)** 📋
+3. **[GETTING-STARTED.md](GETTING-STARTED.md)** 🚀
+   - **Setup instructions**
+   - Prerequisites checklist
+   - Step-by-step environment setup
+   - Verification steps
+
+4. **[phase1-rewrite-foundation.instructions.md](phase1-rewrite-foundation.instructions.md)** 📋
    - **The main plan** (150+ pages)
    - 33 detailed tasks
    - Implementation checklists
    - Your primary reference
 
-4. **[architecture-diagrams.md](architecture-diagrams.md)** 🏗️
+5. **[architecture-diagrams.md](architecture-diagrams.md)** 🏗️
    - Visual architecture
    - Flow diagrams
    - Before/after comparison
    - Easy to understand
 
-5. **[iconset-system-reference.md](iconset-system-reference.md)** 🎨
+6. **[iconset-system-reference.md](iconset-system-reference.md)** 🎨
    - How iconsets work
    - Migration guide
    - Build system details
    - CSS generation
 
-6. **[archive2-analysis.md](archive2-analysis.md)** ⚠️
+7. **[archive2-analysis.md](archive2-analysis.md)** ⚠️
    - What went wrong
    - What to use/avoid
    - Lessons learned
@@ -47,6 +53,7 @@ If you're new to this project, read these files **in this order**:
 ├── INDEX.md ← YOU ARE HERE
 ├── PACKAGE-SUMMARY.md ← Start here first!
 ├── README.md ← Quick reference
+├── GETTING-STARTED.md ← Setup guide
 ├── phase1-rewrite-foundation.instructions.md ← Main plan
 ├── architecture-diagrams.md ← Visual guide
 ├── iconset-system-reference.md ← Iconset details
@@ -60,10 +67,12 @@ If you're new to this project, read these files **in this order**:
 **Read in this order:**
 1. PACKAGE-SUMMARY.md (10 min)
 2. README.md (5 min)
-3. architecture-diagrams.md (10 min)
-4. phase1-rewrite-foundation.instructions.md (detailed read)
+3. GETTING-STARTED.md (20 min)
+4. architecture-diagrams.md (10 min)
+5. phase1-rewrite-foundation.instructions.md (detailed read)
 
 **Then:**
+- Follow GETTING-STARTED.md setup steps
 - Set up environment (PHASE1-001)
 - Start implementing tasks
 - Reference other docs as needed
@@ -106,6 +115,11 @@ Implement task PHASE1-XXX
 **Note:** Phase 1 keeps frontend identical. UI improvements come in Phase 2.
 
 ## 📖 Quick Reference by Topic
+
+### Getting Started / Setup
+- 📄 GETTING-STARTED.md → Complete setup guide
+- 📄 README.md → Quick start
+- 📄 PACKAGE-SUMMARY.md → Overview
 
 ### Understanding Current System
 - 📄 PACKAGE-SUMMARY.md → "Analysis Summary"
@@ -172,28 +186,31 @@ Implement task PHASE1-XXX
 |----------|-------|---------|-----------|
 | PACKAGE-SUMMARY.md | 10 | Overview & summary | 15 min |
 | README.md | 5 | Quick reference | 10 min |
+| GETTING-STARTED.md | 8 | Setup instructions | 20 min |
 | phase1-rewrite-foundation.instructions.md | 150+ | Main implementation plan | 2-3 hours |
 | architecture-diagrams.md | 8 | Visual architecture | 15 min |
 | iconset-system-reference.md | 12 | Iconset deep dive | 20 min |
 | archive2-analysis.md | 15 | What to avoid | 25 min |
 
-**Total:** ~200 pages of comprehensive documentation
+**Total:** ~210 pages of comprehensive documentation
 
 ## 🎯 Learning Paths
 
-### Path 1: Quick Start (45 minutes)
-1. PACKAGE-SUMMARY.md
-2. README.md
-3. architecture-diagrams.md
+### Path 1: Quick Start (1 hour)
+1. PACKAGE-SUMMARY.md (15 min)
+2. README.md (10 min)
+3. GETTING-STARTED.md (20 min)
+4. Follow setup steps (15 min)
 → **Ready to start PHASE1-001**
 
-### Path 2: Deep Dive (4 hours)
-1. PACKAGE-SUMMARY.md
-2. README.md
-3. architecture-diagrams.md
-4. phase1-rewrite-foundation.instructions.md (full read)
-5. iconset-system-reference.md
-6. archive2-analysis.md
+### Path 2: Deep Dive (4.5 hours)
+1. PACKAGE-SUMMARY.md (15 min)
+2. README.md (10 min)
+3. GETTING-STARTED.md (20 min)
+4. architecture-diagrams.md (15 min)
+5. phase1-rewrite-foundation.instructions.md (full read - 2-3 hours)
+6. iconset-system-reference.md (20 min)
+7. archive2-analysis.md (25 min)
 → **Complete understanding**
 
 ### Path 3: Specific Topic (20 minutes)
@@ -208,9 +225,11 @@ Implement task PHASE1-XXX
 ```
 1. Read PACKAGE-SUMMARY.md
 2. Read README.md
-3. Set up environment
-4. Start PHASE1-001
-5. Reference main plan as needed
+3. Read GETTING-STARTED.md
+4. Follow all setup steps in GETTING-STARTED.md
+5. Verify setup checklist
+6. Start PHASE1-001
+7. Reference main plan as needed
 ```
 
 ### Implementing a Task
