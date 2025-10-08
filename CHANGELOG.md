@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- **Settings Save Debug Logging**: Added comprehensive debug logging to SettingsController to track setting save operations
+  - Logs each individual setting being saved with key and value
+  - Logs total count of updated settings keys
+  - Performs database check after save to verify iconset, title, and enabled_networks are persisted
+  - Added `iconset` field to REST API schema in appearance properties
+  - Fixed `profiles` schema type from object to array with proper item structure
+  - Added `default_profile` to top-level schema
+
 ### Changed
 - **Component Decomposition Rule Added**: Updated `.github/copilot-instructions.md` with new architectural rule requiring components over 200-300 lines to be decomposed into smaller, focused components with single responsibilities. This improves maintainability, testability, and reduces risk of file corruption during edits.
 - **Networks Tab Drag-and-Drop UX Improvements**: Enhanced drag-and-drop experience in Networks tab

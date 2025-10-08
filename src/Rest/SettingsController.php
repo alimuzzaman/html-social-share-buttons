@@ -259,8 +259,22 @@ class SettingsController extends WP_REST_Controller
                     $sanitized_value = $this->sanitize_setting_value($key, $value);
                     $this->settings->set($key, $sanitized_value);
                     $updated[$key] = $sanitized_value;
+                    
+                    // Debug: Log each setting being saved
+                    error_log("HSS Settings: Saved {$key} = " . print_r($sanitized_value, true));
                 }
             }
+
+            // Debug: Log all updated settings
+            error_log("HSS Settings: Total updated keys: " . print_r(array_keys($updated), true));
+
+            // Debug: Check what's actually in the database after save
+            $dbCheck = [
+                'iconset' => $this->settings->get('iconset', 'NOT_FOUND'),
+                'title' => $this->settings->get('title', 'NOT_FOUND'),
+                'enabled_networks' => $this->settings->get('enabled_networks', 'NOT_FOUND'),
+            ];
+            error_log("HSS Settings: DB Check after save: " . print_r($dbCheck, true));
 
             // Return fresh settings from DB to ensure consistency
             $freshSettings = $this->get_settings($request);
@@ -670,6 +684,7 @@ class SettingsController extends WP_REST_Controller
                 'type' => 'object',
                 'properties' => [
                     'title' => ['type' => 'string'],
+                    'iconset' => ['type' => 'string'],
                     'icon_style' => ['type' => 'string'],
                     'button_size' => ['type' => 'string'],
                     'button_spacing' => ['type' => 'integer'],
@@ -720,7 +735,19 @@ class SettingsController extends WP_REST_Controller
                 ],
             ],
             'profiles' => [
-                'type' => 'object',
+                'type' => 'array',
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'id' => ['type' => 'string'],
+                        'name' => ['type' => 'string'],
+                        'networks' => ['type' => 'array', 'items' => ['type' => 'string']],
+                        'display_settings' => ['type' => 'object'],
+                    ],
+                ],
+            ],
+            'default_profile' => [
+                'type' => 'string',
             ],
         ];
     }
