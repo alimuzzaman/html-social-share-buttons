@@ -48,6 +48,17 @@ add_action('plugins_loaded', function() {
 	$plugin->init();
 }, 10);
 
+// Activation hook - run migration
+register_activation_hook(__FILE__, function() {
+	\HtmlSocialShare\Migration\OptionsMigration::runOnActivation();
+});
+
+// Legacy function wrapper for backward compatibility
+function zm_sh_btn($atts = array()) {
+	return \HtmlSocialShare\Compatibility\LegacyFunctions::zm_sh_btn($atts);
+}
+
+
 // Register activation/deactivation hooks
 register_activation_hook(__FILE__, function() {
 	$plugin = \HtmlSocialShare\Core\Plugin::getInstance();
