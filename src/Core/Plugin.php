@@ -102,6 +102,12 @@ class Plugin {
             $this->services['buttonRenderer'],
             $this->services['iconRegistry']
         );
+        
+        // Settings page
+        $this->services['settingsPage'] = new \HtmlSocialShare\Admin\SettingsPage(
+            $this->services['optionsManager'],
+            $this->services['iconRegistry']
+        );
     }
     
     /**
@@ -126,6 +132,12 @@ class Plugin {
                 register_widget(get_class($widget));
             }
         });
+        
+        // Register settings page
+        $settingsPage = $this->getService('settingsPage');
+        if ($settingsPage) {
+            $settingsPage->register();
+        }
         
         // Register WP-CLI commands
         if (defined('WP_CLI') && WP_CLI) {
