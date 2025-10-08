@@ -42,4 +42,32 @@ if (! file_exists($autoload)) {
 
 require_once $autoload;
 
-// Silence is golden. (Phase 1A: Add Bootstrap class and hooks in later tasks)
+// Initialize the plugin
+add_action('plugins_loaded', function() {
+	$plugin = \HtmlSocialShare\Core\Plugin::getInstance();
+	$plugin->init();
+}, 10);
+
+// Register activation/deactivation hooks
+register_activation_hook(__FILE__, function() {
+	$plugin = \HtmlSocialShare\Core\Plugin::getInstance();
+	$plugin->activate();
+});
+
+register_deactivation_hook(__FILE__, function() {
+	$plugin = \HtmlSocialShare\Core\Plugin::getInstance();
+	$plugin->deactivate();
+});
+
+// Legacy function wrapper for backward compatibility
+if (!function_exists('zm_sh_btn')) {
+	/**
+	 * Legacy function for rendering social share buttons
+	 *
+	 * @param array $atts Attributes
+	 * @return string HTML output
+	 */
+	function zm_sh_btn($atts = []) {
+		return \HtmlSocialShare\Compatibility\LegacyFunctions::zm_sh_btn($atts);
+	}
+}
