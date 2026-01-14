@@ -3,11 +3,12 @@ Contributors: alimuzzamanalim
 Author: Md. Alimuzzaman Alim
 Donate link: none
 Tags: lightweight, no javascript, social share, fast, privacy-friendly
-Requires at least: 3.0.0
-Tested up to: 6.8
-Version: 2.2.1
+Requires at least: 5.0
+Tested up to: 6.9
+Requires PHP: 7.0
+Version: 2.2.2
 License: GPLv2
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 
 
 Are you searching for a lightweight sharing plugin? You are in right place. This plugin does not use JavaScript.
@@ -17,7 +18,7 @@ Are you searching for a lightweight sharing plugin? You are in right place. This
 Designed By Hakan Ertan <a target="_blank" href="https://www.tonicons.com/" rel="follow">www.tonicons.com</a>
 
 To make Icons horizontal append  class='in_widget' in ShortCode.
-Ex. [zm_sh_btn iconset='long-shadows' iconset_type='square' icons='facebook,twitter,linkedin,googlepluse,pinterest,mail' class='in_widget']
+Ex. [zm_sh_btn iconset='long-shadows' iconset_type='square' icons='facebook,x,linkedin,pinterest,mail' class='in_widget']
 
 <strong>New feature:</strong><br />
 <ul>
@@ -49,10 +50,8 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 
 <ol>
 	<li>Share with Facebook.</li>
-	<li>Share with Twitter.</li>
+	<li>Share with X (Twitter).</li>
 	<li>Share with LinkedIn.</li>
-	<li>Share with Google Plus.</li>
-	<li>Bookmark with Google Bookmark.</li>
 	<li>Share with Email.</li>
 	<li>Share with Pinterest</li>
 	<li>Your asked item will be added ASAP</li>
@@ -74,6 +73,17 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 6. That's all. Enjoy this widget.
 
 == Changelog ==
+
+= 2.2.2 =
+* **BREAKING**: Removed Google Plus sharing (service discontinued April 2019)
+* **BREAKING**: Removed Google Bookmarks (service discontinued September 2021)
+* **UPDATE**: Renamed Twitter to X (Twitter) following platform rebrand
+* **UPDATE**: Updated share URL from twitter.com to x.com
+* **UPDATE**: Requires at least WordPress 5.0
+* **UPDATE**: Tested up to WordPress 6.9
+* **UPDATE**: Requires PHP 7.0 minimum
+* **SECURITY**: Sanitized AJAX input in iconset handlers
+* **IMPROVEMENT**: Replaced extract() calls for better PHP 8.x compatibility
 
 = 2.2.1 =
 * Tested up to WordPress 6.8
