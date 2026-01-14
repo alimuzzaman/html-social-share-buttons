@@ -311,6 +311,7 @@ class zm_social_share {
 		//print_r($icons);
 		if (is_array($selected_icons))
 			foreach ($selected_icons as $id => $ico) {
+				if (!isset($icons[$id])) continue;
 				$icon = $icons[$id];
 				if (!$icon) continue;
 				// Explicit variable extraction for PHP 8.x compatibility
