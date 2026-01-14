@@ -15,8 +15,6 @@
 															"facebook"		=> "on",
 															"twitter"		=> "on",
 															"linkedin"		=> "on",
-															"googlepluse"	=> "on",
-															"bookmark"		=> "on",
 															"pinterest"		=> "on",
 															"mail"			=> "on",
 															),
