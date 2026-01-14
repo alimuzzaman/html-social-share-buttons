@@ -14,6 +14,12 @@ class zm_sh_settings{
 		$this->zm_sh	= &$zm_sh;
 		$this->iconsets	= &$zm_sh->iconsets;
 		$this->options = get_option("zm_shbt_fld", $zm_sh_default_options);
+
+		// Runtime migration: Convert 'twitter' to 'x' for backward compatibility
+		if (isset($this->options['icons']['twitter'])) {
+			$this->options['icons']['x'] = $this->options['icons']['twitter'];
+			unset($this->options['icons']['twitter']);
+		}
 		//adding menu item and page on admin
 		add_action('admin_menu', array($this,'reg_admn_menu'));
 		//registering settings/options for admin page
@@ -54,7 +60,7 @@ class zm_sh_settings{
 	}
 	//option page content
 	function zm_sh_opt(){
-		$zm_form = new zm_form;
+		$zm_form = new zm_form($this->options);
 		$options = $this->options;
 		//print_r($this->options);
 		?>

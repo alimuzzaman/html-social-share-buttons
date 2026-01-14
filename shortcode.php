@@ -13,10 +13,8 @@
 									'url'			=> "%%permalink%%",
 									'icons'			=> array(
 															"facebook"		=> "on",
-															"twitter"		=> "on",
+															"x"				=> "on",
 															"linkedin"		=> "on",
-															"googlepluse"	=> "on",
-															"bookmark"		=> "on",
 															"pinterest"		=> "on",
 															"mail"			=> "on",
 															),
@@ -38,6 +36,12 @@
 		$icons = explode(",", $icons);
 		// Sanitize each icon name
 		$icons = array_map('sanitize_key', $icons);
+
+		// Runtime migration: Convert 'twitter' to 'x' for backward compatibility
+		$icons = array_map(function($icon) {
+			return $icon === 'twitter' ? 'x' : $icon;
+		}, $icons);
+
 		$atts['icons'] = array_flip($icons);
 		return $zm_sh->zm_sh_btn($atts);
 	}

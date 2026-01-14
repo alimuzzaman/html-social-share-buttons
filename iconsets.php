@@ -83,14 +83,20 @@ class zm_sh_iconset{
 
 
 	function wp_ajax_get_iconset_preview(){
-		$iconset_id	= $_POST['iconsetId'];
+		if (!isset($_POST['iconsetId'])) {
+			wp_die('Missing iconset ID');
+		}
+		$iconset_id	= sanitize_key($_POST['iconsetId']);
 		$preview	= $this->get_iconset($iconset_id)->get_iconset_preview();
-		echo $preview;
+		echo esc_url($preview);
 		die();
 	}
 
 	function wp_ajax_get_iconset(){
-		$iconset_id	= $_POST['iconsetId'];
+		if (!isset($_POST['iconsetId'])) {
+			wp_die('Missing iconset ID');
+		}
+		$iconset_id	= sanitize_key($_POST['iconsetId']);
 		$iconset	= $this->get_iconset($iconset_id);
 		echo json_encode($iconset);
 		die();
@@ -179,8 +185,11 @@ foreach ($dir as $subdir) {
 add_action( 'wp_ajax_get_iconset_details', 'wp_ajax_get_iconset_details' );
 
 function wp_ajax_get_iconset_details() {
+	if (!isset($_POST['iconset'])) {
+		wp_die('Missing iconset');
+	}
 	$iconset_class	= new zm_sh_iconset;
-	$iconset = $iconset_class->get_iconset($_POST['iconset']);
+	$iconset = $iconset_class->get_iconset(sanitize_key($_POST['iconset']));
 	echo json_encode($iconset->get_icons_id_name());
 	die();
 }

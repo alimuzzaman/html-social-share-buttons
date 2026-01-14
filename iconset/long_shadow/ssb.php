@@ -18,12 +18,12 @@ class	zm_sh_iconset_long_shadows extends __iconset_parent_class{
 								'image' => 'facebook.png',
 								'url' => "http://www.facebook.com/sharer.php?u=%%permalink%%&amp;t=%%title%%",
 							),
-				'twitter'=>array(
-								'id' => 'twitter',
-								'name' => "Twitter",
+				'x'=>array(
+								'id' => 'x',
+								'name' => "X (formerly Twitter)",
 								'class' => 'twitter',
 								'image' => 'twitter.png',
-								'url' => "http://twitter.com/share?url=%%permalink%%&amp;text=%%title%%",
+								'url' => "https://x.com/intent/tweet?url=%%permalink%%&amp;text=%%title%%",
 							),
 				'linkedin'=>array(
 								'id' => 'linkedin',
@@ -31,20 +31,6 @@ class	zm_sh_iconset_long_shadows extends __iconset_parent_class{
 								'class' => 'linkedin',
 								'image' => 'linkedin.png',
 								'url' => "http://www.linkedin.com/shareArticle?mini=true&url=%%permalink%%&amp;title=%%title%%",
-							),
-				'googlepluse'=>array(
-								'id' => 'googlepluse',
-								'name' => "Google Plus",
-								'class' => 'googlepluse',
-								'image' => 'google_+.png',
-								'url' => "https://plus.google.com/share?url=%%permalink%%",
-							),
-				'bookmark'=>array(
-								'id' => 'bookmark',
-								'name' => "Google Bookmarks",
-								'class' => 'bookmark',
-								'image' => 'rss.png',
-								'url' => "http://www.google.com/bookmarks/mark?op=edit&bkmk=%%permalink%%&amp;title=%%title%%&annotation=%%description%%",
 							),
 				'pinterest'=>array(
 								'id' => 'pinterest',
@@ -61,6 +47,6 @@ class	zm_sh_iconset_long_shadows extends __iconset_parent_class{
 								'url' => "mailto:?subject=I wanted you to see this site&amp;body=This is about %%title%% %%permalink%%",
 							),
 				);
-	
-	
+
+
 }

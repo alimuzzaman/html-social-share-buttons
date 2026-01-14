@@ -13,7 +13,7 @@ function zm_sh_register_widgets() {
 
 
 class zm_html_share_widget extends WP_Widget {
-	
+
 	function __construct() {
 		// Instantiate the parent object
 		$widget_ops = array( 'description' => __("Html share button. It show lite share button only with html. It's not using any javascript whats anothers do.") );
@@ -22,13 +22,17 @@ class zm_html_share_widget extends WP_Widget {
 
 	function widget( $args, $instance ) {
 		global $zm_sh;
-		extract( $args );
+		// Explicit variable extraction for PHP 8.x compatibility
+		$before_widget = $args['before_widget'] ?? '';
+		$after_widget = $args['after_widget'] ?? '';
+		$before_title = $args['before_title'] ?? '';
+		$after_title = $args['after_title'] ?? '';
 		//$instance = shortcode_atts($zm_sh_default_options, $instance);
 		//if($instance[
 		$title = apply_filters( 'widget_title', $instance['title'] );
 		echo $before_widget;
 		if ( ! empty( $title ) )
-			echo $before_title . $title . $after_title;
+			echo $before_title . esc_html($title) . $after_title;
 		$instance['class'] = "in_widget";
 		$options['show_on'] = 'widget';
 		echo $zm_sh->zm_sh_btn($instance);
@@ -57,13 +61,13 @@ class zm_html_share_widget extends WP_Widget {
 				<?php settings_fields( 'zm_shbt_opt' ); ?>
                 <h3>Select theme and Icon Style</h3>
                 <?php $zm_form->text($this->get_field_id( 'title' ), "Enter a Title", $this->get_field_name( 'title' ), $instance['title']);?>
-				
+
                 <?php $zm_form->select_iconset($this->get_field_id("iconset"), "Select Button Style", $this->get_field_name( 'iconset' ), $instance['iconset'] );?>
-                
+
                 <?php $zm_form->dropdown($this->get_field_id("iconset_type"), "Select Type", $zm_form->iconsets->get_iconset($instance['iconset'])->types, $this->get_field_name( 'iconset_type' ), $instance['iconset_type']);?>
-                
+
                 <?php $zm_form->icon_fields_widget($this->get_field_id("icons"), $this->get_field_name( 'icons' ), $instance['icons'], "Select Buttons", "Enable", $instance['iconset']);?>
-                
+
         </div>
 		<?php
 	}

@@ -4,10 +4,12 @@ Plugin Name: Html Social share buttons
 Plugin URI: http://wordpress.org/plugins/html-social-share-buttons/
 Description: Html share button. It show lite share button only with html. It's not using any javascript whats another do. It's load only extra 10-11 kb total on your site.
 Author: Alimuzzaman Alim
-Version: 2.2.1
+Version: 2.2.2
 Author URI: https://alim.dev
 Text Domain: zm-sh
 Domain Path: /languages
+Requires at least: 5.0
+Requires PHP: 7.0
 */
 
 // Iconset dir where to search for iconsets.
@@ -35,10 +37,8 @@ $zm_sh_default_options = array(
 	'iconset_type'	=> "square",
 	"icons" => array(
 		"facebook"		=> 1,
-		"twitter"		=> 1,
+		"x"				=> 1,
 		"linkedin"		=> 1,
-		"googlepluse"	=> 1,
-		"bookmark"		=> 1,
 		"pinterest"		=> 1,
 		"mail"			=> 1,
 	)
@@ -118,6 +118,13 @@ class zm_social_share {
 		global $zm_sh_default_options;
 
 		$this->options = get_option("zm_shbt_fld", $zm_sh_default_options);
+
+		// Runtime migration: Convert 'twitter' to 'x' for backward compatibility
+		if (isset($this->options['icons']['twitter'])) {
+			$this->options['icons']['x'] = $this->options['icons']['twitter'];
+			unset($this->options['icons']['twitter']);
+		}
+
 		$this->iconsets	= new zm_sh_iconset;
 		//print_r($this->iconsets);
 		// getting options form database
@@ -249,10 +256,15 @@ class zm_social_share {
 		echo "<style>";
 		//print_r($this->printed_icons);
 		foreach ($this->printed_icons as $id => $iconset) {
-			extract($iconset);
+			// Explicit variable extraction for PHP 8.x compatibility
+			$iconset_id = $iconset['iconset_id'] ?? '';
+			$iconset_type = $iconset['iconset_type'] ?? '';
+			$iconset_url = $iconset['iconset_url'] ?? '';
+			$class = $iconset['class'] ?? '';
+			$image = $iconset['image'] ?? '';
 			echo "
-			.zmshbt.$iconset_id.$iconset_type .$class {
-					background-image:url('$iconset_url$iconset_type/$image');
+			.zmshbt." . esc_attr($iconset_id) . "." . esc_attr($iconset_type) . " ." . esc_attr($class) . " {
+					background-image:url('" . esc_url($iconset_url . $iconset_type . '/' . $image) . "');
 			}
 			";
 		}
@@ -274,6 +286,12 @@ class zm_social_share {
 		$output			= '';
 		if (isset($this->excluded) and $this->excluded == true) return;
 		$options		= $instance ? $instance : $this->options;
+
+		// Runtime migration: Convert 'twitter' to 'x' for widgets/instances with old data
+		if (isset($options['icons']['twitter'])) {
+			$options['icons']['x'] = $options['icons']['twitter'];
+			unset($options['icons']['twitter']);
+		}
 
 		// Sanitize inputs to prevent XSS vulnerabilities
 		$__class		= sanitize_html_class($options['class'] ? $options['class'] : "left");
@@ -306,9 +324,12 @@ class zm_social_share {
 		//print_r($icons);
 		if (is_array($selected_icons))
 			foreach ($selected_icons as $id => $ico) {
+				if (!isset($icons[$id])) continue;
 				$icon = $icons[$id];
 				if (!$icon) continue;
-				extract($icon);
+				// Explicit variable extraction for PHP 8.x compatibility
+				$class = $icon['class'] ?? '';
+				$url = $icon['url'] ?? '';
 				$icon['iconset_id']		= $iconset->id;
 				$icon['iconset_url']	= $iconset->url;
 				$icon['iconset_type']	= $iconset_type;
