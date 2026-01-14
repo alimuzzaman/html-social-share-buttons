@@ -287,6 +287,12 @@ class zm_social_share {
 		if (isset($this->excluded) and $this->excluded == true) return;
 		$options		= $instance ? $instance : $this->options;
 
+		// Runtime migration: Convert 'twitter' to 'x' for widgets/instances with old data
+		if (isset($options['icons']['twitter'])) {
+			$options['icons']['x'] = $options['icons']['twitter'];
+			unset($options['icons']['twitter']);
+		}
+
 		// Sanitize inputs to prevent XSS vulnerabilities
 		$__class		= sanitize_html_class($options['class'] ? $options['class'] : "left");
 		$iconset_id		= sanitize_key($options['iconset']);
