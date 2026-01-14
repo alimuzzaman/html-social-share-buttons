@@ -37,7 +37,7 @@ $zm_sh_default_options = array(
 	'iconset_type'	=> "square",
 	"icons" => array(
 		"facebook"		=> 1,
-		"twitter"		=> 1,
+		"x"				=> 1,
 		"linkedin"		=> 1,
 		"pinterest"		=> 1,
 		"mail"			=> 1,
@@ -118,6 +118,13 @@ class zm_social_share {
 		global $zm_sh_default_options;
 
 		$this->options = get_option("zm_shbt_fld", $zm_sh_default_options);
+
+		// Runtime migration: Convert 'twitter' to 'x' for backward compatibility
+		if (isset($this->options['icons']['twitter'])) {
+			$this->options['icons']['x'] = $this->options['icons']['twitter'];
+			unset($this->options['icons']['twitter']);
+		}
+
 		$this->iconsets	= new zm_sh_iconset;
 		//print_r($this->iconsets);
 		// getting options form database

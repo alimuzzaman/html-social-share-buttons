@@ -15,16 +15,9 @@ class	zm_sh_iconset_flat extends __iconset_parent_class{
 								'image' => 'Facebook.png',
 								'url' => "http://www.facebook.com/sharer.php?u=%%permalink%%&amp;t=%%title%%",
 							),
-				'twitter'=>array(
-								'id' => 'twitter',
-								'name' => "X (Twitter)",
-								'class' => 'twitter',
-								'image' => 'Twitter.png',
-								'url' => "https://x.com/intent/tweet?url=%%permalink%%&amp;text=%%title%%",
-							),
 				'x'=>array(
 								'id' => 'x',
-								'name' => "X (Twitter)",
+								'name' => "X (formerly Twitter)",
 								'class' => 'twitter',
 								'image' => 'Twitter.png',
 								'url' => "https://x.com/intent/tweet?url=%%permalink%%&amp;text=%%title%%",
