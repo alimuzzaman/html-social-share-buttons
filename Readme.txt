@@ -4,11 +4,11 @@ Author: Md. Alimuzzaman Alim
 Donate link: none
 Tags: lightweight, no javascript, social share, fast, privacy-friendly
 Requires at least: 5.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.0
-Version: 2.2.2
+Version: 2.2.3
 License: GPLv2
-Stable tag: 2.2.2
+Stable tag: 2.2.3
 
 
 Are you searching for a lightweight sharing plugin? You are in right place. This plugin does not use JavaScript.
@@ -73,6 +73,10 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 6. That's all. Enjoy this widget.
 
 == Changelog ==
+
+= 2.2.3 =
+* **UPDATE**: Tested up to WordPress 7.0
+* **FEATURE**: Added direct settings link on plugins admin page for quick access
 
 = 2.2.2 =
 * **BREAKING**: Removed Google Plus sharing (service discontinued April 2019)
