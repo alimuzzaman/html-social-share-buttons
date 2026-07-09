@@ -1,7 +1,7 @@
 === Html Social share buttons ===
 Contributors: alimuzzamanalim
 Author: Md. Alimuzzaman Alim
-Donate link: https://alim.dev
+Donate link: none
 Tags: lightweight, no javascript, social share, fast, privacy-friendly
 Requires at least: 5.0
 Tested up to: 7.0
