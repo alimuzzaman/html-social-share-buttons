@@ -33,7 +33,7 @@ class zm_sh_settings{
 
 	//registering menu item and page on admin
 	function reg_admn_menu(){
-		add_menu_page(__("Html Social Share", "zm-sh"), __("Html Social Share", "zm-sh"),"administrator", "zm_shbt_opt",array($this,"zm_sh_opt"),"","59.679861");
+		add_menu_page(__("Html Social Share", "zm-sh"), __("Html Social Share", "zm-sh"),"manage_options", "zm_shbt_opt",array($this,"zm_sh_opt"),"","59.679861");
 	}
 
 	//registering scripts and styles for admin

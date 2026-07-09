@@ -119,9 +119,9 @@
 	}
 
 	function ToggleInput(props) {
-		return e('div', { className: 'row' }, [
-			e('label', { htmlFor: props.id }, props.label),
+		return e('div', { className: 'zm_option_toggle' }, [
 			e('input', {
+				key: 'input',
 				type: 'checkbox',
 				id: props.id,
 				name: props.name,
@@ -133,11 +133,79 @@
 				disabled: !!props.disabled,
 				'data-id': props.dataId || ''
 			}),
-			e('span', { className: 'for_label' }, e('label', {
-				htmlFor: props.id,
-				className: 'toggle-check',
-				'data-on': props.yes || 'Yes',
-				'data-off': props.no || 'No'
+			e('label', { key: 'label', htmlFor: props.id, className: 'zm_toggle_label' }, [
+				e('span', { key: 'text', className: 'zm_toggle_text' }, props.label),
+				e('span', { key: 'control', className: 'for_label' }, e('span', {
+					className: 'toggle-check',
+					'data-on': props.yes || 'Yes',
+					'data-off': props.no || 'No'
+				}))
+			])
+		]);
+	}
+
+	function FieldRow(props) {
+		return e('div', { className: 'zm_field_row' }, [
+			e('label', { key: 'label', htmlFor: props.id }, props.label),
+			e('div', { key: 'control', className: 'zm_field_control' }, props.children)
+		]);
+	}
+
+	function SectionHeader(props) {
+		return e('div', { className: 'zm_section_header' }, [
+			e('h2', { key: 'title' }, props.title),
+			props.description ? e('p', { key: 'description' }, props.description) : null
+		]);
+	}
+
+	function PlacementInput(props) {
+		var iconset = props.iconset || { types: [] };
+		var types = iconset.types || [];
+		return e('div', { className: 'zm_placement_card' + (toBoolean(props.enabled) ? ' is-enabled' : '') }, [
+			e('div', { key: 'header', className: 'zm_placement_card_header' }, [
+				e('input', {
+					key: 'input',
+					type: 'checkbox',
+					id: props.id,
+					name: 'zm_shbt_fld[show_in][' + props.id + ']',
+					value: '1',
+					checked: toBoolean(props.enabled),
+					onChange: function (event) {
+						props.onEnabled(event.target.checked ? 1 : 0);
+					}
+				}),
+				e('label', { key: 'label', htmlFor: props.id, className: 'zm_toggle_label' }, [
+					e('span', { key: 'text', className: 'zm_toggle_text' }, props.label),
+					e('span', { key: 'control', className: 'for_label' }, e('span', {
+						className: 'toggle-check',
+						'data-on': 'Yes',
+						'data-off': 'No'
+					}))
+				])
+			]),
+			e('div', { key: 'types', className: 'zm_type_picker', 'aria-hidden': toBoolean(props.enabled) ? 'false' : 'true' }, types.map(function (type) {
+				var radioId = props.id + '-' + type;
+				return e('span', { key: type, className: 'zm_type_option' }, [
+					e('input', {
+						key: 'input',
+						type: 'radio',
+						id: radioId,
+						name: 'zm_shbt_fld[' + props.id + ']',
+						value: type,
+						checked: props.type === type,
+						onChange: function (event) {
+							props.onType(event.target.value);
+						}
+					}),
+					e('label', { key: 'label', htmlFor: radioId }, [
+						e('img', {
+							key: 'image',
+							src: data.assets_img + 'show_after_post-' + type + '.png',
+							alt: type
+						}),
+						e('span', { key: 'name' }, type)
+					])
+				]);
 			}))
 		]);
 	}
@@ -151,50 +219,6 @@
 			onChange: props.onChange,
 			dataId: props.dataId
 		});
-	}
-
-	function PlacementInput(props) {
-		var iconset = props.iconset || { types: [] };
-		return e('div', { className: 'row toggle' }, [
-			e('label', { htmlFor: props.id }, props.label),
-			e('input', {
-				type: 'checkbox',
-				id: props.id,
-				name: 'zm_shbt_fld[show_in][' + props.id + ']',
-				value: '1',
-				checked: toBoolean(props.enabled),
-				onChange: function (event) {
-					props.onEnabled(event.target.checked ? 1 : 0);
-				}
-			}),
-			e('span', { className: 'for_label' }, [
-				e('label', {
-					htmlFor: props.id,
-					className: 'toggle-check',
-					'data-on': 'Yes',
-					'data-off': 'No'
-				}),
-				e('div', { className: 'row show_on', style: { marginTop: '50px' } }, (iconset.types || []).map(function (type) {
-					var radioId = props.id + '-' + type;
-					return e('span', { key: type }, [
-						e('input', {
-							type: 'radio',
-							id: radioId,
-							name: 'zm_shbt_fld[' + props.id + ']',
-							value: type,
-							checked: props.type === type,
-							onChange: function (event) {
-								props.onType(event.target.value);
-							}
-						}),
-						e('label', { htmlFor: radioId }, e('img', {
-							src: data.assets_img + 'show_after_post-' + type + '.png',
-							alt: type
-						}))
-					]);
-				}))
-			])
-		]);
 	}
 
 	function App(props) {
@@ -292,11 +316,14 @@
 		var modalOutput = this.state.modalMode === 'php' ? generated.php : generated.shortcode;
 		var modalTitle = this.state.modalMode === 'php' ? '<\\?> Get PHP Code' : '[] Get Shortcode';
 
-		return e('div', null, [
-			e('section', { key: 'header', className: 'zm_settings_section' }, [
-				e('h2', {}, 'Header'),
-				e('div', { className: 'row' }, [
-					e('label', { htmlFor: 'title' }, 'Enter a Title'),
+		return e('div', { className: 'zm_settings_shell' }, [
+			e('section', { key: 'header', className: 'zm_settings_section zm_settings_section--intro' }, [
+				e(SectionHeader, {
+					key: 'section-header',
+					title: 'Header',
+					description: 'Set the text shown with the share buttons and choose pages where buttons should stay hidden.'
+				}),
+				e(FieldRow, { key: 'title-field', id: 'title', label: 'Enter a Title' },
 					e('input', {
 						type: 'text',
 						id: 'title',
@@ -306,46 +333,58 @@
 							self.update('title', event.target.value);
 						}
 					})
-				]),
-				e('div', { className: 'row' }, [
-					e('label', { htmlFor: 'excludes' }, 'Exclude'),
+				),
+				e(FieldRow, { key: 'exclude-field', id: 'excludes', label: 'Exclude' },
 					e('textarea', {
 						id: 'excludes',
 						name: 'zm_shbt_fld[excludes]',
-						style: { width: '278px', backgroundColor: '#ffffff', border: '1.2px solid #B8B8B8' },
 						value: options.excludes,
 						placeholder: 'Exclude by Page ID, Page Title or Page Slug',
 						onChange: function (event) {
 							self.update('excludes', event.target.value);
 						}
 					})
-				]),
-				e('p', { className: 'zm_settings_hint' }, 'Exclude can contain page IDs, slugs, or titles separated by commas.')
+				),
+				e('p', { key: 'exclude-hint', className: 'zm_settings_hint' }, 'Exclude can contain page IDs, slugs, or titles separated by commas.')
 			]),
 			e('section', { key: 'icon-style', className: 'zm_settings_section' }, [
-				e('h2', {}, 'Icon Style'),
-				e('div', { className: 'row' }, [
-					e('label', { htmlFor: 'iconset' }, 'Select Button Style'),
-					e('select', {
-						id: 'iconset',
-						name: 'zm_shbt_fld[iconset]',
-						value: options.iconset,
-						onChange: function (event) {
-							self.update('iconset', event.target.value);
-						}
-					}, iconsets.map(function (item) {
-						return e('option', { key: item.id, value: item.id }, item.name);
-					})),
-					e('div', { className: 'button-style-img' }, e('img', {
-						src: currentIconset ? currentIconset.preview_img : '',
-						alt: options.iconset
-					}))
+				e(SectionHeader, {
+					key: 'section-header',
+					title: 'Icon Style',
+					description: 'Choose the icon pack used for every placement and generated code snippet.'
+				}),
+				e('div', { key: 'icon-style-panel', className: 'zm_icon_style_panel' }, [
+					e(FieldRow, { key: 'iconset-field', id: 'iconset', label: 'Select Button Style' },
+						e('select', {
+							id: 'iconset',
+							name: 'zm_shbt_fld[iconset]',
+							value: options.iconset,
+							onChange: function (event) {
+								self.update('iconset', event.target.value);
+							}
+						}, iconsets.map(function (item) {
+							return e('option', { key: item.id, value: item.id }, item.name);
+						}))
+					),
+						e('div', { key: 'preview', className: 'button-style-img' }, [
+						e('span', { key: 'label' }, 'Preview'),
+						e('img', {
+							key: 'image',
+							src: currentIconset ? currentIconset.preview_img : '',
+							alt: options.iconset
+						})
+					])
 				])
 			]),
 			e('section', { key: 'placement', className: 'zm_settings_section' }, [
-				e('h2', {}, 'Display placement'),
-				e('div', { className: 'zm_settings_row_pair' }, [
+				e(SectionHeader, {
+					key: 'section-header',
+					title: 'Display placement',
+					description: 'Turn each placement on or off and pick its shape.'
+				}),
+				e('div', { key: 'placement-grid', className: 'zm_placement_grid' }, [
 					e(PlacementInput, {
+						key: 'show-left',
 						id: 'show_left',
 						label: 'Show on Left Side',
 						iconset: currentIconset,
@@ -359,6 +398,7 @@
 						}
 					}),
 					e(PlacementInput, {
+						key: 'show-right',
 						id: 'show_right',
 						label: 'Show on Right Side',
 						iconset: currentIconset,
@@ -370,10 +410,9 @@
 						onType: function (type) {
 							self.update('show_right', type);
 						}
-					})
-				]),
-				e('div', { className: 'zm_settings_row_pair' }, [
+					}),
 					e(PlacementInput, {
+						key: 'show-before-post',
 						id: 'show_before_post',
 						label: 'Show Before Post',
 						iconset: currentIconset,
@@ -387,6 +426,7 @@
 						}
 					}),
 					e(PlacementInput, {
+						key: 'show-after-post',
 						id: 'show_after_post',
 						label: 'Show After Post',
 						iconset: currentIconset,
@@ -402,9 +442,12 @@
 				])
 			]),
 			e('section', { key: 'social', className: 'zm_settings_section' }, [
-				e('h2', {}, 'Social Networks'),
-				e('div', { className: 'row' }, e('h2', {}, 'Select Buttons')),
-				currentIconset && currentIconset.icons && currentIconset.icons.length ? currentIconset.icons.map(function (icon) {
+				e(SectionHeader, {
+					key: 'section-header',
+					title: 'Social Networks',
+					description: 'Select the share buttons that should be available in the output.'
+				}),
+				e('div', { key: 'network-grid', className: 'zm_network_grid' }, currentIconset && currentIconset.icons && currentIconset.icons.length ? currentIconset.icons.map(function (icon) {
 					return e(CheckboxInput, {
 						key: icon.id,
 						id: 'icon_' + icon.id,
@@ -416,61 +459,77 @@
 							self.update('icon_' + icon.id, value);
 						}
 					});
-				}) : []
+				}) : [])
 			]),
 			e('section', { key: 'advanced', className: 'zm_settings_section zm_settings_section--advanced' }, [
-				e('h2', {}, 'Advanced options'),
-				e(CheckboxInput, {
-					id: 'g_analytics',
-					label: 'Google Social analytics',
-					name: 'zm_shbt_fld[g_analytics]',
-					checked: options.g_analytics,
-					onChange: function (value) {
-						self.update('g_analytics', value);
-					}
+				e(SectionHeader, {
+					key: 'section-header',
+					title: 'Advanced options',
+					description: 'Fine tune tracking, behavior, and link output.'
 				}),
-				e(CheckboxInput, {
-					id: 'auto_hide_btn',
-					label: 'Auto hide button',
-					name: 'zm_shbt_fld[auto_hide_btn]',
-					checked: options.auto_hide_btn,
-					onChange: function (value) {
-						self.update('auto_hide_btn', value);
-					}
-				}),
-				e(CheckboxInput, {
-					id: 'use_port',
-					label: 'Use port on the url.',
-					name: 'zm_shbt_fld[use_port]',
-					checked: options.use_port,
-					onChange: function (value) {
-						self.update('use_port', value);
-					}
-				}),
-				e(CheckboxInput, {
-					id: 'nofollow',
-					label: 'No follow social link',
-					name: 'zm_shbt_fld[nofollow]',
-					checked: options.nofollow,
-					onChange: function (value) {
-						self.update('nofollow', value);
-					}
-				})
+					e('div', { key: 'advanced-grid', className: 'zm_network_grid' }, [
+						e(CheckboxInput, {
+							key: 'g-analytics',
+							id: 'g_analytics',
+						label: 'Google Social analytics',
+						name: 'zm_shbt_fld[g_analytics]',
+						checked: options.g_analytics,
+						onChange: function (value) {
+							self.update('g_analytics', value);
+						}
+						}),
+						e(CheckboxInput, {
+							key: 'auto-hide',
+							id: 'auto_hide_btn',
+						label: 'Auto hide button',
+						name: 'zm_shbt_fld[auto_hide_btn]',
+						checked: options.auto_hide_btn,
+						onChange: function (value) {
+							self.update('auto_hide_btn', value);
+						}
+						}),
+						e(CheckboxInput, {
+							key: 'use-port',
+							id: 'use_port',
+						label: 'Use port on the url.',
+						name: 'zm_shbt_fld[use_port]',
+						checked: options.use_port,
+						onChange: function (value) {
+							self.update('use_port', value);
+						}
+						}),
+						e(CheckboxInput, {
+							key: 'nofollow',
+							id: 'nofollow',
+						label: 'No follow social link',
+						name: 'zm_shbt_fld[nofollow]',
+						checked: options.nofollow,
+						onChange: function (value) {
+							self.update('nofollow', value);
+						}
+					})
+				])
 			]),
 			e('section', { key: 'generator', className: 'zm_settings_section' }, [
-				e('h2', {}, 'Code generator'),
-				e('div', { className: 'zm_settings_generator_actions' }, [
-					e('a', {
-						href: '#zm-sh-thick-box',
+				e(SectionHeader, {
+					key: 'section-header',
+					title: 'Code generator',
+					description: 'Generate embed code from the same icon set and selected networks.'
+				}),
+					e('div', { key: 'generator-actions', className: 'zm_settings_generator_actions' }, [
+						e('a', {
+							key: 'php',
+							href: '#zm-sh-thick-box',
 						className: 'get_phpcode button button-default',
 						title: '<\\?> Get PHP Code',
 						onClick: function (event) {
 							event.preventDefault();
 							self.openModal('php');
 						}
-					}, '<\\?> Get PHP Code'),
-					e('a', {
-						href: '#zm-sh-thick-box',
+						}, '<\\?> Get PHP Code'),
+						e('a', {
+							key: 'shortcode',
+							href: '#zm-sh-thick-box',
 						className: 'get_shortcode button button-default',
 						title: '[] Get Shortcode',
 						onClick: function (event) {
@@ -481,6 +540,7 @@
 				])
 			]),
 			e('div', {
+				key: 'code-modal',
 				className: 'zm-sh-thick-box',
 				id: 'zm-sh-thick-box',
 				style: {
@@ -493,17 +553,18 @@
 					zIndex: 99999
 				}
 			}, [
-				e('div', { className: 'backdrop', onClick: function () { self.closeModal(); } }),
-				e('div', { className: 'zm-tabs', onMouseDown: function (event) { event.stopPropagation(); } }, [
-					e('h3', { className: 'title' }, modalTitle),
-					e('span', { className: 'close', onClick: function () { self.closeModal(); } }, 'X'),
-					e('div', { className: 'tab', id: 'tab-1' },
-						e('div', { className: 'row show_on code-type', style: { marginTop: '20px', marginBottom: '50px' } },
-							((currentIconset && currentIconset.types) || ['square']).map(function (type) {
-								var radioId = 'shortcode-' + type;
-								return e('span', { key: type }, [
-									e('input', {
-										type: 'radio',
+				e('div', { key: 'backdrop', className: 'backdrop', onClick: function () { self.closeModal(); } }),
+				e('div', { key: 'panel', className: 'zm-tabs', onMouseDown: function (event) { event.stopPropagation(); } }, [
+					e('h3', { key: 'title', className: 'title' }, modalTitle),
+					e('button', { key: 'close', type: 'button', className: 'close', onClick: function () { self.closeModal(); }, 'aria-label': 'Close' }, 'X'),
+					e('div', { key: 'type-picker', className: 'tab', id: 'tab-1' },
+							e('div', { key: 'type-picker-grid', className: 'zm_type_picker code-type' },
+								((currentIconset && currentIconset.types) || ['square']).map(function (type) {
+									var radioId = 'shortcode-' + type;
+									return e('span', { key: type, className: 'zm_type_option' }, [
+										e('input', {
+											key: 'input',
+											type: 'radio',
 										id: radioId,
 										name: 'shortcode-iconset-type',
 										value: type,
@@ -512,14 +573,18 @@
 											self.setState({ modalType: event.target.value });
 										}
 									}),
-									e('label', { htmlFor: radioId }, e('img', {
-										src: data.assets_img + 'show_after_post-' + type + '.png',
-										alt: type
-									}))
-								]);
-							}))
+										e('label', { key: 'label', htmlFor: radioId }, [
+											e('img', {
+												key: 'image',
+												src: data.assets_img + 'show_after_post-' + type + '.png',
+												alt: type
+											}),
+											e('span', { key: 'name' }, type)
+										])
+									]);
+								}))
 					),
-					e('div', { className: 'tab', id: 'tab-2' },
+					e('div', { key: 'output', className: 'tab', id: 'tab-2' },
 						e('textarea', {
 							id: 'copy_shortcode',
 							style: { width: '100%', height: '200px' },
@@ -537,12 +602,12 @@
 		if (!root) {
 			return;
 		}
-		if (typeof wp.element.render === 'function') {
-			wp.element.render(e(App), root);
-			return;
-		}
 		if (typeof wp.element.createRoot === 'function') {
 			wp.element.createRoot(root).render(e(App));
+			return;
+		}
+		if (typeof wp.element.render === 'function') {
+			wp.element.render(e(App), root);
 		}
 	});
 })(window.wp, jQuery);
