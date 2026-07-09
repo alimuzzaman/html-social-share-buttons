@@ -1,0 +1,211 @@
+{
+  "scenarios": [
+    {
+      "name": "default-baseline",
+      "options": {
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "display-left-only",
+      "options": {
+        "show_in": {
+          "show_left": 1,
+          "show_right": 0,
+          "show_before_post": 0,
+          "show_after_post": 0
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "display-right-only",
+      "options": {
+        "show_in": {
+          "show_left": 0,
+          "show_right": 1,
+          "show_before_post": 0,
+          "show_after_post": 0
+        },
+        "show_on": "show_right",
+        "class": "right"
+      }
+    },
+    {
+      "name": "display-inline-only-before",
+      "options": {
+        "show_in": {
+          "show_left": 0,
+          "show_right": 0,
+          "show_before_post": 1,
+          "show_after_post": 0
+        },
+        "show_on": "show_before_post",
+        "class": "in_widget"
+      }
+    },
+    {
+      "name": "display-inline-only-after",
+      "options": {
+        "show_in": {
+          "show_left": 0,
+          "show_right": 0,
+          "show_before_post": 0,
+          "show_after_post": 1
+        },
+        "show_on": "show_after_post",
+        "class": "in_widget"
+      }
+    },
+    {
+      "name": "display-left-and-right",
+      "options": {
+        "show_in": {
+          "show_left": 1,
+          "show_right": 1,
+          "show_before_post": 0,
+          "show_after_post": 0
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "display-before-and-after",
+      "options": {
+        "show_in": {
+          "show_left": 0,
+          "show_right": 0,
+          "show_before_post": 1,
+          "show_after_post": 1
+        },
+        "show_on": "show_after_post",
+        "class": "in_widget"
+      }
+    },
+    {
+      "name": "iconset-default-square",
+      "options": {
+        "iconset": "default",
+        "iconset_type": "square",
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "iconset-flat-circle",
+      "options": {
+        "iconset": "flat",
+        "iconset_type": "circle",
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "iconset-long-shadows-square",
+      "options": {
+        "iconset": "long-shadows",
+        "iconset_type": "square",
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "iconset-prajin-circle",
+      "options": {
+        "iconset": "prajin",
+        "iconset_type": "circle",
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "icons-all-on",
+      "options": {
+        "icons": {
+          "facebook": true,
+          "x": true,
+          "linkedin": true,
+          "pinterest": true,
+          "mail": true
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "icons-subset",
+      "options": {
+        "icons": {
+          "facebook": true,
+          "x": true,
+          "linkedin": false,
+          "pinterest": false,
+          "mail": false
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "nofollow-enabled",
+      "options": {
+        "nofollow": 1,
+        "show_in": {
+          "show_left": 1,
+          "show_right": 0,
+          "show_before_post": 0,
+          "show_after_post": 0
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "google-analytics-enabled",
+      "options": {
+        "g_analytics": 1,
+        "show_in": {
+          "show_left": 1,
+          "show_right": 0,
+          "show_before_post": 0,
+          "show_after_post": 0
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "google-analytics-disabled",
+      "options": {
+        "g_analytics": 0,
+        "show_in": {
+          "show_left": 1,
+          "show_right": 0,
+          "show_before_post": 0,
+          "show_after_post": 0
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "excludes-empty",
+      "options": {
+        "excludes": "",
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "excludes-active-list",
+      "options": {
+        "excludes": "1,2,3",
+        "show_on": "show_left",
+        "class": "left"
+      }
+    }
+  ]
+}
