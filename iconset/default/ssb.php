@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /*add_action('zm_sh_add_iconset', 'zm_sh_iconset_default');
 function zm_sh_iconset_default(){

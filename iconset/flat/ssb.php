@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 class	zm_sh_iconset_flat extends __iconset_parent_class{
 		public $id = 'flat';

@@ -1,7 +1,11 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class zm_sh_schema{
 	private $schemas;
-	
+
 	static function getInstance() {
 		static $instance;
 		if ($instance === null){
@@ -10,19 +14,19 @@ class zm_sh_schema{
 		}
 		return $instance;
 	}
-	
+
 	protected function __construct() {
-		
+
 	}
-		
+
 	public function get_schema($id){
 		return $this->schemas[$id];
 	}
-	
+
 	public function get_schemas(){
 		return $this->schemas;
 	}
-	
+
 	public function add_schema($schema){
 		if(is_array($schema)){
 			foreach($schema as $sch){
@@ -36,12 +40,12 @@ class zm_sh_schema{
 		}
 		return $this->schemas;
 	}
-	
+
 	public function remove_schema($id){
 		unset($this->schemas[$id]);
 		return $id;
 	}
-	
+
 }
 
 function zm_sh_get_schema($id){
@@ -51,7 +55,7 @@ function zm_sh_get_schema($id){
 
 function zm_sh_get_schemas(){
 	$zm_sh_schema = zm_sh_schema::getInstance();
- 	return $zm_sh_schema->get_schemas();
+		return $zm_sh_schema->get_schemas();
 }
 
 function zm_sh_add_schema($schema){

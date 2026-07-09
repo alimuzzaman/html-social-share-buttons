@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Calls the class on the post edit screen.
@@ -12,7 +15,7 @@ if ( is_admin() ) {
     add_action( 'load-post-new.php', 'zm_sh_metabox_new' );
 }
 
-/** 
+/**
  * The Class.
  */
 class zm_sh_metabox {
@@ -48,7 +51,7 @@ class zm_sh_metabox {
 	 * @param int $post_id The ID of the post being saved.
 	 */
 	public function save( $post_id ) {
-	
+
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
 		 * because save_post can be triggered at other times.
@@ -58,7 +61,7 @@ class zm_sh_metabox {
 		if ( ! isset( $_POST['zm_sh_mtbox'] ) )
 			return $post_id;
 
-		$nonce = $_POST['zm_sh_mtbox'];
+		$nonce = sanitize_text_field( wp_unslash( $_POST['zm_sh_mtbox'] ) );
 
 		// Verify that the nonce is valid.
 		if ( ! wp_verify_nonce( $nonce, 'zm_sh_metabox' ) )
@@ -66,15 +69,17 @@ class zm_sh_metabox {
 
 		// If this is an autosave, our form has not been submitted,
                 //     so we don't want to do anything.
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return $post_id;
 
 		// Check the user's permissions.
-		if ( 'page' == $_POST['post_type'] ) {
+		$post_type = isset( $_POST['post_type'] ) ? sanitize_key( wp_unslash( $_POST['post_type'] ) ) : '';
+
+		if ( 'page' == $post_type ) {
 
 			if ( ! current_user_can( 'edit_page', $post_id ) )
 				return $post_id;
-	
+
 		} else {
 
 			if ( ! current_user_can( 'edit_post', $post_id ) )
@@ -84,7 +89,7 @@ class zm_sh_metabox {
 		/* OK, its safe for us to save the data now. */
 
 		// Sanitize the user input.
-		$mydata = isset($_POST['_zm_sh_disable_share'])?sanitize_text_field( $_POST['_zm_sh_disable_share'] ):false;
+		$mydata = isset($_POST['_zm_sh_disable_share'])?sanitize_text_field( wp_unslash( $_POST['_zm_sh_disable_share'] ) ):false;
 		// Update the meta field.
 		update_post_meta( $post_id, '_zm_sh_disable_share', $mydata );
 	}
@@ -96,17 +101,17 @@ class zm_sh_metabox {
 	 * @param WP_Post $post The post object.
 	 */
 	public function render_meta_box_content( $post ) {
-	
+
 		// Add an nonce field so we can check for it later.
 		wp_nonce_field( 'zm_sh_metabox', 'zm_sh_mtbox' );
-		
+
 		// Use get_post_meta to retrieve an existing value from the database.
 		$value = get_post_meta( $post->ID, '_zm_sh_disable_share', true );
 		$checked	= checked($value, 'on', false);
 		// Display the form, using the current value.
-		echo '<input type="checkbox" id="_zm_sh_disable_share" name="_zm_sh_disable_share" '.$checked.' />';
+		echo '<input type="checkbox" id="_zm_sh_disable_share" name="_zm_sh_disable_share" '.wp_kses_post($checked).' />';
 		echo '<label for="_zm_sh_disable_share">';
-		_e( 'Disable Social share for this page', 'zm-sh' );
+		esc_html_e( 'Disable Social share for this page', 'zm-sh' );
 		echo '</label> ';
 	}
 }
