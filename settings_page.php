@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 add_action('init', function(){
 	if(is_admin())
@@ -36,16 +39,23 @@ class zm_sh_settings{
 	//registering scripts and styles for admin
 	function admin_scripts($hook) {
 		if ( 'toplevel_page_zm_shbt_opt' == $hook ) {
-			wp_enqueue_style( 'zm_sh_admin_styles',  plugin_dir_url( __FILE__ ) . 'assets/admin.css' );
-			wp_enqueue_script('zm_sh_admin_scripts', plugin_dir_url( __FILE__ ) . 'assets/admin.js', false, false, true  );
-			wp_localize_script( 'zm_sh_admin_scripts', 'zm_sh',		[
+			wp_enqueue_style( 'zm_sh_admin_styles',  plugin_dir_url( __FILE__ ) . 'assets/admin.css', array(), '2.2.4' );
+			wp_enqueue_script('zm_sh_admin_scripts', plugin_dir_url( __FILE__ ) . 'assets/admin.js', array(), '2.2.4', true  );
+			wp_localize_script( 'zm_sh_admin_scripts', 'zm_sh', array(
 				'root_url'       => zm_sh_url,
 				'url_assets'     => zm_sh_url_assets,
 				'url_assets_img' => zm_sh_url_assets_img,
-			] );
+				'nonce'          => wp_create_nonce( 'zm_sh_admin' ),
+			) );
 		}
 		elseif ( 'widgets.php' == $hook ) {
-			wp_enqueue_style( 'zm_sh_admin_styles_scripts', plugin_dir_url( __FILE__ ) . 'assets/admin-widget.css' );
+			wp_enqueue_style( 'zm_sh_admin_styles_scripts', plugin_dir_url( __FILE__ ) . 'assets/admin-widget.css', array(), '2.2.4' );
+		}
+		elseif ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) && function_exists( 'vc_map' ) ) {
+			wp_enqueue_script('zm_sh_vc_admin_scripts', plugin_dir_url( __FILE__ ) . 'assets/vc_scripts.js', array( 'jquery' ), '2.2.4', true);
+			wp_localize_script( 'zm_sh_vc_admin_scripts', 'zm_sh', array(
+				'nonce' => wp_create_nonce( 'zm_sh_admin' ),
+			) );
 		}
 	}
 
@@ -65,16 +75,16 @@ class zm_sh_settings{
 		//print_r($this->options);
 		?>
         <div class="wrap">
-            <h2 class="zm_options_page_heading"><?php _e("Html Social Share button", "zm-sh");?></h2>
+            <h2 class="zm_options_page_heading"><?php esc_html_e("Html Social Share button", "zm-sh");?></h2>
             <form class="zm_settings" method="post" action="options.php">
             <?php settings_fields( 'zm_shbt_opt' ); ?>
             <h3>Select theme and Icon Style</h3>
             <?php $zm_form->text("title", "Enter a Title");?>
             <?php $zm_form->textArea("excludes", "Exclude");?>
- 			<?php $zm_form->checkbox('g_analytics', 'Google Social analytics', $name = '',null,'','','','', "Be sure you have google analytics already in page" );?>
- 			<?php $zm_form->checkbox('auto_hide_btn', 'Auto hide button', $name = '',null,'','','','', "Auto hide button on page load when used on left or right side." );?>
- 			<?php $zm_form->checkbox('use_port', 'Use port on the url.', $name = '',null,'','','','', "Ex. ssl port :443" );?>
- 			<?php $zm_form->checkbox('nofollow', 'No follow social link', $name = '',null,'','','','', "This will make all social link nofollow." );?>
+				<?php $zm_form->checkbox('g_analytics', 'Google Social analytics', $name = '',null,'','','','', "Be sure you have google analytics already in page" );?>
+				<?php $zm_form->checkbox('auto_hide_btn', 'Auto hide button', $name = '',null,'','','','', "Auto hide button on page load when used on left or right side." );?>
+				<?php $zm_form->checkbox('use_port', 'Use port on the url.', $name = '',null,'','','','', "Ex. ssl port :443" );?>
+				<?php $zm_form->checkbox('nofollow', 'No follow social link', $name = '',null,'','','','', "This will make all social link nofollow." );?>
             <?php $zm_form->select_iconset("iconset", "Select Button Style");?>
             <?php $zm_form->show_on("show_left", "Show on Left Side");?>
             <?php $zm_form->show_on("show_right", "Show on Right Side");?>
@@ -84,36 +94,36 @@ class zm_sh_settings{
             <?php $zm_form->icon_fields("Select Buttons", "Enable");?>
 
             <?php submit_button(); ?>
-            <a id="get_php" href="#zm-sh-thick-box" class="get_phpcode button button-default" title="<?php _e("<\?> Get PHP Code", "zm-sh");?>"><?php _e("<\?> Get PHP Code", "zm-sh");?></a>
-            <a id="get_short" href="#zm-sh-thick-box" class="get_shortcode button button-default" title="<?php _e("[] Get Shortcode", "zm-sh");?>"><?php _e("[] Get Shortcode", "zm-sh");?></a>
+            <a id="get_php" href="#zm-sh-thick-box" class="get_phpcode button button-default" title="<?php esc_attr_e("<\?> Get PHP Code", "zm-sh");?>"><?php esc_html_e("<\?> Get PHP Code", "zm-sh");?></a>
+            <a id="get_short" href="#zm-sh-thick-box" class="get_shortcode button button-default" title="<?php esc_attr_e("[] Get Shortcode", "zm-sh");?>"><?php esc_html_e("[] Get Shortcode", "zm-sh");?></a>
 
             <p class="desin_by">
-            	Designed By Hakan Ertan <a target="_blank" href="https://www.tonicons.com/" rel="follow">www.tonicons.com</a>
+		Designed By Hakan Ertan <a target="_blank" href="https://www.tonicons.com/" rel="follow">www.tonicons.com</a>
             </p>
 			</form>
             <div id="zm-sh-thick-box" class="zm-sh-thick-box">
-            	<div class="backdrop"></div>
-            	<div class="zm-tabs">
-                	<h3 class="title"></h3>
-                	<span class="close">X</span>
-                	<div id="tab-1" class="tab">
+		<div class="backdrop"></div>
+		<div class="zm-tabs">
+		<h3 class="title"></h3>
+		<span class="close">X</span>
+		<div id="tab-1" class="tab">
                     <?php
 						$iconset = $this->iconsets->get_iconset($options['iconset']);
 						//print_r($iconset->types);
 						$i = 0;
-                    	echo "<div class='row show_on code-type' style='margin-top:20px;margin-bottom:50px'>";
+		echo "<div class='row show_on code-type' style='margin-top:20px;margin-bottom:50px'>";
                             foreach($iconset->types as $type){
 								$selected = "";
 								if($i==0)
 									$selected = "checked='checked'";
-                                echo "<input type='radio' id='shortcode-$type' name='shortcode-iconset-type' value='$type' $selected>";
-                                echo "<label for='shortcode-$type'><img src='". zm_sh_url_assets_img . "show_after_post-$type.png'></label>";
+                                echo "<input type='radio' id='".esc_attr('shortcode-' . $type)."' name='shortcode-iconset-type' value='".esc_attr($type)."' ".wp_kses_post($selected).">";
+                                echo "<label for='".esc_attr('shortcode-' . $type)."'><img src='".esc_url(zm_sh_url_assets_img . 'show_after_post-' . $type . '.png')."'></label>";
 								$i++;
                             }
                         echo "</div>";
 					?>
                     </div>
-                	<div id="tab-2" class="tab">
+		<div id="tab-2" class="tab">
 						<textarea id="copy_shortcode" style="width:100%;height:200px"></textarea>
                     </div>
                 </div>

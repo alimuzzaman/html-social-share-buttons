@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 global $zm_sh_iconset_classes;
 $zm_sh_iconset_classes[]	= 'zm_sh_iconset_long_shadows';

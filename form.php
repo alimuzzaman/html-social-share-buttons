@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class zm_form{
 
 	public $options;
@@ -40,7 +44,7 @@ class zm_form{
 		$name = $name ? $name : "zm_shbt_fld[$id]";
 		echo "<div class='row'>";
 			echo "<label for='".esc_attr($id_prefix.$id)."' title='".esc_attr($description)."'>".esc_html($label)."</label>";
-			echo "<input name='".esc_attr($name)."' id='".esc_attr($id_prefix.$id)."' $chk type='checkbox' value='1' data-id='".esc_attr($id)."' />";
+			echo "<input name='".esc_attr($name)."' id='".esc_attr($id_prefix.$id)."' ".wp_kses_post($chk)." type='checkbox' value='1' data-id='".esc_attr($id)."' />";
 			echo "<span class='for_label'>";
 				echo "<label for='".esc_attr($id_prefix.$id)."' class='".esc_attr($class)."' data-on='".esc_attr($yes)."' data-off='".esc_attr($no)."'></label>";
 			echo "</span>";
@@ -67,10 +71,10 @@ class zm_form{
 		//if($chk and !$circle and !$square)
 			//$circle = 'checked="checked"';
 		echo "<div class='row toggle'>";
-			echo "<label for='$id'>$label</label>";
-			echo "<input id='$id' $chk type='checkbox' name='{$name}' value='1'/>";
+			echo "<label for='".esc_attr($id)."'>".esc_html($label)."</label>";
+			echo "<input id='".esc_attr($id)."' ".wp_kses_post($chk)." type='checkbox' name='".esc_attr($name)."' value='1'/>";
 			echo "<span class='for_label'>";
-				echo "<label for='$id' class='$class' data-on='$yes' data-off='$no'></label>";
+				echo "<label for='".esc_attr($id)."' class='".esc_attr($class)."' data-on='".esc_attr($yes)."' data-off='".esc_attr($no)."'></label>";
 
 				echo "<div class='row show_on' style='margin-top:50px'>";
 					foreach($iconset->types as $type){
@@ -78,8 +82,8 @@ class zm_form{
 							$selected = checked($options[$id], $type, false);
 						else
 							$selected = '';
-						echo "<input type='radio' id='$id-$type' name='$name_1' value='$type' $selected >";
-						echo "<label for='$id-$type'><img src='". zm_sh_url_assets_img . $id . "-$type.png'></label>";
+						echo "<input type='radio' id='".esc_attr($id . '-' . $type)."' name='".esc_attr($name_1)."' value='".esc_attr($type)."' ".wp_kses_post($selected)." >";
+						echo "<label for='".esc_attr($id . '-' . $type)."'><img src='".esc_url(zm_sh_url_assets_img . $id . '-' . $type . '.png')."'></label>";
 					}
 				echo "</div>";
 			echo "</span>";
@@ -90,7 +94,7 @@ class zm_form{
 	function icon_fields($label, $label_prefix, $class = 'toggle-check', $yes = "", $no = ""){
 		$icons = $this->iconsets->get_iconset($this->options['iconset'])->get_icons();
 		echo "<div class='row' style='margin-bottom:20px'>";
-			echo "<h2>$label</h2>";
+			echo "<h2>".esc_html($label)."</h2>";
 		echo "</div>";
 		foreach($icons as $icon){
 			$id		= $icon['id'];
@@ -126,7 +130,7 @@ class zm_form{
 			echo "<select id='".esc_attr($id)."' name='".esc_attr($name)."'>";
 			foreach($items as $item){
 				$selec = selected($selected, $item, false);
-				echo "<option value='".esc_attr($item)."' $selec>".esc_html(ucwords($item))."</option>";
+				echo "<option value='".esc_attr($item)."' ".wp_kses_post($selec).">".esc_html(ucwords($item))."</option>";
 			}
 			echo "</select>";
 		echo "</div>";
@@ -141,7 +145,7 @@ class zm_form{
 			echo "<select id='".esc_attr($id)."' name='".esc_attr($name)."'>";
 			foreach($items as $i_id=>$i_name){
 				$selec = selected($selected, $i_id, false);
-				echo "<option value='".esc_attr($i_id)."' $selec>".esc_html($i_name)."</option>";
+				echo "<option value='".esc_attr($i_id)."' ".wp_kses_post($selec).">".esc_html($i_name)."</option>";
 			}
 			echo "</select>";
 			//print_r($this->zm_sh->iconsets->get_iconset($selected));

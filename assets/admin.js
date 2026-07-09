@@ -1,7 +1,7 @@
 // JavaScript Document
 /*
 jQuery(document).ready(function($) {
-    jQuery('#iconset').change(function(){
+    jQuery('#iconset').on('change', function(){
 		var iconsetId	= jQuery(this).val();
 		console.log(iconsetId);
 		jQuery.post(
@@ -9,6 +9,7 @@ jQuery(document).ready(function($) {
 			{
 				'action'	: 'get_iconset_preview',
 				'iconsetId'	: iconsetId,
+				'nonce'		: zm_sh.nonce,
 				'type'		: 'iconset_preview'
 			},
 			function(url){
@@ -31,6 +32,7 @@ jQuery(document).ready(function($) {
 			{
 				'action'	: 'get_iconset',
 				'iconsetId'	: iconsetId,
+				'nonce'		: zm_sh.nonce,
 			},
 			function(iconset_1){
 				$iconset	= $.parseJSON(iconset_1);
@@ -54,7 +56,7 @@ function change_preview_img(url){
 }
 
 jQuery(document).ready(function($) {
-    $('#get_php, #get_short').click(function(event){
+    $('#get_php, #get_short').on('click', function(event){
 		event.preventDefault();
 		$('#zm-sh-thick-box').show().find('.title').html($(this).attr('title'));
 		$('body').css({
@@ -63,7 +65,7 @@ jQuery(document).ready(function($) {
 		});
 
 	});
-	$('#zm-sh-thick-box .backdrop, #zm-sh-thick-box .close').click(function(){
+	$('#zm-sh-thick-box .backdrop, #zm-sh-thick-box .close').on('click', function(){
 		$('#zm-sh-thick-box').hide();
 		$('body').css({
 			overflow	: 'initial',
@@ -74,7 +76,7 @@ jQuery(document).ready(function($) {
 
 function zm_thick_box(id){
 	$(id).css({
-			display: block,
+			display: 'block',
 	});
 
 
