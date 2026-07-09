@@ -6,9 +6,9 @@ Tags: lightweight, no javascript, social share, fast, privacy-friendly
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.0
-Version: 2.2.3
+Version: 2.2.4
 License: GPLv2
-Stable tag: 2.2.3
+Stable tag: 2.2.4
 
 
 Are you searching for a lightweight sharing plugin? You are in right place. This plugin does not use JavaScript.
@@ -73,6 +73,12 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 6. That's all. Enjoy this widget.
 
 == Changelog ==
+
+= 2.2.4 =
+* **UPDATE**: Compatibility release tested through WordPress 7.0 and PHP 8.5
+* **FIX**: Fixed a Google Social analytics console typo that caused a JavaScript error
+* **IMPROVEMENT**: Added `noopener noreferrer` to share links opened in a new tab while preserving optional `nofollow`
+* **IMPROVEMENT**: Scoped settings-page button styles so they do not affect other WordPress admin buttons
 
 = 2.2.3 =
 * **UPDATE**: Tested up to WordPress 7.0

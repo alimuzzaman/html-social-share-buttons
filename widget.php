@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 
 
@@ -16,7 +19,7 @@ class zm_html_share_widget extends WP_Widget {
 
 	function __construct() {
 		// Instantiate the parent object
-		$widget_ops = array( 'description' => __("Html share button. It show lite share button only with html. It's not using any javascript whats anothers do.") );
+		$widget_ops = array( 'description' => __("Html share button. It show lite share button only with html. It's not using any javascript whats anothers do.", 'zm-sh') );
 		parent::__construct( "html_share_button_widget", "Html share button widget", $widget_ops );
 	}
 
@@ -30,13 +33,13 @@ class zm_html_share_widget extends WP_Widget {
 		//$instance = shortcode_atts($zm_sh_default_options, $instance);
 		//if($instance[
 		$title = apply_filters( 'widget_title', $instance['title'] );
-		echo $before_widget;
+		echo wp_kses_post($before_widget);
 		if ( ! empty( $title ) )
-			echo $before_title . esc_html($title) . $after_title;
+			echo wp_kses_post($before_title) . esc_html($title) . wp_kses_post($after_title);
 		$instance['class'] = "in_widget";
 		$options['show_on'] = 'widget';
-		echo $zm_sh->zm_sh_btn($instance);
-		echo $after_widget;
+		echo wp_kses_post($zm_sh->zm_sh_btn($instance));
+		echo wp_kses_post($after_widget);
 	}
 
 	function update( $new_instance, $old_instance ) {

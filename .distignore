@@ -5,6 +5,9 @@
 tests/
 security/
 docs/
+.claude/
+.github/
+_legacy/
 
 # Markdown documentation files (except README)
 *.md
@@ -14,6 +17,11 @@ docs/
 .git/
 .gitignore
 .distignore
+sandbox.config
+sandbox.config.*
+.wp-env.json
+AGENTS.md
+CLAUDE.md
 .editorconfig
 .eslintrc*
 .stylelintrc*
@@ -23,6 +31,7 @@ composer.json
 composer.lock
 package.json
 package-lock.json
+pnpm-lock.yaml
 yarn.lock
 
 # IDE and editor files
@@ -57,4 +66,3 @@ error_log
 .Trashes
 ehthumbs.db
 Thumbs.db
-.github/

@@ -4,13 +4,18 @@ Plugin Name: Html Social share buttons
 Plugin URI: http://wordpress.org/plugins/html-social-share-buttons/
 Description: Html share button. It show lite share button only with html. It's not using any javascript whats another do. It's load only extra 10-11 kb total on your site.
 Author: Alimuzzaman Alim
-Version: 2.2.3
+Version: 2.2.4
 Author URI: https://alim.dev
 Text Domain: zm-sh
 Domain Path: /languages
 Requires at least: 5.0
 Requires PHP: 7.0
+License: GPLv2
 */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 // Iconset dir where to search for iconsets.
 define("zm_sh_dir", plugin_dir_path(__FILE__));
@@ -96,7 +101,7 @@ function zm_sh_btn($options) {
 	//print_r($zm_sh);
 	//wp_die();
 	if (!is_object($zm_sh))
-		trigger_error('Please call after init hook');
+		return '';
 	$options['icons']	= array_flip($options['icons']);
 	return $zm_sh->zm_sh_btn($options);
 }
@@ -212,7 +217,7 @@ class zm_social_share {
 				<script>
 				jQuery(document).ready(function($){
 					var _gaq = _gaq || [];
-					jQuery('.zmshbt a').click(function(event){
+					jQuery('.zmshbt a').on('click', function(event){
 						var _gaq = _gaq || [];
 						switch(this.className){
 							case 'googlepluse':
@@ -225,7 +230,7 @@ class zm_social_share {
 								action = 'Share';
 						}
 						_gaq.push(['_trackSocial', this.className, action]);
-						conlole.log(action);
+						console.log(action);
 					});
 				});
 				</script>
@@ -234,12 +239,12 @@ class zm_social_share {
 		if (isset($options['show_in']['show_left']) and $options['show_in']['show_left']) {
 			$options['class'] = 'left';
 			$options['show_on'] = 'show_left';
-			echo $this->zm_sh_btn($options);
+			echo wp_kses_post($this->zm_sh_btn($options));
 		}
 		if (isset($options['show_in']['show_right']) and $options['show_in']['show_right']) {
 			$options['class'] = 'right';
 			$options['show_on'] = 'show_right';
-			echo $this->zm_sh_btn($options);
+			echo wp_kses_post($this->zm_sh_btn($options));
 		}
 
 		$this->register_styles();
@@ -249,10 +254,10 @@ class zm_social_share {
 	function register_styles() {
 		if (is_array($this->stylesheets)) {
 			foreach ($this->stylesheets as $id => $stylesheet) {
-				echo "<link rel='stylesheet' id='social-share-" . esc_attr($id) . "'  href='" . esc_url($stylesheet) . "' type='text/css' media='all' />\n";
+				wp_enqueue_style("social-share-" . sanitize_key($id), $stylesheet, array(), '2.2.4');
 			}
 		} else
-			wp_enqueue_style("social-share-default", plugins_url('iconset/default/', __FILE__) . 'style.css');
+			wp_enqueue_style("social-share-default", plugins_url('iconset/default/', __FILE__) . 'style.css', array(), '2.2.4');
 	}
 
 	//print styles for each icons in footer
@@ -304,7 +309,7 @@ class zm_social_share {
 		$__class		= sanitize_html_class($options['class'] ? $options['class'] : "left");
 		$iconset_id		= sanitize_key($options['iconset']);
 		$selected_icons = $options['icons'];
-		$nofollow		= isset($options['nofollow']) ? ' rel="nofollow" ' : '';
+		$rel			= isset($options['nofollow']) ? 'nofollow noopener noreferrer' : 'noopener noreferrer';
 
 		$iconset		= $this->iconsets->get_iconset($iconset_id);
 		$this->stylesheets[$iconset->id]	= $iconset->url . $iconset->stylesheet;
@@ -345,7 +350,7 @@ class zm_social_share {
 				if (isset($options['url']) and !empty($options['url']))
 					$url = str_replace("%%permalink%%", $options['url'], $url);
 				$url = apply_filters("zm_sh_placeholder", $url);
-				$output .= "<a class='" . esc_attr($class) . "' target='_blank' href='" . esc_url($url) . "' $nofollow></a>\n";
+				$output .= "<a class='" . esc_attr($class) . "' target='_blank' href='" . esc_url($url) . "' rel='" . esc_attr($rel) . "'></a>\n";
 			}
 		$output .= "</div>";
 		return $output;
@@ -362,10 +367,13 @@ function zm_sh_curentPageURL() {
 		$pageURL .= "s";
 	}
 	$pageURL .= "://";
-	if (($_SERVER["SERVER_PORT"] != "80" and $_SERVER["SERVER_PORT"] != "443") or (isset($options['use_port']) and $options['use_port'])) {
-		$pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
+	$server_name = isset($_SERVER["SERVER_NAME"]) ? sanitize_text_field(wp_unslash($_SERVER["SERVER_NAME"])) : '';
+	$server_port = isset($_SERVER["SERVER_PORT"]) ? sanitize_text_field(wp_unslash($_SERVER["SERVER_PORT"])) : '';
+	$request_uri = isset($_SERVER["REQUEST_URI"]) ? esc_url_raw(wp_unslash($_SERVER["REQUEST_URI"])) : '';
+	if (($server_port != "80" and $server_port != "443") or (isset($options['use_port']) and $options['use_port'])) {
+		$pageURL .= $server_name . ":" . $server_port . $request_uri;
 	} else {
-		$pageURL .= $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+		$pageURL .= $server_name . $request_uri;
 	}
 	return $pageURL;
 }

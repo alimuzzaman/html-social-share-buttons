@@ -1,13 +1,17 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 add_action( 'vc_before_init', 'zm_sh_integrateWithVC' );
 
 function zm_sh_integrateWithVC() {
 	global $zm_sh;
 	if(isset($zm_sh->excluded) and $zm_sh->excluded == true) return;
+	if ( ! function_exists( 'vc_map' ) ) return;
 	$iconsets = $zm_sh->iconsets->get_iconset_list();
 	$iconsets = array_flip($iconsets);
-	
+
 	$iconset	= $zm_sh->iconsets->get_current_iconset();
 	$types		= $iconset->types;
 	$icons		= $iconset->get_icons_id_name();
@@ -52,7 +56,7 @@ function zm_sh_integrateWithVC() {
 						  "holder"		=> "div",
 						  "class"		=> "",
 						  "heading"		=> __("Iconset type", 'zm-sh'),
-						  "param_name"	=> "type",
+						  "param_name"	=> "iconset_type",
 						  "value"		=> $types,
 						  "description"	=> __("Select iconset type", 'zm-sh'),
 					  ),
@@ -70,4 +74,3 @@ function zm_sh_integrateWithVC() {
 				)
 	) );
 }
-    

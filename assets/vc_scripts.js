@@ -6,8 +6,9 @@ jQuery(document).ready(function($) {
 			ajaxurl, 
 			{
 				'action': 'get_iconset_details',
-				'iconset':   $value
-			}, 
+				'iconset':   $value,
+				'nonce': typeof zm_sh !== 'undefined' ? zm_sh.nonce : ''
+			},
 			function(response){
 				$icons = $.parseJSON(response);
 				$html = "";

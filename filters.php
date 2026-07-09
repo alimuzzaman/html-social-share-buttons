@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 new zm_sh_filters;
 class zm_sh_filters{
@@ -13,10 +16,10 @@ class zm_sh_filters{
 		$title			= $this->make_title($parmalink);
 		$description	= get_bloginfo ( 'description' );
 		$image_url		= $this->image_url($parmalink);
-		$item 			= str_replace( "%%permalink%%",		urlencode($parmalink),		$item);
-		$item 			= str_replace( "%%title%%",			urlencode($title),			$item);
-		$item 			= str_replace( "%%description%%",	urlencode($description),	$item);
-		$item 			= str_replace( "%%imageurl%%",		urlencode($image_url),		$item);
+		$item 			= str_replace( "%%permalink%%",		urlencode((string) $parmalink),		$item);
+		$item 			= str_replace( "%%title%%",			urlencode((string) $title),			$item);
+		$item 			= str_replace( "%%description%%",	urlencode((string) $description),	$item);
+		$item 			= str_replace( "%%imageurl%%",		urlencode((string) $image_url),		$item);
 		return $item;
 	}
 
@@ -60,5 +63,4 @@ class zm_sh_filters{
 		return $imageurl;
 	}
 }
-
 
