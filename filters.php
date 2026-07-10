@@ -16,10 +16,10 @@ class zm_sh_filters{
 		$title			= $this->make_title($parmalink);
 		$description	= get_bloginfo ( 'description' );
 		$image_url		= $this->image_url($parmalink);
-		$item 			= str_replace( "%%permalink%%",		urlencode((string) $parmalink),		$item);
-		$item 			= str_replace( "%%title%%",			urlencode((string) $title),			$item);
-		$item 			= str_replace( "%%description%%",	urlencode((string) $description),	$item);
-		$item 			= str_replace( "%%imageurl%%",		urlencode((string) $image_url),		$item);
+		$item 			= str_replace( "%%permalink%%",		rawurlencode((string) $parmalink),		$item);
+		$item 			= str_replace( "%%title%%",			rawurlencode((string) $title),			$item);
+		$item 			= str_replace( "%%description%%",	rawurlencode((string) $description),	$item);
+		$item 			= str_replace( "%%imageurl%%",		rawurlencode((string) $image_url),		$item);
 		return $item;
 	}
 
@@ -48,7 +48,7 @@ class zm_sh_filters{
 		if(empty($post->ID)) return;
 		$thumb_id	= get_post_thumbnail_id($post->ID);
 		$attachmetn_url	= wp_get_attachment_url( $thumb_id);
-		$imageurl = urlencode( $attachmetn_url );
+		$imageurl = $attachmetn_url;
 
 		if(!$imageurl){
 			$postid = url_to_postid( $url );
@@ -63,4 +63,3 @@ class zm_sh_filters{
 		return $imageurl;
 	}
 }
-

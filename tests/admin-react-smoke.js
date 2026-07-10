@@ -4,9 +4,11 @@ const vm = require('vm');
 
 const scriptPath = 'assets/admin-react.js';
 const code = fs.readFileSync(scriptPath, 'utf8');
+const settingsPageCode = fs.readFileSync('settings_page.php', 'utf8');
 const roots = {
 	'zmsh-react-settings-root': {},
 };
+const animationFrames = [];
 
 function jqueryMock(arg) {
 	if (typeof arg === 'function') {
@@ -30,7 +32,12 @@ jqueryMock.inArray = (value, values) => values.indexOf(value);
 const context = {
 	console,
 	jQuery: jqueryMock,
-	window: {},
+	window: {
+		requestAnimationFrame(callback) {
+			animationFrames.push(callback);
+			return animationFrames.length;
+		},
+	},
 	document: {
 		getElementById(id) {
 			return roots[id] || null;
@@ -56,9 +63,9 @@ context.window.zm_sh_react_settings = {
 	options: {
 		title: 'Share this with your friends',
 		iconset: 'default',
-		excludes: '',
+		excludes: '42,about,Sample page',
 		show_in: {
-			show_left: true,
+			show_left: 'square',
 			show_right: false,
 			show_before_post: false,
 			show_after_post: true,
@@ -135,8 +142,8 @@ function componentText(props) {
 	return element.createElement('input', props);
 }
 
-function componentTextarea(props) {
-	return element.createElement('textarea', props);
+function componentTokenField(props) {
+	return element.createElement('div', Object.assign({}, props, { className: 'mock-form-token-field' }), props.children);
 }
 
 function componentToggle(props) {
@@ -148,9 +155,10 @@ context.window.wp = {
 	components: {
 		Card: componentContainer,
 		CardBody: componentContainer,
+		FormTokenField: componentTokenField,
 		SelectControl: componentSelect,
+		Snackbar: componentContainer,
 		TextControl: componentText,
-		TextareaControl: componentTextarea,
 		ToggleControl: componentToggle,
 	},
 };
@@ -158,6 +166,21 @@ context.wp = context.window.wp;
 
 vm.createContext(context);
 vm.runInContext(code, context, { filename: scriptPath });
+
+const initialTree = roots['zmsh-react-settings-root'].tree;
+if (!initialTree || !initialTree.props || !String(initialTree.props.className).includes('zm_settings_loader--react')) {
+	throw new Error('React settings loader did not render before the app.');
+}
+
+if (!settingsPageCode.includes('zm_settings_loader--html')) {
+	throw new Error('Server-rendered settings loader is missing.');
+}
+
+if (animationFrames.length !== 1) {
+	throw new Error('React app mount was not scheduled after the loader.');
+}
+
+animationFrames.shift()();
 
 if (!roots['zmsh-react-settings-root'].tree) {
 	throw new Error('React settings root did not mount.');
@@ -178,6 +201,9 @@ function collectNodes(tree) {
 }
 
 const nodes = collectNodes(roots['zmsh-react-settings-root'].tree);
+if (!nodes.some((node) => node.props && node.props.className === 'zm_settings_top_grid')) {
+	throw new Error('Responsive settings top grid did not render.');
+}
 const names = new Set();
 nodes.forEach((node) => {
 	if (!node || typeof node !== 'object') {
@@ -212,6 +238,23 @@ const requiredNames = [
 const missing = requiredNames.filter((name) => !names.has(name));
 if (missing.length > 0) {
 	throw new Error(`Missing legacy field names: ${missing.join(', ')}`);
+}
+
+const excludeTokenField = nodes.find((node) => node.props && node.props.className === 'mock-form-token-field');
+if (!excludeTokenField || excludeTokenField.props.value.join('|') !== '42|about|Sample page') {
+	throw new Error('Exclude CSV value did not render as WordPress tokens.');
+}
+
+const legacyPlacement = nodes.find((node) => node.props && node.props.name === 'zm_shbt_fld[show_in][show_left]');
+if (!legacyPlacement || legacyPlacement.props.checked !== true) {
+	throw new Error('Legacy saved placement shape did not normalize to enabled.');
+}
+
+excludeTokenField.props.onChange(['42', 'contact']);
+const excludeNodes = collectNodes(appInstance.render());
+const excludeHiddenInput = excludeNodes.find((node) => node.props && node.props.name === 'zm_shbt_fld[excludes]');
+if (!excludeHiddenInput || excludeHiddenInput.props.value !== '42,contact') {
+	throw new Error('Exclude tokens did not preserve the comma-separated saving format.');
 }
 
 const shortcodeTextarea = nodes.find((node) => node.type === 'textarea' && node.props && node.props.id === 'copy_shortcode');

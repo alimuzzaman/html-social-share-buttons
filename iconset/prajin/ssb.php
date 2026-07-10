@@ -16,31 +16,26 @@ class	zm_sh_iconset_prajin extends __iconset_parent_class{
 								'name' => "Facebook",
 								'class' => 'facebook',
 								'image' => 'facebook.png',
-								'url' => "http://www.facebook.com/sharer.php?u=%%permalink%%&amp;t=%%title%%",
 							),
 				'x'=>array(
 								'id' => 'x',
 								'name' => "X (formerly Twitter)",
 								'class' => 'twitter',
 								'image' => 'twitter.png',
-								'url' => "https://x.com/intent/tweet?url=%%permalink%%&amp;text=%%title%%",
 							),
 				'linkedin'=>array(
 								'id' => 'linkedin',
 								'name' => "Linkedin",
 								'class' => 'linkedin',
 								'image' => 'linkedin.png',
-								'url' => "http://www.linkedin.com/shareArticle?mini=true&url=%%permalink%%&amp;title=%%title%%",
 				),
 				'pinterest'=>array(
 								'id' => 'pinterest',
 								'name' => "Pinterest",
 								'class' => 'pinterest',
 								'image' => 'pinterest.png',
-								'url' => "http://pinterest.com/pin/create/button/?url=%%permalink%%&amp;media=%%imageurl%%&amp;description=%%title%%",
 							),
 				);
 
 }
-
 

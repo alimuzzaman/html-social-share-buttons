@@ -54,6 +54,9 @@ $zm_sh_default_options = array(
 //it's contains all interfaces
 include("interfaces.php");
 
+// Canonical, filterable share URL templates for built-in platforms.
+include("share-templates.php");
+
 //include iconsets.php
 //it's contains all function to add, remove, get iconsets
 include("iconsets.php");
@@ -168,10 +171,8 @@ class zm_social_share {
 		//print_r($post);
 		if (empty($post->ID)) return;
 
-		$excludes		= !empty($this->options['excludes']) ? $this->options['excludes'] : '';
-		$excludes		= (array) explode(',', $excludes);
-		//print_r($excludes);
-		if (in_array($post->ID, $excludes)) {
+		$excludes = ! empty( $this->options['excludes'] ) ? $this->options['excludes'] : '';
+		if ( zm_sh_post_is_excluded( $post, $excludes ) ) {
 			$this->excluded	= true;
 			return;
 		}
@@ -341,39 +342,18 @@ class zm_social_share {
 				if (!$icon) continue;
 				// Explicit variable extraction for PHP 8.x compatibility
 				$class = $icon['class'] ?? '';
-				$url = $icon['url'] ?? '';
+				$url = zm_sh_get_share_template( $id, $icon['url'] ?? '' );
 				$icon['iconset_id']		= $iconset->id;
 				$icon['iconset_url']	= $iconset->url;
 				$icon['iconset_type']	= $iconset_type;
 				if (!array_key_exists($id, (array)$selected_icons) and !in_array($id, (array)$selected_icons)) continue;
 				$this->printed_icons[$iconset->id . "_$iconset_type\0_" . $id] = $icon;
 				if (isset($options['url']) and !empty($options['url']))
-					$url = str_replace("%%permalink%%", $options['url'], $url);
+					$url = str_replace("%%permalink%%", rawurlencode( esc_url_raw( (string) $options['url'] ) ), $url);
 				$url = apply_filters("zm_sh_placeholder", $url);
 				$output .= "<a class='" . esc_attr($class) . "' target='_blank' href='" . esc_url($url) . "' rel='" . esc_attr($rel) . "'></a>\n";
 			}
 		$output .= "</div>";
 		return $output;
 	}
-}
-
-
-
-function zm_sh_curentPageURL() {
-	global $zm_sh_default_options;
-	$options = get_option("zm_shbt_fld", $zm_sh_default_options);
-	$pageURL = 'http';
-	if (isset($_SERVER["HTTPS"])) if ($_SERVER["HTTPS"] == "on") {
-		$pageURL .= "s";
-	}
-	$pageURL .= "://";
-	$server_name = isset($_SERVER["SERVER_NAME"]) ? sanitize_text_field(wp_unslash($_SERVER["SERVER_NAME"])) : '';
-	$server_port = isset($_SERVER["SERVER_PORT"]) ? sanitize_text_field(wp_unslash($_SERVER["SERVER_PORT"])) : '';
-	$request_uri = isset($_SERVER["REQUEST_URI"]) ? esc_url_raw(wp_unslash($_SERVER["REQUEST_URI"])) : '';
-	if (($server_port != "80" and $server_port != "443") or (isset($options['use_port']) and $options['use_port'])) {
-		$pageURL .= $server_name . ":" . $server_port . $request_uri;
-	} else {
-		$pageURL .= $server_name . $request_uri;
-	}
-	return $pageURL;
 }

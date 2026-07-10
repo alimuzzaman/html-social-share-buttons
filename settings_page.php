@@ -29,6 +29,37 @@ class zm_sh_settings{
 		add_action('admin_init', array($this,'zm_reg_sett'));
 		//registering scripts and styles for admin
 		add_action( 'admin_enqueue_scripts', array($this,'admin_scripts'),20 );
+		add_action( 'wp_ajax_zm_sh_save_settings', array($this,'ajax_save_settings') );
+	}
+
+	private function get_admin_color_scheme_tokens() {
+		global $_wp_admin_css_colors;
+
+		$tokens = array(
+			'accent'        => '#2271b1',
+			'accent_strong' => '#135e96',
+			'accent_light'  => '#72aee6',
+		);
+		$scheme = get_user_option( 'admin_color' );
+
+		if ( empty( $_wp_admin_css_colors[ $scheme ] ) ) {
+			$scheme = 'modern';
+		}
+
+		$colors = ! empty( $_wp_admin_css_colors[ $scheme ]->colors ) ? $_wp_admin_css_colors[ $scheme ]->colors : array();
+		$color_map = array(
+			'accent'        => 2,
+			'accent_strong' => 1,
+			'accent_light'  => 3,
+		);
+
+		foreach ( $color_map as $token => $index ) {
+			if ( isset( $colors[ $index ] ) && sanitize_hex_color( $colors[ $index ] ) ) {
+				$tokens[ $token ] = sanitize_hex_color( $colors[ $index ] );
+			}
+		}
+
+		return $tokens;
 	}
 
 	//registering menu item and page on admin
@@ -39,8 +70,15 @@ class zm_sh_settings{
 	//registering scripts and styles for admin
 	function admin_scripts($hook) {
 		if ( 'toplevel_page_zm_shbt_opt' == $hook ) {
-			wp_enqueue_style( 'zm_sh_admin_styles',  plugin_dir_url( __FILE__ ) . 'assets/admin.css', array(), '2.2.6' );
-			wp_enqueue_script('zm_sh_admin_scripts', plugin_dir_url( __FILE__ ) . 'assets/admin-react.js', array('jquery', 'wp-components', 'wp-element'), '2.2.6', true  );
+			wp_enqueue_style( 'zm_sh_admin_styles',  plugin_dir_url( __FILE__ ) . 'assets/admin.css', array(), '2.2.8' );
+			$admin_color_tokens = $this->get_admin_color_scheme_tokens();
+			wp_add_inline_style( 'zm_sh_admin_styles', sprintf(
+				'.zmsh-settings-wrap{--zmsh-accent:%1$s;--zmsh-accent-strong:%2$s;--zmsh-accent-light:%3$s;}',
+				esc_html( $admin_color_tokens['accent'] ),
+				esc_html( $admin_color_tokens['accent_strong'] ),
+				esc_html( $admin_color_tokens['accent_light'] )
+			) );
+			wp_enqueue_script('zm_sh_admin_scripts', plugin_dir_url( __FILE__ ) . 'assets/admin-react.js', array('jquery', 'wp-components', 'wp-element'), '2.2.8', true  );
 
 			$iconset_data = [];
 			foreach ($this->iconsets->get_iconsets() as $iconset) {
@@ -94,6 +132,12 @@ class zm_sh_settings{
 					'iconsets'       => $iconset_data,
 					'options'        => $defaulted_options,
 					'defaultIconset' => 'default',
+					'strings'        => array(
+						'loading'   => __('Loading settings...', 'zm-sh'),
+						'saving'    => __('Saving...', 'zm-sh'),
+						'saved'     => __('Settings saved.', 'zm-sh'),
+						'saveError' => __('Settings could not be saved. Try again.', 'zm-sh'),
+					),
 				)
 			);
 		}
@@ -106,6 +150,31 @@ class zm_sh_settings{
 				'nonce' => wp_create_nonce( 'zm_sh_admin' ),
 			) );
 		}
+	}
+
+	function ajax_save_settings() {
+		check_ajax_referer( 'zm_sh_admin', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __('You are not allowed to change these settings.', 'zm-sh') ), 403 );
+		}
+
+		$serialized_settings = isset( $_POST['settings'] ) && is_string( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : '';
+		$form_data = array();
+		parse_str( $serialized_settings, $form_data );
+
+		if ( empty( $form_data['zm_shbt_fld'] ) || ! is_array( $form_data['zm_shbt_fld'] ) ) {
+			wp_send_json_error( array( 'message' => __('No settings were received.', 'zm-sh') ), 400 );
+		}
+
+		$sanitized = $this->sanitize( $form_data['zm_shbt_fld'] );
+		update_option( 'zm_shbt_fld', $sanitized );
+		$this->options = $sanitized;
+
+		wp_send_json_success( array(
+			'message' => __('Settings saved.', 'zm-sh'),
+			'options' => $sanitized,
+		) );
 	}
 
 	function add_new(){
@@ -127,7 +196,12 @@ class zm_sh_settings{
             </div>
             <form id="zm-social-share-settings" class="zm_settings" method="post" action="options.php">
             <?php settings_fields( 'zm_shbt_opt' ); ?>
-            <div id="zmsh-react-settings-root"></div>
+            <div id="zmsh-react-settings-root">
+                <div class="zm_settings_loader zm_settings_loader--html" role="status" aria-live="polite">
+                    <span class="zm_settings_loader_spinner" aria-hidden="true"></span>
+                    <span><?php esc_html_e("Loading settings...", "zm-sh");?></span>
+                </div>
+            </div>
             <?php submit_button(); ?>
             <p class="desin_by">
 			Designed By Hakan Ertan <a target="_blank" href="https://www.tonicons.com/" rel="follow">www.tonicons.com</a>
@@ -146,9 +220,13 @@ class zm_sh_settings{
 		$keep_as_is = array( "title", "iconset", "excludes", "icons", "show_in", "show_left", "show_right", "show_before_post", "show_after_post", );
 
 		foreach($input as $key =>$value){
-			if( $key == "show_in")
-				foreach($value as $key_1=>$value_1)
-					$new_input["show_in"]["$key_1"] = $input[$key_1];
+			if( $key == "show_in" && is_array( $value ) ) {
+				foreach($value as $key_1=>$value_1) {
+					if ( $value_1 ) {
+						$new_input["show_in"]["$key_1"] = '1';
+					}
+				}
+			}
 			elseif( in_array($key, $keep_as_is))
 				$new_input[$key] = $value;
 			elseif(isset( $input[$key] ) and $input[$key] )

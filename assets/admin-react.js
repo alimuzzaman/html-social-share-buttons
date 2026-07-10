@@ -7,13 +7,15 @@
 
 	var data = window.zm_sh_react_settings || {};
 	var iconsets = data.iconsets || [];
+	var strings = data.strings || {};
 	var e = wp.element.createElement;
 	var Component = wp.element.Component;
 	var Card = wp.components.Card;
 	var CardBody = wp.components.CardBody;
+	var FormTokenField = wp.components.FormTokenField;
 	var SelectControl = wp.components.SelectControl;
+	var Snackbar = wp.components.Snackbar;
 	var TextControl = wp.components.TextControl;
-	var TextareaControl = wp.components.TextareaControl;
 	var ToggleControl = wp.components.ToggleControl;
 	var defaults = {
 		title: 'Share this with your friends',
@@ -37,7 +39,15 @@
 	};
 
 	function toBoolean(value) {
-		return value === true || value === 1 || value === '1';
+		return !(value === false || value === 0 || value === '0' || value === '' || value === null || typeof value === 'undefined' || value === 'false');
+	}
+
+	function parseExcludes(value) {
+		return String(value || '').split(',').map(function (item) {
+			return item.trim();
+		}).filter(function (item) {
+			return item.length > 0;
+		});
 	}
 
 	function findIconset(id) {
@@ -140,6 +150,17 @@
 		);
 	}
 
+	function SettingsLoader() {
+		return e('div', {
+			className: 'zm_settings_loader zm_settings_loader--react',
+			role: 'status',
+			'aria-live': 'polite'
+		}, [
+			e('span', { key: 'spinner', className: 'zm_settings_loader_spinner', 'aria-hidden': 'true' }),
+			e('span', { key: 'label' }, strings.loading || 'Loading settings...')
+		]);
+	}
+
 	function SectionHeader(props) {
 		return e('div', { className: 'zm_section_header' }, [
 			e('h2', { key: 'title' }, props.title),
@@ -207,14 +228,81 @@
 			modalOpen: false,
 			modalMode: 'shortcode',
 			modalType: 'square',
+			isSaving: false,
+			notice: null,
 		};
+		this.noticeTimer = null;
+		this.submitLabel = '';
 	}
 
 	App.prototype = Object.create(Component.prototype);
 	App.prototype.constructor = App;
 
+	App.prototype.componentDidMount = function () {
+		this.$form = $('#zm-social-share-settings');
+		this.handleSubmitBound = this.handleSubmit.bind(this);
+		if (data.ajax_url && data.nonce) {
+			this.$form.on('submit.zmShareSettings', this.handleSubmitBound);
+		}
+	};
+
 	App.prototype.componentWillUnmount = function () {
 		this.setBodyLock(false);
+		if (this.$form && this.handleSubmitBound) {
+			this.$form.off('submit.zmShareSettings', this.handleSubmitBound);
+		}
+		if (this.noticeTimer) {
+			window.clearTimeout(this.noticeTimer);
+		}
+	};
+
+	App.prototype.showNotice = function (message, status) {
+		var self = this;
+		if (this.noticeTimer) {
+			window.clearTimeout(this.noticeTimer);
+		}
+		this.setState({ notice: { message: message, status: status } });
+		this.noticeTimer = window.setTimeout(function () {
+			self.setState({ notice: null });
+		}, 5000);
+	};
+
+	App.prototype.handleSubmit = function (event) {
+		var self = this;
+		var $submit;
+
+		event.preventDefault();
+		if (this.state.isSaving) {
+			return;
+		}
+
+		$submit = this.$form.find('#submit');
+		this.submitLabel = $submit.val();
+		$submit.prop('disabled', true).attr('aria-busy', 'true').addClass('is-busy').val(strings.saving || 'Saving...');
+		this.setState({ isSaving: true, notice: null });
+
+		$.ajax({
+			url: data.ajax_url,
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				action: 'zm_sh_save_settings',
+				nonce: data.nonce,
+				settings: this.$form.serialize()
+			}
+		}).done(function (response) {
+			if (response && response.success) {
+				self.showNotice((response.data && response.data.message) || strings.saved || 'Settings saved.', 'success');
+				return;
+			}
+			self.showNotice((response && response.data && response.data.message) || strings.saveError || 'Settings could not be saved. Try again.', 'error');
+		}).fail(function (request) {
+			var response = request.responseJSON;
+			self.showNotice((response && response.data && response.data.message) || strings.saveError || 'Settings could not be saved. Try again.', 'error');
+		}).always(function () {
+			$submit.prop('disabled', false).removeAttr('aria-busy').removeClass('is-busy').val(self.submitLabel || 'Save Changes');
+			self.setState({ isSaving: false });
+		});
 	};
 
 	App.prototype.setBodyLock = function (locked) {
@@ -296,7 +384,8 @@
 		var modalTitle = this.state.modalMode === 'php' ? '<\\?> Get PHP Code' : '[] Get Shortcode';
 
 		return e('div', { className: 'zm_settings_shell' }, [
-			e('section', { key: 'header', className: 'zm_settings_section zm_settings_section--intro' }, [
+			e('div', { key: 'top-grid', className: 'zm_settings_top_grid' }, [
+				e('section', { key: 'header', className: 'zm_settings_section zm_settings_section--intro' }, [
 				e(SectionHeader, {
 					key: 'section-header',
 					title: 'Header',
@@ -314,22 +403,29 @@
 					__next40pxDefaultSize: true,
 					__nextHasNoMarginBottom: true
 				}),
-				e(TextareaControl, {
-					key: 'exclude-field',
-					id: 'excludes',
-					label: 'Exclude',
-					name: 'zm_shbt_fld[excludes]',
-					value: options.excludes,
-					rows: 4,
-					help: 'Use comma-separated page IDs, titles, or slugs.',
-					placeholder: 'Example: 42, about, Sample page',
-					onChange: function (value) {
-						self.update('excludes', value);
-					},
-					__nextHasNoMarginBottom: true
-				})
-			]),
-			e('section', { key: 'icon-style', className: 'zm_settings_section' }, [
+				e('div', { key: 'exclude-field', className: 'zm_exclude_control' }, [
+					e(FormTokenField, {
+						key: 'tokens',
+						label: 'Exclude',
+						value: parseExcludes(options.excludes),
+						placeholder: 'Add a page ID, slug, or exact title',
+						tokenizeOnBlur: true,
+						__next40pxDefaultSize: true,
+						onChange: function (values) {
+							self.update('excludes', values.join(','));
+						}
+					}),
+					e('input', {
+						key: 'value',
+						type: 'hidden',
+						id: 'excludes',
+						name: 'zm_shbt_fld[excludes]',
+						value: options.excludes
+					}),
+					e('p', { key: 'help', className: 'components-base-control__help' }, 'Match a page by ID, slug, or exact title. Remove a token to include it again.')
+				])
+				]),
+				e('section', { key: 'icon-style', className: 'zm_settings_section' }, [
 				e(SectionHeader, {
 					key: 'section-header',
 					title: 'Icon Style',
@@ -358,6 +454,7 @@
 							src: currentIconset ? currentIconset.preview_img : '',
 							alt: options.iconset
 						})
+					])
 					])
 				])
 			]),
@@ -528,6 +625,14 @@
 					}, '[] Get Shortcode')
 				])
 			]),
+			this.state.notice ? e('div', {
+				key: 'toaster',
+				className: 'zm_settings_toaster is-' + this.state.notice.status
+			}, e(Snackbar, {
+				onRemove: function () {
+					self.setState({ notice: null });
+				}
+			}, this.state.notice.message)) : null,
 			e('div', {
 				key: 'code-modal',
 				className: 'zm-sh-thick-box',
@@ -575,15 +680,33 @@
 
 	$(document).ready(function () {
 		var root = document.getElementById('zmsh-react-settings-root');
+		var mountApp;
 		if (!root) {
 			return;
 		}
 		if (typeof wp.element.createRoot === 'function') {
-			wp.element.createRoot(root).render(e(App));
+			var reactRoot = wp.element.createRoot(root);
+			reactRoot.render(e(SettingsLoader));
+			mountApp = function () {
+				reactRoot.render(e(App));
+			};
+			if (typeof window.requestAnimationFrame === 'function') {
+				window.requestAnimationFrame(mountApp);
+			} else {
+				mountApp();
+			}
 			return;
 		}
 		if (typeof wp.element.render === 'function') {
-			wp.element.render(e(App), root);
+			wp.element.render(e(SettingsLoader), root);
+			mountApp = function () {
+				wp.element.render(e(App), root);
+			};
+			if (typeof window.requestAnimationFrame === 'function') {
+				window.requestAnimationFrame(mountApp);
+			} else {
+				mountApp();
+			}
 		}
 	});
 })(window.wp, jQuery);

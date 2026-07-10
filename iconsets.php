@@ -133,6 +133,9 @@ abstract class __iconset_parent_class implements interface_iconset{
 
 	function __construct(){
 		$this->set_dir_and_url($this->__FILE__);
+		foreach ( (array) $this->icons as $id => $icon ) {
+			$this->icons[ $id ]['url'] = zm_sh_get_share_template( $id, isset( $icon['url'] ) ? $icon['url'] : '' );
+		}
 
 	}
 

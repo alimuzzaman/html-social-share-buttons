@@ -39,8 +39,8 @@ $expected = [
 	'iconset' => 'default',
 	'excludes' => '1,2,3',
 	'show_in' => [
-		'show_left' => 'circle',
-		'show_after_post' => 'square',
+		'show_left' => '1',
+		'show_after_post' => '1',
 	],
 	'show_left' => 'circle',
 	'show_right' => 'square',
@@ -65,6 +65,32 @@ if ($actual !== $expected) {
 	var_export($expected);
 	echo "\nActual:\n";
 	var_export($actual);
+	echo "\n";
+	exit(1);
+}
+
+$unchecked_input = [
+	'title' => 'Share this with your friends',
+	'iconset' => 'default',
+	'excludes' => 'about,42,Sample page',
+	'show_in' => [],
+	'show_left' => 'circle',
+	'show_right' => 'square',
+	'show_before_post' => 'circle',
+	'show_after_post' => 'square',
+	'icons' => [],
+];
+
+$unchecked_expected = $unchecked_input;
+unset( $unchecked_expected['show_in'] );
+$unchecked_actual = $settings->sanitize($unchecked_input);
+
+if ($unchecked_actual !== $unchecked_expected) {
+	echo "Unchecked settings sanitize contract failed.\n";
+	echo "Expected:\n";
+	var_export($unchecked_expected);
+	echo "\nActual:\n";
+	var_export($unchecked_actual);
 	echo "\n";
 	exit(1);
 }
