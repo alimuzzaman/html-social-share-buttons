@@ -1,7 +1,7 @@
 (function (wp, $) {
 	'use strict';
 
-	if (!wp || !wp.element || !wp.element.createElement || !wp.element.Component) {
+	if (!wp || !wp.element || !wp.element.createElement || !wp.element.Component || !wp.components) {
 		return;
 	}
 
@@ -9,6 +9,12 @@
 	var iconsets = data.iconsets || [];
 	var e = wp.element.createElement;
 	var Component = wp.element.Component;
+	var Card = wp.components.Card;
+	var CardBody = wp.components.CardBody;
+	var SelectControl = wp.components.SelectControl;
+	var TextControl = wp.components.TextControl;
+	var TextareaControl = wp.components.TextareaControl;
+	var ToggleControl = wp.components.ToggleControl;
 	var defaults = {
 		title: 'Share this with your friends',
 		iconset: data.defaultIconset || 'default',
@@ -119,36 +125,19 @@
 	}
 
 	function ToggleInput(props) {
-		return e('div', { className: 'zm_option_toggle' }, [
-			e('input', {
-				key: 'input',
-				type: 'checkbox',
-				id: props.id,
+		return e('div', { className: 'zm_native_toggle' },
+			e(ToggleControl, {
+				label: props.label,
 				name: props.name,
 				value: '1',
 				checked: toBoolean(props.checked),
-				onChange: function (event) {
-					props.onChange(event.target.checked ? 1 : 0);
+				onChange: function (checked) {
+					props.onChange(checked ? 1 : 0);
 				},
 				disabled: !!props.disabled,
-				'data-id': props.dataId || ''
-			}),
-			e('label', { key: 'label', htmlFor: props.id, className: 'zm_toggle_label' }, [
-				e('span', { key: 'text', className: 'zm_toggle_text' }, props.label),
-				e('span', { key: 'control', className: 'for_label' }, e('span', {
-					className: 'toggle-check',
-					'data-on': props.yes || 'Yes',
-					'data-off': props.no || 'No'
-				}))
-			])
-		]);
-	}
-
-	function FieldRow(props) {
-		return e('div', { className: 'zm_field_row' }, [
-			e('label', { key: 'label', htmlFor: props.id }, props.label),
-			e('div', { key: 'control', className: 'zm_field_control' }, props.children)
-		]);
+				__nextHasNoMarginBottom: true
+			})
+		);
 	}
 
 	function SectionHeader(props) {
@@ -161,53 +150,43 @@
 	function PlacementInput(props) {
 		var iconset = props.iconset || { types: [] };
 		var types = iconset.types || [];
-		return e('div', { className: 'zm_placement_card' + (toBoolean(props.enabled) ? ' is-enabled' : '') }, [
-			e('div', { key: 'header', className: 'zm_placement_card_header' }, [
-				e('input', {
-					key: 'input',
-					type: 'checkbox',
-					id: props.id,
+		return e(Card, { className: 'zm_placement_card' + (toBoolean(props.enabled) ? ' is-enabled' : '') },
+			e(CardBody, { className: 'zm_placement_card_body' }, [
+				e('div', { key: 'heading', className: 'zm_placement_heading' }, [
+					e('span', { key: 'diagram', className: 'zm_placement_diagram zm_placement_diagram--' + props.id, 'aria-hidden': 'true' }, [
+						e('span', { key: 'copy', className: 'zm_placement_diagram_copy' }),
+						e('span', { key: 'buttons', className: 'zm_placement_diagram_buttons' })
+					]),
+					e('div', { key: 'copy', className: 'zm_placement_copy' }, [
+						e('h3', { key: 'title' }, props.label),
+						e('p', { key: 'description' }, props.description)
+					])
+				]),
+				e(ToggleControl, {
+					key: 'toggle',
+					label: props.enabled ? 'Enabled' : 'Disabled',
 					name: 'zm_shbt_fld[show_in][' + props.id + ']',
 					value: '1',
 					checked: toBoolean(props.enabled),
-					onChange: function (event) {
-						props.onEnabled(event.target.checked ? 1 : 0);
-					}
+					onChange: function (checked) {
+						props.onEnabled(checked ? 1 : 0);
+					},
+					__nextHasNoMarginBottom: true
 				}),
-				e('label', { key: 'label', htmlFor: props.id, className: 'zm_toggle_label' }, [
-					e('span', { key: 'text', className: 'zm_toggle_text' }, props.label),
-					e('span', { key: 'control', className: 'for_label' }, e('span', {
-						className: 'toggle-check',
-						'data-on': 'Yes',
-						'data-off': 'No'
-					}))
-				])
-			]),
-			e('div', { key: 'types', className: 'zm_type_picker', 'aria-hidden': toBoolean(props.enabled) ? 'false' : 'true' }, types.map(function (type) {
-				var radioId = props.id + '-' + type;
-				return e('span', { key: type, className: 'zm_type_option' }, [
-					e('input', {
-						key: 'input',
-						type: 'radio',
-						id: radioId,
-						name: 'zm_shbt_fld[' + props.id + ']',
-						value: type,
-						checked: props.type === type,
-						onChange: function (event) {
-							props.onType(event.target.value);
-						}
+				e(SelectControl, {
+					key: 'type',
+					label: 'Button shape',
+					name: 'zm_shbt_fld[' + props.id + ']',
+					value: props.type,
+					options: types.map(function (type) {
+						return { label: type, value: type };
 					}),
-					e('label', { key: 'label', htmlFor: radioId }, [
-						e('img', {
-							key: 'image',
-							src: data.assets_img + 'show_after_post-' + type + '.png',
-							alt: type
-						}),
-						e('span', { key: 'name' }, type)
-					])
-				]);
-			}))
-		]);
+					onChange: props.onType,
+					__next40pxDefaultSize: true,
+					__nextHasNoMarginBottom: true
+				})
+			])
+		);
 	}
 
 	function CheckboxInput(props) {
@@ -323,29 +302,32 @@
 					title: 'Header',
 					description: 'Set the text shown with the share buttons and choose pages where buttons should stay hidden.'
 				}),
-				e(FieldRow, { key: 'title-field', id: 'title', label: 'Enter a Title' },
-					e('input', {
-						type: 'text',
-						id: 'title',
-						name: 'zm_shbt_fld[title]',
-						value: options.title,
-						onChange: function (event) {
-							self.update('title', event.target.value);
-						}
-					})
-				),
-				e(FieldRow, { key: 'exclude-field', id: 'excludes', label: 'Exclude' },
-					e('textarea', {
-						id: 'excludes',
-						name: 'zm_shbt_fld[excludes]',
-						value: options.excludes,
-						placeholder: 'Exclude by Page ID, Page Title or Page Slug',
-						onChange: function (event) {
-							self.update('excludes', event.target.value);
-						}
-					})
-				),
-				e('p', { key: 'exclude-hint', className: 'zm_settings_hint' }, 'Exclude can contain page IDs, slugs, or titles separated by commas.')
+				e(TextControl, {
+					key: 'title-field',
+					id: 'title',
+					label: 'Enter a title',
+					name: 'zm_shbt_fld[title]',
+					value: options.title,
+					onChange: function (value) {
+						self.update('title', value);
+					},
+					__next40pxDefaultSize: true,
+					__nextHasNoMarginBottom: true
+				}),
+				e(TextareaControl, {
+					key: 'exclude-field',
+					id: 'excludes',
+					label: 'Exclude',
+					name: 'zm_shbt_fld[excludes]',
+					value: options.excludes,
+					rows: 4,
+					help: 'Use comma-separated page IDs, titles, or slugs.',
+					placeholder: 'Example: 42, about, Sample page',
+					onChange: function (value) {
+						self.update('excludes', value);
+					},
+					__nextHasNoMarginBottom: true
+				})
 			]),
 			e('section', { key: 'icon-style', className: 'zm_settings_section' }, [
 				e(SectionHeader, {
@@ -354,19 +336,22 @@
 					description: 'Choose the icon pack used for every placement and generated code snippet.'
 				}),
 				e('div', { key: 'icon-style-panel', className: 'zm_icon_style_panel' }, [
-					e(FieldRow, { key: 'iconset-field', id: 'iconset', label: 'Select Button Style' },
-						e('select', {
-							id: 'iconset',
-							name: 'zm_shbt_fld[iconset]',
-							value: options.iconset,
-							onChange: function (event) {
-								self.update('iconset', event.target.value);
-							}
-						}, iconsets.map(function (item) {
-							return e('option', { key: item.id, value: item.id }, item.name);
-						}))
-					),
-						e('div', { key: 'preview', className: 'button-style-img' }, [
+					e(SelectControl, {
+						key: 'iconset-field',
+						id: 'iconset',
+						label: 'Button style',
+						name: 'zm_shbt_fld[iconset]',
+						value: options.iconset,
+						options: iconsets.map(function (item) {
+							return { label: item.name, value: item.id };
+						}),
+						onChange: function (value) {
+							self.update('iconset', value);
+						},
+						__next40pxDefaultSize: true,
+						__nextHasNoMarginBottom: true
+					}),
+					e('div', { key: 'preview', className: 'button-style-img' }, [
 						e('span', { key: 'label' }, 'Preview'),
 						e('img', {
 							key: 'image',
@@ -386,7 +371,8 @@
 					e(PlacementInput, {
 						key: 'show-left',
 						id: 'show_left',
-						label: 'Show on Left Side',
+						label: 'Left side',
+						description: 'A vertical rail on the left edge of the screen.',
 						iconset: currentIconset,
 						type: ensureType(currentIconset, options.show_left),
 						enabled: options.show_in.show_left,
@@ -400,7 +386,8 @@
 					e(PlacementInput, {
 						key: 'show-right',
 						id: 'show_right',
-						label: 'Show on Right Side',
+						label: 'Right side',
+						description: 'A vertical rail on the right edge of the screen.',
 						iconset: currentIconset,
 						type: ensureType(currentIconset, options.show_right),
 						enabled: options.show_in.show_right,
@@ -414,7 +401,8 @@
 					e(PlacementInput, {
 						key: 'show-before-post',
 						id: 'show_before_post',
-						label: 'Show Before Post',
+						label: 'Before post',
+						description: 'A row of buttons placed above post content.',
 						iconset: currentIconset,
 						type: ensureType(currentIconset, options.show_before_post),
 						enabled: options.show_in.show_before_post,
@@ -428,7 +416,8 @@
 					e(PlacementInput, {
 						key: 'show-after-post',
 						id: 'show_after_post',
-						label: 'Show After Post',
+						label: 'After post',
+						description: 'A row of buttons placed below post content.',
 						iconset: currentIconset,
 						type: ensureType(currentIconset, options.show_after_post),
 						enabled: options.show_in.show_after_post,
@@ -557,33 +546,20 @@
 				e('div', { key: 'panel', className: 'zm-tabs', onMouseDown: function (event) { event.stopPropagation(); } }, [
 					e('h3', { key: 'title', className: 'title' }, modalTitle),
 					e('button', { key: 'close', type: 'button', className: 'close', onClick: function () { self.closeModal(); }, 'aria-label': 'Close' }, 'X'),
-					e('div', { key: 'type-picker', className: 'tab', id: 'tab-1' },
-							e('div', { key: 'type-picker-grid', className: 'zm_type_picker code-type' },
-								((currentIconset && currentIconset.types) || ['square']).map(function (type) {
-									var radioId = 'shortcode-' + type;
-									return e('span', { key: type, className: 'zm_type_option' }, [
-										e('input', {
-											key: 'input',
-											type: 'radio',
-										id: radioId,
-										name: 'shortcode-iconset-type',
-										value: type,
-										checked: self.state.modalType === type,
-										onChange: function (event) {
-											self.setState({ modalType: event.target.value });
-										}
-									}),
-										e('label', { key: 'label', htmlFor: radioId }, [
-											e('img', {
-												key: 'image',
-												src: data.assets_img + 'show_after_post-' + type + '.png',
-												alt: type
-											}),
-											e('span', { key: 'name' }, type)
-										])
-									]);
-								}))
-					),
+					e(SelectControl, {
+						key: 'type-picker',
+						id: 'shortcode-iconset-type',
+						label: 'Button shape',
+						value: self.state.modalType,
+						options: ((currentIconset && currentIconset.types) || ['square']).map(function (type) {
+							return { label: type, value: type };
+						}),
+						onChange: function (value) {
+							self.setState({ modalType: value });
+						},
+						__next40pxDefaultSize: true,
+						__nextHasNoMarginBottom: true
+					}),
 					e('div', { key: 'output', className: 'tab', id: 'tab-2' },
 						e('textarea', {
 							id: 'copy_shortcode',

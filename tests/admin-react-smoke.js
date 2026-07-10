@@ -123,7 +123,37 @@ element.Component.prototype.setState = function setState(update) {
 	this.state = Object.assign({}, this.state || {}, next || {});
 };
 
-context.window.wp = { element };
+function componentContainer(props) {
+	return element.createElement('div', props, props.children);
+}
+
+function componentSelect(props) {
+	return element.createElement('select', props, props.children);
+}
+
+function componentText(props) {
+	return element.createElement('input', props);
+}
+
+function componentTextarea(props) {
+	return element.createElement('textarea', props);
+}
+
+function componentToggle(props) {
+	return element.createElement('input', Object.assign({}, props, { type: 'checkbox' }));
+}
+
+context.window.wp = {
+	element,
+	components: {
+		Card: componentContainer,
+		CardBody: componentContainer,
+		SelectControl: componentSelect,
+		TextControl: componentText,
+		TextareaControl: componentTextarea,
+		ToggleControl: componentToggle,
+	},
+};
 context.wp = context.window.wp;
 
 vm.createContext(context);

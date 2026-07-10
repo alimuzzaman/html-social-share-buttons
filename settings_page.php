@@ -39,8 +39,8 @@ class zm_sh_settings{
 	//registering scripts and styles for admin
 	function admin_scripts($hook) {
 		if ( 'toplevel_page_zm_shbt_opt' == $hook ) {
-			wp_enqueue_style( 'zm_sh_admin_styles',  plugin_dir_url( __FILE__ ) . 'assets/admin.css', array(), '2.2.4' );
-			wp_enqueue_script('zm_sh_admin_scripts', plugin_dir_url( __FILE__ ) . 'assets/admin-react.js', array('jquery', 'wp-element'), '2.2.4', true  );
+			wp_enqueue_style( 'zm_sh_admin_styles',  plugin_dir_url( __FILE__ ) . 'assets/admin.css', array(), '2.2.6' );
+			wp_enqueue_script('zm_sh_admin_scripts', plugin_dir_url( __FILE__ ) . 'assets/admin-react.js', array('jquery', 'wp-components', 'wp-element'), '2.2.6', true  );
 
 			$iconset_data = [];
 			foreach ($this->iconsets->get_iconsets() as $iconset) {
