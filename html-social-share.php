@@ -45,6 +45,8 @@ $zm_sh_default_options = array(
 		"x"				=> 1,
 		"linkedin"		=> 1,
 		"pinterest"		=> 1,
+		"telegram"		=> 0,
+		"bluesky"		=> 0,
 		"mail"			=> 1,
 	)
 

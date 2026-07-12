@@ -15,6 +15,8 @@ function zm_sh_get_default_share_templates() {
 		'x'         => 'https://x.com/intent/tweet?url=%%permalink%%&text=%%title%%',
 		'linkedin'  => 'https://www.linkedin.com/sharing/share-offsite/?url=%%permalink%%',
 		'pinterest' => 'https://www.pinterest.com/pin/create/button/?url=%%permalink%%&media=%%imageurl%%&description=%%title%%',
+		'telegram'  => 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
+		'bluesky'   => 'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',
 		'mail'      => 'mailto:?subject=%%title%%&body=%%permalink%%',
 	);
 }

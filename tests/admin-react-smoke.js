@@ -63,6 +63,8 @@ context.window.zm_sh_react_settings = {
 			icons: [
 				{ id: 'facebook', name: 'Facebook' },
 				{ id: 'x', name: 'X' },
+				{ id: 'telegram', name: 'Telegram' },
+				{ id: 'bluesky', name: 'Bluesky' },
 			],
 		},
 	],
@@ -83,10 +85,14 @@ context.window.zm_sh_react_settings = {
 		icons: {
 			facebook: 1,
 			x: 1,
+			telegram: 0,
+			bluesky: 0,
 		},
 		share_templates: {
 			facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
 			x: 'https://x.com/intent/tweet?url=%%permalink%%&text=%%title%%',
+			telegram: 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
+			bluesky: 'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',
 		},
 		g_analytics: 0,
 		auto_hide_btn: 0,
@@ -96,6 +102,8 @@ context.window.zm_sh_react_settings = {
 	share_template_defaults: {
 		facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
 		x: 'https://x.com/intent/tweet?url=%%permalink%%&text=%%title%%',
+		telegram: 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
+		bluesky: 'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',
 	},
 	share_template_overrides: {
 		facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
@@ -267,6 +275,8 @@ const requiredNames = [
 	'zm_shbt_fld[show_after_post]',
 	'zm_shbt_fld[icons][facebook]',
 	'zm_shbt_fld[icons][x]',
+	'zm_shbt_fld[icons][telegram]',
+	'zm_shbt_fld[icons][bluesky]',
 	'zm_shbt_fld[g_analytics]',
 	'zm_shbt_fld[auto_hide_btn]',
 	'zm_shbt_fld[use_port]',

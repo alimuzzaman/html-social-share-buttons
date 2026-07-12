@@ -224,6 +224,7 @@
 		return e('div', { className: 'zm_native_toggle' + (props.className ? ' ' + props.className : '') }, [
 			props.headerContent || null,
 			e(ToggleControl, {
+				key: 'control',
 				label: props.label,
 				name: props.name,
 				value: '1',
@@ -279,7 +280,7 @@
 			className: 'zm_placement_item',
 			headerClassName: 'zm_placement_toggle',
 			detailsClassName: 'zm_placement_details',
-			headerContent: e('div', { className: 'zm_placement_heading' }, [
+			headerContent: e('div', { key: 'heading', className: 'zm_placement_heading' }, [
 					e('span', { key: 'diagram', className: 'zm_placement_diagram zm_placement_diagram--' + props.id, 'aria-hidden': 'true' }, [
 						e('span', { key: 'copy', className: 'zm_placement_diagram_copy' }),
 						e('span', { key: 'buttons', className: 'zm_placement_diagram_buttons' })
@@ -455,6 +456,8 @@
 				case 'share_templates.x':
 				case 'share_templates.linkedin':
 				case 'share_templates.pinterest':
+				case 'share_templates.telegram':
+				case 'share_templates.bluesky':
 				case 'share_templates.mail':
 					nextOptions.share_templates[path.substring(16)] = value;
 					break;

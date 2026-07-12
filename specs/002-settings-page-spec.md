@@ -1,4 +1,4 @@
-# [SPECKIT-002] Spec: Settings Page Revamp (2.9-preserving behavior)
+# [SPECKIT-002] Spec: Settings Page Revamp (3.1-preserving behavior)
 
 ## Metadata
 - **Spec Number:** SPECKIT-002
@@ -54,15 +54,16 @@ Users rely on current settings and may have significant persisted values under `
 - FR-012: Exclusion selection stores selected post IDs in the existing comma-separated `zm_shbt_fld[excludes]` value.
 - FR-013: Exclusions use one WordPress `FormTokenField` combobox. Published pages/posts appear as searchable suggestions, and free-form values entered with Enter or comma become selected custom tokens in the same field.
 - FR-014: Existing custom exclusion values are rendered as selected tokens in the same combobox and remain editable/removable without a separate mode or textarea.
-- FR-015: Social Networks lists every built-in platform. On desktop, the cards render in two independent, source-ordered vertical columns to avoid shared-row-height gaps; on mobile, the same order collapses to one column. When a platform is enabled, its share-template editor expands beneath it; disabled platforms do not show template controls. The editor keeps the canonical URL prefix read-only as static code context, rather than as a writable or disabled form field, and displays existing query parameters as rows in one textarea-like rich-text surface with non-editable parameter names and inline-editable values. Custom text renders as ordinary text; supported placeholders render as subtly distinguished inline syntax rather than chips, buttons, or separate inputs. Typing `%%` opens a caret-anchored autocomplete menu, with keyboard navigation and insertion at the caret. The editor distinguishes saved overrides from canonical defaults and offers a layout-stable reset-to-default action.
+- FR-015: Social Networks lists every built-in platform, including opt-in Telegram and Bluesky buttons. On desktop, the cards render in two independent, source-ordered vertical columns to avoid shared-row-height gaps; on mobile, the same order collapses to one column. When a platform is enabled, its share-template editor expands beneath it; disabled platforms do not show template controls. The editor keeps the canonical URL prefix read-only as static code context, rather than as a writable or disabled form field, and displays existing query parameters as rows in one textarea-like rich-text surface with non-editable parameter names and inline-editable values. Custom text renders as ordinary text; supported placeholders render as subtly distinguished inline syntax rather than chips, buttons, or separate inputs. Typing `%%` opens a caret-anchored autocomplete menu, with keyboard navigation and insertion at the caret. The editor distinguishes saved overrides from canonical defaults and offers a layout-stable reset-to-default action.
 - FR-016: Platform templates persist as an additive `zm_shbt_fld[share_templates][<platform>]` map, fall back to canonical templates when unset, and continue to support existing placeholder tokens.
-- FR-017: Template values are sanitized as text while preserving supported placeholder tokens and are applied by the frontend share-link renderer.
+- FR-017: Template values are sanitized as text while preserving supported placeholder tokens and are applied by the frontend share-link renderer. Telegram defaults to `https://t.me/share/url?url=%%permalink%%&text=%%title%%`. Bluesky defaults to `https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%` and is presented as its single documented `text` parameter.
 - FR-018: Display placement and Social Networks use one reusable expandable toggle-panel component. A disabled item shows only its header and toggle; enabling it reveals its existing detail panel directly beneath the header without changing the card background or saved option contract.
+- FR-019: Every built-in platform is represented by a local icon asset in each supported icon-set shape. New platform marks must match the established artwork scale and the host set's exact treatment: Default uses its inset dotted frame, Flat uses unshadowed square/circle color blocks, Long Shadows casts the mark down-left within the button shape, Prajin square uses a short softened down-right cast, and Prajin circle remains unshadowed.
 
 ## 4.0 Data and Contract Preservation
 - Preserve these existing keys and nested shape in `zm_shbt_fld`:
   - `title`, `excludes`, `g_analytics`, `auto_hide_btn`, `use_port`, `nofollow`, `iconset`, `show_in.*`, `show_left`, `show_right`, `show_before_post`, `show_after_post`, `icons`, `iconset_type`.
-- Additive key: `share_templates.<platform>` for built-in platforms only; missing values resolve to canonical defaults.
+- Additive key: `share_templates.<platform>` for built-in platforms only; missing values resolve to canonical defaults. New `telegram` and `bluesky` icon flags are additive and disabled by default.
 - Preserve runtime compatibility behavior (including legacy `twitter` -> `x` migration).
 
 ## 5.0 UX Requirements

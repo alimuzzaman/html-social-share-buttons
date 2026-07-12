@@ -32,6 +32,8 @@ $input = [
 		'facebook' => '1',
 		'x' => '1',
 		'linkedin' => '1',
+		'telegram' => '0',
+		'bluesky' => '1',
 	],
 	'g_analytics' => '1',
 	'auto_hide_btn' => '1',
@@ -40,6 +42,8 @@ $input = [
 	'share_templates' => [
 		'facebook' => 'https://example.com/share?u=%%permalink%%',
 		'x' => 'https://x.com/intent/tweet?url=%%permalink%%',
+		'telegram' => 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
+		'bluesky' => 'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',
 		'unknown' => 'https://example.com/ignored',
 	],
 ];
@@ -60,6 +64,8 @@ $expected = [
 		'facebook' => '1',
 		'x' => '1',
 		'linkedin' => '1',
+		'telegram' => '0',
+		'bluesky' => '1',
 	],
 	'g_analytics' => true,
 	'auto_hide_btn' => true,
@@ -68,6 +74,8 @@ $expected = [
 	'share_templates' => [
 		'facebook' => 'https://example.com/share?u=%%permalink%%',
 		'x' => 'https://x.com/intent/tweet?url=%%permalink%%',
+		'telegram' => 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
+		'bluesky' => 'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',
 	],
 ];
 

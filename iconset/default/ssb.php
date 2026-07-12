@@ -43,6 +43,18 @@ class zm_sh_iconset_default extends __iconset_parent_class{
 								'class' => 'pinterest',
 								'image' => 'pinterest.png',
 							),
+				'telegram'=>array(
+								'id' => 'telegram',
+								'name' => "Telegram",
+								'class' => 'telegram',
+								'image' => 'telegram.svg',
+							),
+				'bluesky'=>array(
+								'id' => 'bluesky',
+								'name' => "Bluesky",
+								'class' => 'bluesky',
+								'image' => 'bluesky.svg',
+							),
 				'mail'=>array(
 								'id' => 'mail',
 								'name' => "Email",
@@ -55,4 +67,3 @@ class zm_sh_iconset_default extends __iconset_parent_class{
 
 
 }
-
