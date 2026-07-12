@@ -5,7 +5,6 @@ frontend_files=(
 	"actions.php"
 	"filters.php"
 	"function.php"
-	"html-social-share.php"
 	"iconsets.php"
 	"interfaces.php"
 	"shortcode.php"

@@ -1,4 +1,4 @@
-.PHONY: frontend-capture frontend-compare frontend-drift-surface admin-react-smoke settings-sanitize-contract share-template-contract exclude-contract current-url-contract settings-local-checks help check-wp-root
+.PHONY: build watch frontend-capture frontend-compare frontend-drift-surface admin-react-smoke settings-sanitize-contract share-template-contract exclude-contract current-url-contract settings-local-checks help check-wp-root
 
 WP_ROOT ?= $(shell [ -n "$(WP_ROOT)" ] && echo "$(WP_ROOT)" || echo "")
 
@@ -10,6 +10,8 @@ check-wp-root:
 
 help:
 	@echo "Targets:"
+	@echo "  build               Build the WordPress admin bundle"
+	@echo "  watch               Watch and rebuild the WordPress admin bundle"
 	@echo "  frontend-capture   Capture frontend output baseline fixtures"
 	@echo "  frontend-compare   Compare current output against baseline"
 	@echo "  frontend-drift-surface   Verify frontend renderer files are unchanged"
@@ -18,7 +20,13 @@ help:
 	@echo "  share-template-contract  Verify platform share URL templates"
 	@echo "  exclude-contract  Verify excluded post identifiers"
 	@echo "  current-url-contract  Verify share links use the configured WordPress URL"
-	@echo "  settings-local-checks  Run local settings checks that do not need WordPress DB"
+	@echo "  settings:check       Run local settings checks via pnpm"
+
+build:
+	@pnpm run build
+
+watch:
+	@pnpm run start
 
 frontend-capture: check-wp-root
 	@php tests/frontend-output-regression.php capture \
@@ -54,4 +62,5 @@ exclude-contract:
 current-url-contract:
 	@php tests/current-url-contract.php
 
-settings-local-checks: admin-react-smoke settings-sanitize-contract share-template-contract exclude-contract current-url-contract frontend-drift-surface
+settings-local-checks:
+	@pnpm run settings:check

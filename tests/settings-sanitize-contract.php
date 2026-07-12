@@ -6,6 +6,11 @@ function add_action($hook, $callback, $priority = 10, $accepted_args = 1) {
 	return true;
 }
 
+function sanitize_textarea_field($value) {
+	return trim($value);
+}
+
+require_once __DIR__ . '/../share-templates.php';
 require_once __DIR__ . '/../settings_page.php';
 
 $reflection = new ReflectionClass('zm_sh_settings');
@@ -32,6 +37,11 @@ $input = [
 	'auto_hide_btn' => '1',
 	'use_port' => '1',
 	'nofollow' => '1',
+	'share_templates' => [
+		'facebook' => 'https://example.com/share?u=%%permalink%%',
+		'x' => 'https://x.com/intent/tweet?url=%%permalink%%',
+		'unknown' => 'https://example.com/ignored',
+	],
 ];
 
 $expected = [
@@ -55,6 +65,10 @@ $expected = [
 	'auto_hide_btn' => true,
 	'use_port' => true,
 	'nofollow' => true,
+	'share_templates' => [
+		'facebook' => 'https://example.com/share?u=%%permalink%%',
+		'x' => 'https://x.com/intent/tweet?url=%%permalink%%',
+	],
 ];
 
 $actual = $settings->sanitize($input);

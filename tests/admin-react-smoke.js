@@ -4,6 +4,7 @@ const vm = require('vm');
 
 const scriptPath = 'assets/admin-react.js';
 const code = fs.readFileSync(scriptPath, 'utf8');
+const adminCss = fs.readFileSync('assets/admin.css', 'utf8');
 const settingsPageCode = fs.readFileSync('settings_page.php', 'utf8');
 const roots = {
 	'zmsh-react-settings-root': {},
@@ -33,10 +34,15 @@ const context = {
 	console,
 	jQuery: jqueryMock,
 	window: {
-		requestAnimationFrame(callback) {
-			animationFrames.push(callback);
-			return animationFrames.length;
-		},
+	requestAnimationFrame(callback) {
+		animationFrames.push(callback);
+		return animationFrames.length;
+	},
+	setTimeout(callback) {
+		callback();
+		return 1;
+	},
+	clearTimeout() {},
 	},
 	document: {
 		getElementById(id) {
@@ -63,7 +69,7 @@ context.window.zm_sh_react_settings = {
 	options: {
 		title: 'Share this with your friends',
 		iconset: 'default',
-		excludes: '42,about,Sample page',
+		excludes: '42,43,44',
 		show_in: {
 			show_left: 'square',
 			show_right: false,
@@ -78,11 +84,29 @@ context.window.zm_sh_react_settings = {
 			facebook: 1,
 			x: 1,
 		},
+		share_templates: {
+			facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
+			x: 'https://x.com/intent/tweet?url=%%permalink%%&text=%%title%%',
+		},
 		g_analytics: 0,
 		auto_hide_btn: 0,
 		use_port: 0,
-		nofollow: 0,
+		 nofollow: 0,
 	},
+	share_template_defaults: {
+		facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
+		x: 'https://x.com/intent/tweet?url=%%permalink%%&text=%%title%%',
+	},
+	share_template_overrides: {
+		facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
+		x: 'https://example.com/custom?url=%%permalink%%',
+	},
+	exclude_items: [
+		{ id: '42', token: '#42 - About (page)' },
+		{ id: '43', token: '#43 - Contact (page)' },
+		{ id: '44', token: '#44 - Sample page (page)' },
+	],
+	exclude_custom: ['aefs'],
 };
 
 let appInstance = null;
@@ -155,6 +179,7 @@ context.window.wp = {
 	components: {
 		Card: componentContainer,
 		CardBody: componentContainer,
+		Button: componentContainer,
 		FormTokenField: componentTokenField,
 		SelectControl: componentSelect,
 		Snackbar: componentContainer,
@@ -200,6 +225,19 @@ function collectNodes(tree) {
 	return items;
 }
 
+function collectText(tree) {
+	if (typeof tree === 'string' || typeof tree === 'number') {
+		return String(tree);
+	}
+	if (Array.isArray(tree)) {
+		return tree.map(collectText).join('');
+	}
+	if (!tree || typeof tree !== 'object') {
+		return '';
+	}
+	return collectText(tree.children || []);
+}
+
 const nodes = collectNodes(roots['zmsh-react-settings-root'].tree);
 if (!nodes.some((node) => node.props && node.props.className === 'zm_settings_top_grid')) {
 	throw new Error('Responsive settings top grid did not render.');
@@ -233,6 +271,8 @@ const requiredNames = [
 	'zm_shbt_fld[auto_hide_btn]',
 	'zm_shbt_fld[use_port]',
 	'zm_shbt_fld[nofollow]',
+	'zm_shbt_fld[share_templates][facebook]',
+	'zm_shbt_fld[share_templates][x]',
 ];
 
 const missing = requiredNames.filter((name) => !names.has(name));
@@ -240,8 +280,203 @@ if (missing.length > 0) {
 	throw new Error(`Missing legacy field names: ${missing.join(', ')}`);
 }
 
+const facebookTemplate = nodes.find((node) => node.props && node.props.id === 'share_template_facebook_0');
+const xTemplate = nodes.find((node) => node.props && node.props.id === 'share_template_x_0');
+const networkColumns = nodes.filter((node) => node.props && node.props.className === 'zm_network_column');
+const facebookPrefix = nodes.find((node) => node.props && node.props.className === 'zm_template_prefix' && node.children && node.children[0].includes('facebook.com'));
+const facebookSerializedTemplate = nodes.find((node) => node.props && node.props.name === 'zm_shbt_fld[share_templates][facebook]');
+const xInitialSerializedTemplate = nodes.find((node) => node.props && node.props.name === 'zm_shbt_fld[share_templates][x]');
+const facebookPlaceholder = nodes.find((node) => node.props && node.props.className === 'zm_template_placeholder' && node.children && node.children[0] === '%%permalink%%');
+if (!facebookTemplate || facebookTemplate.props.className !== 'zm_template_parameter_editor' || !facebookTemplate.props.contentEditable || !facebookPrefix || !facebookPlaceholder || !facebookSerializedTemplate || facebookSerializedTemplate.props.value !== '' || networkColumns.length !== 2) {
+	throw new Error('Canonical templates should show a fixed URL and separately editable parameter values.');
+}
+
+if (!xTemplate || xTemplate.props.className !== 'zm_template_parameter_editor' || xTemplate.props.role !== 'combobox' || xTemplate.props['aria-autocomplete'] !== 'list' || xTemplate.props['aria-haspopup'] !== 'listbox') {
+	throw new Error('Saved platform template override did not render.');
+}
+if (!xInitialSerializedTemplate || xInitialSerializedTemplate.props.value !== 'https://example.com/custom?url=%%permalink%%') {
+	throw new Error('Hidden templates should retain the exact saved full URL.');
+}
+
+if (nodes.some((node) => node.props && node.props.className === 'zm_template_placeholders') || code.includes('Insert into selected value') || code.includes('zm_template_parameter_value')) {
+	throw new Error('Retired placeholder insertion controls should not render.');
+}
+
+const parameterListCss = adminCss.match(/\.zm_template_parameter_list\s*\{[^}]*\}/);
+if (!parameterListCss || !parameterListCss[0].includes('border: 1px solid #c3c4c7') || !adminCss.includes('.zm_template_parameter_list:focus-within') || !adminCss.includes('var(--zmsh-accent)')) {
+	throw new Error('Template parameter editor should keep a neutral resting border and scheme-aware active state.');
+}
+
+const prefixCss = adminCss.match(/\.zm_template_prefix\s*\{[^}]*\}/);
+if (!prefixCss || !prefixCss[0].includes('background: #f0f0f1') || !prefixCss[0].includes('border-left: 3px solid #c3c4c7') || prefixCss[0].includes('border: 1px solid')) {
+	throw new Error('Share URL prefix should render as static code context, not as an input-like control.');
+}
+
+const networkColumnsCss = adminCss.match(/\.zm_network_columns\s*\{[^}]*\}/);
+const networkColumnCss = adminCss.match(/\.zm_network_column\s*\{[^}]*\}/);
+if (!networkColumnsCss || !networkColumnsCss[0].includes('grid-template-columns: repeat(2, minmax(0, 1fr))') || !networkColumnCss || !networkColumnCss[0].includes('display: flex') || !networkColumnCss[0].includes('flex-direction: column')) {
+	throw new Error('Social networks should use independent desktop column stacks.');
+}
+
+const networkTemplateCss = adminCss.match(/\.zm_network_template\s*\{[^}]*\}/);
+if (!networkTemplateCss || !networkTemplateCss[0].includes('border-left: 3px solid var(--zmsh-accent-light)')) {
+	throw new Error('Social network template panels should use the scheme-aware accent border.');
+}
+
+const expandablePanelCss = adminCss.match(/\.zm_expandable_toggle_panel_details\s*\{[^}]*\}/);
+if (!expandablePanelCss || !expandablePanelCss[0].includes('border-top: 0') || adminCss.includes('background: #f7fbff')) {
+	throw new Error('Enabled placements should use the shared joined neutral detail panel, not a tinted selected card.');
+}
+
+const expandablePanelUses = code.match(/e\(ExpandableTogglePanel/g) || [];
+if (expandablePanelUses.length < 2 || !adminCss.includes('.zm_expandable_toggle_panel.is-enabled > .zm_native_toggle')) {
+	throw new Error('Placement and social network items should share the expandable toggle-panel component.');
+}
+
+const settingsSectionCss = adminCss.match(/\.zm_settings_section\s*\{[^}]*\}/);
+if (!settingsSectionCss || !settingsSectionCss[0].includes('border-left: 3px solid var(--zmsh-accent-light)')) {
+	throw new Error('Top-level settings sections should use the scheme-aware accent border.');
+}
+
+if (!code.includes("className: 'zm_network_columns zm_placement_columns'") || !code.includes('var placementColumns = [')) {
+	throw new Error('Placement cards should use explicit independent columns so collapsed cards do not inherit a neighboring card height.');
+}
+
+xTemplate.props.onFocus();
+appInstance.getTemplateSelection = function () { return { start: 0, end: 0 }; };
+appInstance.insertSharePlaceholder('x', '%%imageurl%%');
+if (appInstance.state.options.share_templates.x !== 'https://example.com/custom?url=%%imageurl%%%%permalink%%') {
+	throw new Error('Template placeholder insertion did not preserve the selection offset.');
+}
+
+appInstance.getTemplateSelection = function () { return null; };
+const editorAfterInsertion = collectNodes(appInstance.render()).find((node) => node.props && node.props.id === 'share_template_x_0');
+const plainTextValue = 'ordinary text ';
+appInstance.getTemplateSelection = function () { return { start: plainTextValue.length, end: plainTextValue.length }; };
+editorAfterInsertion.props.onInput({ currentTarget: { textContent: plainTextValue } });
+if (appInstance.state.templateAutocomplete) {
+	throw new Error('Ordinary spaces should not open the placeholder listbox.');
+}
+
+const triggerValue = 'ordinary text %%';
+appInstance.getTemplateSelection = function () { return { start: triggerValue.length, end: triggerValue.length }; };
+editorAfterInsertion.props.onInput({ currentTarget: { textContent: triggerValue } });
+if (!appInstance.state.templateAutocomplete) {
+	throw new Error('Typing %% should open the placeholder listbox at the caret.');
+}
+const triggerEditor = collectNodes(appInstance.render()).find((node) => node.props && node.props.id === 'share_template_x_0');
+if (!triggerEditor || triggerEditor.props.key !== editorAfterInsertion.props.key) {
+	throw new Error('Normal typing should not remount the contenteditable editor.');
+}
+
+let compositionPrevented = false;
+editorAfterInsertion.props.onKeyDown({
+	key: 'Enter',
+	isComposing: true,
+	currentTarget: {},
+	preventDefault() { compositionPrevented = true; },
+});
+if (compositionPrevented || !appInstance.state.templateAutocomplete || appInstance.state.options.share_templates.x !== 'https://example.com/custom?url=ordinary text %%') {
+	throw new Error('IME composition Enter should not select an autocomplete option.');
+}
+
+editorAfterInsertion.props.onKeyDown({
+	key: 'Enter',
+	currentTarget: {},
+	preventDefault() {},
+});
+if (appInstance.state.templateAutocomplete || appInstance.state.options.share_templates.x !== 'https://example.com/custom?url=ordinary text %%title%%') {
+	throw new Error('Selecting a typed %% suggestion should replace the trigger characters exactly once.');
+}
+const normalizedEditorNodes = collectNodes(appInstance.render());
+const normalizedEditor = normalizedEditorNodes.find((node) => node.props && node.props.id === 'share_template_x_0');
+const normalizedPlaceholder = normalizedEditorNodes.find((node) => node.props && node.props.className === 'zm_template_placeholder' && node.children && node.children[0] === '%%title%%');
+if (!normalizedEditor || normalizedEditor.props.key === triggerEditor.props.key || collectText(normalizedEditor) !== 'ordinary text %%title%%' || !normalizedPlaceholder) {
+	throw new Error('Autocomplete insertion should remount the editor from safe styled state children.');
+}
+
+let prevented = false;
+editorAfterInsertion.props.onKeyDown({
+	ctrlKey: true,
+	key: ' ',
+	currentTarget: {},
+	preventDefault() { prevented = true; },
+});
+if (!prevented || !appInstance.state.templateAutocomplete) {
+	throw new Error('Ctrl+Space should open the placeholder listbox without inserting text.');
+}
+
+editorAfterInsertion.props.onKeyDown({
+	key: 'Escape',
+	currentTarget: {},
+	preventDefault() {},
+});
+if (appInstance.state.templateAutocomplete) {
+	throw new Error('Escape should close the placeholder listbox.');
+}
+
+editorAfterInsertion.props.onKeyDown({
+	ctrlKey: true,
+	key: ' ',
+	currentTarget: {},
+	preventDefault() {},
+});
+
+let autocompleteNodes = collectNodes(appInstance.render());
+const listbox = autocompleteNodes.find((node) => node.props && node.props.role === 'listbox');
+if (!listbox || listbox.props['aria-label'] !== 'Insert share parameter placeholder') {
+	throw new Error('Placeholder suggestions should render as an accessible listbox.');
+}
+const activeEditor = autocompleteNodes.find((node) => node.props && node.props.id === 'share_template_x_0');
+if (!activeEditor || activeEditor.props['aria-controls'] !== listbox.props.id || activeEditor.props['aria-expanded'] !== true) {
+	throw new Error('The active editor should expose its combobox/listbox relationship.');
+}
+
+editorAfterInsertion.props.onKeyDown({
+	key: 'ArrowDown',
+	currentTarget: {},
+	preventDefault() {},
+});
+if (appInstance.state.templateAutocomplete.selectedIndex !== 1) {
+	throw new Error('ArrowDown should change the active placeholder suggestion.');
+}
+
+editorAfterInsertion.props.onKeyDown({
+	key: 'ArrowUp',
+	currentTarget: {},
+	preventDefault() {},
+});
+if (appInstance.state.templateAutocomplete.selectedIndex !== 0) {
+	throw new Error('ArrowUp should change the active placeholder suggestion.');
+}
+
+editorAfterInsertion.props.onKeyDown({
+	key: 'ArrowDown',
+	currentTarget: {},
+	preventDefault() {},
+});
+
+appInstance.getTemplateSelection = function () {
+	const value = appInstance.getShareTemplateParameters('x')[0].value;
+	return { start: value.length, end: value.length };
+};
+editorAfterInsertion.props.onKeyDown({
+	key: 'Enter',
+	currentTarget: {},
+	preventDefault() {},
+});
+if (appInstance.state.templateAutocomplete || !appInstance.state.options.share_templates.x.endsWith('%%permalink%%')) {
+	throw new Error('Enter should insert the selected placeholder and close the listbox.');
+}
+
+const updatedTemplateNodes = collectNodes(appInstance.render());
+const xSerializedTemplate = updatedTemplateNodes.find((node) => node.props && node.props.name === 'zm_shbt_fld[share_templates][x]');
+if (!xSerializedTemplate || xSerializedTemplate.props.value !== appInstance.state.options.share_templates.x) {
+	throw new Error('Template form serialization did not preserve the full URL contract.');
+}
+
 const excludeTokenField = nodes.find((node) => node.props && node.props.className === 'mock-form-token-field');
-if (!excludeTokenField || excludeTokenField.props.value.join('|') !== '42|about|Sample page') {
+if (!excludeTokenField || excludeTokenField.props.value.join('|') !== '#42 - About (page)|#43 - Contact (page)|#44 - Sample page (page)|aefs') {
 	throw new Error('Exclude CSV value did not render as WordPress tokens.');
 }
 
@@ -250,10 +485,27 @@ if (!legacyPlacement || legacyPlacement.props.checked !== true) {
 	throw new Error('Legacy saved placement shape did not normalize to enabled.');
 }
 
-excludeTokenField.props.onChange(['42', 'contact']);
+const beforePostShape = nodes.find((node) => node.type === 'select' && node.props && node.props.name === 'zm_shbt_fld[show_before_post]');
+if (beforePostShape) {
+	throw new Error('Disabled placement controls should remain collapsed.');
+}
+
+legacyPlacement.props.onChange(false);
+const collapsedPlacementNodes = collectNodes(appInstance.render());
+if (collapsedPlacementNodes.find((node) => node.type === 'select' && node.props && node.props.name === 'zm_shbt_fld[show_left]')) {
+	throw new Error('Disabling a placement should collapse its button shape control.');
+}
+
+legacyPlacement.props.onChange(true);
+const expandedPlacementNodes = collectNodes(appInstance.render());
+if (!expandedPlacementNodes.find((node) => node.type === 'select' && node.props && node.props.name === 'zm_shbt_fld[show_left]')) {
+	throw new Error('Enabling a placement should reveal its existing button shape control.');
+}
+
+excludeTokenField.props.onChange(['#42 - About (page)', '#44 - Sample page (page)']);
 const excludeNodes = collectNodes(appInstance.render());
 const excludeHiddenInput = excludeNodes.find((node) => node.props && node.props.name === 'zm_shbt_fld[excludes]');
-if (!excludeHiddenInput || excludeHiddenInput.props.value !== '42,contact') {
+if (!excludeHiddenInput || excludeHiddenInput.props.value !== '42,44') {
 	throw new Error('Exclude tokens did not preserve the comma-separated saving format.');
 }
 

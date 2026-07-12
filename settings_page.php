@@ -30,6 +30,7 @@ class zm_sh_settings{
 		//registering scripts and styles for admin
 		add_action( 'admin_enqueue_scripts', array($this,'admin_scripts'),20 );
 		add_action( 'wp_ajax_zm_sh_save_settings', array($this,'ajax_save_settings') );
+		add_action( 'wp_ajax_zm_sh_search_content', array($this,'ajax_search_content') );
 	}
 
 	private function get_admin_color_scheme_tokens() {
@@ -64,13 +65,15 @@ class zm_sh_settings{
 
 	//registering menu item and page on admin
 	function reg_admn_menu(){
-		add_menu_page(__("Html Social Share", "zm-sh"), __("Html Social Share", "zm-sh"),"manage_options", "zm_shbt_opt",array($this,"zm_sh_opt"),"","59.679861");
+		add_submenu_page('options-general.php', __("Html Social Share", "zm-sh"), __("Html Social Share", "zm-sh"), 'manage_options', 'zm_shbt_opt', array($this, 'zm_sh_opt'));
 	}
 
 	//registering scripts and styles for admin
 	function admin_scripts($hook) {
-		if ( 'toplevel_page_zm_shbt_opt' == $hook ) {
-			wp_enqueue_style( 'zm_sh_admin_styles',  plugin_dir_url( __FILE__ ) . 'assets/admin.css', array(), '2.2.8' );
+		if ( 'settings_page_zm_shbt_opt' === $hook ) {
+			$admin_style_path = __DIR__ . '/assets/admin.css';
+			$admin_style_version = file_exists( $admin_style_path ) ? filemtime( $admin_style_path ) : '2.2.8';
+			wp_enqueue_style( 'zm_sh_admin_styles', plugin_dir_url( __FILE__ ) . 'assets/admin.css', array(), $admin_style_version );
 			$admin_color_tokens = $this->get_admin_color_scheme_tokens();
 			wp_add_inline_style( 'zm_sh_admin_styles', sprintf(
 				'.zmsh-settings-wrap{--zmsh-accent:%1$s;--zmsh-accent-strong:%2$s;--zmsh-accent-light:%3$s;}',
@@ -78,7 +81,10 @@ class zm_sh_settings{
 				esc_html( $admin_color_tokens['accent_strong'] ),
 				esc_html( $admin_color_tokens['accent_light'] )
 			) );
-			wp_enqueue_script('zm_sh_admin_scripts', plugin_dir_url( __FILE__ ) . 'assets/admin-react.js', array('jquery', 'wp-components', 'wp-element'), '2.2.8', true  );
+			$admin_script = file_exists( __DIR__ . '/build/admin-react.js' ) ? 'build/admin-react.js' : 'assets/admin-react.js';
+			$admin_script_path = __DIR__ . '/' . $admin_script;
+			$admin_script_version = file_exists( $admin_script_path ) ? filemtime( $admin_script_path ) : '2.2.8';
+			wp_enqueue_script('zm_sh_admin_scripts', plugin_dir_url( __FILE__ ) . $admin_script, array('jquery', 'wp-components', 'wp-element'), $admin_script_version, true  );
 
 			$iconset_data = [];
 			foreach ($this->iconsets->get_iconsets() as $iconset) {
@@ -115,7 +121,11 @@ class zm_sh_settings{
 				'auto_hide_btn' => 0,
 				'use_port' => 0,
 				'nofollow' => 0,
+				'share_templates' => function_exists( 'zm_sh_get_share_templates' ) ? zm_sh_get_share_templates() : array(),
 			));
+			$exclude_items = $this->get_exclude_items( $defaulted_options['excludes'] );
+			$share_template_defaults = function_exists( 'zm_sh_get_default_share_templates' ) ? zm_sh_get_default_share_templates() : array();
+			$share_template_overrides = isset( $this->options['share_templates'] ) && is_array( $this->options['share_templates'] ) ? $this->options['share_templates'] : array();
 
 			$legacy_twitter = isset($defaulted_options['icons']['twitter']);
 			if ($legacy_twitter && ! isset($defaulted_options['icons']['x'])) {
@@ -131,6 +141,10 @@ class zm_sh_settings{
 					'assets_img'     => zm_sh_url_assets_img,
 					'iconsets'       => $iconset_data,
 					'options'        => $defaulted_options,
+					'share_template_defaults' => $share_template_defaults,
+					'share_template_overrides' => $share_template_overrides,
+					'exclude_items'  => $exclude_items['items'],
+					'exclude_custom' => $exclude_items['custom'],
 					'defaultIconset' => 'default',
 					'strings'        => array(
 						'loading'   => __('Loading settings...', 'zm-sh'),
@@ -150,6 +164,69 @@ class zm_sh_settings{
 				'nonce' => wp_create_nonce( 'zm_sh_admin' ),
 			) );
 		}
+	}
+
+	private function get_exclude_items( $excludes ) {
+		$items = array();
+		$custom = array();
+
+		foreach ( zm_sh_get_excluded_post_identifiers( $excludes ) as $identifier ) {
+			$post = null;
+			if ( ctype_digit( $identifier ) ) {
+				$post = get_post( absint( $identifier ) );
+			} else {
+				$matches = get_posts( array(
+					'post_type' => array( 'post', 'page' ),
+					'post_status' => 'publish',
+					'posts_per_page' => 1,
+					's' => $identifier,
+				) );
+				foreach ( $matches as $match ) {
+					if ( 0 === strcasecmp( $identifier, $match->post_name ) || 0 === strcasecmp( $identifier, $match->post_title ) ) {
+						$post = $match;
+						break;
+					}
+				}
+			}
+
+			if ( $post && in_array( $post->post_type, array( 'post', 'page' ), true ) && 'publish' === $post->post_status ) {
+				$items[] = array(
+					'id' => (string) $post->ID,
+					'token' => sprintf( '#%d - %s (%s)', $post->ID, get_the_title( $post ), $post->post_type ),
+				);
+			} else {
+				$custom[] = $identifier;
+			}
+		}
+
+		return array( 'items' => $items, 'has_custom' => ! empty( $custom ), 'custom' => $custom );
+	}
+
+	function ajax_search_content() {
+		check_ajax_referer( 'zm_sh_admin', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to search content.', 'zm-sh' ) ), 403 );
+		}
+
+		$query = isset( $_POST['query'] ) ? sanitize_text_field( wp_unslash( $_POST['query'] ) ) : '';
+		$posts = get_posts( array(
+			'post_type' => array( 'post', 'page' ),
+			'post_status' => 'publish',
+			'posts_per_page' => 20,
+			's' => $query,
+			'orderby' => 'relevance',
+		) );
+		$items = array();
+
+		foreach ( $posts as $post ) {
+			$items[] = array(
+				'id' => (string) $post->ID,
+				'token' => sprintf( '#%d - %s (%s)', $post->ID, get_the_title( $post ), $post->post_type ),
+			);
+		}
+
+		wp_send_json_success( $items );
 	}
 
 	function ajax_save_settings() {
@@ -224,6 +301,15 @@ class zm_sh_settings{
 				foreach($value as $key_1=>$value_1) {
 					if ( $value_1 ) {
 						$new_input["show_in"]["$key_1"] = '1';
+					}
+				}
+			}
+			elseif ( 'share_templates' === $key && is_array( $value ) ) {
+				$defaults = function_exists( 'zm_sh_get_default_share_templates' ) ? zm_sh_get_default_share_templates() : array();
+				$new_input['share_templates'] = array();
+				foreach ( $defaults as $platform => $default ) {
+					if ( isset( $value[ $platform ] ) && is_string( $value[ $platform ] ) ) {
+						$new_input['share_templates'][ $platform ] = sanitize_textarea_field( $value[ $platform ] );
 					}
 				}
 			}

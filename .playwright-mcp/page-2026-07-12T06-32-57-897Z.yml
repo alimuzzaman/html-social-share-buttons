@@ -1,0 +1,26 @@
+- generic [active] [ref=f3e1]:
+  - heading "Log In" [level=1] [ref=f3e2]
+  - generic [ref=f3e3]:
+    - link "Powered by WordPress" [ref=f3e4] [cursor=pointer]:
+      - /url: https://wordpress.org/
+    - generic [ref=f3e5]:
+      - paragraph [ref=f3e6]:
+        - generic [ref=f3e7]: Username or Email Address
+        - textbox "Username or Email Address" [ref=f3e8]
+      - generic [ref=f3e9]:
+        - generic [ref=f3e10]: Password
+        - generic [ref=f3e11]:
+          - textbox "Password" [ref=f3e12]
+          - button "Show password" [ref=f3e13] [cursor=pointer]:
+            - generic [ref=f3e14]: 
+      - paragraph [ref=f3e15]:
+        - checkbox "Remember Me" [ref=f3e16] [cursor=pointer]
+        - generic [ref=f3e17]: Remember Me
+      - paragraph:
+        - button "Log In" [ref=f3e18] [cursor=pointer]
+    - paragraph [ref=f3e19]:
+      - link "Lost your password?" [ref=f3e20] [cursor=pointer]:
+        - /url: https://html-social-share-button.tst/wp-login.php?action=lostpassword
+    - paragraph [ref=f3e21]:
+      - link "← Go to Sandbox html-social-share-button" [ref=f3e22] [cursor=pointer]:
+        - /url: https://html-social-share-button.tst/

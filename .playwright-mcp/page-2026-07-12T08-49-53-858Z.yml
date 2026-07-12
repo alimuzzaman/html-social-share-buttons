@@ -1,0 +1,431 @@
+- generic [ref=f5e2]:
+  - navigation "Main menu":
+    - link "Skip to main content" [ref=f5e3] [cursor=pointer]:
+      - /url: "#wpbody-content"
+    - link "Skip to toolbar" [ref=f5e4] [cursor=pointer]:
+      - /url: "#wp-toolbar"
+    - list [ref=f5e7]:
+      - listitem [ref=f5e8]:
+        - link "Dashboard" [ref=f5e9] [cursor=pointer]:
+          - /url: index.php
+          - generic [ref=f5e10]: 
+        - list [ref=f5e12]:
+          - listitem [ref=f5e13]:
+            - link "Home" [ref=f5e14] [cursor=pointer]:
+              - /url: index.php
+          - listitem [ref=f5e15]:
+            - link "Updates" [ref=f5e16] [cursor=pointer]:
+              - /url: update-core.php
+      - listitem [ref=f5e17]
+      - listitem [ref=f5e19]:
+        - link "Posts" [ref=f5e20] [cursor=pointer]:
+          - /url: edit.php
+          - generic [ref=f5e21]: 
+        - list [ref=f5e23]:
+          - listitem [ref=f5e24]:
+            - link "All Posts" [ref=f5e25] [cursor=pointer]:
+              - /url: edit.php
+          - listitem [ref=f5e26]:
+            - link "Add Post" [ref=f5e27] [cursor=pointer]:
+              - /url: post-new.php
+          - listitem [ref=f5e28]:
+            - link "Categories" [ref=f5e29] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=category
+          - listitem [ref=f5e30]:
+            - link "Tags" [ref=f5e31] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=post_tag
+      - listitem [ref=f5e32]:
+        - link "Media" [ref=f5e33] [cursor=pointer]:
+          - /url: upload.php
+          - generic [ref=f5e34]: 
+        - list [ref=f5e36]:
+          - listitem [ref=f5e37]:
+            - link "Library" [ref=f5e38] [cursor=pointer]:
+              - /url: upload.php
+          - listitem [ref=f5e39]:
+            - link "Add Media File" [ref=f5e40] [cursor=pointer]:
+              - /url: media-new.php
+      - listitem [ref=f5e41]:
+        - link "Pages" [ref=f5e42] [cursor=pointer]:
+          - /url: edit.php?post_type=page
+          - generic [ref=f5e43]: 
+        - list [ref=f5e45]:
+          - listitem [ref=f5e46]:
+            - link "All Pages" [ref=f5e47] [cursor=pointer]:
+              - /url: edit.php?post_type=page
+          - listitem [ref=f5e48]:
+            - link "Add Page" [ref=f5e49] [cursor=pointer]:
+              - /url: post-new.php?post_type=page
+      - listitem [ref=f5e50]:
+        - link "Comments" [ref=f5e51] [cursor=pointer]:
+          - /url: edit-comments.php
+          - generic [ref=f5e52]: 
+      - listitem [ref=f5e54]
+      - listitem [ref=f5e56]:
+        - link "Appearance" [ref=f5e57] [cursor=pointer]:
+          - /url: themes.php
+          - generic [ref=f5e58]: 
+        - list [ref=f5e60]:
+          - listitem [ref=f5e61]:
+            - link "Themes" [ref=f5e62] [cursor=pointer]:
+              - /url: themes.php
+          - listitem [ref=f5e63]:
+            - link "Editor" [ref=f5e64] [cursor=pointer]:
+              - /url: site-editor.php
+          - listitem [ref=f5e65]:
+            - link "Fonts" [ref=f5e66] [cursor=pointer]:
+              - /url: font-library.php
+      - listitem [ref=f5e67]:
+        - link "Plugins" [ref=f5e68] [cursor=pointer]:
+          - /url: plugins.php
+          - generic [ref=f5e69]: 
+        - list [ref=f5e71]:
+          - listitem [ref=f5e72]:
+            - link "Installed Plugins" [ref=f5e73] [cursor=pointer]:
+              - /url: plugins.php
+          - listitem [ref=f5e74]:
+            - link "Add Plugin" [ref=f5e75] [cursor=pointer]:
+              - /url: plugin-install.php
+          - listitem [ref=f5e76]:
+            - link "Sandbox On-Demand" [ref=f5e77] [cursor=pointer]:
+              - /url: plugins.php?page=sandbox-ondemand
+      - listitem [ref=f5e78]:
+        - link "Users" [ref=f5e79] [cursor=pointer]:
+          - /url: users.php
+          - generic [ref=f5e80]: 
+        - list [ref=f5e82]:
+          - listitem [ref=f5e83]:
+            - link "All Users" [ref=f5e84] [cursor=pointer]:
+              - /url: users.php
+          - listitem [ref=f5e85]:
+            - link "Add User" [ref=f5e86] [cursor=pointer]:
+              - /url: user-new.php
+          - listitem [ref=f5e87]:
+            - link "Profile" [ref=f5e88] [cursor=pointer]:
+              - /url: profile.php
+      - listitem [ref=f5e89]:
+        - link "Tools" [ref=f5e90] [cursor=pointer]:
+          - /url: tools.php
+          - generic [ref=f5e91]: 
+        - list [ref=f5e93]:
+          - listitem [ref=f5e94]:
+            - link "Available Tools" [ref=f5e95] [cursor=pointer]:
+              - /url: tools.php
+          - listitem [ref=f5e96]:
+            - link "Import" [ref=f5e97] [cursor=pointer]:
+              - /url: import.php
+          - listitem [ref=f5e98]:
+            - link "Export" [ref=f5e99] [cursor=pointer]:
+              - /url: export.php
+          - listitem [ref=f5e100]:
+            - link "Site Health" [ref=f5e101] [cursor=pointer]:
+              - /url: site-health.php
+          - listitem [ref=f5e102]:
+            - link "Export Personal Data" [ref=f5e103] [cursor=pointer]:
+              - /url: export-personal-data.php
+          - listitem [ref=f5e104]:
+            - link "Erase Personal Data" [ref=f5e105] [cursor=pointer]:
+              - /url: erase-personal-data.php
+          - listitem [ref=f5e106]:
+            - link "Sandbox Snapshots" [ref=f5e107] [cursor=pointer]:
+              - /url: tools.php?page=sandbox-snapshots
+          - listitem [ref=f5e108]:
+            - link "Theme File Editor" [ref=f5e109] [cursor=pointer]:
+              - /url: theme-editor.php
+          - listitem [ref=f5e110]:
+            - link "Plugin File Editor" [ref=f5e111] [cursor=pointer]:
+              - /url: plugin-editor.php
+      - listitem [ref=f5e112]:
+        - link "Settings" [ref=f5e113] [cursor=pointer]:
+          - /url: options-general.php
+          - generic [ref=f5e114]: 
+        - list [ref=f5e116]:
+          - listitem [ref=f5e117]:
+            - link "General" [ref=f5e118] [cursor=pointer]:
+              - /url: options-general.php
+          - listitem [ref=f5e119]:
+            - link "Connectors" [ref=f5e120] [cursor=pointer]:
+              - /url: options-connectors.php
+          - listitem [ref=f5e121]:
+            - link "Writing" [ref=f5e122] [cursor=pointer]:
+              - /url: options-writing.php
+          - listitem [ref=f5e123]:
+            - link "Reading" [ref=f5e124] [cursor=pointer]:
+              - /url: options-reading.php
+          - listitem [ref=f5e125]:
+            - link "Discussion" [ref=f5e126] [cursor=pointer]:
+              - /url: options-discussion.php
+          - listitem [ref=f5e127]:
+            - link "Media" [ref=f5e128] [cursor=pointer]:
+              - /url: options-media.php
+          - listitem [ref=f5e129]:
+            - link "Permalinks" [ref=f5e130] [cursor=pointer]:
+              - /url: options-permalink.php
+          - listitem [ref=f5e131]:
+            - link "Privacy" [ref=f5e132] [cursor=pointer]:
+              - /url: options-privacy.php
+          - listitem [ref=f5e133]:
+            - link "Html Social Share" [ref=f5e134] [cursor=pointer]:
+              - /url: options-general.php?page=zm_shbt_opt
+      - listitem [ref=f5e135]:
+        - button "Collapse Main menu" [expanded] [ref=f5e136] [cursor=pointer]:
+          - generic [ref=f5e138]: Collapse Menu
+  - generic [ref=f5e139]:
+    - generic [ref=f5e140]:
+      - navigation "Toolbar":
+        - menu:
+          - group [ref=f5e141]:
+            - menuitem "About WordPress" [ref=f5e142] [cursor=pointer]
+          - group [ref=f5e145]:
+            - menuitem "Sandbox html-social-share-button" [ref=f5e146] [cursor=pointer]
+          - group [ref=f5e147]:
+            - menuitem "⌘K Open command palette" [ref=f5e148] [cursor=pointer]:
+              - generic [ref=f5e150]:
+                - text: ⌘K
+                - generic [ref=f5e151]: Open command palette
+          - group [ref=f5e152]:
+            - menuitem "0 Comments in moderation" [ref=f5e153] [cursor=pointer]:
+              - generic [ref=f5e155]: "0"
+          - group [ref=f5e157]:
+            - menuitem "New" [ref=f5e158] [cursor=pointer]
+        - menu [ref=f5e161]:
+          - group [ref=f5e162]:
+            - menuitem "Howdy, admin" [ref=f5e163] [cursor=pointer]
+    - main [ref=f5e164]:
+      - generic [ref=f5e166]:
+        - generic [ref=f5e167]:
+          - heading "Html Social Share button" [level=1] [ref=f5e168]
+          - paragraph [ref=f5e169]: Configure share buttons, placement, and output format from a single settings page.
+        - generic [ref=f5e170]:
+          - generic [ref=f5e172]:
+            - generic [ref=f5e173]:
+              - generic [ref=f5e174]:
+                - generic [ref=f5e175]:
+                  - heading "Header" [level=2] [ref=f5e176]
+                  - paragraph [ref=f5e177]: Set the text shown with the share buttons and choose pages where buttons should stay hidden.
+                - generic [ref=f5e179]:
+                  - generic [ref=f5e180]: Enter a title
+                  - textbox "Enter a title" [ref=f5e181]: Share this with your friends
+                - generic [ref=f5e183]:
+                  - generic [ref=f5e184]: Exclude pages or posts
+                  - combobox "Exclude pages or posts" [ref=f5e187]
+                  - paragraph [ref=f5e188]: Separate with commas or the Enter key.
+              - generic [ref=f5e189]:
+                - generic [ref=f5e190]:
+                  - heading "Icon Style" [level=2] [ref=f5e191]
+                  - paragraph [ref=f5e192]: Choose the icon pack used for every placement and generated code snippet.
+                - generic [ref=f5e193]:
+                  - generic [ref=f5e196] [cursor=pointer]:
+                    - generic [ref=f5e197]: Button style
+                    - combobox "Button style" [ref=f5e200]:
+                      - option "Default" [selected]
+                      - option "Flat"
+                      - option "Long Shadows"
+                      - option "Prajin"
+                  - generic [ref=f5e201]:
+                    - generic [ref=f5e202]: Preview
+                    - img "default" [ref=f5e203]
+            - generic [ref=f5e204]:
+              - generic [ref=f5e205]:
+                - heading "Display placement" [level=2] [ref=f5e206]
+                - paragraph [ref=f5e207]: Turn each placement on or off and pick its shape.
+              - generic [ref=f5e208]:
+                - generic [ref=f5e211]:
+                  - generic [ref=f5e216]:
+                    - heading "Left side" [level=3] [ref=f5e217]
+                    - paragraph [ref=f5e218]: A vertical rail on the left edge of the screen.
+                  - generic [ref=f5e221]:
+                    - checkbox "Enabled" [checked] [ref=f5e223] [cursor=pointer]
+                    - generic [ref=f5e226] [cursor=pointer]: Enabled
+                  - generic [ref=f5e229] [cursor=pointer]:
+                    - generic [ref=f5e230]: Button shape
+                    - combobox "Button shape" [ref=f5e233]:
+                      - option "square" [selected]
+                - generic [ref=f5e236]:
+                  - generic [ref=f5e241]:
+                    - heading "Right side" [level=3] [ref=f5e242]
+                    - paragraph [ref=f5e243]: A vertical rail on the right edge of the screen.
+                  - generic [ref=f5e246]:
+                    - checkbox "Enabled" [checked] [ref=f5e248] [cursor=pointer]
+                    - generic [ref=f5e251] [cursor=pointer]: Enabled
+                  - generic [ref=f5e254] [cursor=pointer]:
+                    - generic [ref=f5e255]: Button shape
+                    - combobox "Button shape" [ref=f5e258]:
+                      - option "square" [selected]
+                - generic [ref=f5e261]:
+                  - generic [ref=f5e266]:
+                    - heading "Before post" [level=3] [ref=f5e267]
+                    - paragraph [ref=f5e268]: A row of buttons placed above post content.
+                  - generic [ref=f5e271]:
+                    - checkbox "Enabled" [checked] [ref=f5e273] [cursor=pointer]
+                    - generic [ref=f5e276] [cursor=pointer]: Enabled
+                  - generic [ref=f5e279] [cursor=pointer]:
+                    - generic [ref=f5e280]: Button shape
+                    - combobox "Button shape" [ref=f5e283]:
+                      - option "square" [selected]
+                - generic [ref=f5e286]:
+                  - generic [ref=f5e291]:
+                    - heading "After post" [level=3] [ref=f5e292]
+                    - paragraph [ref=f5e293]: A row of buttons placed below post content.
+                  - generic [ref=f5e296]:
+                    - checkbox "Enabled" [checked] [ref=f5e298] [cursor=pointer]
+                    - generic [ref=f5e301] [cursor=pointer]: Enabled
+                  - generic [ref=f5e304] [cursor=pointer]:
+                    - generic [ref=f5e305]: Button shape
+                    - combobox "Button shape" [ref=f5e308]:
+                      - option "square" [selected]
+            - generic [ref=f5e309]:
+              - generic [ref=f5e310]:
+                - heading "Social Networks" [level=2] [ref=f5e311]
+                - paragraph [ref=f5e312]: Select the share buttons that should be available in the output.
+              - generic [ref=f5e313]:
+                - generic [ref=f5e314]:
+                  - generic [ref=f5e318]:
+                    - checkbox "Enable Facebook" [checked] [ref=f5e320] [cursor=pointer]
+                    - generic [ref=f5e323] [cursor=pointer]: Enable Facebook
+                  - generic [ref=f5e324]:
+                    - generic [ref=f5e325]:
+                      - generic [ref=f5e326]: Facebook share template
+                      - button "Restore defaults" [ref=f5e327] [cursor=pointer]
+                    - paragraph [ref=f5e328]:
+                      - generic [ref=f5e329]: Share URL
+                      - code [ref=f5e330]: https://www.facebook.com/sharer/sharer.php?
+                    - group "Share parameters Parameter names are managed automatically" [ref=f5e331]:
+                      - generic [ref=f5e332]:
+                        - generic [ref=f5e333]: Share parameters
+                        - generic [ref=f5e334]: Parameter names are managed automatically
+                      - generic [ref=f5e336]:
+                        - generic [ref=f5e337]: u
+                        - combobox "Facebook u value" [ref=f5e338]: "%%permalink%%%%title%%%%imageurl%%"
+                    - paragraph [ref=f5e339]: Custom template saved for this platform.
+                - generic [ref=f5e340]:
+                  - generic [ref=f5e344]:
+                    - checkbox "Enable X (formerly Twitter)" [checked] [ref=f5e346] [cursor=pointer]
+                    - generic [ref=f5e349] [cursor=pointer]: Enable X (formerly Twitter)
+                  - generic [ref=f5e350]:
+                    - generic [ref=f5e351]:
+                      - generic [ref=f5e352]: X (formerly Twitter) share template
+                      - button "Restore defaults" [disabled] [ref=f5e353]
+                    - paragraph [ref=f5e354]:
+                      - generic [ref=f5e355]: Share URL
+                      - code [ref=f5e356]: https://x.com/intent/tweet?
+                    - group "Share parameters Parameter names are managed automatically" [ref=f5e357]:
+                      - generic [ref=f5e358]:
+                        - generic [ref=f5e359]: Share parameters
+                        - generic [ref=f5e360]: Parameter names are managed automatically
+                      - generic [ref=f5e361]:
+                        - generic [ref=f5e362]:
+                          - generic [ref=f5e363]: url
+                          - combobox "X (formerly Twitter) url value" [ref=f5e364]: "%%permalink%%"
+                        - generic [ref=f5e365]:
+                          - generic [ref=f5e366]: text
+                          - combobox "X (formerly Twitter) text value" [ref=f5e367]: "%%title%%"
+                    - paragraph [ref=f5e368]: Using the canonical template shown as the placeholder.
+                - generic [ref=f5e369]:
+                  - generic [ref=f5e373]:
+                    - checkbox "Enable Linkedin" [checked] [ref=f5e375] [cursor=pointer]
+                    - generic [ref=f5e378] [cursor=pointer]: Enable Linkedin
+                  - generic [ref=f5e379]:
+                    - generic [ref=f5e380]:
+                      - generic [ref=f5e381]: Linkedin share template
+                      - button "Restore defaults" [disabled] [ref=f5e382]
+                    - paragraph [ref=f5e383]:
+                      - generic [ref=f5e384]: Share URL
+                      - code [ref=f5e385]: https://www.linkedin.com/sharing/share-offsite/?
+                    - group "Share parameters Parameter names are managed automatically" [ref=f5e386]:
+                      - generic [ref=f5e387]:
+                        - generic [ref=f5e388]: Share parameters
+                        - generic [ref=f5e389]: Parameter names are managed automatically
+                      - generic [ref=f5e391]:
+                        - generic [ref=f5e392]: url
+                        - combobox "Linkedin url value" [ref=f5e393]: "%%permalink%%"
+                    - paragraph [ref=f5e394]: Using the canonical template shown as the placeholder.
+                - generic [ref=f5e395]:
+                  - generic [ref=f5e399]:
+                    - checkbox "Enable Pinterest" [checked] [ref=f5e401] [cursor=pointer]
+                    - generic [ref=f5e404] [cursor=pointer]: Enable Pinterest
+                  - generic [ref=f5e405]:
+                    - generic [ref=f5e406]:
+                      - generic [ref=f5e407]: Pinterest share template
+                      - button "Restore defaults" [ref=f5e408] [cursor=pointer]
+                    - paragraph [ref=f5e409]:
+                      - generic [ref=f5e410]: Share URL
+                      - code [ref=f5e411]: https://www.pinterest.com/pin/create/button/?
+                    - group "Share parameters Parameter names are managed automatically" [ref=f5e412]:
+                      - generic [ref=f5e413]:
+                        - generic [ref=f5e414]: Share parameters
+                        - generic [ref=f5e415]: Parameter names are managed automatically
+                      - generic [ref=f5e416]:
+                        - generic [ref=f5e417]:
+                          - generic [ref=f5e418]: url
+                          - combobox "Pinterest url value" [ref=f5e419]: "%%permalink%%"
+                        - generic [ref=f5e420]:
+                          - generic [ref=f5e421]: media
+                          - combobox "Pinterest media value" [ref=f5e422]: "%%imageurl%%"
+                        - generic [ref=f5e423]:
+                          - generic [ref=f5e424]: description
+                          - combobox "Pinterest description value" [ref=f5e425]: title
+                    - paragraph [ref=f5e426]: Custom template saved for this platform.
+                - generic [ref=f5e427]:
+                  - generic [ref=f5e431]:
+                    - checkbox "Enable Email" [checked] [ref=f5e433] [cursor=pointer]
+                    - generic [ref=f5e436] [cursor=pointer]: Enable Email
+                  - generic [ref=f5e437]:
+                    - generic [ref=f5e438]:
+                      - generic [ref=f5e439]: Email share template
+                      - button "Restore defaults" [disabled] [ref=f5e440]
+                    - paragraph [ref=f5e441]:
+                      - generic [ref=f5e442]: Share URL
+                      - code [ref=f5e443]: mailto:?
+                    - group "Share parameters Parameter names are managed automatically" [ref=f5e444]:
+                      - generic [ref=f5e445]:
+                        - generic [ref=f5e446]: Share parameters
+                        - generic [ref=f5e447]: Parameter names are managed automatically
+                      - generic [ref=f5e448]:
+                        - generic [ref=f5e449]:
+                          - generic [ref=f5e450]: subject
+                          - combobox "Email subject value" [ref=f5e451]: "%%title%%"
+                        - generic [ref=f5e452]:
+                          - generic [ref=f5e453]: body
+                          - combobox "Email body value" [ref=f5e454]: "%%permalink%%"
+                    - paragraph [ref=f5e455]: Using the canonical template shown as the placeholder.
+            - generic [ref=f5e456]:
+              - generic [ref=f5e457]:
+                - heading "Advanced options" [level=2] [ref=f5e458]
+                - paragraph [ref=f5e459]: Fine tune tracking, behavior, and link output.
+              - generic [ref=f5e460]:
+                - generic [ref=f5e464]:
+                  - checkbox "Google Social analytics" [ref=f5e466] [cursor=pointer]
+                  - generic [ref=f5e469] [cursor=pointer]: Google Social analytics
+                - generic [ref=f5e473]:
+                  - checkbox "Auto hide button" [ref=f5e475] [cursor=pointer]
+                  - generic [ref=f5e478] [cursor=pointer]: Auto hide button
+                - generic [ref=f5e482]:
+                  - checkbox "Use port on the url." [ref=f5e484] [cursor=pointer]
+                  - generic [ref=f5e487] [cursor=pointer]: Use port on the url.
+                - generic [ref=f5e491]:
+                  - checkbox "No follow social link" [ref=f5e493] [cursor=pointer]
+                  - generic [ref=f5e496] [cursor=pointer]: No follow social link
+            - generic [ref=f5e497]:
+              - generic [ref=f5e498]:
+                - heading "Code generator" [level=2] [ref=f5e499]
+                - paragraph [ref=f5e500]: Generate embed code from the same icon set and selected networks.
+              - generic [ref=f5e501]:
+                - link "<\\?> Get PHP Code" [ref=f5e502] [cursor=pointer]:
+                  - /url: "#zm-sh-thick-box"
+                - link "[] Get Shortcode" [ref=f5e503] [cursor=pointer]:
+                  - /url: "#zm-sh-thick-box"
+          - paragraph [ref=f5e504]:
+            - button "Save Changes" [ref=f5e505] [cursor=pointer]
+          - paragraph [ref=f5e506]:
+            - text: Designed By Hakan Ertan
+            - link "www.tonicons.com" [ref=f5e507] [cursor=pointer]:
+              - /url: https://www.tonicons.com/
+  - contentinfo [ref=f5e508]:
+    - paragraph [ref=f5e509]:
+      - generic [ref=f5e510]:
+        - text: Thank you for creating with
+        - link "WordPress" [ref=f5e511] [cursor=pointer]:
+          - /url: https://wordpress.org/
+        - text: .
+    - paragraph [ref=f5e512]: Version 7.0.1

@@ -69,7 +69,7 @@ This verifies that React-submitted settings still sanitize into the legacy `zm_s
 Run all non-WordPress-DB settings checks together:
 
 ```bash
-make settings-local-checks
+pnpm run settings:check
 ```
 
 ## Scenario authoring

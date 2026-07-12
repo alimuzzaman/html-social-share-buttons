@@ -84,7 +84,7 @@ include("settings_page.php");
 
 // Add settings link to plugins page
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function($links) {
-	$settings_link = '<a href="admin.php?page=zm_shbt_opt">' . __('Settings', 'zm-sh') . '</a>';
+	$settings_link = '<a href="options-general.php?page=zm_shbt_opt">' . __('Settings', 'zm-sh') . '</a>';
 	array_unshift($links, $settings_link);
 	return $links;
 });

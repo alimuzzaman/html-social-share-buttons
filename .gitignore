@@ -20,3 +20,4 @@ error_log
 sandbox.config
 sandbox.config.*
 .wp-env.json
+.wp-env-port
