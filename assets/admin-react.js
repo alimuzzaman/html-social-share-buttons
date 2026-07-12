@@ -47,14 +47,6 @@
 		return !(value === false || value === 0 || value === '0' || value === '' || value === null || typeof value === 'undefined' || value === 'false');
 	}
 
-	function parseExcludes(value) {
-		return String(value || '').split(',').map(function (item) {
-			return item.trim();
-		}).filter(function (item) {
-			return item.length > 0;
-		});
-	}
-
 	function findIconset(id) {
 		for (var i = 0; i < iconsets.length; i++) {
 			if (iconsets[i].id === id) {

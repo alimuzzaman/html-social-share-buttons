@@ -1,4 +1,4 @@
-.PHONY: build watch frontend-capture frontend-compare frontend-drift-surface admin-react-smoke settings-sanitize-contract share-template-contract exclude-contract current-url-contract settings-local-checks help check-wp-root
+.PHONY: build watch frontend-capture frontend-compare frontend-drift-surface admin-react-smoke settings-sanitize-contract share-template-contract exclude-contract current-url-contract phpunit settings-local-checks help check-wp-root
 
 WP_ROOT ?= $(shell [ -n "$(WP_ROOT)" ] && echo "$(WP_ROOT)" || echo "")
 
@@ -20,6 +20,7 @@ help:
 	@echo "  share-template-contract  Verify platform share URL templates"
 	@echo "  exclude-contract  Verify excluded post identifiers"
 	@echo "  current-url-contract  Verify share links use the configured WordPress URL"
+	@echo "  phpunit             Run the Composer PHPUnit contract suite"
 	@echo "  settings:check       Run local settings checks via pnpm"
 
 build:
@@ -61,6 +62,9 @@ exclude-contract:
 
 current-url-contract:
 	@php tests/current-url-contract.php
+
+phpunit:
+	@composer test
 
 settings-local-checks:
 	@pnpm run settings:check

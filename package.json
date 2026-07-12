@@ -6,6 +6,7 @@
     "build": "wp-scripts build assets/admin-react.js --output-path=build",
     "start": "wp-scripts start assets/admin-react.js --output-path=build",
     "lint:js": "wp-scripts lint-js assets/admin-react.js",
+    "test:phpunit": "composer test",
     "settings:check": "node --check assets/admin-react.js && node tests/admin-react-smoke.js && php -l settings_page.php && php tests/settings-sanitize-contract.php && php -l share-templates.php && php tests/share-template-contract.php && php -l function.php && php tests/exclude-contract.php && php tests/current-url-contract.php && php tests/settings-menu-contract.php && bash tests/frontend-drift-surface.sh",
     "test:start": "node scripts/sandbox-env.js start",
     "test:status": "node scripts/sandbox-env.js status",

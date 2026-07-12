@@ -72,6 +72,32 @@ Run all non-WordPress-DB settings checks together:
 pnpm run settings:check
 ```
 
+## PHPUnit contract suite
+
+The repository includes a minimal Composer manifest and PHPUnit bootstrap for
+the current procedural plugin architecture. Install the locked development
+dependencies and run the contract tests with:
+
+```bash
+composer install
+composer test
+```
+
+The same suite is available through `pnpm run test:phpunit` or `make phpunit`.
+
+## WordPress Plugin Check
+
+The project Sandbox config installs and activates the WordPress Plugin Check
+plugin automatically. The first run establishes the reviewed baseline; later
+runs fail only for new error-level findings:
+
+```bash
+wp plugin install plugin-check --activate
+```
+
+The committed `plugin-check-baseline.json` records the current known findings.
+Update it only after reviewing a deliberate Plugin Check change.
+
 ## Scenario authoring
 Add new scenarios in `tests/frontend-output-scenarios.json` with the same schema:
 - `name`: unique string

@@ -10,6 +10,7 @@ build/
 dist/
 tmp/
 temp/
+tests/test-results/
 
 *.log
 error_log
