@@ -240,11 +240,23 @@
 
 	function ExpandableTogglePanel(props) {
 		var enabled = toBoolean(props.checked);
+		var headerContent = props.headerContent;
+
+		if (props.title) {
+			headerContent = e('div', { key: 'identity', className: 'zm_panel_identity' }, [
+				props.marker || null,
+				e('div', { key: 'copy', className: 'zm_panel_copy' }, [
+					e('h3', { key: 'title' }, props.title),
+					props.description ? e('p', { key: 'description' }, props.description) : null
+				])
+			]);
+		}
+
 		return e('div', { className: 'zm_expandable_toggle_panel' + (props.className ? ' ' + props.className : '') + (enabled ? ' is-enabled' : '') }, [
 			e(ToggleInput, {
 				key: 'toggle',
-				className: props.headerClassName,
-				headerContent: props.headerContent,
+				className: 'zm_panel_toggle' + (props.headerClassName ? ' ' + props.headerClassName : ''),
+				headerContent: headerContent,
 				label: props.label,
 				name: props.name,
 				checked: enabled,
@@ -278,18 +290,13 @@
 		var types = iconset.types || [];
 		return e(ExpandableTogglePanel, {
 			className: 'zm_placement_item',
-			headerClassName: 'zm_placement_toggle',
 			detailsClassName: 'zm_placement_details',
-			headerContent: e('div', { key: 'heading', className: 'zm_placement_heading' }, [
-					e('span', { key: 'diagram', className: 'zm_placement_diagram zm_placement_diagram--' + props.id, 'aria-hidden': 'true' }, [
+			marker: e('span', { key: 'diagram', className: 'zm_panel_marker zm_placement_diagram zm_placement_diagram--' + props.id, 'aria-hidden': 'true' }, [
 						e('span', { key: 'copy', className: 'zm_placement_diagram_copy' }),
 						e('span', { key: 'buttons', className: 'zm_placement_diagram_buttons' })
 					]),
-					e('div', { key: 'copy', className: 'zm_placement_copy' }, [
-						e('h3', { key: 'title' }, props.label),
-						e('p', { key: 'description' }, props.description)
-					])
-				]),
+			title: props.label,
+			description: props.description,
 			label: props.enabled ? 'Enabled' : 'Disabled',
 			name: 'zm_shbt_fld[show_in][' + props.id + ']',
 			checked: props.enabled,
@@ -297,6 +304,7 @@
 				props.onEnabled(checked ? 1 : 0);
 			},
 			preservedControl: e('input', {
+				key: 'preserved-type',
 				type: 'hidden',
 				name: 'zm_shbt_fld[' + props.id + ']',
 				value: props.type
@@ -1078,7 +1086,14 @@
 						key: icon.id,
 						className: 'zm_network_item',
 						detailsClassName: 'zm_network_template',
-						label: 'Enable ' + icon.name,
+						marker: e('span', { key: 'icon', className: 'zm_panel_marker zm_network_marker', 'aria-hidden': 'true' }, icon.preview_url ? e('img', {
+							key: 'image',
+							src: icon.preview_url,
+							alt: ''
+						}) : icon.name.substring(0, 1)),
+						title: icon.name,
+						description: icon.id === 'mail' ? 'Share the current page by email.' : 'Share the current page on ' + icon.name + '.',
+						label: enabled ? 'Enabled' : 'Disabled',
 						name: 'zm_shbt_fld[icons][' + icon.id + ']',
 						checked: enabled,
 						onChange: function (value) {

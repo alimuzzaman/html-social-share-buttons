@@ -61,8 +61,8 @@ context.window.zm_sh_react_settings = {
 			preview_img: '/preview.png',
 			types: ['square', 'circle'],
 			icons: [
-				{ id: 'facebook', name: 'Facebook' },
-				{ id: 'x', name: 'X' },
+				{ id: 'facebook', name: 'Facebook', preview_url: '/facebook.png' },
+				{ id: 'x', name: 'X', preview_url: '/x.png' },
 				{ id: 'telegram', name: 'Telegram' },
 				{ id: 'bluesky', name: 'Bluesky' },
 			],
@@ -329,18 +329,24 @@ if (!networkColumnsCss || !networkColumnsCss[0].includes('grid-template-columns:
 }
 
 const networkTemplateCss = adminCss.match(/\.zm_network_template\s*\{[^}]*\}/);
-if (!networkTemplateCss || !networkTemplateCss[0].includes('border-left: 3px solid var(--zmsh-accent-light)')) {
-	throw new Error('Social network template panels should use the scheme-aware accent border.');
+const sharedPanelToggleCss = adminCss.match(/\.zm_panel_toggle\s*\{[^}]*\}/);
+const sharedPanelIdentityCss = adminCss.match(/\.zm_panel_identity\s*\{[^}]*\}/);
+if (!networkTemplateCss || !sharedPanelToggleCss || !sharedPanelToggleCss[0].includes('min-height: 74px') || !sharedPanelIdentityCss) {
+	throw new Error('Placement and social network cards should use the same identity header anatomy.');
 }
 
 const expandablePanelCss = adminCss.match(/\.zm_expandable_toggle_panel_details\s*\{[^}]*\}/);
-if (!expandablePanelCss || !expandablePanelCss[0].includes('border-top: 0') || adminCss.includes('background: #f7fbff')) {
+if (!expandablePanelCss || !expandablePanelCss[0].includes('border-top: 0') || !expandablePanelCss[0].includes('border-left: 2px solid var(--zmsh-accent-light)') || !adminCss.includes('.zm_native_toggle.zm_panel_toggle') || adminCss.includes('background: #f7fbff')) {
 	throw new Error('Enabled placements should use the shared joined neutral detail panel, not a tinted selected card.');
 }
 
 const expandablePanelUses = code.match(/e\(ExpandableTogglePanel/g) || [];
 if (expandablePanelUses.length < 2 || !adminCss.includes('.zm_expandable_toggle_panel.is-enabled > .zm_native_toggle')) {
 	throw new Error('Placement and social network items should share the expandable toggle-panel component.');
+}
+
+if (!settingsPageCode.includes("'preview_url' =>") || !nodes.some((node) => node.props && node.props.className === 'zm_panel_marker zm_network_marker')) {
+	throw new Error('Social network card headers should expose the active icon-set marker.');
 }
 
 const settingsSectionCss = adminCss.match(/\.zm_settings_section\s*\{[^}]*\}/);
