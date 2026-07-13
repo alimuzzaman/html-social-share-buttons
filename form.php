@@ -36,8 +36,8 @@ class zm_form{
 
 
 	function checkbox($id, $label, $name = '', $selected=null, $class = '', $yes = "", $no = "", $id_prefix="",$description=''){
-		$yes = $yes?$yes:__("Yes", "zm_sh");
-		$no = $no?$no:__("No", "zm_sh");
+		$yes = $yes?$yes:__("Yes", "html-social-share-buttons");
+		$no = $no?$no:__("No", "html-social-share-buttons");
 		$class	= $class?$class:'toggle-check';
 		$saved_val = isset($this->options[$id])?$this->options[$id]:false;
 		$chk = $selected===null?checked($saved_val, true, false):$selected;
@@ -56,8 +56,8 @@ class zm_form{
 	function show_on($id, $label, $selected=false, $class = 'toggle-check', $yes = "", $no = ""){
 		$options = $this->options;
 		$iconset = $this->iconsets->get_iconset($options['iconset']);
-		$yes	= $yes?$yes:__("Yes", "zm_sh");
-		$no		= $no?$no:__("No", "zm_sh");
+		$yes	= $yes?$yes:__("Yes", "html-social-share-buttons");
+		$no		= $no?$no:__("No", "html-social-share-buttons");
 		$name	= "zm_shbt_fld[show_in][$id]";
 		$name_1	= "zm_shbt_fld[$id]";
 		if(isset($options['show_in'][$id]) and $options['show_in'][$id] )

@@ -27,8 +27,14 @@ switch (command) {
 	case 'run':
 		runSandbox(['--instance', instanceName(), 'wp', ...rest]);
 		break;
+	case 'test':
+		runSandbox(['test', '--project-dir', REPO_ROOT, ...rest]);
+		break;
+	case 'e2e':
+		runSandbox(['e2e', '--project-dir', REPO_ROOT, '--workers', '1', ...rest]);
+		break;
 	default:
-		console.error('Usage: sandbox-env.js <start|status|destroy|run [wp-cli args]>');
+		console.error('Usage: sandbox-env.js <start|status|destroy|run [wp-cli args]|test [phpunit args]|e2e [playwright args]>');
 		process.exit(1);
 }
 

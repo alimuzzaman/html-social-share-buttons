@@ -1,4 +1,4 @@
-.PHONY: build watch frontend-capture frontend-compare frontend-drift-surface admin-react-smoke share-template-contract exclude-contract settings-local-checks help check-wp-root
+.PHONY: build watch zip frontend-capture frontend-compare frontend-drift-surface admin-react-smoke share-template-contract exclude-contract settings-local-checks help check-wp-root
 
 WP_ROOT ?= $(shell [ -n "$(WP_ROOT)" ] && echo "$(WP_ROOT)" || echo "")
 
@@ -10,8 +10,9 @@ check-wp-root:
 
 help:
 	@echo "Targets:"
-	@echo "  build               Build the WordPress admin bundle"
-	@echo "  watch               Watch and rebuild the WordPress admin bundle"
+	@echo "  build               Build the WordPress admin and block bundles"
+	@echo "  watch               Watch and rebuild the WordPress admin and block bundles"
+	@echo "  zip                Create the distribution archive in the project parent directory"
 	@echo "  frontend-capture   Capture frontend output baseline fixtures"
 	@echo "  frontend-compare   Compare current output against baseline"
 	@echo "  frontend-drift-surface   Verify frontend renderer files are unchanged"
@@ -25,6 +26,9 @@ build:
 
 watch:
 	@pnpm run start
+
+zip:
+	@pnpm run zip
 
 frontend-capture: check-wp-root
 	@php tests/frontend-output-regression.php capture \

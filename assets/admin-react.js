@@ -343,6 +343,7 @@
 			modalMode: 'shortcode',
 			modalType: 'square',
 			isSaving: false,
+			isDirty: false,
 			notice: null,
 			templateAutocomplete: null,
 		};
@@ -353,6 +354,7 @@
 		this.activeTemplateField = {};
 		this.templateSelections = {};
 		this.templateEditorVersions = {};
+		this.changeRevision = 0;
 	}
 
 	App.prototype = Object.create(Component.prototype);
@@ -364,9 +366,16 @@
 		if (data.ajax_url && data.nonce) {
 			this.$form.on('submit.zmShareSettings', this.handleSubmitBound);
 		}
+		this.$form.toggleClass('is-dirty', !!this.state.isDirty);
 		this.handleTemplateDocumentPointerDownBound = this.handleTemplateDocumentPointerDown.bind(this);
 		if (document.addEventListener) {
 			document.addEventListener('mousedown', this.handleTemplateDocumentPointerDownBound);
+		}
+	};
+
+	App.prototype.componentDidUpdate = function () {
+		if (this.$form) {
+			this.$form.toggleClass('is-dirty', !!this.state.isDirty);
 		}
 	};
 
@@ -400,6 +409,7 @@
 	App.prototype.handleSubmit = function (event) {
 		var self = this;
 		var $submit;
+		var submittedRevision;
 
 		event.preventDefault();
 		if (this.state.isSaving) {
@@ -407,6 +417,7 @@
 		}
 
 		$submit = this.$form.find('#submit');
+		submittedRevision = this.changeRevision;
 		this.submitLabel = $submit.val();
 		$submit.prop('disabled', true).attr('aria-busy', 'true').addClass('is-busy').val(strings.saving || 'Saving...');
 		this.setState({ isSaving: true, notice: null });
@@ -423,6 +434,9 @@
 		}).done(function (response) {
 			if (response && response.success) {
 				self.showNotice((response.data && response.data.message) || strings.saved || 'Settings saved.', 'success');
+				if (self.changeRevision === submittedRevision) {
+					self.setState({ isDirty: false });
+				}
 				return;
 			}
 			self.showNotice((response && response.data && response.data.message) || strings.saveError || 'Settings could not be saved. Try again.', 'error');
@@ -440,6 +454,8 @@
 	};
 
 	App.prototype.update = function (path, value) {
+		this.changeRevision += 1;
+		this.setState({ isDirty: true });
 		this.setState(function (prev) {
 			var nextOptions = $.extend({}, prev.options);
 			nextOptions.show_in = $.extend({}, prev.options.show_in || {});
@@ -952,7 +968,7 @@
 			]
 		];
 
-		return e('div', { className: 'zm_settings_shell' }, [
+		return e('div', { className: 'zm_settings_shell' + (this.state.isDirty ? ' is-dirty' : '') }, [
 			e('div', { key: 'top-grid', className: 'zm_settings_top_grid' }, [
 				e('section', { key: 'header', className: 'zm_settings_section zm_settings_section--intro' }, [
 				e(SectionHeader, {

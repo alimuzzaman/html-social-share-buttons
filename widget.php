@@ -19,7 +19,7 @@ class zm_html_share_widget extends WP_Widget {
 
 	function __construct() {
 		// Instantiate the parent object
-		$widget_ops = array( 'description' => __("Html share button. It show lite share button only with html. It's not using any javascript whats anothers do.", 'zm-sh') );
+		$widget_ops = array( 'description' => __("Html share button. It show lite share button only with html. It's not using any javascript whats anothers do.", 'html-social-share-buttons') );
 		parent::__construct( "html_share_button_widget", "Html share button widget", $widget_ops );
 	}
 

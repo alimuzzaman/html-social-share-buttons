@@ -3,7 +3,7 @@ Contributors: alimuzzamanalim
 Author: Md. Alimuzzaman Alim
 Donate link: none
 Tags: lightweight, no javascript, social share, fast, privacy-friendly
-Requires at least: 5.0
+Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.0
 Version: 2.2.4
@@ -76,6 +76,7 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 
 = 2.2.4 =
 * **UPDATE**: Compatibility release tested through WordPress 7.0 and PHP 8.5
+* **UPDATE**: Requires at least WordPress 5.3 for the native block editor integration
 * **FIX**: Fixed a Google Social analytics console typo that caused a JavaScript error
 * **IMPROVEMENT**: Added `noopener noreferrer` to share links opened in a new tab while preserving optional `nofollow`
 * **IMPROVEMENT**: Scoped settings-page button styles so they do not affect other WordPress admin buttons

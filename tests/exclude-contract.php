@@ -1,6 +1,11 @@
 #!/usr/bin/env php
 <?php
-define( 'ABSPATH', __DIR__ . '/../' );
+if ( ! defined( 'ABSPATH' ) ) {
+	if ( 'cli' !== PHP_SAPI ) {
+		exit;
+	}
+	define( 'ABSPATH', __DIR__ . '/../' );
+}
 
 require_once __DIR__ . '/../function.php';
 

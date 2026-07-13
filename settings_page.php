@@ -65,7 +65,7 @@ class zm_sh_settings{
 
 	//registering menu item and page on admin
 	function reg_admn_menu(){
-		add_submenu_page('options-general.php', __("Html Social Share", "zm-sh"), __("Html Social Share", "zm-sh"), 'manage_options', 'zm_shbt_opt', array($this, 'zm_sh_opt'));
+		add_submenu_page('options-general.php', __("Html Social Share", "html-social-share-buttons"), __("Html Social Share", "html-social-share-buttons"), 'manage_options', 'zm_shbt_opt', array($this, 'zm_sh_opt'));
 	}
 
 	//registering scripts and styles for admin
@@ -108,7 +108,7 @@ class zm_sh_settings{
 			}
 
 			$defaulted_options = wp_parse_args((array) $this->options, array(
-				'title' => __('Share this with your friends', 'zm-sh'),
+			'title' => __('Share this with your friends', 'html-social-share-buttons'),
 				'iconset' => 'default',
 				'show_in' => array(
 					'show_left' => 0,
@@ -149,10 +149,10 @@ class zm_sh_settings{
 					'exclude_custom' => $exclude_items['custom'],
 					'defaultIconset' => 'default',
 					'strings'        => array(
-						'loading'   => __('Loading settings...', 'zm-sh'),
-						'saving'    => __('Saving...', 'zm-sh'),
-						'saved'     => __('Settings saved.', 'zm-sh'),
-						'saveError' => __('Settings could not be saved. Try again.', 'zm-sh'),
+					'loading'   => __('Loading settings...', 'html-social-share-buttons'),
+					'saving'    => __('Saving...', 'html-social-share-buttons'),
+					'saved'     => __('Settings saved.', 'html-social-share-buttons'),
+					'saveError' => __('Settings could not be saved. Try again.', 'html-social-share-buttons'),
 					),
 				)
 			);
@@ -208,7 +208,7 @@ class zm_sh_settings{
 		check_ajax_referer( 'zm_sh_admin', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'You are not allowed to search content.', 'zm-sh' ) ), 403 );
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to search content.', 'html-social-share-buttons' ) ), 403 );
 		}
 
 		$query = isset( $_POST['query'] ) ? sanitize_text_field( wp_unslash( $_POST['query'] ) ) : '';
@@ -235,7 +235,7 @@ class zm_sh_settings{
 		check_ajax_referer( 'zm_sh_admin', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __('You are not allowed to change these settings.', 'zm-sh') ), 403 );
+			wp_send_json_error( array( 'message' => __('You are not allowed to change these settings.', 'html-social-share-buttons') ), 403 );
 		}
 
 		$serialized_settings = isset( $_POST['settings'] ) && is_string( $_POST['settings'] ) ? wp_kses_post( wp_unslash( $_POST['settings'] ) ) : '';
@@ -243,7 +243,7 @@ class zm_sh_settings{
 		parse_str( $serialized_settings, $form_data );
 
 		if ( empty( $form_data['zm_shbt_fld'] ) || ! is_array( $form_data['zm_shbt_fld'] ) ) {
-			wp_send_json_error( array( 'message' => __('No settings were received.', 'zm-sh') ), 400 );
+			wp_send_json_error( array( 'message' => __('No settings were received.', 'html-social-share-buttons') ), 400 );
 		}
 
 		$sanitized = $this->sanitize( $form_data['zm_shbt_fld'] );
@@ -251,7 +251,7 @@ class zm_sh_settings{
 		$this->options = $sanitized;
 
 		wp_send_json_success( array(
-			'message' => __('Settings saved.', 'zm-sh'),
+			'message' => __('Settings saved.', 'html-social-share-buttons'),
 			'options' => $sanitized,
 		) );
 	}
@@ -270,15 +270,15 @@ class zm_sh_settings{
 		?>
         <div class="wrap zmsh-settings-wrap">
             <div class="zm_settings_page_header">
-                <h1 class="zm_options_page_heading"><?php esc_html_e("Html Social Share button", "zm-sh");?></h1>
-                <p class="zm_settings_page_subtitle"><?php esc_html_e("Configure share buttons, placement, and output format from a single settings page.", "zm-sh");?></p>
+                <h1 class="zm_options_page_heading"><?php esc_html_e("Html Social Share button", "html-social-share-buttons");?></h1>
+                <p class="zm_settings_page_subtitle"><?php esc_html_e("Configure share buttons, placement, and output format from a single settings page.", "html-social-share-buttons");?></p>
             </div>
             <form id="zm-social-share-settings" class="zm_settings" method="post" action="options.php">
             <?php settings_fields( 'zm_shbt_opt' ); ?>
             <div id="zmsh-react-settings-root">
                 <div class="zm_settings_loader zm_settings_loader--html" role="status" aria-live="polite">
                     <span class="zm_settings_loader_spinner" aria-hidden="true"></span>
-                    <span><?php esc_html_e("Loading settings...", "zm-sh");?></span>
+                    <span><?php esc_html_e("Loading settings...", "html-social-share-buttons");?></span>
                 </div>
             </div>
             <?php submit_button(); ?>

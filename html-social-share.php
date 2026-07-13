@@ -6,9 +6,9 @@ Description: Html share button. It show lite share button only with html. It's n
 Author: Alimuzzaman Alim
 Version: 2.2.4
 Author URI: https://alim.dev
-Text Domain: zm-sh
+Text Domain: html-social-share-buttons
 Domain Path: /languages
-Requires at least: 5.0
+Requires at least: 5.3
 Requires PHP: 7.0
 License: GPLv2
 */
@@ -78,6 +78,8 @@ include("widget.php");
 
 include('vc-integration.php');
 include('shortcode.php');
+include('elementor-integration.php');
+include('block-integration.php');
 
 require_once("form.php");
 
@@ -86,7 +88,7 @@ include("settings_page.php");
 
 // Add settings link to plugins page
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function($links) {
-	$settings_link = '<a href="options-general.php?page=zm_shbt_opt">' . __('Settings', 'zm-sh') . '</a>';
+	$settings_link = '<a href="options-general.php?page=zm_shbt_opt">' . __('Settings', 'html-social-share-buttons') . '</a>';
 	array_unshift($links, $settings_link);
 	return $links;
 });
@@ -155,7 +157,7 @@ class zm_social_share {
 
 
 
-		add_action('plugins_loaded', array($this, 'plugins_loaded'));
+		add_action( 'init', array( $this, 'plugins_loaded' ), 2 );
 
 		if (isset($this->options['show_after_post']) and $this->options['show_after_post'] or isset($this->options['show_before_post']) and $this->options['show_before_post'])
 			add_filter('the_content', array($this, 'filter_the_content'));
@@ -188,8 +190,25 @@ class zm_social_share {
 
 	function plugins_loaded() {
 		// Localization
-		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Preserve the legacy loader for existing translations.
-		load_plugin_textdomain('zm-sh', false, dirname(plugin_basename(__FILE__)) . '/languages');
+		$language_path = dirname( plugin_basename( __FILE__ ) ) . '/languages';
+
+		// Keep loading the legacy domain so existing site-local translations remain available during migration.
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Required for the legacy zm-sh catalog during the text-domain migration.
+		load_plugin_textdomain( 'zm-sh', false, $language_path );
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Required for the bundled catalog on WordPress versions without automatic plugin translation loading.
+		load_plugin_textdomain( 'html-social-share-buttons', false, $language_path );
+
+		add_filter( 'gettext', array( $this, 'translate_legacy_domain' ), 10, 3 );
+	}
+
+	function translate_legacy_domain( $translation, $text, $domain ) {
+		if ( 'html-social-share-buttons' !== $domain || $translation !== $text ) {
+			return $translation;
+		}
+
+		$legacy_translation = get_translations_for_domain( 'zm-sh' )->translate( $text );
+
+		return $legacy_translation !== $text ? $legacy_translation : $translation;
 	}
 
 	function filter_the_content($content) {

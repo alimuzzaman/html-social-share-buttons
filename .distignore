@@ -5,9 +5,12 @@
 tests/
 security/
 docs/
+specs/
+../sandbox/
 .claude/
 .github/
 _legacy/
+.playwright-mcp/
 
 # Markdown documentation files (except README)
 *.md
@@ -20,19 +23,26 @@ _legacy/
 sandbox.config
 sandbox.config.*
 .wp-env.json
+.wp-env-port
 AGENTS.md
 CLAUDE.md
 .editorconfig
 .eslintrc*
 .stylelintrc*
+eslint.config.cjs
 phpcs.xml
 phpunit.xml
+phpunit.xml.dist
 composer.json
 composer.lock
+Makefile
 package.json
 package-lock.json
 pnpm-lock.yaml
+pnpm-workspace.yaml
 yarn.lock
+plugin-check-baseline.json
+scripts/
 
 # IDE and editor files
 .vscode/
@@ -44,7 +54,7 @@ Thumbs.db
 # Build and temporary files
 node_modules/
 vendor/
-build/
+blocks/
 dist/
 tmp/
 temp/

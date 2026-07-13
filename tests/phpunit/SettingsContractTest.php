@@ -52,6 +52,14 @@ final class SettingsContractTest extends WP_UnitTestCase {
 		$this->assertSame( 'Share', $sanitized['title'] );
 	}
 
+	public function testPluginUsesCanonicalTextDomainAndShipsMigratedCatalogs(): void {
+		$plugin_data = get_plugin_data( dirname( __DIR__, 2 ) . '/html-social-share.php', false, false );
+
+		$this->assertSame( 'html-social-share-buttons', $plugin_data['TextDomain'] );
+		$this->assertFileExists( dirname( __DIR__, 2 ) . '/languages/html-social-share-buttons.pot' );
+		$this->assertFileExists( dirname( __DIR__, 2 ) . '/languages/html-social-share-buttons-fr_FR.mo' );
+	}
+
 	public function testCurrentPageUrlKeepsTheExistingShareUrlShape(): void {
 		$_SERVER['REQUEST_URI'] = '/privacy-policy/?preview=true';
 
@@ -61,5 +69,12 @@ final class SettingsContractTest extends WP_UnitTestCase {
 		);
 
 		unset( $_SERVER['REQUEST_URI'] );
+	}
+
+	public function testShortcodeWithoutAttributesUsesTheDefaultNetworks(): void {
+		$output = do_shortcode( '[zm_sh_btn]' );
+
+		$this->assertStringContainsString( 'zmshbt', $output );
+		$this->assertStringContainsString( 'facebook', $output );
 	}
 }

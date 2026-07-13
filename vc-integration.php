@@ -24,12 +24,12 @@ function zm_sh_integrateWithVC() {
 	More info: http://kb.wpbakery.com/index.php?title=Vc_map
 	*/
 	vc_map( array(
-					"name" => __("Html Social Share", 'vc_extend'),
-					"description" => __("Html Social Share", 'vc_extend'),
+					"name" => __("Html Social Share", 'html-social-share-buttons'),
+					"description" => __("Html Social Share", 'html-social-share-buttons'),
 					"base" => "zm_sh_btn",
 					"class" => "zm_sh_btn",
 					"controls" => "full",
-					"category" => __('Content', 'js_composer'),
+					"category" => __('Content', 'html-social-share-buttons'),
 					'admin_enqueue_js' => array( plugins_url( '/assets', __FILE__) .'/vc_scripts.js'),
 					//'admin_enqueue_css' => array(plugins_url( '/assets', __FILE__) .'/admin-widget.css'),
 					"params" => array(
@@ -37,37 +37,37 @@ function zm_sh_integrateWithVC() {
 						  "type"		=> "textfield",
 						  "holder"		=> "div",
 						  "class"		=> "",
-						  "heading"		=> __("Title", 'zm-sh'),
+						  "heading"		=> __("Title", 'html-social-share-buttons'),
 						  "param_name"	=> "title",
-						  "value"		=> __("Share this page", 'zm-sh'),
-						  "description"	=> __("Add social share button", 'zm-sh')
+						  "value"		=> __("Share this page", 'html-social-share-buttons'),
+						  "description"	=> __("Add social share button", 'html-social-share-buttons')
 					  ),
 						array(
 						  "type"		=> "dropdown",
 						  "holder"		=> "div",
 						  "class"		=> "",
-						  "heading"		=> __("Iconset", 'zm-sh'),
+						  "heading"		=> __("Iconset", 'html-social-share-buttons'),
 						  "param_name"	=> "iconset",
 						  "value"		=> $iconsets,
-						  "description"	=> __("Select iconset to use", 'zm-sh'),
+						  "description"	=> __("Select iconset to use", 'html-social-share-buttons'),
 					  ),
 						array(
 						  "type"		=> "dropdown",
 						  "holder"		=> "div",
 						  "class"		=> "",
-						  "heading"		=> __("Iconset type", 'zm-sh'),
+						  "heading"		=> __("Iconset type", 'html-social-share-buttons'),
 						  "param_name"	=> "iconset_type",
 						  "value"		=> $types,
-						  "description"	=> __("Select iconset type", 'zm-sh'),
+						  "description"	=> __("Select iconset type", 'html-social-share-buttons'),
 					  ),
 						array(
 						  "type"		=> "checkbox",
 						  "holder"		=> "div",
 						  "class"		=> "",
-						  "heading"		=> __("Icons", 'zm-sh'),
+						  "heading"		=> __("Icons", 'html-social-share-buttons'),
 						  "param_name"	=> "icons",
 						  "value"		=> $icons,
-						  "description"	=> __("Select icons", 'zm-sh'),
+						  "description"	=> __("Select icons", 'html-social-share-buttons'),
 						  //"dependency"	=> array("element"=>"iconset", "callback" => "$this->iconsets->get_icons"),
 
 					  ),

@@ -35,8 +35,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$atts['iconset_type'] = sanitize_key($atts['iconset_type']);
 		$atts['class'] = sanitize_html_class($atts['class']);
 
-		$icons = $atts['icons'];
-		$icons = explode(",", $icons);
+		if ( is_array( $atts['icons'] ) ) {
+			$is_list = ! empty( $atts['icons'] ) && array_keys( $atts['icons'] ) === range( 0, count( $atts['icons'] ) - 1 );
+			$icons   = $is_list ? $atts['icons'] : array_keys( $atts['icons'] );
+		} else {
+			$icons = explode( ',', (string) $atts['icons'] );
+		}
 		// Sanitize each icon name
 		$icons = array_map('sanitize_key', $icons);
 
@@ -45,6 +49,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 			return $icon === 'twitter' ? 'x' : $icon;
 		}, $icons);
 
-		$atts['icons'] = array_flip($icons);
+		$atts['icons'] = array_fill_keys( array_filter( $icons ), 'on' );
 		return $zm_sh->zm_sh_btn($atts);
+	}
+
+	function zm_sh_get_builder_iconset( $iconset = 'inherit' ) {
+		global $zm_sh;
+
+		$iconset = sanitize_key( $iconset );
+		if ( 'inherit' !== $iconset ) {
+			return $iconset;
+		}
+
+		if ( is_object( $zm_sh ) && ! empty( $zm_sh->options['iconset'] ) ) {
+			return sanitize_key( $zm_sh->options['iconset'] );
+		}
+
+		return 'default';
+	}
+
+	function zm_sh_get_builder_iconset_options() {
+		global $zm_sh;
+
+		$options = array(
+			'inherit' => __( 'Inherit from plugin settings', 'html-social-share-buttons' ),
+		);
+
+		if ( is_object( $zm_sh ) && isset( $zm_sh->iconsets ) ) {
+			foreach ( $zm_sh->iconsets->get_iconsets() as $iconset ) {
+				$options[ $iconset->id ] = $iconset->name;
+			}
+		}
+
+		return $options;
 	}

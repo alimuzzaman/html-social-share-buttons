@@ -111,7 +111,7 @@ class zm_sh_metabox {
 		// Display the form, using the current value.
 		echo '<input type="checkbox" id="_zm_sh_disable_share" name="_zm_sh_disable_share" '.wp_kses_post($checked).' />';
 		echo '<label for="_zm_sh_disable_share">';
-		esc_html_e( 'Disable Social share for this page', 'zm-sh' );
+		esc_html_e( 'Disable Social share for this page', 'html-social-share-buttons' );
 		echo '</label> ';
 	}
 }

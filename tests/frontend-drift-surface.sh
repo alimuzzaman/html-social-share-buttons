@@ -6,8 +6,6 @@ frontend_files=(
 	"filters.php"
 	"iconsets.php"
 	"interfaces.php"
-	"shortcode.php"
-	"widget.php"
 )
 
 changed=()

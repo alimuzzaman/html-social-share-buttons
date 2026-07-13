@@ -98,6 +98,10 @@
 	border-radius: var(--zmsh-radius);
 }
 
+.zm_settings_shell.is-dirty .zm_settings_section {
+	border-left-color: var(--zmsh-accent-strong);
+}
+
 .zm_section_header {
 	display: flex;
 	align-items: baseline;
@@ -736,6 +740,11 @@
 	background: var(--zmsh-accent-strong);
 	border-color: var(--zmsh-accent-strong);
 	box-shadow: 0 0 0 1px var(--zmsh-accent-strong);
+}
+
+.wp-core-ui .zmsh-settings-wrap form.is-dirty .submit .button-primary {
+	background: var(--zmsh-accent-strong);
+	border-color: var(--zmsh-accent-strong);
 }
 
 .wp-core-ui .zmsh-settings-wrap .zm_settings .get_phpcode,
