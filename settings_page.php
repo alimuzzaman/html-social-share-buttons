@@ -238,7 +238,7 @@ class zm_sh_settings{
 			wp_send_json_error( array( 'message' => __('You are not allowed to change these settings.', 'zm-sh') ), 403 );
 		}
 
-		$serialized_settings = isset( $_POST['settings'] ) && is_string( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : '';
+		$serialized_settings = isset( $_POST['settings'] ) && is_string( $_POST['settings'] ) ? wp_kses_post( wp_unslash( $_POST['settings'] ) ) : '';
 		$form_data = array();
 		parse_str( $serialized_settings, $form_data );
 
@@ -315,8 +315,14 @@ class zm_sh_settings{
 					}
 				}
 			}
-			elseif( in_array($key, $keep_as_is))
-				$new_input[$key] = $value;
+			elseif ( 'title' === $key )
+				$new_input[ $key ] = sanitize_text_field( $value );
+			elseif ( 'excludes' === $key )
+				$new_input[ $key ] = sanitize_textarea_field( $value );
+			elseif ( 'iconset' === $key )
+				$new_input[ $key ] = sanitize_key( $value );
+			elseif ( in_array( $key, $keep_as_is, true ) )
+				$new_input[ $key ] = $value;
 			elseif(isset( $input[$key] ) and $input[$key] )
 				$new_input[$key] = true;
 

@@ -130,7 +130,7 @@ For every proposed settings UI change, run all scenarios below and store expecte
 - [ ] Settings submenu and Plugins action link resolve to the settings page.
 - [ ] Shortcut/modal output remains correct and syntactically unchanged for identical selections.
 - [ ] `make admin-react-smoke` passes after every React settings UI change.
-- [ ] `make settings-sanitize-contract` passes after every settings form/save change.
+- [ ] Sandbox `run_tests` passes after every settings form/save change, including the `WP_UnitTestCase` save-contract coverage.
 - [ ] `make frontend-drift-surface` passes for settings-only implementation work.
 
 ## 7.0 Risks and Hard Rules

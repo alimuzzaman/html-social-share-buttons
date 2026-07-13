@@ -54,16 +54,10 @@ Run this when a settings-only change should not touch frontend rendering code:
 make frontend-drift-surface
 ```
 
-This verifies that core frontend renderer files such as `html-social-share.php`, `shortcode.php`, `function.php`, `filters.php`, and `iconsets.php` have no working-tree diff.
-
-## Settings save contract check
-Run this after changing settings form fields or sanitizer behavior:
-
-```bash
-make settings-sanitize-contract
-```
-
-This verifies that React-submitted settings still sanitize into the legacy `zm_shbt_fld` shape, including storing enabled `show_in[...]` placements as the selected iconset type string.
+This verifies that core frontend renderer files such as `actions.php`,
+`filters.php`, `iconsets.php`, `interfaces.php`, `shortcode.php`, and
+`widget.php` have no working-tree diff. The current URL sanitizer is covered by
+the Sandbox-backed PHPUnit contract suite.
 
 ## Local settings suite
 Run all non-WordPress-DB settings checks together:
@@ -74,16 +68,14 @@ pnpm run settings:check
 
 ## PHPUnit contract suite
 
-The repository includes a minimal Composer manifest and PHPUnit bootstrap for
-the current procedural plugin architecture. Install the locked development
-dependencies and run the contract tests with:
+The repository includes a PHPUnit configuration and bootstrap for the current
+procedural plugin architecture. The tests use `WP_UnitTestCase` and the
+WordPress test library supplied by Sandbox:
 
-```bash
-composer install
-composer test
-```
+Run the Sandbox MCP `run_tests` tool for this suite.
 
-The same suite is available through `pnpm run test:phpunit` or `make phpunit`.
+Sandbox supplies PHPUnit, the WordPress test library, and polyfills; no test
+dependencies are installed in this plugin repository.
 
 ## WordPress Plugin Check
 

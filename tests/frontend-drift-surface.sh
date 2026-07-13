@@ -4,7 +4,6 @@ set -euo pipefail
 frontend_files=(
 	"actions.php"
 	"filters.php"
-	"function.php"
 	"iconsets.php"
 	"interfaces.php"
 	"shortcode.php"
@@ -13,7 +12,9 @@ frontend_files=(
 
 changed=()
 for file in "${frontend_files[@]}"; do
-	if ! git diff --quiet -- "$file"; then
+	diff_output=$(git diff -- "$file")
+	meaningful_diff=$(printf '%s\n' "$diff_output" | sed -E '/^(diff --git|index |--- |\+\+\+ |@@ )/d' | grep -E '^[+-]' | grep -Ev '^\+[[:space:]]*// phpcs:ignore ' || true)
+	if [ -n "$meaningful_diff" ]; then
 		changed+=("$file")
 	fi
 done

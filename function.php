@@ -35,7 +35,7 @@ function zm_sh_post_is_excluded( $post, $excludes ) {
 }
 
 function zm_sh_curentPageURL() {
-	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/';
+	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
 
 	return esc_url_raw( home_url( $request_uri ) );
 }

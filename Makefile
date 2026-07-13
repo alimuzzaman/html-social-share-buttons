@@ -1,4 +1,4 @@
-.PHONY: build watch frontend-capture frontend-compare frontend-drift-surface admin-react-smoke settings-sanitize-contract share-template-contract exclude-contract current-url-contract phpunit settings-local-checks help check-wp-root
+.PHONY: build watch frontend-capture frontend-compare frontend-drift-surface admin-react-smoke share-template-contract exclude-contract settings-local-checks help check-wp-root
 
 WP_ROOT ?= $(shell [ -n "$(WP_ROOT)" ] && echo "$(WP_ROOT)" || echo "")
 
@@ -16,11 +16,8 @@ help:
 	@echo "  frontend-compare   Compare current output against baseline"
 	@echo "  frontend-drift-surface   Verify frontend renderer files are unchanged"
 	@echo "  admin-react-smoke  Verify React settings render and legacy field names"
-	@echo "  settings-sanitize-contract  Verify saved settings keep legacy shape"
 	@echo "  share-template-contract  Verify platform share URL templates"
 	@echo "  exclude-contract  Verify excluded post identifiers"
-	@echo "  current-url-contract  Verify share links use the configured WordPress URL"
-	@echo "  phpunit             Run the Composer PHPUnit contract suite"
 	@echo "  settings:check       Run local settings checks via pnpm"
 
 build:
@@ -48,10 +45,6 @@ admin-react-smoke:
 	@node --check assets/admin-react.js
 	@node tests/admin-react-smoke.js
 
-settings-sanitize-contract:
-	@php -l settings_page.php
-	@php tests/settings-sanitize-contract.php
-
 share-template-contract:
 	@php -l share-templates.php
 	@php tests/share-template-contract.php
@@ -59,12 +52,6 @@ share-template-contract:
 exclude-contract:
 	@php -l function.php
 	@php tests/exclude-contract.php
-
-current-url-contract:
-	@php tests/current-url-contract.php
-
-phpunit:
-	@composer test
 
 settings-local-checks:
 	@pnpm run settings:check

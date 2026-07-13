@@ -188,6 +188,7 @@ class zm_social_share {
 
 	function plugins_loaded() {
 		// Localization
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Preserve the legacy loader for existing translations.
 		load_plugin_textdomain('zm-sh', false, dirname(plugin_basename(__FILE__)) . '/languages');
 	}
 

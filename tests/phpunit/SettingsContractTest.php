@@ -1,13 +1,11 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-final class SettingsContractTest extends TestCase {
+final class SettingsContractTest extends WP_UnitTestCase {
 	private $settings;
 
 	protected function setUp(): void {
-		$reflection = new ReflectionClass( 'zm_sh_settings' );
-		$this->settings = $reflection->newInstanceWithoutConstructor();
+		parent::setUp();
+		$this->settings = new zm_sh_settings();
 	}
 
 	public function testLegacySettingsSanitizeWithoutChangingTheSavedContract(): void {
@@ -43,5 +41,25 @@ final class SettingsContractTest extends TestCase {
 		$this->assertArrayHasKey( 'x', $defaults );
 		$this->assertArrayHasKey( 'telegram', $defaults );
 		$this->assertArrayHasKey( 'bluesky', $defaults );
+	}
+
+	public function testSerializedSettingsAreSanitizedBeforeParsing(): void {
+		$serialized = 'zm_shbt_fld%5Btitle%5D=Share+%3Cscript%3Ebad%3C%2Fscript%3E';
+		parse_str( wp_kses_post( wp_unslash( $serialized ) ), $form_data );
+
+		$sanitized = $this->settings->sanitize( $form_data['zm_shbt_fld'] );
+
+		$this->assertSame( 'Share', $sanitized['title'] );
+	}
+
+	public function testCurrentPageUrlKeepsTheExistingShareUrlShape(): void {
+		$_SERVER['REQUEST_URI'] = '/privacy-policy/?preview=true';
+
+		$this->assertSame(
+			esc_url_raw( home_url( '/privacy-policy/?preview=true' ) ),
+			zm_sh_curentPageURL()
+		);
+
+		unset( $_SERVER['REQUEST_URI'] );
 	}
 }
