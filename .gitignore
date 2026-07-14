@@ -6,7 +6,6 @@ ehthumbs.db
 
 node_modules/
 vendor/
-build/
 dist/
 tmp/
 temp/
