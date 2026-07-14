@@ -1,6 +1,14 @@
 #!/usr/bin/env php
 <?php
-define( 'ABSPATH', __DIR__ . '/../' );
+
+require_once __DIR__ . '/cli-helpers.php';
+
+if ( ! defined( 'ABSPATH' ) ) {
+	if ( 'cli' !== PHP_SAPI ) {
+		exit;
+	}
+	define( 'ABSPATH', __DIR__ . '/../' );
+}
 
 $template_overrides = array();
 
@@ -39,14 +47,14 @@ if ( zm_sh_get_share_template( 'facebook' ) !== $template_overrides['facebook'] 
 
 $iconset_sources = glob( __DIR__ . '/../iconset/*/ssb.php' );
 foreach ( $iconset_sources as $source ) {
-	$contents = file_get_contents( $source );
+	$contents = implode( '', file( $source ) );
 	if ( false !== strpos( $contents, 'sharer.php' ) || false !== strpos( $contents, 'shareArticle' ) ) {
-		echo "Legacy platform URL remains in {$source}.\n";
+		exit( esc_html( sprintf( 'Legacy platform URL remains in %s.\n', $source ) ) );
 		exit( 1 );
 	}
 
 	if ( false === strpos( $contents, "'telegram'" ) || false === strpos( $contents, "'bluesky'" ) ) {
-		echo "New platform IDs are missing from {$source}.\n";
+		exit( esc_html( sprintf( 'New platform IDs are missing from %s.\n', $source ) ) );
 		exit( 1 );
 	}
 }
@@ -64,7 +72,7 @@ $icon_asset_directories = array(
 foreach ( $icon_asset_directories as $directory ) {
 	foreach ( array( 'telegram', 'bluesky' ) as $platform ) {
 		if ( ! file_exists( __DIR__ . '/../' . $directory . '/' . $platform . '.svg' ) ) {
-			echo "Missing {$platform} asset in {$directory}.\n";
+			exit( esc_html( sprintf( 'Missing %s asset in %s.\n', $platform, $directory ) ) );
 			exit( 1 );
 		}
 	}
@@ -82,25 +90,25 @@ foreach ( array( 'telegram', 'bluesky' ) as $platform ) {
 	);
 
 	foreach ( $icon_style_contracts as $asset => $expected_markup ) {
-		$contents = file_get_contents( __DIR__ . '/../' . $asset );
+		$contents = implode( '', file( __DIR__ . '/../' . $asset ) );
 		if ( false === strpos( $contents, $expected_markup ) ) {
-			echo "Set-specific icon treatment is missing from {$asset}.\n";
+			exit( esc_html( sprintf( 'Set-specific icon treatment is missing from %s.\n', $asset ) ) );
 			exit( 1 );
 		}
 	}
 
 	foreach ( array( 'long_shadow/square', 'long_shadow/circle', 'prajin/square' ) as $iconset_shape ) {
 		$asset    = "iconset/{$iconset_shape}/{$platform}.svg";
-		$contents = file_get_contents( __DIR__ . '/../' . $asset );
+		$contents = implode( '', file( __DIR__ . '/../' . $asset ) );
 		if ( false !== strpos( $contents, '<use href="#clip"' ) ) {
-			echo "Visible background must not reference a clipPath in {$asset}.\n";
+			exit( esc_html( sprintf( 'Visible background must not reference a clipPath in %s.\n', $asset ) ) );
 			exit( 1 );
 		}
 	}
 
-	$prajin_circle = file_get_contents( __DIR__ . '/../iconset/prajin/circle/' . $platform . '.svg' );
+	$prajin_circle = implode( '', file( __DIR__ . '/../iconset/prajin/circle/' . $platform . '.svg' ) );
 	if ( false !== strpos( $prajin_circle, 'id="shadow"' ) || false !== strpos( $prajin_circle, '<filter' ) ) {
-		echo "Prajin circle {$platform} asset must remain unshadowed.\n";
+		exit( esc_html( sprintf( 'Prajin circle %s asset must remain unshadowed.\n', $platform ) ) );
 		exit( 1 );
 	}
 }

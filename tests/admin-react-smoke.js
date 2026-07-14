@@ -336,8 +336,8 @@ if (!networkTemplateCss || !sharedPanelToggleCss || !sharedPanelToggleCss[0].inc
 }
 
 const expandablePanelCss = adminCss.match(/\.zm_expandable_toggle_panel_details\s*\{[^}]*\}/);
-if (!expandablePanelCss || !expandablePanelCss[0].includes('border-top: 0') || !expandablePanelCss[0].includes('border-left: 2px solid var(--zmsh-accent-light)') || !adminCss.includes('.zm_native_toggle.zm_panel_toggle') || adminCss.includes('background: #f7fbff')) {
-	throw new Error('Enabled placements should use the shared joined neutral detail panel, not a tinted selected card.');
+if (!expandablePanelCss || !expandablePanelCss[0].includes('border: 1px solid var(--zmsh-inner-border)') || !expandablePanelCss[0].includes('border-top: 0') || !adminCss.includes('.zm_native_toggle.zm_panel_toggle') || adminCss.includes('background: #f7fbff')) {
+	throw new Error('Enabled placements should use the shared joined inner-border detail panel, not a tinted selected card.');
 }
 
 const expandablePanelUses = code.match(/e\(ExpandableTogglePanel/g) || [];

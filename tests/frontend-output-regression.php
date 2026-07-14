@@ -1,5 +1,12 @@
 #!/usr/bin/env php
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	if ( 'cli' !== PHP_SAPI ) {
+		exit;
+	}
+}
+
 if (php_sapi_name() !== 'cli') {
 	exit("This script must be run from the command line.\n");
 }
@@ -17,6 +24,11 @@ $defaults = [
 	'baseline' => __DIR__ . '/fixtures/frontend-output-baseline.json',
 	'strict' => false,
 ];
+
+function regression_fail(string $format, ...$values): void
+{
+	exit(esc_html(vsprintf($format, $values)));
+}
 
 function parse_args(array $argv): array
 {
@@ -54,26 +66,7 @@ if ($command === '--help' || $command === '-h' || $command === 'help') {
 }
 
 $args = parse_args($argvCopy);
-if (!in_array($command, ['capture', 'compare'], true)) {
-	echo "Invalid command: {$command}.\n\n";
-	show_help();
-}
-
 $options = array_merge($defaults, $args);
-
-if (!is_file($options['scenario-file'])) {
-	echo "Scenario file not found: {$options['scenario-file']}\n";
-	exit(1);
-}
-
-if (!is_file($options['plugin-path'])) {
-	echo "Plugin entry file not found: {$options['plugin-path']}\n";
-	exit(1);
-}
-
-if (!is_dir(dirname($options['output']))) {
-	mkdir(dirname($options['output']), 0777, true);
-}
 
 function bootstrap_wp(array $options): void
 {
@@ -139,10 +132,10 @@ function render_scenario(array $scenario): array
 
 function load_scenarios(string $path): array
 {
-	$raw = file_get_contents($path);
+	$raw = implode('', file($path));
 	$data = json_decode((string) $raw, true);
 	if (!is_array($data) || !isset($data['scenarios']) || !is_array($data['scenarios'])) {
-		echo "Invalid scenario schema in {$path}\n";
+		regression_fail("Invalid scenario schema in %s\n", $path);
 		exit(1);
 	}
 	return $data['scenarios'];
@@ -160,21 +153,40 @@ register_shutdown_function(function (): void {
 		$output = (string) ob_get_clean();
 	}
 
-	$summary = trim(preg_replace('/\s+/', ' ', strip_tags($output)));
 	echo "WordPress bootstrap failed or terminated before regression capture could start.\n";
-	if ($summary !== '') {
-		echo "Bootstrap output: " . substr($summary, 0, 500) . "\n";
-	}
 	exit(1);
 });
 
 bootstrap_wp($options);
+
+require_once __DIR__ . '/cli-helpers.php';
+
+if (!in_array($command, ['capture', 'compare'], true)) {
+	regression_fail("Invalid command: %s.\n\n", $command);
+	show_help();
+}
+
+if (!is_file($options['scenario-file'])) {
+	regression_fail("Scenario file not found: %s\n", $options['scenario-file']);
+}
+
+if (!is_file($options['plugin-path'])) {
+	regression_fail("Plugin entry file not found: %s\n", $options['plugin-path']);
+}
 
 require_once $options['plugin-path'];
 do_action('init');
 $GLOBALS['zm_sh_regression_bootstrapped'] = true;
 if (ob_get_level() > 0) {
 	ob_end_clean();
+}
+
+require_once ABSPATH . 'wp-admin/includes/file.php';
+WP_Filesystem();
+global $wp_filesystem;
+
+if (!is_dir(dirname($options['output']))) {
+	wp_mkdir_p(dirname($options['output']));
 }
 
 $scenarios = load_scenarios($options['scenario-file']);
@@ -194,19 +206,21 @@ if ($command === 'capture') {
 		'command' => 'capture',
 		'scenarios' => $results,
 	];
-	file_put_contents($options['output'], json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-	echo "Captured " . count($results) . " scenario(s) -> {$options['output']}\n";
+	if (!$wp_filesystem->put_contents($options['output'], wp_json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), FS_CHMOD_FILE)) {
+		regression_fail("Could not write capture output: %s\n", $options['output']);
+	}
+	echo "Captured " . count($results) . " scenario(s) -> " . esc_html($options['output']) . "\n";
 	exit(0);
 }
 
 if ($command === 'compare') {
 	if (!is_file($options['baseline'])) {
-		echo "Baseline not found: {$options['baseline']}\n";
+		regression_fail("Baseline not found: %s\n", $options['baseline']);
 		exit(1);
 	}
-	$baselineRaw = json_decode((string) file_get_contents($options['baseline']), true);
+	$baselineRaw = json_decode(implode('', file($options['baseline'])), true);
 	if (!is_array($baselineRaw) || !isset($baselineRaw['scenarios'])) {
-		echo "Invalid baseline schema: {$options['baseline']}\n";
+		regression_fail("Invalid baseline schema: %s\n", $options['baseline']);
 		exit(1);
 	}
 
@@ -234,7 +248,7 @@ if ($command === 'compare') {
 	if ($failures) {
 		echo "\nFrontend regression failed for " . count($failures) . " scenario(s):\n";
 		foreach ($failures as $name => $diff) {
-			echo "- {$name}: {$diff['reason']}\n";
+			echo '- ' . esc_html($name) . ': ' . esc_html($diff['reason']) . "\n";
 		}
 		if (($options['strict'] === 'true') || ($options['strict'] === true)) {
 			echo "Strict mode: failing.\n";

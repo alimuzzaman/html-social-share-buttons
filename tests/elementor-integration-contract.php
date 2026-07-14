@@ -1,5 +1,8 @@
 #!/usr/bin/env php
 <?php
+
+require_once __DIR__ . '/cli-helpers.php';
+
 if ( ! defined( 'ABSPATH' ) ) {
 	if ( 'cli' !== PHP_SAPI ) {
 		exit;
@@ -7,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/../' );
 }
 
-$source = file_get_contents( __DIR__ . '/../elementor-integration.php' );
+$source = implode( '', file( __DIR__ . '/../elementor-integration.php' ) );
 
 $checks = array(
 	"add_action( 'elementor/widgets/register'" => 'Elementor registration hook',
@@ -22,7 +25,7 @@ $checks = array(
 
 foreach ( $checks as $needle => $label ) {
 	if ( false === strpos( $source, $needle ) ) {
-		echo "Elementor integration contract failed: {$label}\n";
+		exit( esc_html( sprintf( 'Elementor integration contract failed: %s\n', $label ) ) );
 		exit( 1 );
 	}
 }

@@ -1,8 +1,14 @@
 #!/usr/bin/env php
 <?php
 
-$settings_page = file_get_contents( __DIR__ . '/../settings_page.php' );
-$plugin_bootstrap = file_get_contents( __DIR__ . '/../html-social-share.php' );
+if ( ! defined( 'ABSPATH' ) ) {
+	if ( 'cli' !== PHP_SAPI ) {
+		exit;
+	}
+}
+
+$settings_page = implode( '', file( __DIR__ . '/../settings_page.php' ) );
+$plugin_bootstrap = implode( '', file( __DIR__ . '/../html-social-share.php' ) );
 
 if ( false === strpos( $settings_page, "add_submenu_page('options-general.php'" ) ) {
 	echo "Settings submenu contract failed.\n";

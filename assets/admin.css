@@ -4,6 +4,7 @@
 	--zmsh-ink: #1d2327;
 	--zmsh-muted: #50575e;
 	--zmsh-border: #dcdcde;
+	--zmsh-inner-border: #c7d0d9;
 	--zmsh-surface: #ffffff;
 	--zmsh-page: #f6f7f7;
 	--zmsh-soft: #f0f6fc;
@@ -425,9 +426,8 @@
 .zm_expandable_toggle_panel_details {
 	margin: 0;
 	background: var(--zmsh-surface);
-	border: 1px solid var(--zmsh-border);
+	border: 1px solid var(--zmsh-inner-border);
 	border-top: 0;
-	border-left: 2px solid var(--zmsh-accent-light);
 	border-radius: 0 0 6px 6px;
 	box-sizing: border-box;
 }
@@ -440,7 +440,7 @@
 .zm_network_marker {
 	overflow: hidden;
 	background: #fff;
-	border: 1px solid #c3c4c7;
+	border: 0;
 	border-radius: 4px;
 	color: var(--zmsh-muted);
 	font-size: 18px;
@@ -664,7 +664,7 @@
 	min-width: 0;
 	padding: 12px 14px;
 	background: var(--zmsh-page);
-	border: 1px solid var(--zmsh-border);
+	border: 1px solid var(--zmsh-inner-border);
 	border-radius: 6px;
 }
 

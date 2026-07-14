@@ -1,5 +1,8 @@
 #!/usr/bin/env php
 <?php
+
+require_once __DIR__ . '/cli-helpers.php';
+
 if ( ! defined( 'ABSPATH' ) ) {
 	if ( 'cli' !== PHP_SAPI ) {
 		exit;
@@ -28,7 +31,7 @@ $cases = array(
 
 foreach ( $cases as $value => $expected ) {
 	if ( zm_sh_post_is_excluded( $post, $value ) !== $expected ) {
-		echo "Exclude contract failed for: {$value}\n";
+		exit( esc_html( sprintf( 'Exclude contract failed for: %s\n', $value ) ) );
 		exit( 1 );
 	}
 }
