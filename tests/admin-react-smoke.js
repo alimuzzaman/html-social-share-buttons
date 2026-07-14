@@ -345,7 +345,7 @@ if (expandablePanelUses.length < 2 || !adminCss.includes('.zm_expandable_toggle_
 	throw new Error('Placement and social network items should share the expandable toggle-panel component.');
 }
 
-if (!settingsPageCode.includes("'preview_url' =>") || !nodes.some((node) => node.props && node.props.className === 'zm_panel_marker zm_network_marker')) {
+if (!settingsPageCode.includes("'preview_url' =>") || !settingsPageCode.includes("'preview_urls' =>") || !code.includes('function getIconPreview') || !code.includes('networkPreviewType') || !nodes.some((node) => node.props && node.props.className === 'zm_panel_marker zm_network_marker')) {
 	throw new Error('Social network card headers should expose the active icon-set marker.');
 }
 

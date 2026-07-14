@@ -87,6 +87,13 @@
 		return value;
 	}
 
+	function getIconPreview(icon, type) {
+		if (icon && icon.preview_urls && icon.preview_urls[type]) {
+			return icon.preview_urls[type];
+		}
+		return icon && icon.preview_url ? icon.preview_url : '';
+	}
+
 	function buildIconState(iconset, existing) {
 		var nextIcons = {};
 		if (!iconset) {
@@ -951,6 +958,7 @@
 		var modalOutput = this.state.modalMode === 'php' ? generated.php : generated.shortcode;
 		var modalTitle = this.state.modalMode === 'php' ? '<\\?> Get PHP Code' : '[] Get Shortcode';
 		var socialNetworkColumns = [[], []];
+		var networkPreviewType = ensureType(currentIconset, options.show_before_post || options.show_after_post || options.show_left || options.show_right);
 
 		if (currentIconset && currentIconset.icons && currentIconset.icons.length) {
 			currentIconset.icons.forEach(function (icon, index) {
@@ -1094,9 +1102,9 @@
 						key: icon.id,
 						className: 'zm_network_item',
 						detailsClassName: 'zm_network_template',
-						marker: e('span', { key: 'icon', className: 'zm_panel_marker zm_network_marker', 'aria-hidden': 'true' }, icon.preview_url ? e('img', {
-							key: 'image',
-							src: icon.preview_url,
+							marker: e('span', { key: 'icon', className: 'zm_panel_marker zm_network_marker', 'aria-hidden': 'true' }, getIconPreview(icon, networkPreviewType) ? e('img', {
+								key: 'image',
+								src: getIconPreview(icon, networkPreviewType),
 							alt: ''
 						}) : icon.name.substring(0, 1)),
 						title: icon.name,

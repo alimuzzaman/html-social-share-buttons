@@ -91,10 +91,17 @@ class zm_sh_settings{
 				$icons = [];
 				foreach ($iconset->get_icons() as $icon) {
 					$icon_type = isset($iconset->types[0]) ? $iconset->types[0] : 'square';
+					$preview_urls = [];
+					if ( isset( $icon['image'] ) ) {
+						foreach ( (array) $iconset->types as $type ) {
+							$preview_urls[ $type ] = esc_url_raw( $iconset->url . $type . '/' . $icon['image'] );
+						}
+					}
 					$icons[] = [
 						'id' => (string) $icon['id'],
 						'name' => esc_html($icon['name']),
 						'preview_url' => isset($icon['image']) ? esc_url_raw($iconset->url . $icon_type . '/' . $icon['image']) : '',
+						'preview_urls' => $preview_urls,
 					];
 				}
 
