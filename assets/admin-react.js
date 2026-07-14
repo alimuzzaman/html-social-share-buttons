@@ -357,6 +357,7 @@
 		this.noticeTimer = null;
 		this.submitLabel = '';
 		this.excludeSearchTimer = null;
+		this.excludeSearchRequest = null;
 		this.templateFields = {};
 		this.activeTemplateField = {};
 		this.templateSelections = {};
@@ -396,6 +397,10 @@
 		}
 		if (this.excludeSearchTimer) {
 			window.clearTimeout(this.excludeSearchTimer);
+		}
+		if (this.excludeSearchRequest && this.excludeSearchRequest.abort) {
+			this.excludeSearchRequest.abort();
+			this.excludeSearchRequest = null;
 		}
 		if (document.removeEventListener && this.handleTemplateDocumentPointerDownBound) {
 			document.removeEventListener('mousedown', this.handleTemplateDocumentPointerDownBound);
@@ -917,19 +922,35 @@
 		if (this.excludeSearchTimer) {
 			window.clearTimeout(this.excludeSearchTimer);
 		}
+		if (this.excludeSearchRequest && this.excludeSearchRequest.abort) {
+			this.excludeSearchRequest.abort();
+			this.excludeSearchRequest = null;
+		}
+		if (String(query || '').trim().length < 2) {
+			this.setState({ excludeSuggestions: [], excludeSuggestionItems: [] });
+			return;
+		}
 		this.excludeSearchTimer = window.setTimeout(function () {
-			$.post(data.ajax_url, {
+			var request = $.post(data.ajax_url, {
 				action: 'zm_sh_search_content',
 				nonce: data.nonce,
 				query: query || ''
 			}).done(function (response) {
+				if (request !== self.excludeSearchRequest) {
+					return;
+				}
 				if (response && response.success && response.data) {
 					self.setState({
 						excludeSuggestions: response.data.map(excludeToken),
 						excludeSuggestionItems: response.data
 					});
 				}
+			}).always(function () {
+				if (request === self.excludeSearchRequest) {
+					self.excludeSearchRequest = null;
+				}
 			});
+			self.excludeSearchRequest = request;
 		}, 250);
 	};
 

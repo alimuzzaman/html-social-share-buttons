@@ -219,12 +219,21 @@ class zm_sh_settings{
 		}
 
 		$query = isset( $_POST['query'] ) ? sanitize_text_field( wp_unslash( $_POST['query'] ) ) : '';
+		$query = trim( $query );
+		if ( strlen( $query ) < 2 ) {
+			wp_send_json_success( array() );
+		}
+		$query = function_exists( 'mb_substr' ) ? mb_substr( $query, 0, 100 ) : substr( $query, 0, 100 );
 		$posts = get_posts( array(
 			'post_type' => array( 'post', 'page' ),
 			'post_status' => 'publish',
 			'posts_per_page' => 20,
 			's' => $query,
 			'orderby' => 'relevance',
+			'no_found_rows' => true,
+			'ignore_sticky_posts' => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
 		) );
 		$items = array();
 

@@ -349,6 +349,14 @@ if (!settingsPageCode.includes("'preview_url' =>") || !settingsPageCode.includes
 	throw new Error('Social network card headers should expose the active icon-set marker.');
 }
 
+if (!settingsPageCode.includes("strlen( $query ) < 2") || !settingsPageCode.includes("'posts_per_page' => 20") || !settingsPageCode.includes("'no_found_rows' => true") || !code.includes("trim().length < 2")) {
+	throw new Error('Exclude content search should reject short queries and keep the server query bounded.');
+}
+
+if (!code.includes('excludeSearchRequest') || !code.includes('excludeSearchRequest.abort') || !code.includes('request !== self.excludeSearchRequest')) {
+	throw new Error('Exclude content search should prevent stale responses from replacing newer suggestions.');
+}
+
 const settingsSectionCss = adminCss.match(/\.zm_settings_section\s*\{[^}]*\}/);
 if (!settingsSectionCss || !settingsSectionCss[0].includes('border-left: 3px solid var(--zmsh-accent-light)')) {
 	throw new Error('Top-level settings sections should use the scheme-aware accent border.');
