@@ -75,20 +75,22 @@ WordPress test library supplied by Sandbox:
 Run the Sandbox MCP `run_tests` tool for this suite.
 
 Sandbox supplies PHPUnit, the WordPress test library, and polyfills; no test
-dependencies are installed in this plugin repository.
+dependencies are installed in this plugin repository. The PHPUnit harness
+requires PHP 7.4 or later; the distributed plugin itself supports PHP 7.0 or
+later.
 
 ## WordPress Plugin Check
 
 The project Sandbox config installs and activates the WordPress Plugin Check
-plugin automatically. The first run establishes the reviewed baseline; later
-runs fail only for new error-level findings:
+plugin automatically. Run the release-scoped check below. It excludes the
+development-only files already omitted by `.distignore`.
 
 ```bash
-wp plugin install plugin-check --activate
+pnpm run plugin:check
 ```
 
-The committed `plugin-check-baseline.json` records the current known findings.
-Update it only after reviewing a deliberate Plugin Check change.
+The committed `plugin-check-baseline.json` remains empty when the release
+package has no known findings.
 
 ## Scenario authoring
 Add new scenarios in `tests/frontend-output-scenarios.json` with the same schema:

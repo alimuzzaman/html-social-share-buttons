@@ -28,7 +28,7 @@ switch (command) {
 		runSandbox(['--instance', instanceName(), 'wp', ...rest]);
 		break;
 	case 'test':
-		runSandbox(['test', '--project-dir', REPO_ROOT, ...rest]);
+		runSandbox(['test', '--project-dir', REPO_ROOT, '--label', process.env.SANDBOX_LABEL || 'default', ...rest]);
 		break;
 	case 'e2e':
 		runSandbox(['e2e', '--project-dir', REPO_ROOT, '--workers', '1', ...rest]);

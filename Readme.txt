@@ -1,24 +1,23 @@
 === Html Social share buttons ===
 Contributors: alimuzzamanalim
 Author: Md. Alimuzzaman Alim
-Donate link: none
-Tags: lightweight, no javascript, social share, fast, privacy-friendly
+Tags: lightweight, social share, block editor, fast, privacy-friendly
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.0
-Version: 2.2.4
+Version: 2.2.5
 License: GPLv2
-Stable tag: 2.2.4
+Stable tag: 2.2.5
 
 
-Are you searching for a lightweight sharing plugin? You are in right place. This plugin does not use JavaScript.
+Lightweight HTML and CSS share buttons. Settings and block editing use WordPress JavaScript.
 
 == Description ==
 
 Designed By Hakan Ertan <a target="_blank" href="https://www.tonicons.com/" rel="follow">www.tonicons.com</a>
 
 To make Icons horizontal append  class='in_widget' in ShortCode.
-Ex. [zm_sh_btn iconset='long-shadows' iconset_type='square' icons='facebook,x,linkedin,pinterest,mail' class='in_widget']
+Ex. [zm_sh_btn iconset='long_shadow' iconset_type='square' icons='facebook,x,linkedin,pinterest,mail' class='in_widget']
 
 <strong>New feature:</strong><br />
 <ul>
@@ -54,6 +53,8 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 	<li>Share with LinkedIn.</li>
 	<li>Share with Email.</li>
 	<li>Share with Pinterest</li>
+	<li>Share with Telegram.</li>
+	<li>Share with Bluesky.</li>
 	<li>Your asked item will be added ASAP</li>
 </ol>
 
@@ -62,7 +63,7 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 
 2. There are two way to use this share button. You can use as widget or on the left site.
 
-3. You get a option panel under "Appearance" menu called "Html Social Share".
+3. You get an option panel under the "Settings" menu called "Html Social Share".
 
 4. By going to option panel:
 	a) You will able to enable/disable widget.
@@ -73,6 +74,12 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 6. That's all. Enjoy this widget.
 
 == Changelog ==
+
+= 2.2.5 =
+* **FEATURE**: Added native block editor and Elementor share-button controls, including icon-set inheritance.
+* **FEATURE**: Added Telegram and Bluesky sharing templates and matching icons for every bundled icon set.
+* **IMPROVEMENT**: Redesigned the settings page, including searchable exclusions and per-platform template controls.
+* **IMPROVEMENT**: Distribution archives now build required editor assets before `wp dist-archive` packages the plugin.
 
 = 2.2.4 =
 * **UPDATE**: Compatibility release tested through WordPress 7.0 and PHP 8.5

@@ -1,5 +1,1 @@
-{
-  "../sandbox/.wp-env-port::hidden_files": 1,
-  "../sandbox/Readme.txt::readme_invalid_donate_link": 1,
-  "../sandbox/phpunit.xml.dist::application_detected": 1
-}
+{}
