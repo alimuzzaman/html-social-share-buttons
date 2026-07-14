@@ -1,0 +1,100 @@
+name: Compatibility checks
+
+on:
+  push:
+    branches: [ master, release ]
+    tags: [ 'v*' ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '7.4', '8.0', '8.3', '8.5' ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - name: Validate Composer metadata
+        run: composer validate --strict
+      - name: Check PHP syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r file; do php -l "$file"; done < <(find . -type f -name '*.php' \
+            -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' \
+            -not -path './tests/phpunit/*' | sort)
+
+  js:
+    name: JavaScript and contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint:js
+      - run: pnpm run settings:check
+      - run: pnpm run build
+
+  wordpress:
+    name: WordPress ${{ matrix.wordpress }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress: [ '6.8', 'latest' ]
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Install WP-CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o wp-cli.phar
+          chmod +x wp-cli.phar
+          sudo mv wp-cli.phar /usr/local/bin/wp
+      - name: Install WordPress
+        env:
+          WP_VERSION: ${{ matrix.wordpress }}
+        run: |
+          wp core download --version="$WP_VERSION" --force
+          mkdir -p wp-content/plugins/html-social-share-buttons
+          rsync -a --exclude='.git' --exclude='node_modules' ./ wp-content/plugins/html-social-share-buttons/
+          wp config create --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=127.0.0.1 --skip-check
+          wp core install --url=http://localhost --title='Compatibility test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
+          wp plugin activate html-social-share-buttons
+      - name: Verify frontend shortcode rendering
+        run: |
+          wp eval 'if (strpos(do_shortcode("[zm_sh_btn icons=\"facebook\"]"), "facebook") === false) { exit(1); }'

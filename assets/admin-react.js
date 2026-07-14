@@ -381,9 +381,12 @@
 		}
 	};
 
-	App.prototype.componentDidUpdate = function () {
+	App.prototype.componentDidUpdate = function (prevProps, prevState) {
 		if (this.$form) {
 			this.$form.toggleClass('is-dirty', !!this.state.isDirty);
+		}
+		if (this.state.modalOpen && !prevState.modalOpen && this.modalCloseButton) {
+			this.modalCloseButton.focus();
 		}
 	};
 
@@ -954,10 +957,11 @@
 		}, 250);
 	};
 
-	App.prototype.openModal = function (mode) {
+	App.prototype.openModal = function (mode, trigger) {
 		var options = this.state.options;
 		var currentIconset = findIconset(options.iconset);
 		var modalType = ensureType(currentIconset, this.state.modalType || options.show_left || 'square');
+		this.modalTrigger = trigger || null;
 		this.setBodyLock(true);
 		this.setState({
 			modalOpen: true,
@@ -969,6 +973,43 @@
 	App.prototype.closeModal = function () {
 		this.setBodyLock(false);
 		this.setState({ modalOpen: false });
+		if (this.modalTrigger && this.modalTrigger.focus) {
+			this.modalTrigger.focus();
+		}
+		this.modalTrigger = null;
+	};
+
+	App.prototype.handleModalKeyDown = function (event) {
+		var panel;
+		var focusable;
+		var first;
+		var last;
+		var activeElement;
+
+		if (event.key === 'Escape') {
+			event.preventDefault();
+			this.closeModal();
+			return;
+		}
+		if (event.key !== 'Tab') {
+			return;
+		}
+
+		panel = event.currentTarget;
+		activeElement = panel && panel.ownerDocument ? panel.ownerDocument.activeElement : null;
+		focusable = panel && panel.querySelectorAll ? panel.querySelectorAll('button:not([disabled]), select, textarea, input:not([disabled]), [contenteditable="true"], [tabindex]:not([tabindex="-1"])') : [];
+		if (!focusable || !focusable.length) {
+			return;
+		}
+		first = focusable[0];
+		last = focusable[focusable.length - 1];
+		if (event.shiftKey && activeElement === first) {
+			event.preventDefault();
+			last.focus();
+		} else if (!event.shiftKey && activeElement === last) {
+			event.preventDefault();
+			first.focus();
+		}
 	};
 
 	App.prototype.render = function () {
@@ -1257,26 +1298,22 @@
 					description: 'Generate embed code from the same icon set and selected networks.'
 				}),
 					e('div', { key: 'generator-actions', className: 'zm_settings_generator_actions' }, [
-						e('a', {
+						e('button', {
 							key: 'php',
-							href: '#zm-sh-thick-box',
-						className: 'get_phpcode button button-default',
-						title: '<\\?> Get PHP Code',
-						onClick: function (event) {
-							event.preventDefault();
-							self.openModal('php');
-						}
+							type: 'button',
+							className: 'get_phpcode button button-default',
+							onClick: function (event) {
+							self.openModal('php', event.currentTarget);
+							}
 						}, '<\\?> Get PHP Code'),
-						e('a', {
+						e('button', {
 							key: 'shortcode',
-							href: '#zm-sh-thick-box',
-						className: 'get_shortcode button button-default',
-						title: '[] Get Shortcode',
-						onClick: function (event) {
-							event.preventDefault();
-							self.openModal('shortcode');
-						}
-					}, '[] Get Shortcode')
+							type: 'button',
+							className: 'get_shortcode button button-default',
+							onClick: function (event) {
+							self.openModal('shortcode', event.currentTarget);
+							}
+						}, '[] Get Shortcode')
 				])
 			]),
 			this.state.notice ? e('div', {
@@ -1291,6 +1328,9 @@
 				key: 'code-modal',
 				className: 'zm-sh-thick-box',
 				id: 'zm-sh-thick-box',
+				role: 'dialog',
+				'aria-modal': 'true',
+				'aria-labelledby': 'zm-sh-code-modal-title',
 				style: {
 					display: this.state.modalOpen ? 'block' : 'none',
 					position: 'fixed',
@@ -1301,10 +1341,10 @@
 					zIndex: 99999
 				}
 			}, [
-				e('div', { key: 'backdrop', className: 'backdrop', onClick: function () { self.closeModal(); } }),
-				e('div', { key: 'panel', className: 'zm-tabs', onMouseDown: function (event) { event.stopPropagation(); } }, [
-					e('h3', { key: 'title', className: 'title' }, modalTitle),
-					e('button', { key: 'close', type: 'button', className: 'close', onClick: function () { self.closeModal(); }, 'aria-label': 'Close' }, 'X'),
+				e('div', { key: 'backdrop', className: 'backdrop', 'aria-hidden': 'true', onClick: function () { self.closeModal(); } }),
+				e('div', { key: 'panel', className: 'zm-tabs', onMouseDown: function (event) { event.stopPropagation(); }, onKeyDown: function (event) { self.handleModalKeyDown(event); } }, [
+					e('h3', { key: 'title', id: 'zm-sh-code-modal-title', className: 'title' }, modalTitle),
+					e('button', { key: 'close', type: 'button', className: 'close', ref: function (node) { self.modalCloseButton = node; }, onClick: function () { self.closeModal(); } }, 'Close'),
 					e(SelectControl, {
 						key: 'type-picker',
 						id: 'shortcode-iconset-type',

@@ -7,7 +7,7 @@ async function login( page ) {
 		.fill( process.env.WP_ADMIN_USER || 'admin' );
 	await page
 		.locator( '#user_pass' )
-		.fill( process.env.WP_ADMIN_PASSWORD || 'password' );
+		.fill( process.env.WP_ADMIN_PASSWORD || 'admin' );
 	await page.locator( '#wp-submit' ).click();
 	await expect( page ).not.toHaveURL( /wp-login\.php/ );
 }

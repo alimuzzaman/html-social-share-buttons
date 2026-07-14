@@ -10,7 +10,7 @@ License: GPLv2
 Stable tag: 2.2.6
 
 
-Lightweight HTML and CSS share buttons. Settings and block editing use WordPress JavaScript.
+Lightweight HTML and CSS share buttons with a no-JavaScript frontend. Settings and block editing use WordPress JavaScript.
 
 == Description ==
 
@@ -19,44 +19,17 @@ Designed By Hakan Ertan <a target="_blank" href="https://www.tonicons.com/" rel=
 To make Icons horizontal append  class='in_widget' in ShortCode.
 Ex. [zm_sh_btn iconset='long_shadow' iconset_type='square' icons='facebook,x,linkedin,pinterest,mail' class='in_widget']
 
-<strong>New feature:</strong><br />
+<strong>Features:</strong><br />
 <ul>
-	<li>Added ability to provide url in shortcode ( To use provide url parameter).</li>
-	<li>Disable icons on specific page. You can disable by the post edit screen or put the page ID on the setting page.</li>
-	<li>Exclude page/post by ID/slug</li>
-	<li><strong>Social tracker:</strong> Google Social analytics integrated. Now you can track your social shares. Need to enable on settings page.</li>
-	<li>2 New <strong>Premium icons</strong> set added with different styles.</li>
-	<li>WPBakery support.</li>
-	<li>Short code generator</li>
-	<li>Option to add bottom of post.</li>
-	<li>PHP code generator to use in theme</li>
-	<li>Translation ready. (Help me to translate to your language.)</li>
-	<li>3 Different button set.</li>
-	<li>You will be able to display share button horizontally on the left or right side.</li>
-	<li>You can develop add-on for this plugin with your custom icons.</li>
-	<li>Html CSS Social share buttons widget Plugin WordPress.</li>
-	<li>It show lite/simple share button only with html css.</li>
-	<li>It's does not using any JavaScript whats another do.</li>
-	<li>It's load only extra 10-11 KB total on your site.</li>
-	<li>There are top share button in this plugin.</li>
-	<li>It's use only one image instead of 5.(Will be back in future release)</li>
-	<li>So only one extra HTTP request will occur.(Will be back in future release)</li>
+	<li>Share URLs can be configured in a shortcode or generated PHP snippet.</li>
+	<li>Exclude pages and posts by ID, slug, or searchable content.</li>
+	<li>Optional Google Social Analytics tracking.</li>
+	<li>Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, and email sharing.</li>
+	<li>Default, flat, long-shadow, and Prajin icon sets with selectable button shapes.</li>
+	<li>Native block editor, Elementor, WPBakery, and widget integrations.</li>
+	<li>Horizontal or floating placements before, after, left, or right of post content.</li>
+	<li>Translation-ready strings and a lightweight HTML/CSS frontend.</li>
 </ul>
-Added ability to pickup first image from post for use as thumbnail. ( NEW )
-
-<strong>Supports::</strong>
-
-
-<ol>
-	<li>Share with Facebook.</li>
-	<li>Share with X (Twitter).</li>
-	<li>Share with LinkedIn.</li>
-	<li>Share with Email.</li>
-	<li>Share with Pinterest</li>
-	<li>Share with Telegram.</li>
-	<li>Share with Bluesky.</li>
-	<li>Your asked item will be added ASAP</li>
-</ol>
 
 == Installation ==
 1. At first activate the plugin.

@@ -7,7 +7,7 @@
     "start": "wp-scripts start assets/admin-react.js blocks/social-share.js --output-path=build",
     "zip": "pnpm run build && wp dist-archive . ../html-social-share-buttons.$(sed -n 's/^Version:[[:space:]]*//p' html-social-share.php | head -n 1).zip --force && test -f ../html-social-share-buttons.$(sed -n 's/^Version:[[:space:]]*//p' html-social-share.php | head -n 1).zip",
     "release": "pnpm run zip",
-    "lint:js": "wp-scripts lint-js assets/admin-react.js && eslint blocks/social-share.js",
+    "lint:js": "wp-scripts lint-js assets/admin-react.js blocks/social-share.js",
     "settings:check": "node --check assets/admin-react.js && node tests/admin-react-smoke.js && php -l settings_page.php && php -l share-templates.php && php tests/share-template-contract.php && php -l function.php && php tests/exclude-contract.php && php tests/elementor-integration-contract.php && php tests/block-integration-contract.php && php tests/settings-menu-contract.php && php tests/frontend-drift-surface.php",
     "test:unit": "node scripts/sandbox-env.js test",
     "test:e2e": "node scripts/sandbox-env.js e2e",
@@ -20,6 +20,7 @@
     "plugin:check": "node scripts/plugin-check.js"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@wordpress/scripts": "^32.6.0"
   }
 }

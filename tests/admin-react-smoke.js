@@ -261,6 +261,18 @@ nodes.forEach((node) => {
 	}
 });
 
+const phpGenerator = nodes.find((node) => node.props && String(node.props.className).includes('get_phpcode'));
+const shortcodeGenerator = nodes.find((node) => node.props && String(node.props.className).includes('get_shortcode'));
+const codeModal = nodes.find((node) => node.props && node.props.id === 'zm-sh-thick-box');
+const modalTitle = nodes.find((node) => node.props && node.props.id === 'zm-sh-code-modal-title');
+const modalClose = nodes.find((node) => node.props && node.props.className === 'close');
+if (!phpGenerator || phpGenerator.type !== 'button' || phpGenerator.props.type !== 'button' || !shortcodeGenerator || shortcodeGenerator.type !== 'button' || !codeModal || codeModal.props.role !== 'dialog' || codeModal.props['aria-modal'] !== 'true' || codeModal.props['aria-labelledby'] !== 'zm-sh-code-modal-title' || !modalTitle || !modalClose || modalClose.children.join('') !== 'Close') {
+	throw new Error('Code generator modal controls should use accessible buttons and dialog semantics.');
+}
+if (!code.includes('this.modalTrigger = trigger || null') || !code.includes('this.modalTrigger.focus()') || !code.includes('this.modalCloseButton.focus()') || !code.includes('handleModalKeyDown') || !code.includes("event.key === 'Escape'")) {
+	throw new Error('Code generator modal should restore focus to its trigger.');
+}
+
 const requiredNames = [
 	'zm_shbt_fld[title]',
 	'zm_shbt_fld[excludes]',
@@ -547,24 +559,8 @@ if (!code.includes("$options['icons']\\t\\t\\t= array( '")) {
 	throw new Error('PHP code generator no longer matches the legacy icons assignment spacing.');
 }
 
-const generatorTitles = new Set(
-	nodes
-		.filter((node) => node.type === 'a' && node.props && node.props.title)
-		.map((node) => node.props.title)
-);
-
-if (!generatorTitles.has('<\\?> Get PHP Code') || !generatorTitles.has('[] Get Shortcode')) {
-	throw new Error('Code generator action titles were not rendered.');
-}
-
-const generatorHrefs = new Set(
-	nodes
-		.filter((node) => node.type === 'a' && node.props && node.props.href)
-		.map((node) => node.props.href)
-);
-
-if (!generatorHrefs.has('#zm-sh-thick-box')) {
-	throw new Error('Code generator actions no longer point at #zm-sh-thick-box.');
+if (collectText(phpGenerator) !== '<\\?> Get PHP Code' || collectText(shortcodeGenerator) !== '[] Get Shortcode') {
+	throw new Error('Code generator action labels were not rendered.');
 }
 
 const modal = nodes.find((node) => node.type === 'div' && node.props && node.props.id === 'zm-sh-thick-box');
@@ -572,12 +568,12 @@ if (!modal) {
 	throw new Error('Legacy modal id #zm-sh-thick-box was not rendered.');
 }
 
-const phpGeneratorLink = nodes.find((node) => node.type === 'a' && node.props && node.props.className === 'get_phpcode button button-default');
-if (!phpGeneratorLink || typeof phpGeneratorLink.props.onClick !== 'function') {
+const phpGeneratorAction = nodes.find((node) => node.type === 'button' && node.props && String(node.props.className).includes('get_phpcode'));
+if (!phpGeneratorAction || typeof phpGeneratorAction.props.onClick !== 'function') {
 	throw new Error('PHP code generator click handler was not rendered.');
 }
 
-phpGeneratorLink.props.onClick({ preventDefault() {} });
+phpGeneratorAction.props.onClick({ currentTarget: { focus() {} } });
 if (!appInstance) {
 	throw new Error('React settings class instance was not captured.');
 }
