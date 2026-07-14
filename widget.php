@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'widgets_init', 'zm_sh_register_widgets' );
 function zm_sh_register_widgets() {
 	global $zm_sh;
+	if ( ! is_object( $zm_sh ) ) return;
 	if(isset($zm_sh->excluded) and $zm_sh->excluded == true) return;
 	register_widget( 'zm_html_share_widget' );
 }
@@ -25,6 +26,7 @@ class zm_html_share_widget extends WP_Widget {
 
 	function widget( $args, $instance ) {
 		global $zm_sh;
+		if ( ! is_object( $zm_sh ) || ! method_exists( $zm_sh, 'zm_sh_btn' ) ) return;
 		// Explicit variable extraction for PHP 8.x compatibility
 		$before_widget = $args['before_widget'] ?? '';
 		$after_widget = $args['after_widget'] ?? '';
@@ -32,7 +34,7 @@ class zm_html_share_widget extends WP_Widget {
 		$after_title = $args['after_title'] ?? '';
 		//$instance = shortcode_atts($zm_sh_default_options, $instance);
 		//if($instance[
-		$title = apply_filters( 'widget_title', $instance['title'] );
+		$title = apply_filters( 'widget_title', isset( $instance['title'] ) ? $instance['title'] : '' );
 		echo wp_kses_post($before_widget);
 		if ( ! empty( $title ) )
 			echo wp_kses_post($before_title) . esc_html($title) . wp_kses_post($after_title);
@@ -43,10 +45,10 @@ class zm_html_share_widget extends WP_Widget {
 	}
 
 	function update( $new_instance, $old_instance ) {
-		$instance['title'] = $new_instance['title'];
-		$instance['icons'] = $new_instance['icons'];
-		$instance['iconset_type'] = $new_instance['iconset_type'];
-		$instance['iconset'] = $new_instance['iconset'];
+		$instance['title'] = isset( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : '';
+		$instance['icons'] = isset( $new_instance['icons'] ) && is_array( $new_instance['icons'] ) ? array_map( 'sanitize_key', array_keys( $new_instance['icons'] ) ) : array();
+		$instance['iconset_type'] = isset( $new_instance['iconset_type'] ) ? sanitize_key( $new_instance['iconset_type'] ) : 'square';
+		$instance['iconset'] = isset( $new_instance['iconset'] ) ? sanitize_key( $new_instance['iconset'] ) : 'default';
 		return $instance;
 	}
 

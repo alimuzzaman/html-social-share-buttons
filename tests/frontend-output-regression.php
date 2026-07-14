@@ -25,7 +25,7 @@ $defaults = [
 	'strict' => false,
 ];
 
-function regression_fail(string $format, ...$values): void
+function regression_fail(string $format, ...$values)
 {
 	exit(esc_html(vsprintf($format, $values)));
 }
@@ -36,7 +36,7 @@ function parse_args(array $argv): array
 
 	foreach ($argv as $entry) {
 		if (substr($entry, 0, 2) === '--') {
-			[$key, $value] = array_pad(explode('=', substr($entry, 2), 2), 2, true);
+			list( $key, $value ) = array_pad(explode('=', substr($entry, 2), 2), 2, true);
 			if ($value === true || $value === '') {
 				$parsed[$key] = true;
 			} else {
@@ -50,7 +50,7 @@ function parse_args(array $argv): array
 	return $parsed;
 }
 
-function show_help(): void
+function show_help()
 {
 	echo "Usage: php frontend-output-regression.php <capture|compare> [--wp-root=PATH] [--plugin-path=PATH] [--scenario-file=FILE] [--output=FILE] [--baseline=FILE] [--strict]\n";
 	echo "  capture   Generate normalized frontend output for scenarios and write to a fixture file.\n";
@@ -68,7 +68,7 @@ if ($command === '--help' || $command === '-h' || $command === 'help') {
 $args = parse_args($argvCopy);
 $options = array_merge($defaults, $args);
 
-function bootstrap_wp(array $options): void
+function bootstrap_wp(array $options)
 {
 	if (!empty($options['wp-root']) && is_file(rtrim($options['wp-root'], '/') . '/wp-load.php')) {
 		require_once rtrim($options['wp-root'], '/') . '/wp-load.php';
@@ -143,7 +143,7 @@ function load_scenarios(string $path): array
 
 $GLOBALS['zm_sh_regression_bootstrapped'] = false;
 ob_start();
-register_shutdown_function(function (): void {
+register_shutdown_function(function () {
 	if (!empty($GLOBALS['zm_sh_regression_bootstrapped'])) {
 		return;
 	}

@@ -43,7 +43,7 @@ frontend-compare: check-wp-root
 		--scenario-file=tests/frontend-output-scenarios.json --strict
 
 frontend-drift-surface:
-	@bash tests/frontend-drift-surface.sh
+	@php tests/frontend-drift-surface.php
 
 admin-react-smoke:
 	@node --check assets/admin-react.js

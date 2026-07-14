@@ -22,7 +22,9 @@ function zm_sh_register_block() {
 		'zm-sh-social-share-block',
 		'zmShBlock',
 		array(
-			'iconsets' => zm_sh_get_builder_iconset_options(),
+			'iconsets'          => zm_sh_get_builder_iconset_options(),
+			'iconsetAssets'     => zm_sh_get_builder_iconset_assets(),
+			'inheritedIconset'  => zm_sh_get_builder_iconset( 'inherit' ),
 		)
 	);
 
@@ -39,6 +41,34 @@ function zm_sh_register_block() {
 			'render_callback' => 'zm_sh_render_block',
 		)
 	);
+}
+
+function zm_sh_get_builder_iconset_assets() {
+	global $zm_sh;
+
+	$assets = array();
+	if ( ! is_object( $zm_sh ) || ! isset( $zm_sh->iconsets ) ) {
+		return $assets;
+	}
+
+	foreach ( $zm_sh->iconsets->get_iconsets() as $iconset ) {
+		$assets[ $iconset->id ] = array(
+			'types' => array_values( (array) $iconset->types ),
+			'icons' => array(),
+		);
+
+		foreach ( (array) $iconset->icons as $id => $icon ) {
+			if ( empty( $icon['image'] ) ) {
+				continue;
+			}
+
+			foreach ( $assets[ $iconset->id ]['types'] as $type ) {
+				$assets[ $iconset->id ]['icons'][ $id ][ $type ] = trailingslashit( $iconset->url . $type ) . rawurlencode( $icon['image'] );
+			}
+		}
+	}
+
+	return $assets;
 }
 
 function zm_sh_render_block( $attributes ) {

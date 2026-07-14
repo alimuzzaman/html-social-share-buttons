@@ -4,7 +4,7 @@ Plugin Name: Html Social share buttons
 Plugin URI: http://wordpress.org/plugins/html-social-share-buttons/
 Description: Lightweight HTML and CSS social share buttons. Settings and block editing use WordPress JavaScript.
 Author: Alimuzzaman Alim
-Version: 2.2.5
+Version: 2.2.6
 Author URI: https://alim.dev
 Text Domain: html-social-share-buttons
 Domain Path: /languages
@@ -107,9 +107,13 @@ function zm_sh_btn($options) {
 	global $zm_sh;
 	//print_r($zm_sh);
 	//wp_die();
-	if (!is_object($zm_sh))
+	if (!is_object($zm_sh) || !is_array($options))
 		return '';
-	$options['icons']	= array_flip($options['icons']);
+	$icons = isset( $options['icons'] ) && is_array( $options['icons'] ) ? $options['icons'] : array();
+	$is_list = ! empty( $icons ) && array_keys( $icons ) === range( 0, count( $icons ) - 1 );
+	$icons = $is_list ? $icons : array_keys( $icons );
+	$icons = array_map( 'sanitize_key', $icons );
+	$options['icons'] = array_fill_keys( array_filter( $icons ), 'on' );
 	return $zm_sh->zm_sh_btn($options);
 }
 
@@ -173,7 +177,7 @@ class zm_social_share {
 		global $post;
 		//echo $post->ID;
 		//print_r($post);
-		if (empty($post->ID)) return;
+		if (!is_object($post) || empty($post->ID)) return;
 
 		$excludes = ! empty( $this->options['excludes'] ) ? $this->options['excludes'] : '';
 		if ( zm_sh_post_is_excluded( $post, $excludes ) ) {
@@ -320,29 +324,43 @@ class zm_social_share {
 	function zm_sh_btn($instance = "") {
 		$output			= '';
 		if (isset($this->excluded) and $this->excluded == true) return;
-		$options		= $instance ? $instance : $this->options;
+		$options		= is_array( $instance ) && ! empty( $instance ) ? $instance : ( is_array( $this->options ) ? $this->options : array() );
+		$options		= wp_parse_args( $options, array(
+			'iconset' => 'default',
+			'icons' => array(),
+			'class' => 'left',
+			'show_on' => 'show_left',
+			'iconset_type' => '',
+			'title' => '',
+		) );
+		if ( ! is_array( $options['icons'] ) ) {
+			$options['icons'] = array();
+		}
 
 		// Runtime migration: Convert 'twitter' to 'x' for widgets/instances with old data
 		if (isset($options['icons']['twitter'])) {
 			$options['icons']['x'] = $options['icons']['twitter'];
 			unset($options['icons']['twitter']);
 		}
-
 		// Sanitize inputs to prevent XSS vulnerabilities
-		$__class		= sanitize_html_class($options['class'] ? $options['class'] : "left");
-		$iconset_id		= sanitize_key($options['iconset']);
+		$__class		= sanitize_html_class( is_scalar( $options['class'] ) && $options['class'] ? $options['class'] : 'left' );
+		$iconset_id		= sanitize_key( is_scalar( $options['iconset'] ) ? $options['iconset'] : 'default' );
 		$selected_icons = $options['icons'];
-		$rel			= isset($options['nofollow']) ? 'nofollow noopener noreferrer' : 'noopener noreferrer';
+		$rel			= ! empty( $options['nofollow'] ) ? 'nofollow noopener noreferrer' : 'noopener noreferrer';
 
 		$iconset		= $this->iconsets->get_iconset($iconset_id);
+		if ( ! is_object( $iconset ) ) {
+			return '';
+		}
 		$this->stylesheets[$iconset->id]	= $iconset->url . $iconset->stylesheet;
 		$icons			= $iconset->icons;
-		if (!isset($options['show_on']))
-			$options['show_on']				= 'show_left';
-		if (isset($options['iconset_type']) and $options['iconset_type'])
-			$iconset_type					= sanitize_key($options['iconset_type']);
-		else
-			$iconset_type					= sanitize_key($options[$options['show_on']]);
+		$show_on = in_array( $options['show_on'], array( 'show_left', 'show_right', 'show_before_post', 'show_after_post' ), true ) ? $options['show_on'] : 'show_left';
+		$iconset_types = array_values( array_filter( (array) $iconset->types, 'is_scalar' ) );
+		$type_value = $options['iconset_type'] ? $options['iconset_type'] : ( isset( $options[ $show_on ] ) ? $options[ $show_on ] : '' );
+		$iconset_type = sanitize_key( is_scalar( $type_value ) ? $type_value : '' );
+		if ( ! $iconset_type || ! in_array( $iconset_type, $iconset_types, true ) ) {
+			$iconset_type = sanitize_key( isset( $iconset_types[0] ) ? $iconset_types[0] : 'square' );
+		}
 		//print_r($options);
 		if (
 			(

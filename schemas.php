@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class zm_sh_schema{
-	private $schemas;
+	private $schemas = array();
 
 	static function getInstance() {
 		static $instance;
@@ -20,7 +20,7 @@ class zm_sh_schema{
 	}
 
 	public function get_schema($id){
-		return $this->schemas[$id];
+		return isset( $this->schemas[ $id ] ) ? $this->schemas[ $id ] : null;
 	}
 
 	public function get_schemas(){

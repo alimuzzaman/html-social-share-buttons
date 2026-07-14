@@ -19,6 +19,14 @@
 					),
 					default: __( 'Default', 'html-social-share-buttons' ),
 			  };
+	const iconsetAssets =
+		window.zmShBlock && window.zmShBlock.iconsetAssets
+			? window.zmShBlock.iconsetAssets
+			: {};
+	const inheritedIconset =
+		window.zmShBlock && window.zmShBlock.inheritedIconset
+			? window.zmShBlock.inheritedIconset
+			: 'default';
 	const networks = [
 		{ id: 'facebook', label: 'Facebook' },
 		{ id: 'x', label: 'X' },
@@ -44,6 +52,22 @@
 		},
 		edit( props ) {
 			const selected = props.attributes.icons || [];
+			const activeIconsetId =
+				props.attributes.iconset === 'inherit'
+					? inheritedIconset
+					: props.attributes.iconset;
+			const activeIconset = iconsetAssets[ activeIconsetId ] || {
+				types: [ 'square' ],
+				icons: {},
+			};
+			const supportedTypes = activeIconset.types.length
+				? activeIconset.types
+				: [ 'square' ];
+			const previewType = supportedTypes.indexOf(
+				props.attributes.iconset_type
+			) !== -1
+				? props.attributes.iconset_type
+				: supportedTypes[ 0 ];
 			const blockProps = { className: 'zm-sh-block-preview' };
 			return el( Fragment, {}, [
 				el(
@@ -93,22 +117,12 @@
 									'html-social-share-buttons'
 								),
 								value: props.attributes.iconset_type,
-								options: [
-									{
-										label: __(
-											'Square',
-											'html-social-share-buttons'
-										),
-										value: 'square',
-									},
-									{
-										label: __(
-											'Circle',
-											'html-social-share-buttons'
-										),
-										value: 'circle',
-									},
-								],
+								options: supportedTypes.map( function ( type ) {
+									return {
+										label: type.charAt( 0 ).toUpperCase() + type.slice( 1 ),
+										value: type,
+									};
+								} ),
 								onChange( value ) {
 									props.setAttributes( {
 										iconset_type: value,
@@ -148,17 +162,47 @@
 				el(
 					'div',
 					blockProps,
-					el(
-						'strong',
-						{},
-						__( 'Html Social Share', 'html-social-share-buttons' )
-					),
-					el(
-						'p',
-						{},
-						props.attributes.title ||
-							__( 'Share this page', 'html-social-share-buttons' )
-					)
+					selected.length
+						? el(
+								'div',
+								{
+									className: 'zm-sh-block-preview__icons',
+									style: {
+										display: 'flex',
+										flexWrap: 'wrap',
+										gap: '8px',
+										alignItems: 'center',
+										padding: '8px 0',
+									},
+								},
+								selected.map( function ( id ) {
+									const network = networks.find( function ( item ) {
+										return item.id === id;
+									} );
+									const src =
+										activeIconset.icons[ id ] &&
+										activeIconset.icons[ id ][ previewType ];
+									return src
+										? el( 'img', {
+											key: id,
+											src,
+											alt: network ? network.label : id,
+											className: 'zm-sh-block-preview__icon',
+											style: {
+												width: '34px',
+												height: '34px',
+												objectFit: 'contain',
+												borderRadius: previewType === 'circle' ? '50%' : '2px',
+											},
+										} )
+										: null;
+								} )
+							)
+						: el(
+								'span',
+								{ className: 'zm-sh-block-preview__empty' },
+								__( 'Select share networks', 'html-social-share-buttons' )
+							)
 				),
 			] );
 		},

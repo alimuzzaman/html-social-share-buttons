@@ -5,9 +5,9 @@ Tags: lightweight, social share, block editor, fast, privacy-friendly
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.0
-Version: 2.2.5
+Version: 2.2.6
 License: GPLv2
-Stable tag: 2.2.5
+Stable tag: 2.2.6
 
 
 Lightweight HTML and CSS share buttons. Settings and block editing use WordPress JavaScript.
@@ -74,6 +74,14 @@ Added ability to pickup first image from post for use as thumbnail. ( NEW )
 6. That's all. Enjoy this widget.
 
 == Changelog ==
+
+= 2.2.6 =
+* **SECURITY**: Hardened rendering, icon-set, widget, shortcode, and integration paths against malformed input and missing runtime objects.
+* **FIX**: Debounced and cancelled exclusion searches so stale requests do not overwrite newer results.
+* **FIX**: Prevented exclusion searches from loading excessive post results.
+* **IMPROVEMENT**: Social network icon previews now follow the selected button style.
+* **IMPROVEMENT**: Replaced the shell-based frontend drift check with a PHP test helper for plugin compatibility.
+* **UPDATE**: Restored PHP 7.0 compatibility and verified syntax across supported PHP versions.
 
 = 2.2.5 =
 * **FEATURE**: Added native block editor and Elementor share-button controls, including icon-set inheritance.

@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	function zm_sh_shortcode_cb($atts){
 		global $zm_sh;
+		if ( ! is_object( $zm_sh ) || ! method_exists( $zm_sh, 'zm_sh_btn' ) ) {
+			return '';
+		}
 		if(isset($zm_sh->excluded) and $zm_sh->excluded == true) return;
 		$atts = shortcode_atts(array(
 									'title'			=> '',

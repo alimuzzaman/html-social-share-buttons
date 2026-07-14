@@ -45,15 +45,16 @@ class zm_sh_filters{
 
 	function image_url($url) {
 		global $post;
-		if(empty($post->ID)) return;
+		if ( ! is_object( $post ) || empty( $post->ID ) ) return '';
 		$thumb_id	= get_post_thumbnail_id($post->ID);
 		$attachmetn_url	= wp_get_attachment_url( $thumb_id);
 		$imageurl = $attachmetn_url;
 
 		if(!$imageurl){
 			$postid = url_to_postid( $url );
-			$post = get_post( $postid, "OBJECT" );
-			$content	= $post->post_content;
+			$linked_post = $postid ? get_post( $postid, 'OBJECT' ) : null;
+			if ( ! is_object( $linked_post ) ) return '';
+			$content	= $linked_post->post_content;
 			$content	= str_replace('zm_sh_btn', '', $content);
 			$content	= do_shortcode($content);
 			$output = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $content, $matches);
