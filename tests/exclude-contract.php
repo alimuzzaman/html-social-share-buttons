@@ -2,6 +2,7 @@
 <?php
 
 require_once __DIR__ . '/cli-helpers.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 if ( ! defined( 'ABSPATH' ) ) {
 	if ( 'cli' !== PHP_SAPI ) {
@@ -10,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/../' );
 }
 
-require_once __DIR__ . '/../function.php';
+require_once __DIR__ . '/../src/Compatibility/Legacy/Global/functions.php';
 
 $post = (object) array(
 	'ID' => 42,

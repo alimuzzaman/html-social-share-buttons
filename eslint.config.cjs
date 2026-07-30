@@ -3,7 +3,7 @@ const wordpressConfig = require('@wordpress/scripts/config/eslint.config.cjs');
 module.exports = [
 	...wordpressConfig,
 	{
-		files: ['assets/admin-react.js', 'blocks/social-share.js'],
+		files: ['src/js/**/*.js'],
 		languageOptions: {
 			globals: {
 				jQuery: 'readonly',

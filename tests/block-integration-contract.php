@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/../' );
 }
 
-$source = implode( '', file( __DIR__ . '/../block-integration.php' ) );
-$script = implode( '', file( __DIR__ . '/../blocks/social-share.js' ) );
+$source = implode( '', file( __DIR__ . '/../src/Compatibility/Legacy/Integration/BlockAdapter.php' ) );
+$script = implode( '', file( __DIR__ . '/../src/js/compatibility/legacy/block/register.js' ) );
 
-foreach ( array( "register_block_type(\n\t\t'html-social-share/social-share'", 'render_callback', 'zm_sh_shortcode_cb', 'zm_sh_get_builder_iconset( isset( $attributes', "'iconset'      => array( 'type' => 'string', 'default' => 'inherit' )", "empty( \$attributes['icons'] )", 'iconsetAssets', 'zm_sh_get_builder_iconset_assets' ) as $needle ) {
+foreach ( array( "register_block_type(\n\t\t\t'html-social-share/social-share'", 'render_callback', 'zm_sh_shortcode_cb', 'zm_sh_get_builder_iconset(', "'iconset' => array( 'type' => 'string', 'default' => 'inherit' )", "empty( \$attributes['icons'] )", 'iconsetAssets', 'builderIconSetAssets' ) as $needle ) {
 	if ( false === strpos( $source, $needle ) ) {
 		exit( esc_html( sprintf( 'Block integration contract failed: %s\n', $needle ) ) );
 		exit( 1 );

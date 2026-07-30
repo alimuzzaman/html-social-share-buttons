@@ -150,6 +150,100 @@
       }
     },
     {
+      "name": "icons-all-current-networks",
+      "options": {
+        "icons": {
+          "facebook": true,
+          "x": true,
+          "linkedin": true,
+          "pinterest": true,
+          "telegram": true,
+          "bluesky": true,
+          "mail": true
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "icons-empty",
+      "replace": [
+        "icons"
+      ],
+      "options": {
+        "icons": {},
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "icons-legacy-twitter-only",
+      "replace": [
+        "icons"
+      ],
+      "options": {
+        "icons": {
+          "twitter": true
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "icons-unsupported-ignored",
+      "replace": [
+        "icons"
+      ],
+      "options": {
+        "icons": {
+          "facebook": true,
+          "unsupported-network": true
+        },
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "custom-share-url",
+      "replace": [
+        "icons"
+      ],
+      "options": {
+        "icons": {
+          "facebook": true,
+          "x": true
+        },
+        "url": "https://destination.example/article?id=42",
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "invalid-iconset-falls-back-to-default",
+      "options": {
+        "iconset": "missing-iconset",
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "invalid-iconset-type-falls-back",
+      "options": {
+        "iconset": "flat",
+        "iconset_type": "triangle",
+        "show_on": "show_left",
+        "class": "left"
+      }
+    },
+    {
+      "name": "inline-title-is-escaped",
+      "options": {
+        "title": "Share <strong>this</strong>",
+        "show_on": "show_before_post",
+        "class": "in_widget"
+      }
+    },
+    {
       "name": "nofollow-enabled",
       "options": {
         "nofollow": 1,
@@ -205,6 +299,81 @@
         "excludes": "1,2,3",
         "show_on": "show_left",
         "class": "left"
+      }
+    },
+    {
+      "name": "shortcode-default-entrypoint",
+      "entrypoint": "shortcode",
+      "attributes": {}
+    },
+    {
+      "name": "shortcode-custom-entrypoint",
+      "entrypoint": "shortcode",
+      "attributes": {
+        "title": "Shortcode title",
+        "iconset": "flat",
+        "iconset_type": "circle",
+        "icons": "facebook,twitter,mail",
+        "url": "https://destination.example/shortcode"
+      }
+    },
+    {
+      "name": "block-default-entrypoint",
+      "entrypoint": "block",
+      "attributes": {
+        "title": "Block title",
+        "iconset": "default",
+        "iconset_type": "square",
+        "icons": [
+          "facebook",
+          "x",
+          "mail"
+        ]
+      }
+    },
+    {
+      "name": "block-empty-entrypoint",
+      "entrypoint": "block",
+      "attributes": {
+        "icons": []
+      }
+    },
+    {
+      "name": "content-before-after-entrypoint",
+      "entrypoint": "content",
+      "content": "<p>Frontend contract content.</p>",
+      "options": {
+        "show_in": {
+          "show_left": 0,
+          "show_right": 0,
+          "show_before_post": 1,
+          "show_after_post": 1
+        }
+      }
+    },
+    {
+      "name": "footer-left-right-entrypoint",
+      "entrypoint": "footer",
+      "options": {
+        "show_in": {
+          "show_left": 1,
+          "show_right": 1,
+          "show_before_post": 0,
+          "show_after_post": 0
+        }
+      }
+    },
+    {
+      "name": "footer-analytics-entrypoint",
+      "entrypoint": "footer",
+      "options": {
+        "g_analytics": 1,
+        "show_in": {
+          "show_left": 1,
+          "show_right": 0,
+          "show_before_post": 0,
+          "show_after_post": 0
+        }
       }
     }
   ]

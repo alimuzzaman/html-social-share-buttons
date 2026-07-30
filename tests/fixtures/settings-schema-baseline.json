@@ -1,0 +1,213 @@
+{
+  "option_name": "zm_shbt_fld",
+  "autoload": {
+    "new_option": true,
+    "existing_option": "preserved"
+  },
+  "default_options": {
+    "title": "Share this with your friends",
+    "iconset": "default",
+    "use_port": false,
+    "auto_hide_btn": false,
+    "show_in": {
+      "show_left": true,
+      "show_right": false,
+      "show_before_post": false,
+      "show_after_post": true
+    },
+    "iconset_type": "square",
+    "icons": {
+      "facebook": 1,
+      "x": 1,
+      "linkedin": 1,
+      "pinterest": 1,
+      "telegram": 0,
+      "bluesky": 0,
+      "mail": 1
+    }
+  },
+  "field_names": [
+    "zm_shbt_fld[title]",
+    "zm_shbt_fld[excludes]",
+    "zm_shbt_fld[iconset]",
+    "zm_shbt_fld[show_in][show_left]",
+    "zm_shbt_fld[show_left]",
+    "zm_shbt_fld[show_in][show_right]",
+    "zm_shbt_fld[show_right]",
+    "zm_shbt_fld[show_in][show_before_post]",
+    "zm_shbt_fld[show_before_post]",
+    "zm_shbt_fld[show_in][show_after_post]",
+    "zm_shbt_fld[show_after_post]",
+    "zm_shbt_fld[icons][facebook]",
+    "zm_shbt_fld[icons][x]",
+    "zm_shbt_fld[icons][linkedin]",
+    "zm_shbt_fld[icons][pinterest]",
+    "zm_shbt_fld[icons][telegram]",
+    "zm_shbt_fld[icons][bluesky]",
+    "zm_shbt_fld[icons][mail]",
+    "zm_shbt_fld[g_analytics]",
+    "zm_shbt_fld[auto_hide_btn]",
+    "zm_shbt_fld[use_port]",
+    "zm_shbt_fld[nofollow]",
+    "zm_shbt_fld[share_templates][facebook]",
+    "zm_shbt_fld[share_templates][x]",
+    "zm_shbt_fld[share_templates][linkedin]",
+    "zm_shbt_fld[share_templates][pinterest]",
+    "zm_shbt_fld[share_templates][telegram]",
+    "zm_shbt_fld[share_templates][bluesky]",
+    "zm_shbt_fld[share_templates][mail]"
+  ],
+  "share_template_defaults": {
+    "facebook": "https://www.facebook.com/sharer/sharer.php?u=%%permalink%%",
+    "x": "https://x.com/intent/tweet?url=%%permalink%%&text=%%title%%",
+    "linkedin": "https://www.linkedin.com/sharing/share-offsite/?url=%%permalink%%",
+    "pinterest": "https://www.pinterest.com/pin/create/button/?url=%%permalink%%&media=%%imageurl%%&description=%%title%%",
+    "telegram": "https://t.me/share/url?url=%%permalink%%&text=%%title%%",
+    "bluesky": "https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%",
+    "mail": "mailto:?subject=%%title%%&body=%%permalink%%"
+  },
+  "sanitization_case": {
+    "input": {
+      "title": "Compatibility title",
+      "iconset": "flat",
+      "excludes": "42, legacy-slug",
+      "show_in": {
+        "show_left": "1",
+        "show_right": "",
+        "show_before_post": "1",
+        "show_after_post": "0"
+      },
+      "show_left": "circle",
+      "show_right": "square",
+      "show_before_post": "circle",
+      "show_after_post": "square",
+      "icons": {
+        "facebook": "1",
+        "twitter": "1",
+        "telegram": "0"
+      },
+      "use_port": "1",
+      "auto_hide_btn": "1",
+      "g_analytics": "1",
+      "nofollow": "1",
+      "share_templates": {
+        "facebook": "https://example.test/share?url=%%permalink%%",
+        "x": "https://example.test/x?url=%%permalink%%&text=%%title%%",
+        "linkedin": "https://example.test/linkedin?url=%%permalink%%",
+        "pinterest": "https://example.test/pin?url=%%permalink%%",
+        "telegram": "https://example.test/telegram?url=%%permalink%%",
+        "bluesky": "https://example.test/bluesky?text=%%title%%",
+        "mail": "mailto:?body=%%permalink%%",
+        "unknown": "https://example.test/unknown"
+      },
+      "unknown_truthy": "kept-as-boolean",
+      "unknown_falsey": ""
+    },
+    "expected": {
+      "title": "Compatibility title",
+      "iconset": "flat",
+      "excludes": "42, legacy-slug",
+      "show_in": {
+        "show_left": "1",
+        "show_before_post": "1"
+      },
+      "show_left": "circle",
+      "show_right": "square",
+      "show_before_post": "circle",
+      "show_after_post": "square",
+      "icons": {
+        "facebook": "1",
+        "twitter": "1",
+        "telegram": "0"
+      },
+      "use_port": true,
+      "auto_hide_btn": true,
+      "g_analytics": true,
+      "nofollow": true,
+      "share_templates": {
+        "facebook": "https://example.test/share?url=%%permalink%%",
+        "x": "https://example.test/x?url=%%permalink%%&text=%%title%%",
+        "linkedin": "https://example.test/linkedin?url=%%permalink%%",
+        "pinterest": "https://example.test/pin?url=%%permalink%%",
+        "telegram": "https://example.test/telegram?url=%%permalink%%",
+        "bluesky": "https://example.test/bluesky?text=%%title%%",
+        "mail": "mailto:?body=%%permalink%%"
+      },
+      "unknown_truthy": true
+    }
+  },
+  "mixed_type_truthiness_case": {
+    "input": {
+      "show_in": {
+        "show_left": "false",
+        "show_right": 0.0,
+        "show_before_post": [],
+        "show_after_post": [
+          "enabled"
+        ]
+      },
+      "g_analytics": "false",
+      "auto_hide_btn": 0.0,
+      "use_port": [],
+      "nofollow": "0",
+      "unknown_string_false": "false",
+      "unknown_zero_float": 0.0,
+      "unknown_empty_array": [],
+      "unknown_nonempty_array": [
+        "enabled"
+      ]
+    },
+    "expected": {
+      "show_in": {
+        "show_left": "1",
+        "show_after_post": "1"
+      },
+      "g_analytics": true,
+      "unknown_string_false": true,
+      "unknown_nonempty_array": true
+    }
+  },
+  "legacy_aliases": {
+    "icons.twitter": "icons.x"
+  },
+  "upgrade_rollback_case": {
+    "stored_2_2_6": {
+      "title": "Existing 2.2.6 site",
+      "iconset": "flat",
+      "use_port": true,
+      "auto_hide_btn": true,
+      "show_in": {
+        "show_left": "1",
+        "show_after_post": "1"
+      },
+      "show_left": "circle",
+      "show_right": "square",
+      "show_before_post": "circle",
+      "show_after_post": "square",
+      "iconset_type": "circle",
+      "icons": {
+        "facebook": "1",
+        "twitter": "1",
+        "linkedin": "1",
+        "mail": "1",
+        "mastodon": "custom-enabled-value"
+      },
+      "excludes": "42,legacy-page",
+      "g_analytics": true,
+      "nofollow": true,
+      "share_templates": {
+        "facebook": "https://example.test/share?url=%%permalink%%",
+        "x": "https://example.test/tweet?url=%%permalink%%&text=%%title%%",
+        "mail": "mailto:?subject=%%title%%&body=%%permalink%%"
+      },
+      "third_party_flag": true
+    },
+    "runtime_icons": {
+      "facebook": "1",
+      "linkedin": "1",
+      "mail": "1",
+      "mastodon": "custom-enabled-value",
+      "x": "1"
+    }
+  }
+}

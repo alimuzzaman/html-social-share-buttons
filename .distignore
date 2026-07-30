@@ -3,6 +3,8 @@
 
 # Development and testing directories
 tests/
+test-results/
+playwright-report/
 security/
 docs/
 specs/
@@ -12,9 +14,8 @@ specs/
 _legacy/
 .playwright-mcp/
 
-# Markdown documentation files (except README)
+# Markdown documentation files
 *.md
-!README.md
 
 # Development files
 .git/
@@ -33,6 +34,7 @@ eslint.config.cjs
 phpcs.xml
 phpunit.xml
 phpunit.xml.dist
+phpunit.multisite.xml.dist
 composer.json
 composer.lock
 Makefile
@@ -53,8 +55,8 @@ Thumbs.db
 
 # Build and temporary files
 node_modules/
-vendor/
 blocks/
+src/js/
 dist/
 tmp/
 temp/
@@ -62,6 +64,7 @@ temp/
 # Log files
 *.log
 error_log
+.env*
 
 # Backup files
 *.bak

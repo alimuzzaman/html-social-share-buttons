@@ -1,0 +1,19 @@
+Third-party icon notices
+========================
+
+Telegram paper-plane glyph
+--------------------------
+The Telegram SVG assets use an adapted Font Awesome Free 6 paper-plane glyph.
+Font Awesome Free icons are licensed under Creative Commons Attribution 4.0.
+
+Copyright: Fonticons, Inc.
+Source and license: https://fontawesome.com/license/free
+
+Bluesky glyph
+-------------
+The Bluesky SVG assets use an adapted Bluesky path from Simple Icons.
+The Simple Icons repository is released under CC0 1.0. Brand names and logos
+may remain subject to the rights described by the Simple Icons disclaimer.
+
+Source: https://github.com/simple-icons/simple-icons
+Disclaimer: https://github.com/simple-icons/simple-icons/blob/develop/DISCLAIMER.md

@@ -19,8 +19,9 @@ Capture the exact baseline behavior before any settings revamp work begins so we
 The plugin is in active use with saved options in `wp_options`; any schema or serialization mismatch can break user settings or front-end output.
 
 ## 2.0 Baseline Scope
-- Plugin is a legacy PHP-only WordPress plugin (no block-based admin, no React admin app).
-- Version in use is `2.2.4`; compatibility targets are WordPress `5.0+` and PHP `7.0+` in current code.
+- Plugin version is `2.2.6`; the production PHP is still legacy while the
+  settings screen and block editor use compiled JavaScript bundles.
+- Compatibility targets are WordPress `5.3+` and PHP `7.0+`.
 - Settings page, form renderer, iconset rendering, and share output are all in PHP+JS and share existing option contracts.
 
 ## 3.0 Persistence and DB Schema (Critical)
@@ -69,7 +70,9 @@ The plugin is in active use with saved options in `wp_options`; any schema or se
 - Form rendering uses `zm_form` helper methods in `form.php`.
 
 ### 4.3 Admin assets baseline
-- `assets/admin.css`, `assets/admin.js`, and inline scripts in the settings render method are part of current behavior.
+- `assets/admin.css`, compiled `build/admin-react.js`, and the localized
+  settings data are part of current behavior. JavaScript source lives under
+  `src/js/` and is never loaded directly at runtime.
 
 ## 5.0 Requirement Baseline (Do Not Break)
 - Preserve existing settings field names and data keys.

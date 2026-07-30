@@ -22,7 +22,7 @@ function apply_filters( $hook, $value ) {
 	return $value;
 }
 
-require_once __DIR__ . '/../share-templates.php';
+require_once __DIR__ . '/../src/Compatibility/Legacy/Global/share-templates.php';
 
 $expected = array(
 	'facebook'  => 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
@@ -45,16 +45,30 @@ if ( zm_sh_get_share_template( 'facebook' ) !== $template_overrides['facebook'] 
 	exit( 1 );
 }
 
-$iconset_sources = glob( __DIR__ . '/../iconset/*/ssb.php' );
+$iconset_sources = glob(
+	__DIR__ . '/../src/Compatibility/Legacy/IconSet/Definitions/*.php'
+);
 foreach ( $iconset_sources as $source ) {
 	$contents = implode( '', file( $source ) );
 	if ( false !== strpos( $contents, 'sharer.php' ) || false !== strpos( $contents, 'shareArticle' ) ) {
-		exit( esc_html( sprintf( 'Legacy platform URL remains in %s.\n', $source ) ) );
+		fwrite( STDERR, sprintf( "Legacy platform URL remains in %s.\n", $source ) );
 		exit( 1 );
 	}
 
-	if ( false === strpos( $contents, "'telegram'" ) || false === strpos( $contents, "'bluesky'" ) ) {
-		exit( esc_html( sprintf( 'New platform IDs are missing from %s.\n', $source ) ) );
+	if ( false === strpos( $contents, 'builtInIconSets()' ) ) {
+		fwrite( STDERR, sprintf( "Built-in icon set does not delegate to the canonical registry: %s.\n", $source ) );
+		exit( 1 );
+	}
+}
+
+foreach ( glob( __DIR__ . '/../resources/iconsets/*.php' ) as $manifest ) {
+	$definition = require $manifest;
+	if (
+		! isset( $definition['icons'] ) ||
+		! isset( $definition['icons']['telegram'] ) ||
+		! isset( $definition['icons']['bluesky'] )
+	) {
+		fwrite( STDERR, sprintf( "New platform IDs are missing from %s.\n", $manifest ) );
 		exit( 1 );
 	}
 }

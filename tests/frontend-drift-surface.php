@@ -1,40 +1,49 @@
 #!/usr/bin/env php
 <?php
 
-$frontend_files = array(
-	'actions.php',
-	'filters.php',
-	'iconsets.php',
-	'interfaces.php',
+$root = dirname( __DIR__ );
+$compatibilityFiles = array(
+	'src/Compatibility/Legacy/Global/actions.php',
+	'src/Compatibility/Legacy/Global/filters.php',
+	'src/Compatibility/Legacy/Global/interfaces.php',
+	'src/Compatibility/Legacy/Global/iconsets.php',
+	'src/Compatibility/Legacy/Global/shortcode.php',
+	'src/Compatibility/Legacy/Global/widget.php',
+	'src/Compatibility/Legacy/Runtime/SocialShareAdapter.php',
+);
+$rootShims = array(
+	'actions.php'    => 'src/Compatibility/Legacy/Global/actions.php',
+	'filters.php'    => 'src/Compatibility/Legacy/Global/filters.php',
+	'interfaces.php' => 'src/Compatibility/Legacy/Global/interfaces.php',
+	'iconsets.php'   => 'src/Compatibility/Legacy/Global/iconsets.php',
+	'shortcode.php'  => 'src/Compatibility/Legacy/Global/shortcode.php',
+	'widget.php'     => 'src/Compatibility/Legacy/Global/widget.php',
 );
 
-$changed = array();
-foreach ( $frontend_files as $file ) {
-	$diff = shell_exec( 'git diff -- ' . escapeshellarg( $file ) );
-	if ( ! is_string( $diff ) || '' === $diff ) {
-		continue;
+$failures = array();
+foreach ( $compatibilityFiles as $file ) {
+	if ( ! is_file( $root . '/' . $file ) ) {
+		$failures[] = 'Missing compatibility frontend module: ' . $file;
 	}
-
-	foreach ( preg_split( '/\R/', $diff ) as $line ) {
-		if ( preg_match( '/^(diff --git|index |--- |\+\+\+ |@@ )/', $line ) ) {
-			continue;
-		}
-		if ( preg_match( '/^\+\s*\/\/ phpcs:ignore /', $line ) ) {
-			continue;
-		}
-		if ( preg_match( '/^[+-]/', $line ) ) {
-			$changed[] = $file;
-			break;
-		}
+}
+foreach ( $rootShims as $file => $target ) {
+	$contents = is_file( $root . '/' . $file )
+		? (string) file_get_contents( $root . '/' . $file )
+		: '';
+	if (
+		false === strpos( $contents, $target ) ||
+		preg_match( '/\\b(?:class|interface|trait|function)\\s+[A-Za-z_]/', $contents )
+	) {
+		$failures[] = 'Historical root path is not a compatibility-only shim: ' . $file;
 	}
 }
 
-if ( ! empty( $changed ) ) {
-	echo "Frontend drift surface changed:\n";
-	foreach ( $changed as $file ) {
-		echo " - {$file}\n";
-	}
+if ( ! empty( $failures ) ) {
+	echo implode( "\n", $failures ) . "\n";
 	exit( 1 );
 }
 
-printf( "Frontend drift surface unchanged: %d files checked.\n", count( $frontend_files ) );
+printf(
+	"Frontend compatibility isolation passed: %d modules checked.\n",
+	count( $compatibilityFiles )
+);

@@ -2,10 +2,32 @@
 const fs = require('fs');
 const vm = require('vm');
 
-const scriptPath = 'assets/admin-react.js';
+const scriptPath = 'build/admin-react.js';
 const code = fs.readFileSync(scriptPath, 'utf8');
+const sourceFiles = [
+	'src/js/admin/share-template.js',
+	...fs
+		.readdirSync('src/js/compatibility/legacy/admin')
+		.filter((file) => file.endsWith('.js'))
+		.sort()
+		.map((file) => `src/js/compatibility/legacy/admin/${file}`),
+];
+const sourceCode = sourceFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
 const adminCss = fs.readFileSync('assets/admin.css', 'utf8');
-const settingsPageCode = fs.readFileSync('settings_page.php', 'utf8');
+const settingsPageCode = fs.readFileSync(
+	'src/Compatibility/Legacy/Global/settings-page.php',
+	'utf8'
+);
+const settingsImplementationCode = [
+	settingsPageCode,
+	...fs
+		.readdirSync('src/Compatibility/Legacy/Admin')
+		.filter((file) => file.endsWith('.php'))
+		.sort()
+		.map((file) => fs.readFileSync(`src/Compatibility/Legacy/Admin/${file}`, 'utf8')),
+].join('\n');
+const settingsSchema = JSON.parse(fs.readFileSync('tests/fixtures/settings-schema-baseline.json', 'utf8'));
+const schemaIconIds = Object.keys(settingsSchema.default_options.icons);
 const roots = {
 	'zmsh-react-settings-root': {},
 };
@@ -60,17 +82,14 @@ context.window.zm_sh_react_settings = {
 			name: 'Default',
 			preview_img: '/preview.png',
 			types: ['square', 'circle'],
-			icons: [
-				{ id: 'facebook', name: 'Facebook', preview_url: '/facebook.png' },
-				{ id: 'x', name: 'X', preview_url: '/x.png' },
-				{ id: 'telegram', name: 'Telegram' },
-				{ id: 'bluesky', name: 'Bluesky' },
-			],
+			icons: schemaIconIds.map((id) => ({
+				id,
+				name: id,
+				preview_url: `/${id}.png`,
+			})),
 		},
 	],
-	options: {
-		title: 'Share this with your friends',
-		iconset: 'default',
+	options: Object.assign({}, settingsSchema.default_options, {
 		excludes: '42,43,44',
 		show_in: {
 			show_left: 'square',
@@ -82,29 +101,16 @@ context.window.zm_sh_react_settings = {
 		show_right: 'circle',
 		show_before_post: 'square',
 		show_after_post: 'circle',
-		icons: {
-			facebook: 1,
-			x: 1,
-			telegram: 0,
-			bluesky: 0,
-		},
-		share_templates: {
-			facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
-			x: 'https://x.com/intent/tweet?url=%%permalink%%&text=%%title%%',
-			telegram: 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
-			bluesky: 'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',
-		},
+		icons: Object.fromEntries(
+			schemaIconIds.map((id) => [id, 1])
+		),
+		share_templates: settingsSchema.share_template_defaults,
 		g_analytics: 0,
 		auto_hide_btn: 0,
 		use_port: 0,
-		 nofollow: 0,
-	},
-	share_template_defaults: {
-		facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
-		x: 'https://x.com/intent/tweet?url=%%permalink%%&text=%%title%%',
-		telegram: 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
-		bluesky: 'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',
-	},
+		nofollow: 0,
+	}),
+	share_template_defaults: settingsSchema.share_template_defaults,
 	share_template_overrides: {
 		facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
 		x: 'https://example.com/custom?url=%%permalink%%',
@@ -123,7 +129,7 @@ const element = {
 	createElement(type, props, ...children) {
 		if (typeof type === 'function' && type.prototype && typeof type.prototype.render === 'function') {
 			const instance = new type(props || {});
-			if (type.name === 'App') {
+			if (typeof instance.handleSubmit === 'function' && typeof instance.openModal === 'function') {
 				appInstance = instance;
 			}
 			return instance.render();
@@ -269,33 +275,11 @@ const modalClose = nodes.find((node) => node.props && node.props.className === '
 if (!phpGenerator || phpGenerator.type !== 'button' || phpGenerator.props.type !== 'button' || !shortcodeGenerator || shortcodeGenerator.type !== 'button' || !codeModal || codeModal.props.role !== 'dialog' || codeModal.props['aria-modal'] !== 'true' || codeModal.props['aria-labelledby'] !== 'zm-sh-code-modal-title' || !modalTitle || !modalClose || modalClose.children.join('') !== 'Close') {
 	throw new Error('Code generator modal controls should use accessible buttons and dialog semantics.');
 }
-if (!code.includes('this.modalTrigger = trigger || null') || !code.includes('this.modalTrigger.focus()') || !code.includes('this.modalCloseButton.focus()') || !code.includes('handleModalKeyDown') || !code.includes("event.key === 'Escape'")) {
+if (!sourceCode.includes('this.modalTrigger = trigger || null') || !sourceCode.includes('this.modalTrigger.focus()') || !sourceCode.includes('this.modalCloseButton.focus()') || !sourceCode.includes('handleModalKeyDown') || !sourceCode.includes("event.key === 'Escape'")) {
 	throw new Error('Code generator modal should restore focus to its trigger.');
 }
 
-const requiredNames = [
-	'zm_shbt_fld[title]',
-	'zm_shbt_fld[excludes]',
-	'zm_shbt_fld[iconset]',
-	'zm_shbt_fld[show_in][show_left]',
-	'zm_shbt_fld[show_left]',
-	'zm_shbt_fld[show_in][show_right]',
-	'zm_shbt_fld[show_right]',
-	'zm_shbt_fld[show_in][show_before_post]',
-	'zm_shbt_fld[show_before_post]',
-	'zm_shbt_fld[show_in][show_after_post]',
-	'zm_shbt_fld[show_after_post]',
-	'zm_shbt_fld[icons][facebook]',
-	'zm_shbt_fld[icons][x]',
-	'zm_shbt_fld[icons][telegram]',
-	'zm_shbt_fld[icons][bluesky]',
-	'zm_shbt_fld[g_analytics]',
-	'zm_shbt_fld[auto_hide_btn]',
-	'zm_shbt_fld[use_port]',
-	'zm_shbt_fld[nofollow]',
-	'zm_shbt_fld[share_templates][facebook]',
-	'zm_shbt_fld[share_templates][x]',
-];
+const requiredNames = settingsSchema.field_names;
 
 const missing = requiredNames.filter((name) => !names.has(name));
 if (missing.length > 0) {
@@ -320,7 +304,7 @@ if (!xInitialSerializedTemplate || xInitialSerializedTemplate.props.value !== 'h
 	throw new Error('Hidden templates should retain the exact saved full URL.');
 }
 
-if (nodes.some((node) => node.props && node.props.className === 'zm_template_placeholders') || code.includes('Insert into selected value') || code.includes('zm_template_parameter_value')) {
+if (nodes.some((node) => node.props && node.props.className === 'zm_template_placeholders') || sourceCode.includes('Insert into selected value') || sourceCode.includes('zm_template_parameter_value')) {
 	throw new Error('Retired placeholder insertion controls should not render.');
 }
 
@@ -352,20 +336,20 @@ if (!expandablePanelCss || !expandablePanelCss[0].includes('border: 1px solid va
 	throw new Error('Enabled placements should use the shared joined inner-border detail panel, not a tinted selected card.');
 }
 
-const expandablePanelUses = code.match(/e\(ExpandableTogglePanel/g) || [];
+const expandablePanelUses = sourceCode.match(/e\(ExpandableTogglePanel/g) || [];
 if (expandablePanelUses.length < 2 || !adminCss.includes('.zm_expandable_toggle_panel.is-enabled > .zm_native_toggle')) {
 	throw new Error('Placement and social network items should share the expandable toggle-panel component.');
 }
 
-if (!settingsPageCode.includes("'preview_url' =>") || !settingsPageCode.includes("'preview_urls' =>") || !code.includes('function getIconPreview') || !code.includes('networkPreviewType') || !nodes.some((node) => node.props && node.props.className === 'zm_panel_marker zm_network_marker')) {
+if (!settingsImplementationCode.includes("'preview_url'") || !settingsImplementationCode.includes("'preview_urls'") || !sourceCode.includes('function getIconPreview') || !sourceCode.includes('networkPreviewType') || !nodes.some((node) => node.props && node.props.className === 'zm_panel_marker zm_network_marker')) {
 	throw new Error('Social network card headers should expose the active icon-set marker.');
 }
 
-if (!settingsPageCode.includes("strlen( $query ) < 2") || !settingsPageCode.includes("'posts_per_page' => 20") || !settingsPageCode.includes("'no_found_rows' => true") || !code.includes("trim().length < 2")) {
+if (!settingsImplementationCode.includes("strlen( $query ) < 2") || !/'posts_per_page'\s*=>\s*20/.test(settingsImplementationCode) || !/'no_found_rows'\s*=>\s*true/.test(settingsImplementationCode) || !sourceCode.includes("trim().length < 2")) {
 	throw new Error('Exclude content search should reject short queries and keep the server query bounded.');
 }
 
-if (!code.includes('excludeSearchRequest') || !code.includes('excludeSearchRequest.abort') || !code.includes('request !== self.excludeSearchRequest')) {
+if (!sourceCode.includes('excludeSearchRequest') || !sourceCode.includes('excludeSearchRequest.abort') || !sourceCode.includes('request !== self.excludeSearchRequest')) {
 	throw new Error('Exclude content search should prevent stale responses from replacing newer suggestions.');
 }
 
@@ -374,7 +358,7 @@ if (!settingsSectionCss || !settingsSectionCss[0].includes('border-left: 3px sol
 	throw new Error('Top-level settings sections should use the scheme-aware accent border.');
 }
 
-if (!code.includes("className: 'zm_network_columns zm_placement_columns'") || !code.includes('var placementColumns = [')) {
+if (!sourceCode.includes("className: 'zm_network_columns zm_placement_columns'") || !sourceCode.includes('var placementColumns = [')) {
 	throw new Error('Placement cards should use explicit independent columns so collapsed cards do not inherit a neighboring card height.');
 }
 
@@ -550,12 +534,12 @@ if (!shortcodeTextarea) {
 	throw new Error('Code generator textarea was not rendered.');
 }
 
-const expectedShortcode = "[zm_sh_btn iconset='default' iconset_type='square' icons='facebook,x']";
+const expectedShortcode = `[zm_sh_btn iconset='default' iconset_type='square' icons='${schemaIconIds.join(',')}']`;
 if (shortcodeTextarea.props.value !== expectedShortcode) {
 	throw new Error(`Unexpected shortcode output: ${shortcodeTextarea.props.value}`);
 }
 
-if (!code.includes("$options['icons']\\t\\t\\t= array( '")) {
+if (!sourceCode.includes("$options['icons']\\t\\t\\t= array( '")) {
 	throw new Error('PHP code generator no longer matches the legacy icons assignment spacing.');
 }
 
@@ -580,7 +564,7 @@ if (!appInstance) {
 const rerenderedTree = appInstance.render();
 const rerenderedNodes = collectNodes(rerenderedTree);
 const phpTextarea = rerenderedNodes.find((node) => node.type === 'textarea' && node.props && node.props.id === 'copy_shortcode');
-const expectedPhpFragment = "$options['icons']\t\t\t= array( 'facebook', 'x' );";
+const expectedPhpFragment = `$options['icons']\t\t\t= array( '${schemaIconIds.join("', '")}' );`;
 
 if (!phpTextarea || !phpTextarea.props.value.includes(expectedPhpFragment)) {
 	throw new Error('PHP code generator output did not include the expected legacy icon assignment.');

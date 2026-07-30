@@ -3,7 +3,7 @@
 'use strict';
 
 const fs = require('fs');
-const {ENV_FILE, REPO_ROOT, ensureInstance, instanceName, runSandbox} = require('./lib/sandbox');
+const {ENV_FILE, REPO_ROOT, ensureInstance, instanceName, runSandbox, runSandboxTests} = require('./lib/sandbox');
 
 const command = process.argv[2];
 const rest = process.argv.slice(3);
@@ -28,7 +28,7 @@ switch (command) {
 		runSandbox(['--instance', instanceName(), 'wp', ...rest]);
 		break;
 	case 'test':
-		runSandbox(['test', '--project-dir', REPO_ROOT, '--label', process.env.SANDBOX_LABEL || 'default', ...rest]);
+		runSandboxTests(['test', '--project-dir', REPO_ROOT, '--label', process.env.SANDBOX_LABEL || 'default', ...rest]);
 		break;
 	case 'e2e':
 		runSandbox(['e2e', '--project-dir', REPO_ROOT, '--workers', '1', ...rest]);

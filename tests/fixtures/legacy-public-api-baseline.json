@@ -1,0 +1,280 @@
+{
+  "constants": [
+    "zm_sh_dir",
+    "zm_sh_url",
+    "zm_sh_url_iconset",
+    "zm_sh_url_assets",
+    "zm_sh_url_assets_img"
+  ],
+  "functions": [
+    "zm_sh_btn",
+    "zm_sh_shortcode_cb",
+    "zm_sh_get_builder_iconset",
+    "zm_sh_get_builder_iconset_options",
+    "zm_sh_get_builder_iconset_assets",
+    "zm_sh_render_block",
+    "zm_sh_register_block",
+    "zm_sh_register_widgets",
+    "zm_sh_register_elementor_widget",
+    "zm_sh_integrateWithVC",
+    "zm_sh_metabox_new",
+    "zm_sh_curentPageURL",
+    "zm_sh_get_excluded_post_identifiers",
+    "zm_sh_post_is_excluded",
+    "zm_sh_get_default_share_templates",
+    "zm_sh_get_share_templates",
+    "zm_sh_get_share_template",
+    "zm_sh_get_schema",
+    "zm_sh_get_schemas",
+    "zm_sh_add_schema",
+    "zm_sh_remove_schema",
+    "wp_ajax_get_iconset_details"
+  ],
+  "globals": {
+    "zm_sh": "zm_social_share",
+    "zm_sh_default_options": "array",
+    "zm_sh_iconset_classes": "array"
+  },
+  "classes": {
+    "zm_social_share": {
+      "properties": [
+        "iconset",
+        "iconsets",
+        "excluded",
+        "options"
+      ],
+      "methods": [
+        "__construct",
+        "wp",
+        "plugins_loaded",
+        "translate_legacy_domain",
+        "filter_the_content",
+        "footer",
+        "register_styles",
+        "icon_styles",
+        "zm_sh_btn"
+      ]
+    },
+    "zm_sh_iconset": {
+      "properties": [
+        "options"
+      ],
+      "methods": [
+        "__get",
+        "__construct",
+        "add_iconset",
+        "get_current_iconset",
+        "set_current_iconset",
+        "get_iconset",
+        "get_iconsets",
+        "get_iconset_list",
+        "remove_iconset",
+        "wp_ajax_get_iconset_preview",
+        "wp_ajax_get_iconset"
+      ]
+    },
+    "__iconset_parent_class": {
+      "properties": [
+        "__FILE__",
+        "id",
+        "name",
+        "types",
+        "icons",
+        "inTheme",
+        "inChildTheme",
+        "dir",
+        "url",
+        "stylesheet_url",
+        "preview_img_url",
+        "preview_img_dir",
+        "stylesheet",
+        "preview_img"
+      ],
+      "methods": [
+        "__construct",
+        "set_dir_and_url",
+        "get_icons",
+        "get_icons_id_name",
+        "push_icon",
+        "get_iconset_preview"
+      ]
+    },
+    "zm_sh_settings": {
+      "properties": [],
+      "methods": [
+        "__construct",
+        "reg_admn_menu",
+        "admin_scripts",
+        "ajax_search_content",
+        "ajax_save_settings",
+        "add_new",
+        "show_all",
+        "zm_sh_opt",
+        "zm_reg_sett",
+        "sanitize"
+      ]
+    },
+    "zm_form": {
+      "properties": [
+        "options",
+        "zm_sh",
+        "iconsets"
+      ],
+      "methods": [
+        "__construct",
+        "text",
+        "textArea",
+        "checkbox",
+        "show_on",
+        "icon_fields",
+        "icon_fields_widget",
+        "dropdown",
+        "_select_iconset",
+        "select_iconset"
+      ]
+    },
+    "zm_sh_filters": {
+      "properties": [],
+      "methods": [
+        "__construct",
+        "zm_sh_placeholder",
+        "ico_link",
+        "make_title",
+        "image_url"
+      ]
+    },
+    "zm_sh_schema": {
+      "properties": [],
+      "methods": [
+        "getInstance",
+        "get_schema",
+        "get_schemas",
+        "add_schema",
+        "remove_schema"
+      ]
+    },
+    "zm_sh_metabox": {
+      "properties": [],
+      "methods": [
+        "__construct",
+        "add_meta_box",
+        "save",
+        "render_meta_box_content"
+      ]
+    },
+    "zm_html_share_widget": {
+      "properties": [],
+      "methods": [
+        "__construct",
+        "widget",
+        "update",
+        "form"
+      ]
+    }
+  },
+  "interfaces": {
+    "interface_iconset": [
+      "set_dir_and_url",
+      "push_icon",
+      "get_iconset_preview"
+    ]
+  },
+  "built_in_iconsets": [
+    "default",
+    "flat",
+    "long-shadows",
+    "prajin"
+  ],
+  "signatures": {
+    "functions": {
+      "zm_sh_btn": "options",
+      "zm_sh_shortcode_cb": "attributes",
+      "zm_sh_get_builder_iconset": "iconSet=\"inherit\"",
+      "zm_sh_get_builder_iconset_options": "",
+      "zm_sh_get_builder_iconset_assets": "",
+      "zm_sh_render_block": "attributes",
+      "zm_sh_register_block": "",
+      "zm_sh_register_widgets": "",
+      "zm_sh_register_elementor_widget": "widgets_manager",
+      "zm_sh_integrateWithVC": "",
+      "zm_sh_metabox_new": "",
+      "zm_sh_curentPageURL": "",
+      "zm_sh_get_excluded_post_identifiers": "excludes",
+      "zm_sh_post_is_excluded": "post,excludes",
+      "zm_sh_get_default_share_templates": "",
+      "zm_sh_get_share_templates": "",
+      "zm_sh_get_share_template": "platform,fallback=\"\"",
+      "zm_sh_get_schema": "id",
+      "zm_sh_get_schemas": "",
+      "zm_sh_add_schema": "schema",
+      "zm_sh_remove_schema": "id",
+      "wp_ajax_get_iconset_details": ""
+    },
+    "methods": {
+      "zm_social_share::__construct": "",
+      "zm_social_share::wp": "",
+      "zm_social_share::plugins_loaded": "",
+      "zm_social_share::translate_legacy_domain": "translation,text,domain",
+      "zm_social_share::filter_the_content": "content",
+      "zm_social_share::footer": "",
+      "zm_social_share::register_styles": "",
+      "zm_social_share::icon_styles": "",
+      "zm_social_share::zm_sh_btn": "instance=\"\"",
+      "zm_sh_iconset::__get": "var",
+      "zm_sh_iconset::__construct": "",
+      "zm_sh_iconset::add_iconset": "iconset",
+      "zm_sh_iconset::get_current_iconset": "",
+      "zm_sh_iconset::set_current_iconset": "iconset_name",
+      "zm_sh_iconset::get_iconset": "iconset=\"default\",setAsCurrent=false",
+      "zm_sh_iconset::get_iconsets": "",
+      "zm_sh_iconset::get_iconset_list": "",
+      "zm_sh_iconset::remove_iconset": "id",
+      "zm_sh_iconset::wp_ajax_get_iconset_preview": "",
+      "zm_sh_iconset::wp_ajax_get_iconset": "",
+      "__iconset_parent_class::__construct": "",
+      "__iconset_parent_class::set_dir_and_url": "__FILE__",
+      "__iconset_parent_class::get_icons": "",
+      "__iconset_parent_class::get_icons_id_name": "",
+      "__iconset_parent_class::push_icon": "icon",
+      "__iconset_parent_class::get_iconset_preview": "",
+      "zm_sh_settings::__construct": "",
+      "zm_sh_settings::reg_admn_menu": "",
+      "zm_sh_settings::admin_scripts": "hook",
+      "zm_sh_settings::ajax_search_content": "",
+      "zm_sh_settings::ajax_save_settings": "",
+      "zm_sh_settings::add_new": "",
+      "zm_sh_settings::show_all": "",
+      "zm_sh_settings::zm_sh_opt": "",
+      "zm_sh_settings::zm_reg_sett": "",
+      "zm_sh_settings::sanitize": "input",
+      "zm_form::__construct": "options=\"\"",
+      "zm_form::text": "id,label,name=false,value=false",
+      "zm_form::textArea": "id,label,name=false,value=false",
+      "zm_form::checkbox": "id,label,name=\"\",selected=null,class=\"\",yes=\"\",no=\"\",id_prefix=\"\",description=\"\"",
+      "zm_form::show_on": "id,label,selected=false,class=\"toggle-check\",yes=\"\",no=\"\"",
+      "zm_form::icon_fields": "label,label_prefix,class=\"toggle-check\",yes=\"\",no=\"\"",
+      "zm_form::icon_fields_widget": "id,name,selected_icons,label,label_prefix,iconset",
+      "zm_form::dropdown": "id,label,items,name=false,selected=false",
+      "zm_form::_select_iconset": "id,label,items,name=false,selected=\"default\"",
+      "zm_form::select_iconset": "id,label,name=false,selected=false",
+      "zm_sh_filters::__construct": "",
+      "zm_sh_filters::zm_sh_placeholder": "item",
+      "zm_sh_filters::ico_link": "ico_link",
+      "zm_sh_filters::make_title": "url",
+      "zm_sh_filters::image_url": "url",
+      "zm_sh_schema::getInstance": "",
+      "zm_sh_schema::get_schema": "id",
+      "zm_sh_schema::get_schemas": "",
+      "zm_sh_schema::add_schema": "schema",
+      "zm_sh_schema::remove_schema": "id",
+      "zm_sh_metabox::__construct": "",
+      "zm_sh_metabox::add_meta_box": "postType",
+      "zm_sh_metabox::save": "postId",
+      "zm_sh_metabox::render_meta_box_content": "post",
+      "zm_html_share_widget::__construct": "",
+      "zm_html_share_widget::widget": "arguments,instance",
+      "zm_html_share_widget::update": "newInstance,oldInstance",
+      "zm_html_share_widget::form": "instance"
+    }
+  }
+}

@@ -4,7 +4,7 @@
 
 'use strict';
 
-const { execFileSync, execSync } = require('child_process');
+const { execFileSync, execSync, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -71,4 +71,28 @@ function runSandbox(args) {
 	}
 }
 
-module.exports = {ENV_FILE, REPO_ROOT, ensureInstance, instanceName, runSandbox};
+function runSandboxTests(args) {
+	const result = spawnSync(resolveSb(), args, {
+		encoding: 'utf8',
+		maxBuffer: 50 * 1024 * 1024,
+		stdio: ['inherit', 'pipe', 'pipe'],
+	});
+	const stdout = result.stdout || '';
+	const stderr = result.stderr || '';
+	process.stdout.write(stdout);
+	process.stderr.write(stderr);
+
+	if (result.error) {
+		fail(`Sandbox test process could not start: ${result.error.message}`);
+	}
+	if (result.status !== 0) {
+		process.exit(result.status || 1);
+	}
+
+	const combined = `${stdout}\n${stderr}`;
+	if (!/PHPUnit\s+\d/.test(combined) || !/\nOK(?:\s|,|\()/.test(combined)) {
+		fail('Sandbox exited successfully without a completed PHPUnit result. Treating the run as an infrastructure failure.');
+	}
+}
+
+module.exports = {ENV_FILE, REPO_ROOT, ensureInstance, instanceName, runSandbox, runSandboxTests};

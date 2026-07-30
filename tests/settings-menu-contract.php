@@ -7,10 +7,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	}
 }
 
-$settings_page = implode( '', file( __DIR__ . '/../settings_page.php' ) );
-$plugin_bootstrap = implode( '', file( __DIR__ . '/../html-social-share.php' ) );
+$settings_page = implode(
+	'',
+	file( __DIR__ . '/../src/Compatibility/Legacy/Global/settings-page.php' )
+);
+$settings_assets = implode(
+	'',
+	file( __DIR__ . '/../src/Compatibility/Legacy/Admin/LegacySettingsAssetEnqueuer.php' )
+);
+$plugin_bootstrap = implode(
+	'',
+	file( __DIR__ . '/../src/Compatibility/Legacy/Global/bootstrap.php' )
+);
 
-if ( false === strpos( $settings_page, "add_submenu_page('options-general.php'" ) ) {
+if ( ! preg_match( "/add_submenu_page\\(\\s*'options-general\\.php'/", $settings_page ) ) {
 	echo "Settings submenu contract failed.\n";
 	exit( 1 );
 }
@@ -20,7 +30,10 @@ if ( false === strpos( $plugin_bootstrap, 'options-general.php?page=zm_shbt_opt'
 	exit( 1 );
 }
 
-if ( false === strpos( $settings_page, "__DIR__ . '/assets/admin.css'" ) || false === strpos( $settings_page, 'filemtime( $admin_style_path )' ) ) {
+if (
+	false === strpos( $settings_assets, "'/assets/admin.css'" ) ||
+	false === strpos( $settings_assets, 'filemtime( $adminStylePath )' )
+) {
 	echo "Settings stylesheet cache version contract failed.\n";
 	exit( 1 );
 }

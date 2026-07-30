@@ -105,7 +105,9 @@ For every proposed settings UI change, run all scenarios below and store expecte
 - Use `tests/frontend-output-regression.php compare` for deterministic output checks.
 - CI/local execution path: `make frontend-compare` (set `WP_ROOT`), then verify all mismatches before merge.
 
-- The implementation now mounts the settings UI from `assets/admin-react.js` at `#zmsh-react-settings-root` to complete the React conversion while preserving backend form contract.
+- The implementation mounts the settings UI from the compiled
+  `build/admin-react.js` bundle at `#zmsh-react-settings-root`; its modular
+  source lives under `src/js/` and preserves the backend form contract.
 
 ### 6.3 Acceptance
 - [ ] No unapproved frontend output changes in existing scenarios.

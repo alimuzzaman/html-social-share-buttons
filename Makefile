@@ -1,4 +1,4 @@
-.PHONY: build watch zip frontend-capture frontend-compare frontend-drift-surface admin-react-smoke share-template-contract exclude-contract settings-local-checks help check-wp-root
+.PHONY: build watch zip frontend-capture frontend-compare frontend-drift-surface admin-react-smoke share-template-contract exclude-contract settings-local-checks ajax-contracts multisite-contracts help check-wp-root
 
 WP_ROOT ?= $(shell [ -n "$(WP_ROOT)" ] && echo "$(WP_ROOT)" || echo "")
 
@@ -20,6 +20,8 @@ help:
 	@echo "  share-template-contract  Verify platform share URL templates"
 	@echo "  exclude-contract  Verify excluded post identifiers"
 	@echo "  settings:check       Run local settings checks via pnpm"
+	@echo "  ajax-contracts       Run WordPress AJAX integration contracts"
+	@echo "  multisite-contracts  Run WordPress multisite settings contracts"
 
 build:
 	@pnpm run build
@@ -46,16 +48,22 @@ frontend-drift-surface:
 	@php tests/frontend-drift-surface.php
 
 admin-react-smoke:
-	@node --check assets/admin-react.js
+	@pnpm run build
 	@node tests/admin-react-smoke.js
 
 share-template-contract:
-	@php -l share-templates.php
+	@php -l src/Compatibility/Legacy/Global/share-templates.php
 	@php tests/share-template-contract.php
 
 exclude-contract:
-	@php -l function.php
+	@php -l src/Compatibility/Legacy/Global/functions.php
 	@php tests/exclude-contract.php
 
 settings-local-checks:
 	@pnpm run settings:check
+
+ajax-contracts:
+	@pnpm run test:ajax
+
+multisite-contracts:
+	@pnpm run test:multisite

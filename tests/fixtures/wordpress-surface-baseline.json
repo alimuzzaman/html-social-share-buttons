@@ -1,0 +1,236 @@
+{
+  "shortcode": {
+    "tag": "zm_sh_btn",
+    "callback": "zm_sh_shortcode_cb"
+  },
+  "widget": {
+    "class": "zm_html_share_widget",
+    "id_base": "html_share_button_widget",
+    "saved_keys": [
+      "title",
+      "icons",
+      "iconset_type",
+      "iconset"
+    ]
+  },
+  "block": {
+    "name": "html-social-share/social-share",
+    "script_handle": "zm-sh-social-share-block",
+    "script_dependencies": [
+      "wp-blocks",
+      "wp-element",
+      "wp-i18n",
+      "wp-block-editor",
+      "wp-components"
+    ],
+    "localized_object": "zmShBlock"
+  },
+  "elementor": {
+    "hook": "elementor/widgets/register",
+    "callback": "zm_sh_register_elementor_widget",
+    "widget_name": "zm_social_share"
+  },
+  "wpbakery": {
+    "hook": "vc_before_init",
+    "callback": "zm_sh_integrateWithVC",
+    "base": "zm_sh_btn",
+    "script": "build/vc-scripts.js",
+    "script_handle": "zm_sh_vc_admin_scripts",
+    "script_dependencies": [
+      "jquery"
+    ],
+    "localized_object": "zm_sh"
+  },
+  "settings": {
+    "group": "zm_shbt_opt",
+    "option": "zm_shbt_fld",
+    "page_slug": "zm_shbt_opt",
+    "parent": "options-general.php",
+    "script_handle": "zm_sh_admin_scripts",
+    "script": "build/admin-react.js",
+    "script_dependencies": [
+      "jquery",
+      "wp-components",
+      "wp-element"
+    ],
+    "localized_object": "zm_sh_react_settings",
+    "style_handle": "zm_sh_admin_styles"
+  },
+  "metabox": {
+    "id": "zm_sh_metabox",
+    "post_types": [
+      "post",
+      "page"
+    ],
+    "nonce_action": "zm_sh_metabox",
+    "nonce_field": "zm_sh_mtbox",
+    "meta_key": "_zm_sh_disable_share"
+  },
+  "ajax_actions": [
+    "zm_sh_save_settings",
+    "zm_sh_search_content",
+    "get_iconset",
+    "get_iconset_preview",
+    "get_iconset_details"
+  ],
+  "frontend": {
+    "style_handle_prefix": "social-share-",
+    "disable_meta_key": "_zm_sh_disable_share",
+    "wrapper_class": "zmshbt"
+  },
+  "hooks": [
+    {
+      "hook": "init",
+      "closure_file": "src/Compatibility/Legacy/Global/runtime.php",
+      "priority": 1,
+      "accepted_args": 1
+    },
+    {
+      "hook": "init",
+      "class": "zm_social_share",
+      "method": "plugins_loaded",
+      "priority": 2,
+      "accepted_args": 1
+    },
+    {
+      "hook": "init",
+      "callback": "zm_sh_register_block",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "init",
+      "closure_file": "src/Compatibility/Legacy/Global/settings-page.php",
+      "priority": 20,
+      "accepted_args": 1
+    },
+    {
+      "hook": "widgets_init",
+      "callback": "zm_sh_register_widgets",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "elementor/widgets/register",
+      "callback": "zm_sh_register_elementor_widget",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "vc_before_init",
+      "callback": "zm_sh_integrateWithVC",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "wp_footer",
+      "class": "zm_social_share",
+      "method": "footer",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "wp",
+      "class": "zm_social_share",
+      "method": "wp",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "gettext",
+      "class": "zm_social_share",
+      "method": "translate_legacy_domain",
+      "priority": 10,
+      "accepted_args": 3
+    },
+    {
+      "hook": "zm_sh_placeholder",
+      "class": "zm_sh_filters",
+      "method": "zm_sh_placeholder",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "zm_sh_ico_link",
+      "class": "zm_sh_filters",
+      "method": "ico_link",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "admin_menu",
+      "class": "zm_sh_settings",
+      "method": "reg_admn_menu",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "admin_init",
+      "class": "zm_sh_settings",
+      "method": "zm_reg_sett",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "admin_enqueue_scripts",
+      "class": "zm_sh_settings",
+      "method": "admin_scripts",
+      "priority": 20,
+      "accepted_args": 1
+    },
+    {
+      "hook": "wp_ajax_zm_sh_save_settings",
+      "class": "zm_sh_settings",
+      "method": "ajax_save_settings",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "wp_ajax_zm_sh_search_content",
+      "class": "zm_sh_settings",
+      "method": "ajax_search_content",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "save_post",
+      "class": "zm_sh_metabox",
+      "method": "save",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "add_meta_boxes",
+      "class": "zm_sh_metabox",
+      "method": "add_meta_box",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "wp_ajax_get_iconset",
+      "class": "zm_sh_iconset",
+      "method": "wp_ajax_get_iconset",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "wp_ajax_get_iconset_preview",
+      "class": "zm_sh_iconset",
+      "method": "wp_ajax_get_iconset_preview",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "wp_ajax_get_iconset_details",
+      "callback": "wp_ajax_get_iconset_details",
+      "priority": 10,
+      "accepted_args": 1
+    },
+    {
+      "hook": "plugin_action_links_{plugin_basename}",
+      "closure_file": "src/Compatibility/Legacy/Global/bootstrap.php",
+      "priority": 10,
+      "accepted_args": 1
+    }
+  ]
+}

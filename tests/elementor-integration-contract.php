@@ -10,7 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/../' );
 }
 
-$source = implode( '', file( __DIR__ . '/../elementor-integration.php' ) );
+$source = implode(
+	'',
+	file( __DIR__ . '/../src/Compatibility/Legacy/Global/elementor.php' )
+);
 
 $checks = array(
 	"add_action( 'elementor/widgets/register'" => 'Elementor registration hook',

@@ -1,0 +1,50 @@
+{
+  "block": {
+    "name": "html-social-share/social-share",
+    "attributes": {
+      "title": "Stored title",
+      "iconset": "inherit",
+      "iconset_type": "circle",
+      "icons": [
+        "facebook",
+        "x"
+      ]
+    },
+    "serialized": "<!-- wp:html-social-share/social-share {\"title\":\"Stored title\",\"iconset\":\"inherit\",\"iconset_type\":\"circle\",\"icons\":[\"facebook\",\"x\"]} /-->"
+  },
+  "wpbakery": {
+    "shortcode": "[zm_sh_btn title=\"Stored title\" iconset=\"flat\" iconset_type=\"circle\" icons=\"facebook,x\"]",
+    "attributes": {
+      "title": "Stored title",
+      "iconset": "flat",
+      "iconset_type": "circle",
+      "icons": "facebook,x"
+    }
+  },
+  "elementor": {
+    "widget_name": "zm_social_share",
+    "settings": {
+      "title": "Stored title",
+      "iconset": "flat",
+      "iconset_type": "circle",
+      "icons": [
+        "facebook",
+        "x"
+      ]
+    },
+    "document_element": {
+      "id": "a1b2c3d",
+      "elType": "widget",
+      "widgetType": "zm_social_share",
+      "settings": {
+        "title": "Stored title",
+        "iconset": "flat",
+        "iconset_type": "circle",
+        "icons": [
+          "facebook",
+          "x"
+        ]
+      }
+    }
+  }
+}
