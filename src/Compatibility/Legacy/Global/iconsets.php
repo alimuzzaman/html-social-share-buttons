@@ -147,10 +147,18 @@ abstract class __iconset_parent_class implements interface_iconset{
 				'/src/Compatibility/Legacy/IconSet/Definitions/'
 			)
 		) {
-			$asset_directory = 'long-shadows' === $this->id ? 'long_shadow' : sanitize_key( $this->id );
+			$legacy_directories = array(
+				'default'      => 'default',
+				'flat'         => 'flat',
+				'long-shadows' => 'long_shadow',
+				'prajin'       => 'prajin',
+			);
+			$asset_root = isset( $legacy_directories[ $this->id ] )
+				? '/iconset/' . $legacy_directories[ $this->id ]
+				: '/assets/iconsets/' . sanitize_key( $this->id );
 			$this->__FILE__ =
 				\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Bootstrap\LegacyRuntime::pluginRoot() .
-				'/iconset/' . $asset_directory . '/ssb.php';
+				$asset_root . '/ssb.php';
 		}
 		$this->set_dir_and_url($this->__FILE__);
 		foreach ( (array) $this->icons as $id => $icon ) {
@@ -206,6 +214,8 @@ $bundled_iconset_classes = array(
 	'zm_sh_iconset_flat',
 	'zm_sh_iconset_long_shadows',
 	'zm_sh_iconset_prajin',
+	'zm_sh_iconset_bootstrap_solid',
+	'zm_sh_iconset_tabler_outline',
 );
 foreach ( $bundled_iconset_classes as $bundled_iconset_class ) {
 	require_once dirname( __DIR__ ) . '/IconSet/Definitions/' .

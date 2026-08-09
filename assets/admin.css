@@ -460,7 +460,40 @@
 	font-size: 12px;
 }
 
+.hssb-profile-link-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+}
+
+.hssb-profile-link-item {
+	padding: 14px;
+	background: var(--zmsh-surface);
+	border: 1px solid var(--zmsh-border);
+	border-radius: 6px;
+}
+
+.hssb-profile-link-identity {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 12px;
+	color: var(--zmsh-ink);
+	font-weight: 600;
+}
+
+.hssb-profile-link-identity img {
+	display: block;
+	width: 32px;
+	height: 32px;
+	object-fit: cover;
+}
+
 @media screen and (max-width: 600px) {
+	.hssb-profile-link-grid {
+		grid-template-columns: 1fr;
+	}
+
 	.zm_template_prefix_row,
 	.zm_template_parameter {
 		grid-template-columns: 1fr;

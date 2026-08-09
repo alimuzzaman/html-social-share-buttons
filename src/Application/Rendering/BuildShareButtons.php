@@ -7,6 +7,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderRequest;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderResult;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ResolvedButton;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ResolvedProfileLink;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
 
 final class BuildShareButtons {
@@ -34,6 +35,7 @@ final class BuildShareButtons {
 			: $iconSet->shapes()[0];
 		$overrides = $request->templateOverrides();
 		$buttons = array();
+		$profileLinks = array();
 
 		foreach ( $request->networkIds() as $networkId ) {
 			if ( ! $this->networks->has( $networkId ) || ! $iconSet->hasIcon( $networkId ) ) {
@@ -53,6 +55,19 @@ final class BuildShareButtons {
 			);
 		}
 
+		$requestedProfileLinks = $request->profileLinks();
+		foreach ( $this->networks->ids() as $networkId ) {
+			if ( ! isset( $requestedProfileLinks[ $networkId ] ) || ! $iconSet->hasIcon( $networkId ) ) {
+				continue;
+			}
+
+			$profileLinks[] = new ResolvedProfileLink(
+				$this->networks->get( $networkId ),
+				$requestedProfileLinks[ $networkId ],
+				$iconSet->iconFile( $networkId )
+			);
+		}
+
 		$relTokens = array( 'noopener', 'noreferrer' );
 		if ( $request->noFollow() ) {
 			array_unshift( $relTokens, 'nofollow' );
@@ -64,7 +79,8 @@ final class BuildShareButtons {
 			$request->placement(),
 			$request->heading(),
 			$relTokens,
-			$buttons
+			$buttons,
+			$profileLinks
 		);
 	}
 }

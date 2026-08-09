@@ -52,8 +52,12 @@ final class SettingsRequestSanitizer {
 			: array();
 		$networkStates = array();
 		$shareTemplates = array();
+		$profileLinks = array();
 		$submittedTemplates = isset( $input['share_templates'] ) && is_array( $input['share_templates'] )
 			? $input['share_templates']
+			: array();
+		$submittedProfileLinks = isset( $input['profile_links'] ) && is_array( $input['profile_links'] )
+			? $input['profile_links']
 			: array();
 		foreach ( $this->schema->networkIds() as $networkId ) {
 			$networkStates[ $networkId ] = $this->toBoolean(
@@ -65,6 +69,15 @@ final class SettingsRequestSanitizer {
 				$shareTemplates[ $networkId ] = sanitize_textarea_field(
 					$submittedTemplates[ $networkId ]
 				);
+			}
+			if ( isset( $submittedProfileLinks[ $networkId ] ) ) {
+				$profileLink = $this->sanitizeProfileLink(
+					$networkId,
+					$submittedProfileLinks[ $networkId ]
+				);
+				if ( '' !== $profileLink ) {
+					$profileLinks[ $networkId ] = $profileLink;
+				}
 			}
 		}
 
@@ -82,8 +95,53 @@ final class SettingsRequestSanitizer {
 			$this->toBoolean( isset( $input['analytics_enabled'] ) ? $input['analytics_enabled'] : false ),
 			$this->toBoolean( isset( $input['auto_hide_enabled'] ) ? $input['auto_hide_enabled'] : false ),
 			$this->toBoolean( isset( $input['preserve_url_port'] ) ? $input['preserve_url_port'] : false ),
-			$this->toBoolean( isset( $input['no_follow'] ) ? $input['no_follow'] : false )
+			$this->toBoolean( isset( $input['no_follow'] ) ? $input['no_follow'] : false ),
+			$profileLinks
 		);
+	}
+
+	private function sanitizeProfileLink( $networkId, $value ) {
+		if ( ! is_string( $value ) ) {
+			return '';
+		}
+
+		$value = trim( $value );
+		if ( '' === $value || preg_match( '/[\r\n]/', $value ) ) {
+			return '';
+		}
+
+		if ( 'mail' === $networkId ) {
+			if ( 0 !== stripos( $value, 'mailto:' ) ) {
+				return '';
+			}
+
+			$address = substr( $value, 7 );
+			if (
+				false !== strpos( $address, '?' ) ||
+				false !== strpos( $address, '#' ) ||
+				preg_match( '/%(?:0a|0d)/i', $address )
+			) {
+				return '';
+			}
+
+			$address = rawurldecode( $address );
+			$validated = is_email( $address );
+
+			return false !== $validated ? 'mailto:' . $validated : '';
+		}
+
+		$url = esc_url_raw( $value, array( 'https' ) );
+		$parts = $url ? wp_parse_url( $url ) : false;
+		if (
+			! is_array( $parts ) ||
+			empty( $parts['host'] ) ||
+			empty( $parts['scheme'] ) ||
+			'https' !== strtolower( $parts['scheme'] )
+		) {
+			return '';
+		}
+
+		return $url;
 	}
 
 	private function toBoolean( $value ) {

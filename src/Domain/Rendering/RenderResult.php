@@ -12,6 +12,7 @@ final class RenderResult {
 	private $heading;
 	private $relTokens;
 	private $buttons;
+	private $profileLinks;
 
 	public function __construct(
 		IconSet $iconSet,
@@ -19,11 +20,17 @@ final class RenderResult {
 		$placement,
 		$heading,
 		array $relTokens,
-		array $buttons
+		array $buttons,
+		array $profileLinks = array()
 	) {
 		foreach ( $buttons as $button ) {
 			if ( ! $button instanceof ResolvedButton ) {
 				throw new InvalidArgumentException( 'Every render result button must be resolved.' );
+			}
+		}
+		foreach ( $profileLinks as $profileLink ) {
+			if ( ! $profileLink instanceof ResolvedProfileLink ) {
+				throw new InvalidArgumentException( 'Every render result profile link must be resolved.' );
 			}
 		}
 
@@ -33,6 +40,7 @@ final class RenderResult {
 		$this->heading = (string) $heading;
 		$this->relTokens = array_values( $relTokens );
 		$this->buttons = array_values( $buttons );
+		$this->profileLinks = array_values( $profileLinks );
 	}
 
 	public function iconSet() {
@@ -57,5 +65,9 @@ final class RenderResult {
 
 	public function buttons() {
 		return $this->buttons;
+	}
+
+	public function profileLinks() {
+		return $this->profileLinks;
 	}
 }

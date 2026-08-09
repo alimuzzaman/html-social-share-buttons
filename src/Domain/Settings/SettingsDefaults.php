@@ -39,7 +39,8 @@ final class SettingsDefaults {
 			false,
 			false,
 			false,
-			false
+			false,
+			array()
 		);
 	}
 }

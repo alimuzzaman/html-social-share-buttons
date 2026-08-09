@@ -11,6 +11,7 @@ import {
 	serializeShareTemplateParameters,
 	splitShareTemplate,
 } from '../../../admin/share-template';
+import { renderProfileLinksSection } from '../../../admin/profile-links';
 
 export function attachSettingsRenderer(App, dependencies) {
 	var e = dependencies.createElement;
@@ -37,6 +38,7 @@ export function attachSettingsRenderer(App, dependencies) {
 		var modalTitle = this.state.modalMode === 'php' ? '<\\?> Get PHP Code' : '[] Get Shortcode';
 		var socialNetworkColumns = [[], []];
 		var networkPreviewType = ensureType(currentIconset, options.show_before_post || options.show_after_post || options.show_left || options.show_right);
+		var profileNetworks = iconsets.length ? (iconsets[0].icons || []) : [];
 
 		if (currentIconset && currentIconset.icons && currentIconset.icons.length) {
 			currentIconset.icons.forEach(function (icon, index) {
@@ -258,6 +260,23 @@ export function attachSettingsRenderer(App, dependencies) {
 						}));
 					}))
 			]),
+			renderProfileLinksSection({
+				createElement: e,
+				TextControl: TextControl,
+				SectionHeader: SectionHeader,
+				values: options.profile_links,
+				networks: profileNetworks,
+				activeIcons: currentIconset ? currentIconset.icons : [],
+				previewType: networkPreviewType,
+				getIconPreview: getIconPreview,
+				sectionClassName: 'zm_settings_section zm_profile_links_section',
+				fieldName: function (networkId) {
+					return 'zm_shbt_fld[profile_links][' + networkId + ']';
+				},
+				onChange: function (networkId, value) {
+					self.update('profile_links.' + networkId, value);
+				}
+			}),
 			e('section', { key: 'advanced', className: 'zm_settings_section zm_settings_section--advanced' }, [
 				e(SectionHeader, {
 					key: 'section-header',

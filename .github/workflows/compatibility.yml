@@ -5,6 +5,7 @@ on:
     branches: [ master, release ]
     tags: [ 'v*' ]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,7 +17,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '7.4', '8.0', '8.3', '8.5' ]
+        include:
+          - php: '7.0'
+            composer: 'v2.2'
+          - php: '7.4'
+            composer: 'v2'
+          - php: '8.0'
+            composer: 'v2'
+          - php: '8.3'
+            composer: 'v2'
+          - php: '8.5'
+            composer: 'v2'
     steps:
       - uses: actions/checkout@v4
       - name: Set up PHP
@@ -24,8 +35,11 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           coverage: none
+          tools: composer:${{ matrix.composer }}
       - name: Validate Composer metadata
-        run: composer validate --strict
+        run: composer validate --strict --no-check-publish
+      - name: Build the production autoloader
+        run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
       - name: Check PHP syntax
         shell: bash
         run: |
@@ -46,21 +60,38 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint:js
+      - run: pnpm run icons:check
       - run: pnpm run settings:check
-      - run: pnpm run build
 
   wordpress:
-    name: WordPress ${{ matrix.wordpress }}
+    name: WordPress ${{ matrix.wordpress }} / PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        wordpress: [ '6.8', 'latest' ]
+        include:
+          - wordpress: '5.3'
+            php: '7.0'
+            wp-cli: '2.5.0'
+            test-library: ''
+          - wordpress: '6.8'
+            php: '8.3'
+            wp-cli: 'latest'
+            test-library: '6.8.0'
+          - wordpress: 'latest'
+            php: '8.3'
+            wp-cli: 'latest'
+            test-library: 'auto'
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: wordpress
@@ -78,23 +109,141 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: ${{ matrix.php }}
           coverage: none
+          tools: composer:${{ matrix.php == '7.0' && 'v2.2' || 'v2' }}
       - name: Install WP-CLI
+        env:
+          WP_CLI_VERSION: ${{ matrix.wp-cli }}
         run: |
-          curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o wp-cli.phar
-          chmod +x wp-cli.phar
-          sudo mv wp-cli.phar /usr/local/bin/wp
-      - name: Install WordPress
+          if [[ "$WP_CLI_VERSION" == 'latest' ]]; then
+            url='https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar'
+          else
+            url="https://github.com/wp-cli/wp-cli/releases/download/v${WP_CLI_VERSION}/wp-cli-${WP_CLI_VERSION}.phar"
+          fi
+          curl -fsSL "$url" -o "$RUNNER_TEMP/wp"
+          chmod +x "$RUNNER_TEMP/wp"
+          sudo mv "$RUNNER_TEMP/wp" /usr/local/bin/wp
+          wp --info
+      - name: Build the production autoloader
+        run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+      - name: Install and activate the plugin
         env:
           WP_VERSION: ${{ matrix.wordpress }}
+          WP_ROOT: ${{ runner.temp }}/wordpress
         run: |
-          wp core download --version="$WP_VERSION" --force
-          mkdir -p wp-content/plugins/html-social-share-buttons
-          rsync -a --exclude='.git' --exclude='node_modules' ./ wp-content/plugins/html-social-share-buttons/
-          wp config create --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=127.0.0.1 --skip-check
-          wp core install --url=http://localhost --title='Compatibility test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
-          wp plugin activate html-social-share-buttons
+          wp core download --path="$WP_ROOT" --version="$WP_VERSION" --force
+          mkdir -p "$WP_ROOT/wp-content/plugins/html-social-share-buttons"
+          rsync -a \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            ./ "$WP_ROOT/wp-content/plugins/html-social-share-buttons/"
+          wp config create --path="$WP_ROOT" --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=127.0.0.1 --skip-check
+          wp core install --path="$WP_ROOT" --url=http://localhost --title='Compatibility test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
+          wp plugin activate html-social-share-buttons --path="$WP_ROOT"
       - name: Verify frontend shortcode rendering
+        env:
+          WP_ROOT: ${{ runner.temp }}/wordpress
         run: |
-          wp eval 'if (strpos(do_shortcode("[zm_sh_btn icons=\"facebook\"]"), "facebook") === false) { exit(1); }'
+          wp eval --path="$WP_ROOT" 'if (strpos(do_shortcode("[zm_sh_btn icons=\"facebook\"]"), "facebook") === false) { exit(1); }'
+      - name: Install the WordPress PHPUnit harness
+        if: matrix.test-library != ''
+        env:
+          TEST_TOOLS: ${{ runner.temp }}/test-tools
+          WP_TEST_LIBRARY: ${{ matrix.test-library }}
+        run: |
+          mkdir -p "$TEST_TOOLS"
+          if [[ "$WP_TEST_LIBRARY" == 'auto' ]]; then
+            WP_TEST_LIBRARY="$(wp core version --path="$RUNNER_TEMP/wordpress")"
+          fi
+          composer require \
+            --working-dir="$TEST_TOOLS" \
+            --dev \
+            --no-interaction \
+            'phpunit/phpunit:^9.6' \
+            'yoast/phpunit-polyfills:^4.0' \
+            "wp-phpunit/wp-phpunit:${WP_TEST_LIBRARY}"
+      - name: Run regular PHPUnit contracts
+        if: matrix.test-library != ''
+        env:
+          WP_ROOT: ${{ runner.temp }}/wordpress
+          WP_TESTS_DIR: ${{ runner.temp }}/test-tools/vendor/wp-phpunit/wp-phpunit
+          WP_PHPUNIT__TESTS_CONFIG: ${{ github.workspace }}/tests/wp-tests-config.php
+        run: ${{ runner.temp }}/test-tools/vendor/bin/phpunit --configuration phpunit.xml.dist --exclude-group ajax,multisite
+      - name: Run AJAX PHPUnit contracts
+        if: matrix.test-library != ''
+        env:
+          WP_ROOT: ${{ runner.temp }}/wordpress
+          WP_TESTS_DIR: ${{ runner.temp }}/test-tools/vendor/wp-phpunit/wp-phpunit
+          WP_PHPUNIT__TESTS_CONFIG: ${{ github.workspace }}/tests/wp-tests-config.php
+        run: ${{ runner.temp }}/test-tools/vendor/bin/phpunit --configuration phpunit.xml.dist --group ajax
+      - name: Run multisite PHPUnit contracts
+        if: matrix.test-library != ''
+        env:
+          WP_ROOT: ${{ runner.temp }}/wordpress
+          WP_TESTS_DIR: ${{ runner.temp }}/test-tools/vendor/wp-phpunit/wp-phpunit
+          WP_PHPUNIT__TESTS_CONFIG: ${{ github.workspace }}/tests/wp-tests-config.php
+        run: ${{ runner.temp }}/test-tools/vendor/bin/phpunit --configuration phpunit.multisite.xml.dist --group multisite
+
+  distribution:
+    name: Release archive
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+      - name: Install WP-CLI and archive command
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o "$RUNNER_TEMP/wp"
+          chmod +x "$RUNNER_TEMP/wp"
+          sudo mv "$RUNNER_TEMP/wp" /usr/local/bin/wp
+          wp package install wp-cli/dist-archive-command:v3.2.0
+      - run: pnpm install --frozen-lockfile
+      - name: Build and inspect the release archive
+        run: |
+          pnpm run zip
+          version="$(sed -n 's/^Version:[[:space:]]*//p' html-social-share.php | head -n 1)"
+          archive="$(dirname "$GITHUB_WORKSPACE")/html-social-share-buttons.${version}.zip"
+          cp "$archive" "$RUNNER_TEMP/first-build.zip"
+          pnpm run zip
+          cmp "$RUNNER_TEMP/first-build.zip" "$archive"
+      - name: Install the archive in a fresh WordPress site
+        env:
+          WP_ROOT: ${{ runner.temp }}/wordpress
+        run: |
+          version="$(sed -n 's/^Version:[[:space:]]*//p' html-social-share.php | head -n 1)"
+          archive="$(dirname "$GITHUB_WORKSPACE")/html-social-share-buttons.${version}.zip"
+          test -f "$archive"
+          wp core download --path="$WP_ROOT" --force
+          wp config create --path="$WP_ROOT" --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=127.0.0.1 --skip-check
+          wp core install --path="$WP_ROOT" --url=http://localhost --title='Archive test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
+          wp plugin install "$archive" --path="$WP_ROOT" --activate
+          wp plugin is-active html-social-share-buttons --path="$WP_ROOT"
+          wp eval --path="$WP_ROOT" 'if (!function_exists("zm_sh_url")) { exit(1); }'
+          wp eval --path="$WP_ROOT" 'if (false === strpos(do_shortcode("[zm_sh_btn icons=\"facebook\"]"), "facebook")) { exit(1); }'

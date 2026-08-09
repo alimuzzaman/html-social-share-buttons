@@ -5,7 +5,9 @@
   "scripts": {
     "build": "wp-scripts build src/js/admin-react.js src/js/social-share.js src/js/vc-scripts.js --output-path=build",
     "start": "wp-scripts start src/js/admin-react.js src/js/social-share.js src/js/vc-scripts.js --output-path=build",
-    "zip": "composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader && pnpm run build && node scripts/build-archive.js && node tests/distribution-archive-contract.js",
+    "icons:build": "node scripts/generate-iconsets.js",
+    "icons:check": "node scripts/generate-iconsets.js --check",
+    "zip": "pnpm run icons:check && composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader && pnpm run build && node scripts/build-archive.js && node tests/distribution-archive-contract.js",
     "release": "pnpm run zip",
     "lint:js": "wp-scripts lint-js \"src/js/**/*.js\"",
     "settings:check": "pnpm run build && node tests/admin-react-smoke.js && node tests/vc-scripts-smoke.js && php tests/js-build-boundary-contract.php && php -l src/Compatibility/Legacy/Global/settings-page.php && php -l src/Compatibility/Legacy/Global/share-templates.php && php tests/share-template-contract.php && php -l src/Compatibility/Legacy/Global/functions.php && php tests/exclude-contract.php && php tests/elementor-integration-contract.php && php tests/block-integration-contract.php && php tests/settings-menu-contract.php && php tests/legacy-shim-contract.php && php tests/frontend-drift-surface.php && php tests/architecture-boundary-contract.php",

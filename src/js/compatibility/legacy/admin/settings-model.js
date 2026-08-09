@@ -1,3 +1,5 @@
+import { normalizeProfileLinks } from '../../../admin/profile-links';
+
 export function toBoolean(value) {
 	return !(value === false || value === 0 || value === '0' || value === '' || value === null || typeof value === 'undefined' || value === 'false');
 }
@@ -16,6 +18,7 @@ export function normalizeSettingsOptions($, defaults, raw) {
 	options.show_in = $.extend({}, defaults.show_in, options.show_in || {});
 	options.icons = $.extend({}, options.icons || {});
 	options.share_templates = $.extend({}, options.share_templates || {});
+	options.profile_links = normalizeProfileLinks(options.profile_links);
 	options.show_in.show_left = toBoolean(options.show_in.show_left);
 	options.show_in.show_right = toBoolean(options.show_in.show_right);
 	options.show_in.show_before_post = toBoolean(options.show_in.show_before_post);

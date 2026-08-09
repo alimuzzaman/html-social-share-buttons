@@ -5,7 +5,11 @@ const vm = require('vm');
 const scriptPath = 'build/admin-react.js';
 const code = fs.readFileSync(scriptPath, 'utf8');
 const sourceFiles = [
-	'src/js/admin/share-template.js',
+	...fs
+		.readdirSync('src/js/admin')
+		.filter((file) => file.endsWith('.js'))
+		.sort()
+		.map((file) => `src/js/admin/${file}`),
 	...fs
 		.readdirSync('src/js/compatibility/legacy/admin')
 		.filter((file) => file.endsWith('.js'))
@@ -105,6 +109,10 @@ context.window.zm_sh_react_settings = {
 			schemaIconIds.map((id) => [id, 1])
 		),
 		share_templates: settingsSchema.share_template_defaults,
+		profile_links: {
+			facebook: 'https://www.facebook.com/example',
+			x: 'https://x.com/example',
+		},
 		g_analytics: 0,
 		auto_hide_btn: 0,
 		use_port: 0,
@@ -284,6 +292,23 @@ const requiredNames = settingsSchema.field_names;
 const missing = requiredNames.filter((name) => !names.has(name));
 if (missing.length > 0) {
 	throw new Error(`Missing legacy field names: ${missing.join(', ')}`);
+}
+
+const profileFields = nodes.filter((node) => node.props && String(node.props.name || '').indexOf('zm_shbt_fld[profile_links][') === 0);
+const facebookProfile = profileFields.find((node) => node.props.name === 'zm_shbt_fld[profile_links][facebook]');
+const xProfile = profileFields.find((node) => node.props.name === 'zm_shbt_fld[profile_links][x]');
+const mailProfile = profileFields.find((node) => node.props.name === 'zm_shbt_fld[profile_links][mail]');
+if (profileFields.length !== schemaIconIds.length || !facebookProfile || facebookProfile.props.value !== 'https://www.facebook.com/example' || !xProfile || xProfile.props.value !== 'https://x.com/example' || !mailProfile || mailProfile.props.placeholder !== 'mailto:hello@example.com') {
+	throw new Error('Profile-link settings should render one independent destination for every canonical network.');
+}
+facebookProfile.props.onChange('https://www.facebook.com/updated');
+if (appInstance.state.options.profile_links.facebook !== 'https://www.facebook.com/updated') {
+	throw new Error('Profile-link edits should update the canonical nested settings state.');
+}
+
+const profileGridCss = adminCss.match(/\.hssb-profile-link-grid\s*\{[^}]*\}/);
+if (!profileGridCss || !profileGridCss[0].includes('grid-template-columns: repeat(2, minmax(0, 1fr))') || !adminCss.includes('@media screen and (max-width: 600px)')) {
+	throw new Error('Profile-link settings should use a responsive two-column layout.');
 }
 
 const facebookTemplate = nodes.find((node) => node.props && node.props.id === 'share_template_facebook_0');

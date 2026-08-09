@@ -3,8 +3,8 @@
 ## Executive status
 
 The latest published baseline is `v2.2.6` at commit `620f1ae66`. The current
-branch has one committed accessibility/release-verification change after that
-tag plus the uncommitted rewrite work described here.
+branch and working tree contain the accessibility, release-verification, and
+rewrite work described here after that tag.
 
 The rewrite now owns production share-button construction and keeps exact
 public output through a compatibility renderer. Historical globals and
@@ -15,15 +15,15 @@ legacy asset URLs remain deliberately behind that boundary.
 
 - 33 deterministic frontend scenarios cover the renderer plus shortcode,
   dynamic block, content-filter, and footer entrypoints.
-- The settings fixture freezes the option name, 29 submitted fields, defaults,
+- The settings fixture freezes the option name, 36 submitted fields, defaults,
   sanitizer output, nested shapes, and runtime X alias behavior.
 - The WordPress surface fixture freezes shortcode, widget, block, builder,
   settings, metabox, AJAX, asset-handle, and persisted identifier values.
-- JavaScript source is organized as 15 build-time modules. WordPress loads
+- JavaScript source is organized as 16 build-time modules. WordPress loads
   only `build/admin-react.js`, `build/social-share.js`, and
   `build/vc-scripts.js`.
 - The new PHP namespace is Composer/PSR-4 autoloaded and contains settings
-  value objects, seven explicit network definitions, four explicit icon-set
+  value objects, seven explicit network definitions, six explicit icon-set
   manifests, validated registries, and migration infrastructure.
 - Legacy settings, X CSS/file naming, and the old long-shadow directory name
   are mapped only under `Compatibility/Legacy`.
@@ -31,7 +31,8 @@ legacy asset URLs remain deliberately behind that boundary.
   module.
 - The release archive now stages a symlink-free tree before invoking
   `wp dist-archive`, includes the optimized Composer loader and PHP source, and
-  excludes JavaScript source and development files.
+  excludes JavaScript source and development files. Staged timestamps are
+  normalized, and CI rejects byte-level differences between consecutive builds.
 - No custom database table or rewrite-owned option exists. No data-copy
   migration is required or registered at this stage.
 - The root entry file now contains only the plugin header, Composer bootstrap,
@@ -54,6 +55,15 @@ legacy asset URLs remain deliberately behind that boundary.
   registry. Compatibility supplies only old labels, CSS classes, filenames,
   public properties, and URLs; add-on icon sets still use the historical
   registration bridge.
+- Optional global profile/contact destinations are modeled separately from
+  share actions. Compatibility maps their persisted field names and renders
+  accessible profile anchors after the share buttons without changing output
+  when no profiles are configured. Shortcode, block, widget, Elementor, and
+  direct PHP renders inherit those global destinations.
+- Bootstrap Solid and Tabler Outline are complete, generated SVG sets covering
+  all seven current networks in both square and circle shapes. Their pinned
+  MIT-licensed inputs, checksums, distributed licenses, and deterministic
+  generator are part of the repository.
 - `PluginFactory` builds the canonical production service graph. Content
   exclusion, content/floating placement, translation loading, settings request
   sanitization, registries, migrations, and canonical asset validation are
@@ -92,10 +102,12 @@ hydrated. Public frontend URLs still use the old tree so output remains
 unchanged. Licensing/source records and a complete enqueue/URL contract are
 required before switching those URLs.
 
-Dimensions, SVG structure, active-content exclusions, and byte parity are
-covered. The remaining blocker is source/license provenance for the
-pre-existing PNG packs. Browser visual parity and an approved URL transition
-are also required before public URLs move to the canonical tree.
+Dimensions, SVG structure, active-content exclusions, and historical byte
+parity are covered. The new generated SVG sets are cleared, but the remaining
+blocker is source/license provenance for the pre-existing PNG packs. A release
+decision must either remove/replace those packs with cleared SVGs or obtain a
+redistribution-compatible license. Browser visual parity and an approved URL
+transition are also required before historical public URLs move.
 
 ## High-priority engineering gaps
 
@@ -151,7 +163,7 @@ are also required before public URLs move to the canonical tree.
 
 ### P1 — JavaScript decomposition
 
-Runtime modularity is correct: 15 source modules are bundled at build time and
+Runtime modularity is correct: 16 source modules are bundled at build time and
 no module loader ships to WordPress. Exclusion search, template editing,
 modal/focus behavior, rendering, and mounting are isolated. The application
 controller is now 318 lines and the presentation renderer is 391 lines; further
@@ -183,15 +195,19 @@ version. Before the first real migration:
   remote workflow has not run yet.
 - Builder browser tests skip when Elementor or WPBakery is unavailable; the
   settings accessibility test passes in the healthy Sandbox instance.
-- The fresh-instance E2E orchestrator currently fails on a stale Docker network;
-  this is test infrastructure state, not a plugin failure.
+- A fresh local Sandbox instance cannot start while the workstation Docker
+  daemon is unavailable. The configured remote runner also currently rejects
+  jobs before execution because its Sandbox CLI path is missing; neither
+  failure produced a plugin test result.
 - The healthy cached Sandbox instance passes 108 regular tests/1,382 assertions
   (one intentional multisite skip), seven AJAX tests/25 assertions, and the
   multisite contract/7 assertions. The strict frontend CLI independently
   passes all 33 scenarios.
 - Plugin Check reports warnings only, all from the legacy global surface that
   the compatibility phase is designed to isolate.
-- A clean-checkout build and byte-for-byte reproducibility check remain.
+- Two independent `git archive` checkouts build valid 272-file release ZIPs.
+  After timestamp normalization, consecutive builds are byte-identical; CI now
+  repeats that comparison before installing the archive.
 - PHPStan/PHPCS and a committed warning baseline for the new namespace remain.
 - The package header and archive name still say `2.2.6`; a release-candidate
   version must be selected before publication.

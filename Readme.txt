@@ -25,7 +25,9 @@ Ex. [zm_sh_btn iconset='long_shadow' iconset_type='square' icons='facebook,x,lin
 	<li>Exclude pages and posts by ID, slug, or searchable content.</li>
 	<li>Optional Google Social Analytics tracking.</li>
 	<li>Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, and email sharing.</li>
-	<li>Default, flat, long-shadow, and Prajin icon sets with selectable button shapes.</li>
+	<li>Optional profile and contact links displayed beside sharing actions.</li>
+	<li>Default, flat, long-shadow, Prajin, Bootstrap Solid, and Tabler Outline icon sets with selectable button shapes.</li>
+	<li>Complete square and circle SVG coverage for every network in both new icon sets.</li>
 	<li>Native block editor, Elementor, WPBakery, and widget integrations.</li>
 	<li>Horizontal or floating placements before, after, left, or right of post content.</li>
 	<li>Translation-ready strings and a lightweight HTML/CSS frontend.</li>
@@ -47,6 +49,11 @@ Ex. [zm_sh_btn iconset='long_shadow' iconset_type='square' icons='facebook,x,lin
 6. That's all. Enjoy this widget.
 
 == Changelog ==
+
+= Unreleased =
+* **FEATURE**: Added optional global social profile and email links beside share buttons.
+* **FEATURE**: Added complete Bootstrap Solid and Tabler Outline SVG icon sets for all supported networks.
+* **IMPROVEMENT**: Added reproducible icon generation, pinned source checksums, and bundled MIT license notices.
 
 = 2.2.6 =
 * **SECURITY**: Hardened rendering, icon-set, widget, shortcode, and integration paths against malformed input and missing runtime objects.

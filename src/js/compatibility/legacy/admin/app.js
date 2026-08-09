@@ -50,6 +50,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 		show_after_post: 0,
 		icons: {},
 		share_templates: {},
+		profile_links: {},
 		g_analytics: 0,
 		auto_hide_btn: 0,
 		use_port: 0,
@@ -249,6 +250,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 			nextOptions.show_in = $.extend({}, prev.options.show_in || {});
 			nextOptions.icons = $.extend({}, prev.options.icons || {});
 			nextOptions.share_templates = $.extend({}, prev.options.share_templates || {});
+			nextOptions.profile_links = $.extend({}, prev.options.profile_links || {});
 			switch (path) {
 				case 'title':
 					nextOptions.title = value;
@@ -294,7 +296,9 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 					nextOptions[path] = toBoolean(value);
 					break;
 				default:
-					if (path.indexOf('icon_') === 0) {
+					if (path.indexOf('profile_links.') === 0) {
+						nextOptions.profile_links[path.substring(14)] = value;
+					} else if (path.indexOf('icon_') === 0) {
 						nextOptions.icons[path.substring(5)] = toBoolean(value);
 					}
 			}

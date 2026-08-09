@@ -13,6 +13,7 @@ final class RenderRequest {
 	private $templateOverrides;
 	private $permalinkOverride;
 	private $noFollow;
+	private $profileLinks;
 
 	public function __construct(
 		$iconSetId,
@@ -22,7 +23,8 @@ final class RenderRequest {
 		array $networkIds,
 		array $templateOverrides = array(),
 		$permalinkOverride = '',
-		$noFollow = false
+		$noFollow = false,
+		array $profileLinks = array()
 	) {
 		RenderPlacement::assertValid( $placement );
 
@@ -42,6 +44,20 @@ final class RenderRequest {
 			}
 		}
 
+		$normalizedProfileLinks = array();
+		foreach ( $profileLinks as $networkId => $url ) {
+			$networkId = (string) $networkId;
+			if ( ! preg_match( '/^[a-z][a-z0-9-]*$/', $networkId ) ) {
+				throw new InvalidArgumentException( 'Profile-link network IDs must be lowercase slugs.' );
+			}
+			if ( is_string( $url ) && '' !== trim( $url ) ) {
+				$normalizedProfileLinks[ $networkId ] = $this->normalizeProfileUrl(
+					$networkId,
+					trim( $url )
+				);
+			}
+		}
+
 		$this->iconSetId = (string) $iconSetId;
 		$this->shape = (string) $shape;
 		$this->placement = (string) $placement;
@@ -50,6 +66,7 @@ final class RenderRequest {
 		$this->templateOverrides = $normalizedOverrides;
 		$this->permalinkOverride = (string) $permalinkOverride;
 		$this->noFollow = (bool) $noFollow;
+		$this->profileLinks = $normalizedProfileLinks;
 	}
 
 	public function iconSetId() {
@@ -82,5 +99,47 @@ final class RenderRequest {
 
 	public function noFollow() {
 		return $this->noFollow;
+	}
+
+	public function profileLinks() {
+		return $this->profileLinks;
+	}
+
+	private function normalizeProfileUrl( $networkId, $url ) {
+		if ( preg_match( '/[\r\n]/', $url ) ) {
+			throw new InvalidArgumentException( 'Profile-link URLs cannot contain line breaks.' );
+		}
+
+		if ( 'mail' === $networkId ) {
+			if ( 0 !== stripos( $url, 'mailto:' ) ) {
+				throw new InvalidArgumentException( 'Email profile links must use mailto.' );
+			}
+			$address = substr( $url, 7 );
+			if (
+				false !== strpos( $address, '?' ) ||
+				false !== strpos( $address, '#' ) ||
+				preg_match( '/%(?:0a|0d)/i', $address )
+			) {
+				throw new InvalidArgumentException( 'Email profile links cannot contain headers.' );
+			}
+			$address = rawurldecode( $address );
+			if ( false === filter_var( $address, FILTER_VALIDATE_EMAIL ) ) {
+				throw new InvalidArgumentException( 'Email profile links require a valid address.' );
+			}
+
+			return 'mailto:' . $address;
+		}
+
+		$parts = parse_url( $url );
+		if (
+			! is_array( $parts ) ||
+			empty( $parts['scheme'] ) ||
+			empty( $parts['host'] ) ||
+			'https' !== strtolower( $parts['scheme'] )
+		) {
+			throw new InvalidArgumentException( 'Social profile links must use an absolute HTTPS URL.' );
+		}
+
+		return $url;
 	}
 }

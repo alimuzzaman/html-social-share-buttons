@@ -34,6 +34,13 @@ final class LegacySettingsRequestMapper {
 		if ( isset( $networks['twitter'] ) && ! isset( $networks['x'] ) ) {
 			$networks['x'] = $networks['twitter'];
 		}
+		$profileLinks = isset( $input['profile_links'] ) && is_array( $input['profile_links'] )
+			? $input['profile_links']
+			: array();
+		if ( isset( $profileLinks['twitter'] ) && ! isset( $profileLinks['x'] ) ) {
+			$profileLinks['x'] = $profileLinks['twitter'];
+			unset( $profileLinks['twitter'] );
+		}
 
 		return array(
 			'title'              => isset( $input['title'] ) ? $input['title'] : '',
@@ -45,6 +52,7 @@ final class LegacySettingsRequestMapper {
 			'share_templates'    => isset( $input['share_templates'] ) && is_array( $input['share_templates'] )
 				? $input['share_templates']
 				: array(),
+			'profile_links'      => $profileLinks,
 			'excluded_content'   => isset( $input['excludes'] ) ? $input['excludes'] : '',
 			'analytics_enabled'  => isset( $input['g_analytics'] )
 				? LegacyTruthiness::isTruthy( $input['g_analytics'] )
@@ -93,6 +101,21 @@ final class LegacySettingsRequestMapper {
 				}
 			} elseif ( 'share_templates' === $key && is_array( $value ) ) {
 				$sanitized['share_templates'] = $settings->shareTemplates();
+			} elseif ( 'profile_links' === $key ) {
+				if ( is_array( $value ) ) {
+					$profileLinks = $settings->profileLinks();
+					if (
+						isset( $profileLinks['x'] ) &&
+						array_key_exists( 'twitter', $value ) &&
+						! array_key_exists( 'x', $value )
+					) {
+						$profileLinks['twitter'] = $profileLinks['x'];
+						unset( $profileLinks['x'] );
+					}
+					if ( ! empty( $profileLinks ) ) {
+						$sanitized['profile_links'] = $profileLinks;
+					}
+				}
 			} elseif ( 'title' === $key ) {
 				$sanitized['title'] = $settings->title();
 			} elseif ( 'excludes' === $key ) {

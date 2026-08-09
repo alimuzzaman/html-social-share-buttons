@@ -1,0 +1,7 @@
+.zmshbt.tabler-outline.left,.zmshbt.tabler-outline.right{position:fixed;top:30%;z-index:9999}
+.zmshbt.tabler-outline.left{left:0}.zmshbt.tabler-outline.right{right:0}
+.zmshbt.tabler-outline.in_widget a,.zmshbt.tabler-outline.in_shortcode a,.zmshbt.tabler-outline.in_block a,.zmshbt.tabler-outline.in_elementor a,.zmshbt.tabler-outline.in_php_function a{display:inline-block}
+.zmshbt.tabler-outline a{display:block;width:36px;height:36px;margin:7px;background-position:center;background-repeat:no-repeat;background-size:cover;transition:transform .16s ease,filter .16s ease}
+.zmshbt.tabler-outline a:hover{filter:brightness(1.06);transform:translateY(-2px) scale(1.06)}
+.zmshbt.tabler-outline a:focus-visible{outline:3px solid #2271b1;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.zmshbt.tabler-outline a{transition:none}.zmshbt.tabler-outline a:hover{transform:none}}

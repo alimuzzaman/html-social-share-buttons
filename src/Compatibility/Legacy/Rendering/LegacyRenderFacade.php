@@ -83,6 +83,21 @@ final class LegacyRenderFacade {
 			}
 		}
 
+		if ( isset( $canonical['profile_links'] ) && is_array( $canonical['profile_links'] ) ) {
+			$profileLinks = array();
+			foreach ( $canonical['profile_links'] as $networkId => $url ) {
+				$networkId = (string) $networkId;
+				if ( '' === $networkId || sanitize_key( $networkId ) !== $networkId ) {
+					continue;
+				}
+				if ( 'twitter' === $networkId ) {
+					$networkId = 'x';
+				}
+				$profileLinks[ $bundle->canonicalNetworkId( $networkId ) ] = $url;
+			}
+			$canonical['profile_links'] = $profileLinks;
+		}
+
 		foreach (
 			array( 'iconset_type', 'show_left', 'show_right', 'show_before_post', 'show_after_post' )
 			as $shapeField
@@ -150,7 +165,8 @@ final class LegacyRenderFacade {
 		}
 
 		$printed = array();
-		foreach ( $result->buttons() as $button ) {
+		$resolvedLinks = array_merge( $result->buttons(), $result->profileLinks() );
+		foreach ( $resolvedLinks as $button ) {
 			$networkId = $bundle->legacyNetworkId( $button->network()->id() );
 			if ( ! isset( $iconSet->icons[ $networkId ] ) || ! is_array( $iconSet->icons[ $networkId ] ) ) {
 				continue;

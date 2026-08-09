@@ -126,6 +126,7 @@ final class LegacySettingsAssetEnqueuer {
 				'auto_hide_btn'   => 0,
 				'use_port'        => 0,
 				'nofollow'        => 0,
+				'profile_links'   => array(),
 				'share_templates' => function_exists( 'zm_sh_get_share_templates' )
 					? zm_sh_get_share_templates()
 					: array(),
@@ -136,6 +137,14 @@ final class LegacySettingsAssetEnqueuer {
 			! isset( $defaultedOptions['icons']['x'] )
 		) {
 			$defaultedOptions['icons']['x'] = $defaultedOptions['icons']['twitter'];
+		}
+		if (
+			isset( $defaultedOptions['profile_links']['twitter'] ) &&
+			! isset( $defaultedOptions['profile_links']['x'] )
+		) {
+			$defaultedOptions['profile_links']['x'] =
+				$defaultedOptions['profile_links']['twitter'];
+			unset( $defaultedOptions['profile_links']['twitter'] );
 		}
 
 		$excluded = $this->content->resolve( $defaultedOptions['excludes'] );

@@ -6,6 +6,17 @@ use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkP
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\ManifestIconSetProvider;
 
 final class CanonicalIconAssetTest extends WP_UnitTestCase {
+	public function testNewSvgSetsDoNotInheritHistoricalTwitterFilenames(): void {
+		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
+		$registry = ( new ManifestIconSetProvider(
+			dirname( __DIR__, 2 ) . '/resources/iconsets'
+		) )->createRegistry( $networks );
+		$map = new LegacyIconSetAssetMap();
+
+		$this->assertSame( 'twitter.png', $map->iconFile( $registry->get( 'default' ), 'x' ) );
+		$this->assertSame( 'x.svg', $map->iconFile( $registry->get( 'bootstrap-solid' ), 'x' ) );
+		$this->assertSame( 'x.svg', $map->iconFile( $registry->get( 'tabler-outline' ), 'x' ) );
+	}
 	public function testCanonicalAssetsExistAndMatchTheReleasedVisualFiles(): void {
 		$root = dirname( __DIR__, 2 );
 		$registry = ( new ManifestIconSetProvider( $root . '/resources/iconsets' ) )
@@ -15,40 +26,57 @@ final class CanonicalIconAssetTest extends WP_UnitTestCase {
 			'https://example.test/assets/iconsets'
 		);
 		$legacyMap = new LegacyIconSetAssetMap();
+		$legacyIconSetIds = array( 'default', 'flat', 'long-shadows', 'prajin' );
 
 		foreach ( $registry->all() as $iconSet ) {
-			$legacyDirectory = $root . '/iconset/' . $legacyMap->directory( $iconSet );
 			$this->assertFileExists( $resolver->stylesheetPath( $iconSet ) );
 			$this->assertFileExists( $resolver->previewPath( $iconSet ) );
-			$this->assertSame(
-				hash_file( 'sha256', $legacyDirectory . '/style.css' ),
-				hash_file( 'sha256', $resolver->stylesheetPath( $iconSet ) )
-			);
-			$this->assertSame(
-				hash_file( 'sha256', $legacyDirectory . '/preview.png' ),
-				hash_file( 'sha256', $resolver->previewPath( $iconSet ) )
-			);
-			$this->assertValidPng( $resolver->previewPath( $iconSet ) );
+			$isLegacy = in_array( $iconSet->id(), $legacyIconSetIds, true );
+			$legacyDirectory = $root . '/iconset/' . $legacyMap->directory( $iconSet );
+			if ( $isLegacy ) {
+				$this->assertSame(
+					hash_file( 'sha256', $legacyDirectory . '/style.css' ),
+					hash_file( 'sha256', $resolver->stylesheetPath( $iconSet ) )
+				);
+				$this->assertSame(
+					hash_file( 'sha256', $legacyDirectory . '/preview.png' ),
+					hash_file( 'sha256', $resolver->previewPath( $iconSet ) )
+				);
+			}
+			$this->assertAssetFormat( $resolver->previewPath( $iconSet ) );
 
 			foreach ( $iconSet->shapes() as $shape ) {
 				foreach ( array_keys( $iconSet->iconFiles() ) as $networkId ) {
 					$canonical = $resolver->iconPath( $iconSet, $shape, $networkId );
-					$legacy = $legacyDirectory . '/' . $shape . '/' .
-						$legacyMap->iconFile( $iconSet, $networkId );
 					$this->assertFileExists( $canonical );
-					$this->assertSame(
-						hash_file( 'sha256', $legacy ),
-						hash_file( 'sha256', $canonical ),
-						$iconSet->id() . '/' . $shape . '/' . $networkId
-					);
-					if ( 'svg' === strtolower( pathinfo( $canonical, PATHINFO_EXTENSION ) ) ) {
-						$this->assertSafeSvg( $canonical );
-					} else {
-						$this->assertValidPng( $canonical );
+					if ( $isLegacy ) {
+						$legacy = $legacyDirectory . '/' . $shape . '/' .
+							$legacyMap->iconFile( $iconSet, $networkId );
+						$this->assertSame(
+							hash_file( 'sha256', $legacy ),
+							hash_file( 'sha256', $canonical ),
+							$iconSet->id() . '/' . $shape . '/' . $networkId
+						);
 					}
+					$this->assertAssetFormat( $canonical );
 				}
 			}
 		}
+	}
+
+	public function testNewSvgSetsShipTheirMitLicenses(): void {
+		$root = dirname( __DIR__, 2 ) . '/assets/iconsets';
+
+		$this->assertFileExists( $root . '/licenses/bootstrap-icons-MIT.txt' );
+		$this->assertFileExists( $root . '/licenses/tabler-icons-MIT.txt' );
+		$this->assertStringContainsString(
+			'Bootstrap Icons',
+			(string) file_get_contents( $root . '/THIRD-PARTY-NOTICES.txt' )
+		);
+		$this->assertStringContainsString(
+			'Tabler Icons',
+			(string) file_get_contents( $root . '/THIRD-PARTY-NOTICES.txt' )
+		);
 	}
 
 	public function testResolverUsesCanonicalIdsAndEncodedAssetNames(): void {
@@ -73,6 +101,15 @@ final class CanonicalIconAssetTest extends WP_UnitTestCase {
 		$this->assertSame( IMAGETYPE_PNG, $image[2], 'Unexpected image format for ' . $path . '.' );
 		$this->assertTrue( $image[0] > 0 && $image[0] <= 4096, 'Invalid image width for ' . $path . '.' );
 		$this->assertTrue( $image[1] > 0 && $image[1] <= 4096, 'Invalid image height for ' . $path . '.' );
+	}
+
+	private function assertAssetFormat( $path ): void {
+		if ( 'svg' === strtolower( pathinfo( $path, PATHINFO_EXTENSION ) ) ) {
+			$this->assertSafeSvg( $path );
+			return;
+		}
+
+		$this->assertValidPng( $path );
 	}
 
 	private function assertSafeSvg( $path ): void {

@@ -26,9 +26,16 @@ final class LegacySettingsMapper implements SettingsCodec {
 		$icons    = isset( $stored['icons'] ) && is_array( $stored['icons'] )
 			? $stored['icons']
 			: array();
+		$profileLinks = isset( $stored['profile_links'] ) && is_array( $stored['profile_links'] )
+			? $stored['profile_links']
+			: array();
 
 		if ( array_key_exists( 'twitter', $icons ) && ! array_key_exists( 'x', $icons ) ) {
 			$icons['x'] = $icons['twitter'];
+		}
+		if ( array_key_exists( 'twitter', $profileLinks ) && ! array_key_exists( 'x', $profileLinks ) ) {
+			$profileLinks['x'] = $profileLinks['twitter'];
+			unset( $profileLinks['twitter'] );
 		}
 
 		return new Settings(
@@ -53,7 +60,8 @@ final class LegacySettingsMapper implements SettingsCodec {
 			$this->toBoolean( isset( $stored['g_analytics'] ) ? $stored['g_analytics'] : false ),
 			$this->toBoolean( isset( $stored['auto_hide_btn'] ) ? $stored['auto_hide_btn'] : false ),
 			$this->toBoolean( isset( $stored['use_port'] ) ? $stored['use_port'] : false ),
-			$this->toBoolean( isset( $stored['nofollow'] ) ? $stored['nofollow'] : false )
+			$this->toBoolean( isset( $stored['nofollow'] ) ? $stored['nofollow'] : false ),
+			$this->normalizeProfileLinks( $profileLinks )
 		);
 	}
 
@@ -84,6 +92,7 @@ final class LegacySettingsMapper implements SettingsCodec {
 			isset( $original['icons'] ) && is_array( $original['icons'] ) ? $original['icons'] : array()
 		);
 		$original['share_templates']  = $settings->shareTemplates();
+		$this->writeProfileLinks( $original, $settings->profileLinks() );
 		$this->writeBoolean( $original, 'g_analytics', $settings->analyticsEnabled() );
 		$this->writeBoolean( $original, 'auto_hide_btn', $settings->autoHideEnabled() );
 		$this->writeBoolean( $original, 'use_port', $settings->preserveUrlPort() );
@@ -99,6 +108,38 @@ final class LegacySettingsMapper implements SettingsCodec {
 		}
 
 		return $states;
+	}
+
+	private function normalizeProfileLinks( array $stored ) {
+		$links = array();
+		foreach ( $stored as $networkId => $url ) {
+			if ( is_string( $url ) && '' !== trim( $url ) ) {
+				$links[ (string) $networkId ] = trim( $url );
+			}
+		}
+
+		return $links;
+	}
+
+	private function writeProfileLinks( array &$target, array $profileLinks ) {
+		if ( empty( $profileLinks ) ) {
+			unset( $target['profile_links'] );
+			return;
+		}
+
+		$original = isset( $target['profile_links'] ) && is_array( $target['profile_links'] )
+			? $target['profile_links']
+			: array();
+		if (
+			isset( $profileLinks['x'] ) &&
+			array_key_exists( 'twitter', $original ) &&
+			! array_key_exists( 'x', $original )
+		) {
+			$profileLinks['twitter'] = $profileLinks['x'];
+			unset( $profileLinks['x'] );
+		}
+
+		$target['profile_links'] = $profileLinks;
 	}
 
 	private function toLegacyNetworkStates( array $states, array $original ) {

@@ -51,6 +51,28 @@ final class LegacyHtmlRenderer {
 				"'></a>\n";
 		}
 
+		foreach ( $result->profileLinks() as $profileLink ) {
+			$networkId = $profileLink->network()->id();
+			$className = isset( $iconClasses[ $networkId ] )
+				? $iconClasses[ $networkId ]
+				: $this->networks->cssClass( $profileLink->network() );
+			$label = 'mail' === $networkId
+				? __( 'Contact us by email', 'html-social-share-buttons' )
+				: sprintf(
+					__( 'Visit our %s profile', 'html-social-share-buttons' ),
+					$profileLink->network()->label()
+				);
+			$output .= "<a class='" .
+				esc_attr( $className . ' zmshbt-profile-link' ) .
+				"' data-zmshbt-kind='profile'";
+			if ( 'mail' !== $networkId ) {
+				$output .= " target='_blank' rel='" .
+					esc_attr( implode( ' ', $result->relTokens() ) ) . "'";
+			}
+			$output .= " href='" . esc_url( $profileLink->url() ) . "' aria-label='" .
+				esc_attr( $label ) . "'></a>\n";
+		}
+
 		return $output . '</div>';
 	}
 

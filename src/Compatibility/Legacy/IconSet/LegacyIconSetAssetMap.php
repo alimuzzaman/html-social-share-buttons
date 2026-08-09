@@ -29,6 +29,13 @@ final class LegacyIconSetAssetMap {
 			}
 		}
 
-		return 'x' === $networkId ? 'twitter.png' : $iconSet->iconFile( $networkId );
+		if (
+			'x' === $networkId &&
+			in_array( $iconSet->id(), array( 'default', 'flat', 'long-shadows', 'prajin' ), true )
+		) {
+			return 'twitter.png';
+		}
+
+		return $iconSet->iconFile( $networkId );
 	}
 }

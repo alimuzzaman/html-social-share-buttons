@@ -17,7 +17,16 @@ final class ManifestIconSetProvider {
 	public function createRegistry( NetworkRegistry $networks ) {
 		$registry = new IconSetRegistry( $networks );
 
-		foreach ( array( 'default', 'flat', 'long-shadows', 'prajin' ) as $id ) {
+		foreach (
+			array(
+				'default',
+				'flat',
+				'long-shadows',
+				'prajin',
+				'bootstrap-solid',
+				'tabler-outline',
+			) as $id
+		) {
 			$definition = $this->loadDefinition( $id );
 			$registry->register(
 				new IconSet(

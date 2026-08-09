@@ -1,0 +1,16 @@
+<?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class zm_sh_iconset_bootstrap_solid extends __iconset_parent_class {
+	public $id = 'bootstrap-solid';
+	public $__FILE__ = __FILE__;
+
+	function __construct() {
+		\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Bootstrap\LegacyRuntime::builtInIconSets()
+			->hydrate( $this, $this->id, __FILE__ );
+		parent::__construct();
+	}
+}

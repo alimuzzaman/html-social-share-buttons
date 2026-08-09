@@ -17,3 +17,29 @@ may remain subject to the rights described by the Simple Icons disclaimer.
 
 Source: https://github.com/simple-icons/simple-icons
 Disclaimer: https://github.com/simple-icons/simple-icons/blob/develop/DISCLAIMER.md
+
+Bootstrap Icons
+---------------
+The Bootstrap Solid icon set is generated from Bootstrap Icons v1.13.1 SVG
+glyphs. The glyph paths are preserved and placed on plugin-authored tiles.
+
+Copyright: 2019-2024 The Bootstrap Authors
+Source: https://github.com/twbs/icons/tree/v1.13.1/icons
+License: MIT; see licenses/bootstrap-icons-MIT.txt
+
+Tabler Icons
+------------
+The Tabler Outline icon set is generated from Tabler Icons v3.46.0 SVG
+glyphs. The original outline geometry and stroke treatment are preserved and
+placed on plugin-authored tiles.
+
+Copyright: 2020-2026 Paweł Kuna
+Source: https://github.com/tabler/tabler-icons/tree/v3.46.0/icons/outline
+License: MIT; see licenses/tabler-icons-MIT.txt
+
+Brand marks
+-----------
+The social-platform names and logo shapes represented by these icon sets may
+remain subject to their owners' trademark and brand-usage rules. The software
+licenses above cover the distributed icon artwork; they do not grant trademark
+rights or imply endorsement by any platform owner.

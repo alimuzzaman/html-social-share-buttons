@@ -45,6 +45,13 @@
     "zm_shbt_fld[icons][telegram]",
     "zm_shbt_fld[icons][bluesky]",
     "zm_shbt_fld[icons][mail]",
+    "zm_shbt_fld[profile_links][facebook]",
+    "zm_shbt_fld[profile_links][x]",
+    "zm_shbt_fld[profile_links][linkedin]",
+    "zm_shbt_fld[profile_links][pinterest]",
+    "zm_shbt_fld[profile_links][telegram]",
+    "zm_shbt_fld[profile_links][bluesky]",
+    "zm_shbt_fld[profile_links][mail]",
     "zm_shbt_fld[g_analytics]",
     "zm_shbt_fld[auto_hide_btn]",
     "zm_shbt_fld[use_port]",
@@ -100,6 +107,12 @@
         "mail": "mailto:?body=%%permalink%%",
         "unknown": "https://example.test/unknown"
       },
+      "profile_links": {
+        "facebook": "https://www.facebook.com/example",
+        "x": "http://example.test/insecure",
+        "mail": "mailto:hello@example.com",
+        "unknown": "https://example.test/unknown"
+      },
       "unknown_truthy": "kept-as-boolean",
       "unknown_falsey": ""
     },
@@ -132,6 +145,10 @@
         "telegram": "https://example.test/telegram?url=%%permalink%%",
         "bluesky": "https://example.test/bluesky?text=%%title%%",
         "mail": "mailto:?body=%%permalink%%"
+      },
+      "profile_links": {
+        "facebook": "https://www.facebook.com/example",
+        "mail": "mailto:hello@example.com"
       },
       "unknown_truthy": true
     }
@@ -168,7 +185,8 @@
     }
   },
   "legacy_aliases": {
-    "icons.twitter": "icons.x"
+    "icons.twitter": "icons.x",
+    "profile_links.twitter": "profile_links.x"
   },
   "upgrade_rollback_case": {
     "stored_2_2_6": {

@@ -45,6 +45,11 @@ final class LegacyRenderRequestMapper {
 		$type = $options['iconset_type']
 			? $options['iconset_type']
 			: ( isset( $options[ $showOn ] ) ? $options[ $showOn ] : '' );
+		$profileLinks = $this->profileLinks(
+			isset( $options['profile_links'] ) && is_array( $options['profile_links'] )
+				? $options['profile_links']
+				: array()
+		);
 
 		return new RenderRequest(
 			sanitize_key( is_scalar( $options['iconset'] ) ? $options['iconset'] : 'default' ),
@@ -54,8 +59,72 @@ final class LegacyRenderRequestMapper {
 			$networkIds,
 			array(),
 			isset( $options['url'] ) && is_scalar( $options['url'] ) ? (string) $options['url'] : '',
-			! empty( $options['nofollow'] )
+			! empty( $options['nofollow'] ),
+			$profileLinks
 		);
+	}
+
+	private function profileLinks( array $submitted ) {
+		if ( isset( $submitted['twitter'] ) && ! isset( $submitted['x'] ) ) {
+			$submitted['x'] = $submitted['twitter'];
+			unset( $submitted['twitter'] );
+		}
+
+		$profileLinks = array();
+		foreach ( $submitted as $networkId => $value ) {
+			$networkId = (string) $networkId;
+			if (
+				! preg_match( '/^[a-z][a-z0-9-]*$/', $networkId ) ||
+				! is_string( $value )
+			) {
+				continue;
+			}
+
+			$url = $this->profileUrl( $networkId, $value );
+			if ( '' !== $url ) {
+				$profileLinks[ $networkId ] = $url;
+			}
+		}
+
+		return $profileLinks;
+	}
+
+	private function profileUrl( $networkId, $value ) {
+		$value = trim( $value );
+		if ( '' === $value || preg_match( '/[\r\n]/', $value ) ) {
+			return '';
+		}
+
+		if ( 'mail' === $networkId ) {
+			if ( 0 !== stripos( $value, 'mailto:' ) ) {
+				return '';
+			}
+			$address = substr( $value, 7 );
+			if (
+				false !== strpos( $address, '?' ) ||
+				false !== strpos( $address, '#' ) ||
+				preg_match( '/%(?:0a|0d)/i', $address )
+			) {
+				return '';
+			}
+
+			$validated = is_email( rawurldecode( $address ) );
+
+			return false !== $validated ? 'mailto:' . $validated : '';
+		}
+
+		$url = esc_url_raw( $value, array( 'https' ) );
+		$parts = $url ? wp_parse_url( $url ) : false;
+		if (
+			! is_array( $parts ) ||
+			empty( $parts['host'] ) ||
+			empty( $parts['scheme'] ) ||
+			'https' !== strtolower( $parts['scheme'] )
+		) {
+			return '';
+		}
+
+		return $url;
 	}
 
 	private function placement( $className, $showOn ) {

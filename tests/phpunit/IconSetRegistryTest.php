@@ -12,7 +12,17 @@ final class IconSetRegistryTest extends WP_UnitTestCase {
 		$provider = new ManifestIconSetProvider( dirname( __DIR__, 2 ) . '/resources/iconsets' );
 		$registry = $provider->createRegistry( $networks );
 
-		$this->assertSame( array( 'default', 'flat', 'long-shadows', 'prajin' ), $registry->ids() );
+		$this->assertSame(
+			array(
+				'default',
+				'flat',
+				'long-shadows',
+				'prajin',
+				'bootstrap-solid',
+				'tabler-outline',
+			),
+			$registry->ids()
+		);
 		$this->assertSame( array( 'square' ), $registry->get( 'default' )->shapes() );
 		$this->assertSame( array( 'square', 'circle' ), $registry->get( 'flat' )->shapes() );
 		$this->assertSame( 'x.png', $registry->get( 'flat' )->iconFile( 'x' ) );
@@ -25,6 +35,13 @@ final class IconSetRegistryTest extends WP_UnitTestCase {
 			( new LegacyIconSetAssetMap() )->directory( $registry->get( 'long-shadows' ) )
 		);
 		$this->assertFalse( $registry->get( 'prajin' )->hasIcon( 'mail' ) );
+		foreach ( array( 'bootstrap-solid', 'tabler-outline' ) as $iconSetId ) {
+			$this->assertSame( array( 'square', 'circle' ), $registry->get( $iconSetId )->shapes() );
+			$this->assertSame(
+				array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
+				array_keys( $registry->get( $iconSetId )->iconFiles() )
+			);
+		}
 	}
 
 	public function testIconSetsCannotReferenceUnknownNetworks(): void {

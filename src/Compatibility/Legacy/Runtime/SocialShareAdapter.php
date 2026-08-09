@@ -95,11 +95,14 @@ class SocialShareAdapter {
 		$options = $this->options;
 
 		if ( isset( $options['g_analytics'] ) && $options['g_analytics'] ) {
+			$shareSelector = ! empty( $options['profile_links'] )
+				? '.zmshbt a:not(.zmshbt-profile-link)'
+				: '.zmshbt a';
 			echo "
 				<script>
 				jQuery(document).ready(function($){
 					var _gaq = _gaq || [];
-					jQuery('.zmshbt a').on('click', function(event){
+					jQuery('" . esc_js( $shareSelector ) . "').on('click', function(event){
 						var _gaq = _gaq || [];
 						switch(this.className){
 							case 'googlepluse':
@@ -187,6 +190,14 @@ class SocialShareAdapter {
 		$options = is_array( $instance ) && ! empty( $instance )
 			? $instance
 			: ( is_array( $this->options ) ? $this->options : array() );
+		if (
+			! array_key_exists( 'profile_links', $options ) &&
+			is_array( $this->options ) &&
+			isset( $this->options['profile_links'] ) &&
+			is_array( $this->options['profile_links'] )
+		) {
+			$options['profile_links'] = $this->options['profile_links'];
+		}
 		$outcome = LegacyRuntime::renderer()->render( $options, $this->iconsets );
 
 		$this->stylesheets = array_merge(

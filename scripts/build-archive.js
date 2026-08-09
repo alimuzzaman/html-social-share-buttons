@@ -21,6 +21,13 @@ const target = path.resolve(repositoryRoot, '..', `${pluginSlug}.${versionMatch[
 const stagingRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'hssb-archive-'));
 const stagedPlugin = path.join(stagingRoot, pluginSlug);
 const rootExclusions = new Set(['.git', 'node_modules']);
+const sourceDateEpoch = Number(process.env.SOURCE_DATE_EPOCH || 946684800);
+
+if (!Number.isSafeInteger(sourceDateEpoch) || sourceDateEpoch < 315532800) {
+	throw new Error('SOURCE_DATE_EPOCH must be an integer Unix timestamp no earlier than 1980-01-01.');
+}
+
+const archiveTimestamp = new Date(sourceDateEpoch * 1000);
 
 function copyTree(source, destination, relativeDirectory = '') {
 	fs.mkdirSync(destination, { recursive: true });
@@ -44,8 +51,21 @@ function copyTree(source, destination, relativeDirectory = '') {
 	}
 }
 
+function normalizeTreeTimestamps(directory) {
+	for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+		const entryPath = path.join(directory, entry.name);
+		if (entry.isDirectory()) {
+			normalizeTreeTimestamps(entryPath);
+		}
+		fs.utimesSync(entryPath, archiveTimestamp, archiveTimestamp);
+	}
+
+	fs.utimesSync(directory, archiveTimestamp, archiveTimestamp);
+}
+
 try {
 	copyTree(repositoryRoot, stagedPlugin);
+	normalizeTreeTimestamps(stagedPlugin);
 
 	const result = spawnSync(
 		'wp',

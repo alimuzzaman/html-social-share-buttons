@@ -17,6 +17,7 @@ final class Settings {
 	private $autoHideEnabled;
 	private $preserveUrlPort;
 	private $noFollow;
+	private $profileLinks;
 
 	public function __construct(
 		$title,
@@ -30,7 +31,8 @@ final class Settings {
 		$analyticsEnabled,
 		$autoHideEnabled,
 		$preserveUrlPort,
-		$noFollow
+		$noFollow,
+		array $profileLinks = array()
 	) {
 		$this->title             = (string) $title;
 		$this->iconSetId         = (string) $iconSetId;
@@ -44,6 +46,7 @@ final class Settings {
 		$this->autoHideEnabled   = (bool) $autoHideEnabled;
 		$this->preserveUrlPort   = (bool) $preserveUrlPort;
 		$this->noFollow          = (bool) $noFollow;
+		$this->profileLinks      = $profileLinks;
 	}
 
 	public function title() {
@@ -92,5 +95,9 @@ final class Settings {
 
 	public function noFollow() {
 		return $this->noFollow;
+	}
+
+	public function profileLinks() {
+		return $this->profileLinks;
 	}
 }
