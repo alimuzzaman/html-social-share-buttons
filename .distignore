@@ -32,6 +32,9 @@ CLAUDE.md
 .stylelintrc*
 eslint.config.cjs
 phpcs.xml
+phpcs.xml.dist
+phpstan.neon.dist
+phpstan-baseline.neon
 phpunit.xml
 phpunit.xml.dist
 phpunit.multisite.xml.dist

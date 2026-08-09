@@ -74,7 +74,7 @@ final class ProfileLinkSettingsTest extends WP_UnitTestCase {
 			),
 		);
 
-		$this->assertSame(
+		$this->assertEquals(
 			array(
 				'profile_links' => array(
 					'twitter' => 'https://x.com/example',
@@ -112,12 +112,11 @@ final class ProfileLinkSettingsTest extends WP_UnitTestCase {
 		$settings = new zm_sh_settings();
 		$settings->admin_scripts( 'settings_page_zm_shbt_opt' );
 		$data = wp_scripts()->registered['zm_sh_admin_scripts']->extra['data'];
+		$this->assertSame( 1, preg_match( '/^var zm_sh_react_settings = (.+);$/', $data, $matches ) );
+		$payload = json_decode( $matches[1], true );
 
-		$this->assertStringContainsString(
-			'"profile_links":{"x":"https:\/\/x.com\/example"}',
-			$data
-		);
-		$this->assertStringNotContainsString( '"profile_links":{"twitter":', $data );
+		$this->assertSame( 'https://x.com/example', $payload['options']['profile_links']['x'] );
+		$this->assertArrayNotHasKey( 'twitter', $payload['options']['profile_links'] );
 	}
 
 	public function testClearingProfilesRemovesTheCompatibilityStorageKey(): void {

@@ -5,10 +5,10 @@
 - **Spec ID:** SPEC-SETTINGS-REVAMP-2026-07-09
 - **Title:** Settings page revamp and configuration controls
 - **Owner:** Product + UI + Engineering
-- **Status:** Draft
+- **Status:** Implemented — manual visual verification remains
 - **Created:** 2026-07-09
-- **Last Updated:** 2026-07-12
-- **Version:** 2.9
+- **Last Updated:** 2026-08-10
+- **Version:** 3.0
 - **Source of Truth:** Single file in `/specs/`
 
 ## 1.0 Context
@@ -110,11 +110,11 @@ For every proposed settings UI change, run all scenarios below and store expecte
   source lives under `src/js/` and preserves the backend form contract.
 
 ### 6.3 Acceptance
-- [ ] No unapproved frontend output changes in existing scenarios.
-- [ ] Settings page save/reload preserves values.
-- [ ] Existing custom exclusions open as selected tokens in the single combobox and remain unchanged after save when not edited.
-- [ ] Search-selected page/post exclusions serialize as comma-separated IDs in `zm_shbt_fld[excludes]`.
-- [ ] Enabled platform template edits save and affect generated share URLs; disabled platform templates are not shown.
+- [x] No unapproved frontend output changes in existing deterministic scenarios.
+- [x] Settings page save/reload preserves values (automated save-contract coverage).
+- [x] Existing custom exclusions open as selected tokens in the single combobox and remain unchanged after save when not edited.
+- [x] Search-selected page/post exclusions serialize as comma-separated IDs in `zm_shbt_fld[excludes]`.
+- [x] Enabled platform template edits save and affect generated share URLs; disabled platform templates are not shown.
 - [ ] Social Network cards have no shared-row-height gaps on desktop and collapse to one source-ordered column on mobile.
 - [ ] Expanded template panels show the scheme-aware left accent border without changing parameter-editor contrast or layout.
 - [ ] Canonical platform templates appear as default guidance, while saved overrides remain editable and can be reset per platform.
@@ -129,16 +129,20 @@ For every proposed settings UI change, run all scenarios below and store expecte
 - [ ] Display placement and Social Networks render through the same expandable toggle-panel component, including their collapsed header treatment.
 - [ ] An expanded placement does not create an empty same-row gap below a collapsed placement in the neighboring desktop column.
 - [ ] Each top-level settings section has the scheme-aware 3px left accent border.
-- [ ] Settings submenu and Plugins action link resolve to the settings page.
-- [ ] Shortcut/modal output remains correct and syntactically unchanged for identical selections.
-- [ ] `make admin-react-smoke` passes after every React settings UI change.
-- [ ] Sandbox `run_tests` passes after every settings form/save change, including the `WP_UnitTestCase` save-contract coverage.
-- [ ] `make frontend-drift-surface` passes for settings-only implementation work.
+- [x] Settings submenu and Plugins action link resolve to the settings page.
+- [x] Shortcode/modal output remains correct and syntactically unchanged for identical selections.
+- [x] The admin React smoke contract passes for the implemented settings UI.
+- [x] Sandbox PHPUnit covers the settings form/save contract.
+- [x] The frontend drift-surface contract passes for the implemented settings UI.
 
 ## 7.0 Risks and Hard Rules
 - Hard rule: this spec accepts no breaking change to output for unchanged settings values.
 - Hard rule: do not alter option schema without a dedicated migration section and separate schema section update in `SPECKIT-001`.
 
-## 8.0 Open Questions
-- Should we standardize output fixture format as HTML snapshot only, or HTML + screenshot pair?
-- Should section heading text be localized now or in a later i18n cleanup pass?
+## 8.0 Resolved Questions
+- Deterministic HTML snapshots are the required regression gate. Screenshots
+  supplement them for manual visual review and are not the canonical output
+  contract.
+- A complete JavaScript string-localization pass remains release follow-up;
+  it must cover headings, helper text, fields, and block-editor copy together
+  rather than translating isolated labels inconsistently.

@@ -14,15 +14,24 @@ use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\ManifestIconSet
 final class ProfileLinkRenderingTest extends WP_UnitTestCase {
 	private $builder;
 	private $renderer;
+	private $originalRuntime;
 
 	protected function setUp(): void {
 		parent::setUp();
+		global $zm_sh;
+		$this->originalRuntime = $zm_sh;
 		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
 		$iconSets = ( new ManifestIconSetProvider(
 			dirname( __DIR__, 2 ) . '/resources/iconsets'
 		) )->createRegistry( $networks );
 		$this->builder = new BuildShareButtons( $networks, $iconSets, new ResolveShareUrl() );
 		$this->renderer = new LegacyHtmlRenderer( new LegacyNetworkMapper() );
+	}
+
+	protected function tearDown(): void {
+		global $zm_sh;
+		$zm_sh = $this->originalRuntime;
+		parent::tearDown();
 	}
 
 	public function testCanonicalBuilderUsesRegistryOrderAndDoesNotRequireShareToggle(): void {

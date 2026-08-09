@@ -13,7 +13,7 @@ final class BootstrapPluginTest extends WP_UnitTestCase {
 			$runtime->networks()->ids()
 		);
 		$this->assertSame(
-			array( 'default', 'flat', 'long-shadows', 'prajin' ),
+			array( 'default', 'flat', 'long-shadows', 'prajin', 'bootstrap-solid', 'tabler-outline' ),
 			$runtime->iconSets()->ids()
 		);
 		$this->assertSame( $runtime->excludedContent(), LegacyRuntime::excludedContent() );

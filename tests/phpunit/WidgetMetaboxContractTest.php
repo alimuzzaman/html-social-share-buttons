@@ -14,7 +14,7 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		parent::tearDown();
 	}
 
-	public function testWidgetSavedShapeAndCurrentNumericIconBehaviorAreFrozen(): void {
+	public function testWidgetSavesAndRendersSelectedNetworks(): void {
 		$widget = new zm_html_share_widget();
 		$saved = $widget->update(
 			array(
@@ -32,7 +32,7 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		$this->assertSame(
 			array(
 				'title' => 'Widget title',
-				'icons' => array( 'facebook', 'x' ),
+				'icons' => array( 'facebook' => '1', 'x' => '1' ),
 				'iconset_type' => 'circle',
 				'iconset' => 'flat',
 			),
@@ -51,10 +51,31 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		);
 		$output = (string) ob_get_clean();
 
-		$this->assertSame(
-			'<section><h2>Widget title</h2><div class="zmshbt in_widget flat circle"></div></section>',
+		$this->assertStringStartsWith(
+			'<section><h2>Widget title</h2><div class="zmshbt in_widget flat circle">',
 			$output
 		);
+		$this->assertStringContainsString( 'class="facebook"', $output );
+		$this->assertStringContainsString( 'class="twitter"', $output );
+	}
+
+	public function testWidgetRendersLegacyNumericNetworkStorage(): void {
+		$widget = new zm_html_share_widget();
+
+		ob_start();
+		$widget->widget(
+			array(),
+			array(
+				'title' => '',
+				'icons' => array( 'facebook', 'x' ),
+				'iconset_type' => 'square',
+				'iconset' => 'default',
+			)
+		);
+		$output = (string) ob_get_clean();
+
+		$this->assertStringContainsString( 'class="facebook"', $output );
+		$this->assertStringContainsString( 'class="twitter"', $output );
 	}
 
 	public function testMetaboxRenderAndAuthorizedSaveMatchThePersistedContract(): void {

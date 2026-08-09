@@ -130,12 +130,9 @@ final class RenderRequest {
 			return 'mailto:' . $address;
 		}
 
-		$parts = parse_url( $url );
 		if (
-			! is_array( $parts ) ||
-			empty( $parts['scheme'] ) ||
-			empty( $parts['host'] ) ||
-			'https' !== strtolower( $parts['scheme'] )
+			false === filter_var( $url, FILTER_VALIDATE_URL ) ||
+			0 !== stripos( $url, 'https://' )
 		) {
 			throw new InvalidArgumentException( 'Social profile links must use an absolute HTTPS URL.' );
 		}

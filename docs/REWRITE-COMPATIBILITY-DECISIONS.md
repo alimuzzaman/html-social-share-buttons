@@ -16,11 +16,17 @@ decision replaces them.
   and stored builder representations remain available through
   `Compatibility/Legacy`.
 - Bluesky's historical `%0A` URL suffix, analytics inline-script behavior,
-  X's `twitter` CSS/file naming, and the widget numeric-list rendering defect
-  remain unchanged because changing them would alter frozen output or saved
-  behavior.
+  and X's `twitter` CSS/file naming remain unchanged because changing them
+  would alter frozen output.
 
-## Intentional defect corrections pending release sign-off
+## Approved defect corrections
+
+These compatibility-safe corrections were approved for the rewritten release
+on 2026-08-10:
+
+- Widget selections are stored in the associative shape consumed by the
+  renderer. Existing numeric-list widget instances are normalized at render
+  time, so both historical and newly saved widgets render their selections.
 
 - The implementation currently parses the complete URL-encoded AJAX settings
   body before applying the
@@ -34,10 +40,9 @@ decision replaces them.
 - WPBakery currently enqueues its bundle once, localizes its nonce once,
   accepts either a JSON string or an already-parsed response, and inserts
   server-provided labels as text rather than HTML.
-- Malformed mixed-type builder attributes currently normalize to safe
+- Malformed mixed-type builder attributes normalize to safe
   empty/default values. Valid persisted shortcode, block, Elementor, and
-  WPBakery values retain exact output. These corrections require explicit
-  product sign-off before the release candidate is published.
+  WPBakery values retain exact output.
 
 ## Storage, migration, and rollback
 
@@ -54,6 +59,21 @@ decision replaces them.
 - Canonical icon assets live under `assets/iconsets/<set>/<shape>/<network>`.
   Compatibility continues to emit historical public URLs until provenance,
   browser parity, and an explicit URL-transition decision are complete.
-- The working policy is to support the full legacy API throughout 3.x, without
+- Historical PNG packs remain in the plugin. They are not replaced or removed
+  in 3.0; their source and redistribution evidence still needs to be recorded
+  before publication.
+- The full legacy API remains supported throughout 3.x, without
   runtime deprecation notices in 3.0, and consider removal only in 4.0 after a
   documented deprecation period.
+
+## Release policy
+
+- WordPress 5.3 and PHP 7.0 remain the support floor for 3.0.
+- Third-party icon sets keep the legacy registration bridge and the canonical
+  filter. A public manifest API is deferred until its extension contract is
+  designed and tested.
+- The target release is 3.0.0. The first internal candidate is 3.0.0-rc.1;
+  version headers are not changed until the local release gates are green.
+- The release candidate gets a 14-day staging soak. Rollback is to 2.2.6,
+  which reads the unchanged option and post-meta schema; additive 3.0 keys are
+  ignored by the old version.

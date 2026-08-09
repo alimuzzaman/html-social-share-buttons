@@ -6,7 +6,14 @@ final class ExcludedContentPolicy {
 	public function identifiers( $excludedContent ) {
 		$identifiers = array_map( 'trim', explode( ',', (string) $excludedContent ) );
 
-		return array_values( array_filter( $identifiers, 'strlen' ) );
+		return array_values(
+			array_filter(
+				$identifiers,
+				static function ( $identifier ) {
+					return '' !== $identifier;
+				}
+			)
+		);
 	}
 
 	public function matches( $contentId, $slug, $title, $excludedContent ) {
@@ -16,7 +23,9 @@ final class ExcludedContentPolicy {
 				trim( (string) $slug ),
 				trim( (string) $title ),
 			),
-			'strlen'
+			static function ( $candidate ) {
+				return '' !== $candidate;
+			}
 		);
 
 		foreach ( $this->identifiers( $excludedContent ) as $identifier ) {

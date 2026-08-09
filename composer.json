@@ -6,6 +6,12 @@
 	"require": {
 		"php": ">=7.0"
 	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.2",
+		"phpstan/phpstan": "^2.2",
+		"szepeviktor/phpstan-wordpress": "^2.0",
+		"wp-coding-standards/wpcs": "^3.4"
+	},
 	"autoload": {
 		"psr-4": {
 			"Alimuzzaman\\HtmlSocialShareButtons\\": "src/"
@@ -16,6 +22,17 @@
 		]
 	},
 	"scripts": {
-		"test": "phpunit --configuration phpunit.xml.dist"
+		"test": "phpunit --configuration phpunit.xml.dist",
+		"analyse": "phpstan analyse --configuration phpstan.neon.dist --memory-limit=1G",
+		"phpcs": "phpcs --standard=phpcs.xml.dist",
+		"quality": [
+			"@analyse",
+			"@phpcs"
+		]
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	}
 }

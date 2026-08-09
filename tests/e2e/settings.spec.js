@@ -4,8 +4,10 @@ async function login( page ) {
 	await page.goto( '/wp-login.php' );
 	await page.locator( '#user_login' ).fill( process.env.WP_ADMIN_USER || 'admin' );
 	await page.locator( '#user_pass' ).fill( process.env.WP_ADMIN_PASSWORD || 'admin' );
-	await page.locator( '#wp-submit' ).click();
-	await expect( page ).not.toHaveURL( /wp-login\.php/ );
+	await Promise.all( [
+		page.waitForURL( /\/wp-admin\// ),
+		page.locator( '#wp-submit' ).click(),
+	] );
 }
 
 test.describe( 'Settings accessibility', () => {

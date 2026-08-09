@@ -59,6 +59,7 @@ final class LegacyHtmlRenderer {
 			$label = 'mail' === $networkId
 				? __( 'Contact us by email', 'html-social-share-buttons' )
 				: sprintf(
+					/* translators: %s is the social network name. */
 					__( 'Visit our %s profile', 'html-social-share-buttons' ),
 					$profileLink->network()->label()
 				);

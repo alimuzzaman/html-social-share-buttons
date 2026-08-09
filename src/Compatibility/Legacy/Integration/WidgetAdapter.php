@@ -36,6 +36,9 @@ class WidgetAdapter extends \WP_Widget {
 			return;
 		}
 
+		$instance['icons'] = $this->normalizeIconSelection(
+			isset( $instance['icons'] ) ? $instance['icons'] : array()
+		);
 		$beforeWidget = isset( $arguments['before_widget'] ) ? $arguments['before_widget'] : '';
 		$afterWidget = isset( $arguments['after_widget'] ) ? $arguments['after_widget'] : '';
 		$beforeTitle = isset( $arguments['before_title'] ) ? $arguments['before_title'] : '';
@@ -59,9 +62,9 @@ class WidgetAdapter extends \WP_Widget {
 		$instance['title'] = isset( $newInstance['title'] )
 			? sanitize_text_field( $newInstance['title'] )
 			: '';
-		$instance['icons'] = isset( $newInstance['icons'] ) && is_array( $newInstance['icons'] )
-			? array_map( 'sanitize_key', array_keys( $newInstance['icons'] ) )
-			: array();
+		$instance['icons'] = $this->normalizeIconSelection(
+			isset( $newInstance['icons'] ) ? $newInstance['icons'] : array()
+		);
 		$instance['iconset_type'] = isset( $newInstance['iconset_type'] )
 			? sanitize_key( $newInstance['iconset_type'] )
 			: 'square';
@@ -70,6 +73,28 @@ class WidgetAdapter extends \WP_Widget {
 			: 'default';
 
 		return $instance;
+	}
+
+	private function normalizeIconSelection( $icons ) {
+		if ( ! is_array( $icons ) || empty( $icons ) ) {
+			return array();
+		}
+
+		$keys = array_keys( $icons );
+		$networkIds = $keys === range( 0, count( $keys ) - 1 ) ? $icons : $keys;
+		$normalized = array();
+		foreach ( $networkIds as $networkId ) {
+			if ( ! is_scalar( $networkId ) ) {
+				continue;
+			}
+
+			$networkId = sanitize_key( (string) $networkId );
+			if ( '' !== $networkId ) {
+				$normalized[ $networkId ] = '1';
+			}
+		}
+
+		return $normalized;
 	}
 
 	public function form( $instance ) {

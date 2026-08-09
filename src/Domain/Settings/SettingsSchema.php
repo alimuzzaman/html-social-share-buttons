@@ -48,11 +48,13 @@ final class SettingsSchema {
 		foreach ( $values as $value ) {
 			$value = (string) $value;
 			if ( ! preg_match( '/^[a-z][a-z0-9-]*$/', $value ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Domain exceptions are not rendered output.
 				throw new InvalidArgumentException( 'Invalid settings ' . $label . ' identifier.' );
 			}
 			$normalized[ $value ] = $value;
 		}
 		if ( empty( $normalized ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Domain exceptions are not rendered output.
 			throw new InvalidArgumentException( 'Settings schemas require at least one ' . $label . '.' );
 		}
 

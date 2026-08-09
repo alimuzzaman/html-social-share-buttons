@@ -1,7 +1,7 @@
 === Html Social share buttons ===
 Contributors: alimuzzamanalim
 Author: Md. Alimuzzaman Alim
-Tags: lightweight, social share, block editor, fast, privacy-friendly
+Tags: social share buttons, social sharing, gutenberg block, social media, share icons
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.0
@@ -10,14 +10,18 @@ License: GPLv2
 Stable tag: 2.2.6
 
 
-Lightweight HTML and CSS share buttons with a no-JavaScript frontend. Settings and block editing use WordPress JavaScript.
+Fast, privacy-friendly social share buttons with Gutenberg, Elementor, widgets, profile links, SVG icons, and no tracking by default.
 
 == Description ==
 
-Designed By Hakan Ertan <a target="_blank" href="https://www.tonicons.com/" rel="follow">www.tonicons.com</a>
+HTML Social Share Buttons adds fast social sharing controls to WordPress posts,
+pages, sidebars, and page-builder layouts. The frontend uses lightweight HTML
+and CSS, keeps tracking off by default, and does not depend on a remote icon CDN.
 
-To make Icons horizontal append  class='in_widget' in ShortCode.
-Ex. [zm_sh_btn iconset='long_shadow' iconset_type='square' icons='facebook,x,linkedin,pinterest,mail' class='in_widget']
+Use the native Gutenberg block, automatic content placement, a widget,
+Elementor, WPBakery, a shortcode, or the generated PHP snippet. Share actions
+and optional social profile/contact links are configured separately, so a link
+to your profile is never treated as a share event.
 
 <strong>Features:</strong><br />
 <ul>
@@ -33,27 +37,62 @@ Ex. [zm_sh_btn iconset='long_shadow' iconset_type='square' icons='facebook,x,lin
 	<li>Translation-ready strings and a lightweight HTML/CSS frontend.</li>
 </ul>
 
+<strong>Shortcode example:</strong>
+
+`[zm_sh_btn iconset='long_shadow' iconset_type='square' icons='facebook,x,linkedin,pinterest,mail' class='in_widget']`
+
+The `in_widget` class displays the buttons horizontally.
+
 == Installation ==
-1. At first activate the plugin.
+1. Upload the plugin, or install it from the WordPress plugin directory.
+2. Activate **HTML Social Share Buttons**.
+3. Open **Settings > Html Social Share**.
+4. Choose networks, icon style, button shape, and automatic placements.
+5. Optionally add profile/contact links, customize share URL templates, or add
+   the Gutenberg block, widget, Elementor element, WPBakery element, shortcode,
+   or generated PHP snippet where needed.
 
-2. There are two way to use this share button. You can use as widget or on the left site.
+== Frequently Asked Questions ==
 
-3. You get an option panel under the "Settings" menu called "Html Social Share".
+= Does the plugin track visitors? =
 
-4. By going to option panel:
-	a) You will able to enable/disable widget.
-	b) You will be able to display share button horizontally.
+No tracking is enabled by default. Optional Google Social Analytics support can
+be enabled in Advanced settings.
 
-5. Then drag and drop this widget to your sidebar or header banner or footer.
+= What is the difference between a share button and a profile link? =
 
-6. That's all. Enjoy this widget.
+A share button opens a network composer for the current page. A profile link
+opens your configured social profile or email destination. Profile clicks are
+excluded from the optional share analytics handler.
+
+= Does it work with the block editor? =
+
+Yes. Add the native HTML Social Share block and select its networks, icon set,
+shape, and layout. The block is rendered dynamically on the server so it uses
+the current post URL and stays compatible with frontend filters.
+
+= Can I use it without the block editor? =
+
+Yes. Automatic placement, widgets, Elementor, WPBakery, shortcodes, and a PHP
+code generator are also available.
+
+= Are icons loaded from a third-party CDN? =
+
+No. Bundled icon assets are served from your WordPress site.
+
+== Credits ==
+
+Original icon design credit: Hakan Ertan, tonicons.com. Additional generated
+vector sources and their license notices are included with the plugin.
 
 == Changelog ==
 
 = Unreleased =
 * **FEATURE**: Added optional global social profile and email links beside share buttons.
 * **FEATURE**: Added complete Bootstrap Solid and Tabler Outline SVG icon sets for all supported networks.
+* **FIX**: Saved widget network selections now render correctly while preserving existing widget data.
 * **IMPROVEMENT**: Added reproducible icon generation, pinned source checksums, and bundled MIT license notices.
+* **QUALITY**: Added scoped PHPStan and WordPress coding-standard checks for the rewritten namespace.
 
 = 2.2.6 =
 * **SECURITY**: Hardened rendering, icon-set, widget, shortcode, and integration paths against malformed input and missing runtime objects.

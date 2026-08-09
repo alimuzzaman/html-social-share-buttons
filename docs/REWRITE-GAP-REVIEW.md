@@ -6,10 +6,12 @@ The latest published baseline is `v2.2.6` at commit `620f1ae66`. The current
 branch and working tree contain the accessibility, release-verification, and
 rewrite work described here after that tag.
 
-The rewrite now owns production share-button construction and keeps exact
+The architectural rewrite is implementation-complete: production boots the
+new service graph, which owns share-button construction and keeps exact
 public output through a compatibility renderer. Historical globals and
 WordPress adapters are isolated under `Compatibility/Legacy`; settings and
-legacy asset URLs remain deliberately behind that boundary.
+legacy asset URLs remain deliberately behind that boundary. Release hardening
+is still in progress, so this is not yet a published 3.0 release.
 
 ## What is now established
 
@@ -141,10 +143,9 @@ transition are also required before historical public URLs move.
 
 ### P1 — characterized defects requiring an explicit compatibility decision
 
-- Widget saves store selected networks as a numeric list while the renderer
-  expects associative keys, producing an empty button wrapper after a normal
-  widget save. This is now frozen by a contract and should be fixed only with
-  an upgrade/rollback decision.
+- Widget saves now store the associative selection shape consumed by the
+  renderer. Render-time normalization preserves existing numeric-list widget
+  instances. Both paths have regression coverage.
 - The AJAX settings handler previously sanitized the complete URL-encoded form
   before parsing, which discarded every field after the first separator. It
   now parses first and applies the existing field sanitizer; the full saved
@@ -185,45 +186,60 @@ version. Before the first real migration:
 
 ## Verification and release gaps
 
-- CI is configured to syntax-check PHP 7.0–8.5, smoke-test the minimum
-  WordPress 5.3/PHP 7.0 pair, and test WordPress 6.8/latest on PHP 8.3; the
-  updated remote workflow has not run yet.
-- CI runs the PHPUnit regular, AJAX, and multisite suites on WordPress 6.8 and
-  latest. WordPress 5.3 remains an activation/shortcode smoke because its old
-  test library is incompatible with the PHPUnit 9 harness.
-- CI builds, inspects, installs, and activates the release ZIP, but the updated
-  remote workflow has not run yet.
-- Builder browser tests skip when Elementor or WPBakery is unavailable; the
-  settings accessibility test passes in the healthy Sandbox instance.
-- A fresh local Sandbox instance cannot start while the workstation Docker
-  daemon is unavailable. The configured remote runner also currently rejects
-  jobs before execution because its Sandbox CLI path is missing; neither
-  failure produced a plugin test result.
-- The healthy cached Sandbox instance passes 108 regular tests/1,382 assertions
-  (one intentional multisite skip), seven AJAX tests/25 assertions, and the
-  multisite contract/7 assertions. The strict frontend CLI independently
-  passes all 33 scenarios.
-- Plugin Check reports warnings only, all from the legacy global surface that
-  the compatibility phase is designed to isolate.
-- Two independent `git archive` checkouts build valid 272-file release ZIPs.
-  After timestamp normalization, consecutive builds are byte-identical; CI now
-  repeats that comparison before installing the archive.
-- PHPStan/PHPCS and a committed warning baseline for the new namespace remain.
+- CI changes are intentionally out of scope for this cycle. Local Sandbox and
+  archive checks are the active gates.
+- A fresh Sandbox instance passes 116 regular tests/2,009 assertions, seven
+  AJAX tests/25 assertions, and the multisite contract/seven assertions.
+- The isolated fresh-instance Playwright worker passes. The settings keyboard
+  accessibility scenario runs; Elementor fixture-dependent cases and
+  WPBakery-unavailable cases remain conditional.
+- Plugin Check reports no errors. Remaining warnings are compatibility names,
+  the intentionally staged legacy settings sanitizer, and WordPress's modern
+  translation-loading advisory.
+- The release build produces a valid 311-file, 773 KB archive and passes the
+  distribution contract.
+- PHPStan level 5, WordPress-Core PHPCS rules, and a committed clean baseline
+  cover the rewritten namespace. PSR-4 file names and camelCase domain APIs are
+  explicitly excluded from WordPress's procedural naming sniffs.
 - The package header and archive name still say `2.2.6`; a release-candidate
   version must be selected before publication.
 
-## Product decisions still required before 3.0
+Still unfinished before a public 3.0 release:
 
-- Confirm WordPress 5.3 and PHP 7.0 remain the actual support floor.
-- Confirm exact bug compatibility versus approved fixes for known output
-  quirks; the currently implemented corrections are listed as pending sign-off
-  in `REWRITE-COMPATIBILITY-DECISIONS.md`.
-- Confirm the legacy API remains supported throughout 3.x and the planned
-  deprecation/removal policy for 4.0.
-- Confirm whether third-party icon sets register through only the new filter or
-  also through a documented manifest API.
-- Define upgrade notices, rollback instructions, and the release-candidate
-  soak period.
+- source and redistribution evidence for the retained historical PNG packs;
+- manual cross-browser visual parity for all historical and generated icon
+  sets;
+- real Elementor and WPBakery fixture coverage rather than conditional skips;
+- the complete JavaScript localization pass;
+- `block.json` registration and a direct canonical dynamic-block renderer;
+- a 14-day staging soak, rollback rehearsal, and final version/readme alignment.
+
+## Product decisions recorded for 3.0
+
+- WordPress 5.3 and PHP 7.0 remain the support floor.
+- The compatibility-safe defect corrections in
+  `REWRITE-COMPATIBILITY-DECISIONS.md`, including the widget fix, are approved.
+- The legacy API remains supported throughout 3.x; removal is considered only
+  for 4.0 after a documented deprecation period and usage audit.
+- Third-party icon sets keep both the legacy bridge and canonical filter. A
+  documented public manifest API is deferred.
+- The target is 3.0.0, beginning with an internal 3.0.0-rc.1 and a 14-day
+  staging soak. Rollback is to 2.2.6 with no reverse data migration.
+
+## Next implementation plan
+
+1. Finish the local regular, AJAX, multisite, browser, Plugin Check, and archive
+   gates; do not add CI in this cycle.
+2. Register the existing dynamic block from `block.json` and call the canonical
+   renderer directly instead of routing through the shortcode callback. Keep
+   JavaScript responsible for editor controls and preview, not frontend HTML.
+3. Record source, version, checksum, license, and brand-guideline metadata for
+   each additional vector icon. Keep the historical PNG packs while their
+   provenance is documented.
+4. Complete WordPress.org listing copy, screenshots, FAQ, and the accompanying
+   release article before changing the version to 3.0.0-rc.1.
+5. Run the 14-day staging soak, verify rollback to 2.2.6, then make the final
+   publish decision.
 
 ## Completion definition
 

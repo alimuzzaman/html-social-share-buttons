@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="HTML Social Share Buttons rewritten namespace">
+	<description>WordPress coding standards for the rewritten, non-legacy PHP namespace.</description>
+
+	<arg name="basepath" value="." />
+	<arg name="colors" />
+	<arg name="extensions" value="php" />
+	<arg name="parallel" value="8" />
+
+	<file>src/Application</file>
+	<file>src/Bootstrap</file>
+	<file>src/Domain</file>
+	<file>src/Infrastructure</file>
+
+	<rule ref="WordPress-Core">
+		<!-- The PSR-4 domain layer intentionally uses StudlyCaps files and camelCase APIs. -->
+		<exclude name="WordPress.Files.FileName" />
+		<exclude name="WordPress.NamingConventions.ValidFunctionName" />
+		<exclude name="WordPress.NamingConventions.ValidVariableName" />
+		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
+	</rule>
+	<config name="minimum_supported_wp_version" value="5.3" />
+</ruleset>

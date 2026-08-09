@@ -57,6 +57,7 @@ function loadDistignore() {
 			if (ignored && !isGlob(pattern)) {
 				directories.add(pattern);
 			}
+			fileRules.push({ ignored, pattern });
 			continue;
 		}
 

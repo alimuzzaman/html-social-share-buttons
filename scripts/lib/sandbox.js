@@ -10,6 +10,7 @@ const path = require('path');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const ENV_FILE = path.join(REPO_ROOT, '.wp-env-port');
+const LOCAL_FILE = path.join(REPO_ROOT, 'sandbox.local.yml');
 
 function fail(message) {
 	console.error(`\nError: ${message}\n`);
@@ -58,6 +59,30 @@ function instanceName() {
 		}
 	} catch (error) {
 		// Start has not written the descriptor yet.
+	}
+
+	try {
+		const localConfig = fs.readFileSync(LOCAL_FILE, 'utf8');
+		const match = localConfig.match(/^instance:\s*([A-Za-z0-9._-]+)\s*$/m);
+		if (match) {
+			return match[1];
+		}
+	} catch (error) {
+		// Sandbox has not generated its local descriptor yet.
+	}
+
+	try {
+		const status = execFileSync(
+			resolveSb(),
+			['status', '--project-dir', REPO_ROOT],
+			{encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe']}
+		);
+		const match = status.match(/^[^\n]*Instance:\s*([A-Za-z0-9._-]+)/m);
+		if (match) {
+			return match[1];
+		}
+	} catch (error) {
+		// No managed instance exists for this project yet.
 	}
 
 	return path.basename(REPO_ROOT);
