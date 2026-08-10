@@ -82,8 +82,11 @@ No. Bundled icon assets are served from your WordPress site.
 
 == Credits ==
 
-Original icon design credit: Hakan Ertan, tonicons.com. Additional generated
-vector sources and their license notices are included with the plugin.
+Historical icon-pack provenance is under review; the repository does not yet
+contain verified redistribution records for all retained PNG assets. Generated
+Bootstrap Icons and Tabler Icons sources and their license notices are included
+with the plugin. See `resources/iconsets/ASSET-SOURCES.md` in the source
+repository for the current provenance record.
 
 == Changelog ==
 

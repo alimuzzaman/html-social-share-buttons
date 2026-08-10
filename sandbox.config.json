@@ -2,7 +2,7 @@
 	"slug": "html-social-share-buttons",
 	"plugins": {
 		"html-social-share-buttons": ".",
-		"plugin-check": "plugin-check",
+		"plugin-check": true,
 		"elementor": true
 	}
 }

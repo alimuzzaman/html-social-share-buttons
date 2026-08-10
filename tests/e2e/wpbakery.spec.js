@@ -1,18 +1,10 @@
 const { test, expect } = require( '@playwright/test' );
-
-async function login( page ) {
-	await page.goto( '/wp-login.php' );
-	await page
-		.locator( '#user_login' )
-		.fill( process.env.WP_ADMIN_USER || 'admin' );
-	await page
-		.locator( '#user_pass' )
-		.fill( process.env.WP_ADMIN_PASSWORD || 'admin' );
-	await Promise.all( [
-		page.waitForURL( /\/wp-admin\// ),
-		page.locator( '#wp-submit' ).click(),
-	] );
-}
+const {
+	assertVisibleCanonicalShareButtons,
+	builderStorage,
+	createPublishedPage,
+	login,
+} = require( './helpers/wordpress' );
 
 test.describe( 'WPBakery integration', () => {
 	test( 'registers Html Social Share in the WPBakery element picker', async ( {
@@ -39,18 +31,24 @@ test.describe( 'WPBakery integration', () => {
 		);
 	} );
 
-	test( 'renders the configured WPBakery share element on the frontend', async ( {
+	test( 'renders the real stored WPBakery shortcode fixture with a canonical share URL', async ( {
 		page,
 	} ) => {
-		const postId = process.env.WPBAKERY_TEST_POST_ID;
-		test.skip(
-			! postId,
-			'Set WPBAKERY_TEST_POST_ID to a published WPBakery page for frontend verification.'
-		);
+		await login( page );
+		const fixture = await createPublishedPage( page, {
+			content: builderStorage.wpbakery.shortcode,
+			title: 'HSSB stored WPBakery fixture',
+		} );
 
-		await page.goto( `/?p=${ postId }` );
+		await page.goto( fixture.link );
+		await assertVisibleCanonicalShareButtons( page, {
+			placement: 'in_shortcode',
+			iconset: 'flat',
+			shape: 'circle',
+		} );
+		await expect( page.locator( 'h3' ) ).toContainText( 'Stored title' );
 		await expect(
-			page.locator( '.zm_sh_btn, .zm-social-share, [class*="zm_sh"]' )
+			page.locator( '.zmshbt.in_shortcode a.twitter' )
 		).toBeVisible();
 	} );
 } );

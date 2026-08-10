@@ -25,17 +25,20 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 	var data = window.zm_sh_react_settings || {};
 	var iconsets = data.iconsets || [];
 	var strings = data.strings || {};
+	function text(key, fallback) {
+		return strings[key] || fallback;
+	}
 	var e = wp.element.createElement;
 	var Component = wp.element.Component;
 	var SelectControl = wp.components.SelectControl;
 	var ToggleControl = wp.components.ToggleControl;
 	var sharePlaceholders = [
-		{ syntax: '%%title%%', label: 'Post title', description: 'The title of the shared post' },
-		{ syntax: '%%permalink%%', label: 'Permalink', description: 'The canonical post URL' },
-		{ syntax: '%%imageurl%%', label: 'Featured image URL', description: 'The post\'s featured image' }
+		{ syntax: '%%title%%', label: text('postTitle', 'Post title'), description: text('postTitleDescription', 'The title of the shared post') },
+		{ syntax: '%%permalink%%', label: text('permalink', 'Permalink'), description: text('permalinkDescription', 'The canonical post URL') },
+		{ syntax: '%%imageurl%%', label: text('featuredImageUrl', 'Featured image URL'), description: text('featuredImageDescription', 'The post\'s featured image') }
 	];
 	var defaults = {
-		title: 'Share this with your friends',
+		title: text('defaultTitle', 'Share this with your friends'),
 		iconset: data.defaultIconset || 'default',
 		excludes: '',
 		show_in: {
@@ -81,7 +84,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 		createElement: e,
 		SelectControl: SelectControl,
 		ToggleControl: ToggleControl,
-		strings: strings,
+		text: text,
 		toBoolean: toBoolean,
 	});
 	var SettingsLoader = settingsComponents.SettingsLoader;
@@ -123,6 +126,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 		data: data,
 		createElement: e,
 		sharePlaceholders: sharePlaceholders,
+		text: text,
 	});
 	attachExcludeSelectorBehavior(App, {
 		$: $,
@@ -140,6 +144,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 		ensureType: ensureType,
 		components: wp.components,
 		settingsComponents: settingsComponents,
+		text: text,
 	});
 
 	App.prototype.componentDidMount = function () {
@@ -208,7 +213,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 		$submit = this.$form.find('#submit');
 		submittedRevision = this.changeRevision;
 		this.submitLabel = $submit.val();
-		$submit.prop('disabled', true).attr('aria-busy', 'true').addClass('is-busy').val(strings.saving || 'Saving...');
+		$submit.prop('disabled', true).attr('aria-busy', 'true').addClass('is-busy').val(text('saving', 'Saving...'));
 		this.setState({ isSaving: true, notice: null });
 
 		$.ajax({
@@ -222,18 +227,18 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 			}
 		}).done(function (response) {
 			if (response && response.success) {
-				self.showNotice((response.data && response.data.message) || strings.saved || 'Settings saved.', 'success');
+				self.showNotice((response.data && response.data.message) || text('saved', 'Settings saved.'), 'success');
 				if (self.changeRevision === submittedRevision) {
 					self.setState({ isDirty: false });
 				}
 				return;
 			}
-			self.showNotice((response && response.data && response.data.message) || strings.saveError || 'Settings could not be saved. Try again.', 'error');
+			self.showNotice((response && response.data && response.data.message) || text('saveError', 'Settings could not be saved. Try again.'), 'error');
 		}).fail(function (request) {
 			var response = request.responseJSON;
-			self.showNotice((response && response.data && response.data.message) || strings.saveError || 'Settings could not be saved. Try again.', 'error');
+			self.showNotice((response && response.data && response.data.message) || text('saveError', 'Settings could not be saved. Try again.'), 'error');
 		}).always(function () {
-			$submit.prop('disabled', false).removeAttr('aria-busy').removeClass('is-busy').val(self.submitLabel || 'Save Changes');
+			$submit.prop('disabled', false).removeAttr('aria-busy').removeClass('is-busy').val(self.submitLabel || text('saveChanges', 'Save Changes'));
 			self.setState({ isSaving: false });
 		});
 	};

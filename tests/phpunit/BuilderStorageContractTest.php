@@ -52,14 +52,29 @@ final class BuilderStorageContractTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( "class='twitter'", $output );
 	}
 
-	public function testDefaultStoredUrlPlaceholderQuirkIsExplicitlyFrozen(): void {
+	public function testDefaultStoredBlockNeverEmitsTheHistoricalPermalinkPlaceholderDefect(): void {
 		$output = do_blocks( $this->storage['block']['serialized'] );
 
-		$this->assertStringContainsString(
-			'u=http%3A%2F%2F%25%25permalink%25%25',
-			$output,
-			'Changing this known malformed default URL requires an approved compatibility decision.'
-		);
+		$this->assertStringNotContainsString( '%%permalink%%', $output );
+		$this->assertStringNotContainsString( '%25%25permalink%25%25', $output );
+		$this->assertStringNotContainsString( 'http%3A%2F%2F%25%25permalink%25%25', $output );
+	}
+
+	public function testBlockRenderingDoesNotDependOnTheRegisteredShortcodeCallback(): void {
+		global $shortcode_tags;
+
+		$callback = isset( $shortcode_tags['zm_sh_btn'] ) ? $shortcode_tags['zm_sh_btn'] : null;
+		remove_shortcode( 'zm_sh_btn' );
+		try {
+			$output = do_blocks( $this->storage['block']['serialized'] );
+		} finally {
+			if ( null !== $callback ) {
+				$shortcode_tags['zm_sh_btn'] = $callback;
+			}
+		}
+
+		$this->assertStringContainsString( "class='zmshbt in_block default square'", $output );
+		$this->assertStringContainsString( "class='facebook'", $output );
 	}
 
 	public function testMalformedBlockAndShortcodeAttributesFailClosedWithoutTypeErrors(): void {

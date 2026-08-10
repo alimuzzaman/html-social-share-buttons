@@ -190,6 +190,14 @@ class SocialShareAdapter {
 		$options = is_array( $instance ) && ! empty( $instance )
 			? $instance
 			: ( is_array( $this->options ) ? $this->options : array() );
+		return $this->renderCanonical( $options );
+	}
+
+	/**
+	 * Internal adapter entry point for integrations that already normalized
+	 * their stored settings and must not depend on the shortcode callback.
+	 */
+	public function renderCanonical( array $options, $contextPostId = 0 ) {
 		if (
 			! array_key_exists( 'profile_links', $options ) &&
 			is_array( $this->options ) &&
@@ -198,7 +206,11 @@ class SocialShareAdapter {
 		) {
 			$options['profile_links'] = $this->options['profile_links'];
 		}
-		$outcome = LegacyRuntime::renderer()->render( $options, $this->iconsets );
+		$outcome = LegacyRuntime::renderer()->render(
+			$options,
+			$this->iconsets,
+			$contextPostId
+		);
 
 		$this->stylesheets = array_merge(
 			is_array( $this->stylesheets ) ? $this->stylesheets : array(),

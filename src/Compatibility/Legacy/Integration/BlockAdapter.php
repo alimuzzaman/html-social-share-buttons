@@ -14,7 +14,7 @@ final class BlockAdapter {
 	}
 
 	public function registerBlock() {
-		if ( ! function_exists( 'register_block_type' ) || ! function_exists( 'zm_sh_shortcode_cb' ) ) {
+		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
 		}
 
@@ -47,21 +47,34 @@ final class BlockAdapter {
 				'inheritedIconset' => zm_sh_get_builder_iconset( 'inherit' ),
 			)
 		);
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations(
+				'zm-sh-social-share-block',
+				'html-social-share-buttons',
+				$this->pluginRoot . '/languages'
+			);
+		}
 
+		$metadataPath = $this->pluginRoot . '/block.json';
+		$args = array( 'render_callback' => array( $this, 'renderRegisteredBlock' ) );
+		if ( function_exists( 'register_block_type_from_metadata' ) ) {
+			register_block_type( $metadataPath, $args );
+
+			return;
+		}
+
+		$metadata = json_decode( (string) file_get_contents( $metadataPath ), true );
+		if ( ! is_array( $metadata ) || empty( $metadata['name'] ) ) {
+			return;
+		}
 		register_block_type(
-			'html-social-share/social-share',
-			array(
-				'editor_script' => 'zm-sh-social-share-block',
-				'attributes' => array(
-					'title' => array( 'type' => 'string', 'default' => 'Share this page' ),
-					'iconset' => array( 'type' => 'string', 'default' => 'inherit' ),
-					'iconset_type' => array( 'type' => 'string', 'default' => 'square' ),
-					'icons' => array(
-						'type' => 'array',
-						'default' => array( 'facebook', 'x', 'linkedin', 'pinterest', 'mail' ),
-					),
-				),
-				'render_callback' => 'zm_sh_render_block',
+			$metadata['name'],
+			array_merge(
+				$args,
+				array(
+					'attributes' => isset( $metadata['attributes'] ) ? $metadata['attributes'] : array(),
+					'editor_script' => 'zm-sh-social-share-block',
+				)
 			)
 		);
 	}
@@ -93,7 +106,20 @@ final class BlockAdapter {
 		return $assets;
 	}
 
-	public function render( $attributes ) {
+	public function renderRegisteredBlock( $attributes, $content = '', $block = null ) {
+		$contextPostId = is_object( $block ) && isset( $block->context['postId'] )
+			? absint( $block->context['postId'] )
+			: 0;
+
+		return $this->render( $attributes, $contextPostId );
+	}
+
+	public function render( $attributes, $contextPostId = 0 ) {
+		global $zm_sh;
+
+		if ( ! is_object( $zm_sh ) || ! method_exists( $zm_sh, 'renderCanonical' ) ) {
+			return '';
+		}
 		$attributes = is_array( $attributes ) ? $attributes : array();
 		if ( isset( $attributes['icons'] ) && is_array( $attributes['icons'] ) && empty( $attributes['icons'] ) ) {
 			return '';
@@ -102,7 +128,7 @@ final class BlockAdapter {
 			? array_filter( $attributes['icons'], 'is_scalar' )
 			: array( 'facebook', 'x', 'linkedin', 'pinterest', 'mail' );
 
-		return zm_sh_shortcode_cb(
+		return $zm_sh->renderCanonical(
 			array(
 				'title' => isset( $attributes['title'] ) ? $attributes['title'] : '',
 				'iconset' => zm_sh_get_builder_iconset(
@@ -111,9 +137,13 @@ final class BlockAdapter {
 				'iconset_type' => isset( $attributes['iconset_type'] )
 					? $attributes['iconset_type']
 					: 'square',
-				'icons' => implode( ',', array_map( 'sanitize_key', $icons ) ),
+				'icons' => array_fill_keys(
+					array_filter( array_map( 'sanitize_key', $icons ) ),
+					'on'
+				),
 				'class' => 'in_block',
-			)
+			),
+			$contextPostId
 		);
 	}
 }

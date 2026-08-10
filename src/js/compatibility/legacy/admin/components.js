@@ -2,7 +2,7 @@ export function createSettingsComponents(runtime) {
 	var e = runtime.createElement;
 	var SelectControl = runtime.SelectControl;
 	var ToggleControl = runtime.ToggleControl;
-	var strings = runtime.strings;
+	var text = runtime.text;
 	var toBoolean = runtime.toBoolean;
 
 	function ToggleInput(props) {
@@ -59,7 +59,7 @@ export function createSettingsComponents(runtime) {
 			'aria-live': 'polite'
 		}, [
 			e('span', { key: 'spinner', className: 'zm_settings_loader_spinner', 'aria-hidden': 'true' }),
-			e('span', { key: 'label' }, strings.loading || 'Loading settings...')
+			e('span', { key: 'label' }, text('loading', 'Loading settings...'))
 		]);
 	}
 
@@ -82,7 +82,7 @@ export function createSettingsComponents(runtime) {
 			]),
 			title: props.label,
 			description: props.description,
-			label: props.enabled ? 'Enabled' : 'Disabled',
+			label: props.enabled ? text('enabled', 'Enabled') : text('disabled', 'Disabled'),
 			name: 'zm_shbt_fld[show_in][' + props.id + ']',
 			checked: props.enabled,
 			onChange: function (checked) {
@@ -97,7 +97,7 @@ export function createSettingsComponents(runtime) {
 		}, [
 			e(SelectControl, {
 				key: 'type',
-				label: 'Button shape',
+				label: text('buttonShape', 'Button shape'),
 				name: 'zm_shbt_fld[' + props.id + ']',
 				value: props.type,
 				options: types.map(function (type) {

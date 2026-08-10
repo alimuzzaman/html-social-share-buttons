@@ -10,6 +10,7 @@ export function attachTemplateEditorBehavior(App, dependencies) {
 	var data = dependencies.data;
 	var e = dependencies.createElement;
 	var sharePlaceholders = dependencies.sharePlaceholders;
+	var text = dependencies.text;
 
 	App.prototype.resetShareTemplate = function (platform) {
 		this.update('share_templates.' + platform, '');
@@ -275,7 +276,7 @@ export function attachTemplateEditorBehavior(App, dependencies) {
 	App.prototype.handleTemplatePaste = function (platform, index, event) {
 		var field = event.currentTarget || event.target;
 		var clipboard = event.clipboardData || window.clipboardData;
-		var text = clipboard && clipboard.getData ? clipboard.getData('text/plain') : '';
+		var clipboardText = clipboard && clipboard.getData ? clipboard.getData('text/plain') : '';
 		var selection;
 		var range;
 		var textNode;
@@ -290,7 +291,7 @@ export function attachTemplateEditorBehavior(App, dependencies) {
 		}
 		range = selection.getRangeAt(0);
 		range.deleteContents();
-		textNode = document.createTextNode(text);
+		textNode = document.createTextNode(clipboardText);
 		range.insertNode(textNode);
 		range.setStartAfter(textNode);
 		range.collapse(true);
@@ -321,7 +322,7 @@ export function attachTemplateEditorBehavior(App, dependencies) {
 			id: listboxId,
 			className: 'zm_template_autocomplete',
 			role: 'listbox',
-			'aria-label': 'Insert share parameter placeholder',
+			'aria-label': text('insertPlaceholder', 'Insert share parameter placeholder'),
 			style: {
 				left: autocomplete.position.left + 'px',
 				top: autocomplete.position.top + 'px'

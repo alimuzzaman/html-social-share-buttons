@@ -12,8 +12,21 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 	protected function tearDown(): void {
 		$_POST = array();
 		$_GET = array();
+		$_REQUEST = array();
 		delete_option( 'zm_shbt_fld' );
 		parent::tearDown();
+	}
+
+	public function testAjaxRenderingUsesTheRequestedPostCanonicalPermalink(): void {
+		$postId = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$GLOBALS['post'] = null;
+		$_REQUEST['post_id'] = (string) $postId;
+
+		$output = zm_sh_shortcode_cb( array( 'icons' => 'facebook' ) );
+
+		$this->assertStringContainsString( rawurlencode( get_permalink( $postId ) ), $output );
+		$this->assertStringNotContainsString( '%%permalink%%', $output );
+		$this->assertStringNotContainsString( '%25%25permalink%25%25', $output );
 	}
 
 	public function testSettingsSearchReturnsPublishedContentForAdministrators(): void {

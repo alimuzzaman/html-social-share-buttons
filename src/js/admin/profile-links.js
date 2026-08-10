@@ -14,6 +14,7 @@ export function renderProfileLinksSection(dependencies) {
 	var activeIcons = dependencies.activeIcons || [];
 	var networks = dependencies.networks || [];
 	var activeById = {};
+	var text = dependencies.text;
 
 	activeIcons.forEach(function (icon) {
 		activeById[icon.id] = icon;
@@ -22,8 +23,8 @@ export function renderProfileLinksSection(dependencies) {
 	return e('section', { key: 'profiles', className: dependencies.sectionClassName }, [
 		e(SectionHeader, {
 			key: 'section-header',
-			title: 'Social profile links',
-			description: 'Add direct profile or contact destinations beside the share buttons. Leave a field empty to hide it.'
+				title: text('socialProfileLinks', 'Social profile links'),
+				description: text('profileLinksDescription', 'Add direct profile or contact destinations beside the share buttons. Leave a field empty to hide it.')
 		}),
 		e('div', { key: 'profile-grid', className: 'hssb-profile-link-grid' }, networks.map(function (network) {
 			var activeIcon = activeById[network.id] || network;
@@ -37,12 +38,12 @@ export function renderProfileLinksSection(dependencies) {
 				e(TextControl, {
 					key: 'field',
 					id: 'profile_link_' + network.id,
-					label: isMail ? 'Email destination' : network.name + ' profile URL',
+					label: isMail ? text('emailDestination', 'Email destination') : text('profileUrl', '%s profile URL').replace('%s', network.name),
 					name: dependencies.fieldName(network.id),
 					type: 'url',
 					value: values[network.id] || '',
 					placeholder: isMail ? 'mailto:hello@example.com' : 'https://',
-					help: isMail ? 'Use one mailto: address without subject or body parameters.' : 'HTTPS links only.',
+					help: isMail ? text('emailDestinationHelp', 'Use one mailto: address without subject or body parameters.') : text('httpsLinksOnly', 'HTTPS links only.'),
 					onChange: function (value) {
 						dependencies.onChange(network.id, value);
 					},

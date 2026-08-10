@@ -22,7 +22,7 @@ final class ShortcodeAdapter {
 			array(
 				'title' => '',
 				'iconset' => 'default',
-				'url' => '%%permalink%%',
+				'url' => '',
 				'icons' => array(
 					'facebook' => 'on',
 					'x' => 'on',
@@ -39,7 +39,8 @@ final class ShortcodeAdapter {
 
 		$attributes['title'] = sanitize_text_field( $this->scalar( $attributes['title'], '' ) );
 		$attributes['iconset'] = sanitize_key( $this->scalar( $attributes['iconset'], 'default' ) );
-		$attributes['url'] = esc_url_raw( $this->scalar( $attributes['url'], '%%permalink%%' ) );
+		$url = trim( $this->scalar( $attributes['url'], '' ) );
+		$attributes['url'] = '%%permalink%%' === $url ? '' : esc_url_raw( $url );
 		$attributes['iconset_type'] = sanitize_key(
 			$this->scalar( $attributes['iconset_type'], 'square' )
 		);

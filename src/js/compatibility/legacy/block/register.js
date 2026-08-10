@@ -1,3 +1,5 @@
+import metadata from '../../../../../block.json';
+
 /* Bundled at build time through src/js/social-share.js. */
 ( function ( blocks, element, blockEditor, components, i18n ) {
 	'use strict';
@@ -29,28 +31,17 @@
 			? window.zmShBlock.inheritedIconset
 			: 'default';
 	const networks = [
-		{ id: 'facebook', label: 'Facebook' },
+		{ id: 'facebook', label: __( 'Facebook', 'html-social-share-buttons' ) },
 		{ id: 'x', label: 'X' },
-		{ id: 'linkedin', label: 'LinkedIn' },
-		{ id: 'pinterest', label: 'Pinterest' },
-		{ id: 'telegram', label: 'Telegram' },
-		{ id: 'bluesky', label: 'Bluesky' },
-		{ id: 'mail', label: 'Email' },
+		{ id: 'linkedin', label: __( 'LinkedIn', 'html-social-share-buttons' ) },
+		{ id: 'pinterest', label: __( 'Pinterest', 'html-social-share-buttons' ) },
+		{ id: 'telegram', label: __( 'Telegram', 'html-social-share-buttons' ) },
+		{ id: 'bluesky', label: __( 'Bluesky', 'html-social-share-buttons' ) },
+		{ id: 'mail', label: __( 'Email', 'html-social-share-buttons' ) },
 	];
 
-	blocks.registerBlockType( 'html-social-share/social-share', {
-		title: __( 'Html Social Share', 'html-social-share-buttons' ),
-		icon: 'share',
-		category: 'widgets',
-		attributes: {
-			title: { type: 'string', default: 'Share this page' },
-			iconset: { type: 'string', default: 'inherit' },
-			iconset_type: { type: 'string', default: 'square' },
-			icons: {
-				type: 'array',
-				default: [ 'facebook', 'x', 'linkedin', 'pinterest', 'mail' ],
-			},
-		},
+	blocks.registerBlockType( metadata.name, {
+		...metadata,
 		edit( props ) {
 			const selected = props.attributes.icons || [];
 			const activeIconsetId =
@@ -120,7 +111,10 @@
 								value: props.attributes.iconset_type,
 								options: supportedTypes.map( function ( type ) {
 									return {
-										label: type.charAt( 0 ).toUpperCase() + type.slice( 1 ),
+										label:
+											type === 'circle'
+												? __( 'Circle', 'html-social-share-buttons' )
+												: __( 'Square', 'html-social-share-buttons' ),
 										value: type,
 									};
 								} ),

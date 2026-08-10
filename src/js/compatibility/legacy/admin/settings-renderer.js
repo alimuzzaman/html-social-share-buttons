@@ -28,6 +28,14 @@ export function attachSettingsRenderer(App, dependencies) {
 	var SectionHeader = dependencies.settingsComponents.SectionHeader;
 	var PlacementInput = dependencies.settingsComponents.PlacementInput;
 	var CheckboxInput = dependencies.settingsComponents.CheckboxInput;
+	var text = dependencies.text;
+	function format(template, values) {
+		var nextIndex = 0;
+		return template.replace(/%(?:(\d+)\$)?s/g, function (match, position) {
+			var index = position ? Number(position) - 1 : nextIndex++;
+			return typeof values[index] === 'undefined' ? match : values[index];
+		});
+	}
 
 	App.prototype.render = function () {
 		var self = this;
@@ -35,7 +43,7 @@ export function attachSettingsRenderer(App, dependencies) {
 		var currentIconset = findIconset(options.iconset);
 		var generated = buildCode(options, this.state.modalType);
 		var modalOutput = this.state.modalMode === 'php' ? generated.php : generated.shortcode;
-		var modalTitle = this.state.modalMode === 'php' ? '<\\?> Get PHP Code' : '[] Get Shortcode';
+		var modalTitle = this.state.modalMode === 'php' ? '<\\?> ' + text('getPhpCode', 'Get PHP Code') : '[] ' + text('getShortcode', 'Get Shortcode');
 		var socialNetworkColumns = [[], []];
 		var networkPreviewType = ensureType(currentIconset, options.show_before_post || options.show_after_post || options.show_left || options.show_right);
 		var profileNetworks = iconsets.length ? (iconsets[0].icons || []) : [];
@@ -47,12 +55,12 @@ export function attachSettingsRenderer(App, dependencies) {
 		}
 		var placementColumns = [
 			[
-				{ id: 'show_left', label: 'Left side', description: 'A vertical rail on the left edge of the screen.' },
-				{ id: 'show_before_post', label: 'Before post', description: 'A row of buttons placed above post content.' }
+				{ id: 'show_left', label: text('leftSide', 'Left side'), description: text('leftSideDescription', 'A vertical rail on the left edge of the screen.') },
+				{ id: 'show_before_post', label: text('beforePost', 'Before post'), description: text('beforePostDescription', 'A row of buttons placed above post content.') }
 			],
 			[
-				{ id: 'show_right', label: 'Right side', description: 'A vertical rail on the right edge of the screen.' },
-				{ id: 'show_after_post', label: 'After post', description: 'A row of buttons placed below post content.' }
+				{ id: 'show_right', label: text('rightSide', 'Right side'), description: text('rightSideDescription', 'A vertical rail on the right edge of the screen.') },
+				{ id: 'show_after_post', label: text('afterPost', 'After post'), description: text('afterPostDescription', 'A row of buttons placed below post content.') }
 			]
 		];
 
@@ -61,13 +69,13 @@ export function attachSettingsRenderer(App, dependencies) {
 				e('section', { key: 'header', className: 'zm_settings_section zm_settings_section--intro' }, [
 				e(SectionHeader, {
 					key: 'section-header',
-					title: 'Header',
-					description: 'Set the text shown with the share buttons and choose pages where buttons should stay hidden.'
+					title: text('header', 'Header'),
+					description: text('headerDescription', 'Set the text shown with the share buttons and choose pages where buttons should stay hidden.')
 				}),
 				e(TextControl, {
 					key: 'title-field',
 					id: 'title',
-					label: 'Enter a title',
+					label: text('enterTitle', 'Enter a title'),
 					name: 'zm_shbt_fld[title]',
 					value: options.title,
 					onChange: function (value) {
@@ -79,11 +87,11 @@ export function attachSettingsRenderer(App, dependencies) {
 				e('div', { key: 'exclude-field', className: 'zm_exclude_control' }, [
 					e(FormTokenField, {
 						key: 'tokens',
-						label: 'Exclude pages or posts',
+						label: text('excludeContent', 'Exclude pages or posts'),
 						value: this.state.excludeItems.map(excludeToken),
 						suggestions: this.state.excludeSuggestions,
-						help: 'Search published pages and posts, or press Enter to add a custom value.',
-						placeholder: 'Search pages, posts, or add a custom value',
+						help: text('excludeHelp', 'Search published pages and posts, or press Enter to add a custom value.'),
+						placeholder: text('excludePlaceholder', 'Search pages, posts, or add a custom value'),
 						tokenizeOnBlur: true,
 						__next40pxDefaultSize: true,
 						onInputChange: function (value) {
@@ -105,14 +113,14 @@ export function attachSettingsRenderer(App, dependencies) {
 				e('section', { key: 'icon-style', className: 'zm_settings_section' }, [
 				e(SectionHeader, {
 					key: 'section-header',
-					title: 'Icon Style',
-					description: 'Choose the icon pack used for every placement and generated code snippet.'
+					title: text('iconStyle', 'Icon Style'),
+					description: text('iconStyleDescription', 'Choose the icon pack used for every placement and generated code snippet.')
 				}),
 				e('div', { key: 'icon-style-panel', className: 'zm_icon_style_panel' }, [
 					e(SelectControl, {
 						key: 'iconset-field',
 						id: 'iconset',
-						label: 'Button style',
+						label: text('buttonStyle', 'Button style'),
 						name: 'zm_shbt_fld[iconset]',
 						value: options.iconset,
 						options: iconsets.map(function (item) {
@@ -125,7 +133,7 @@ export function attachSettingsRenderer(App, dependencies) {
 						__nextHasNoMarginBottom: true
 					}),
 					e('div', { key: 'preview', className: 'button-style-img' }, [
-						e('span', { key: 'label' }, 'Preview'),
+						e('span', { key: 'label' }, text('preview', 'Preview')),
 						e('img', {
 							key: 'image',
 							src: currentIconset ? currentIconset.preview_img : '',
@@ -138,8 +146,8 @@ export function attachSettingsRenderer(App, dependencies) {
 			e('section', { key: 'placement', className: 'zm_settings_section' }, [
 				e(SectionHeader, {
 					key: 'section-header',
-					title: 'Display placement',
-					description: 'Turn each placement on or off and pick its shape.'
+					title: text('displayPlacement', 'Display placement'),
+					description: text('displayPlacementDescription', 'Turn each placement on or off and pick its shape.')
 				}),
 				e('div', { key: 'placement-columns', className: 'zm_network_columns zm_placement_columns' }, placementColumns.map(function (column, columnIndex) {
 					return e('div', { key: 'placement-column-' + columnIndex, className: 'zm_network_column zm_placement_column' }, column.map(function (placement) {
@@ -164,8 +172,8 @@ export function attachSettingsRenderer(App, dependencies) {
 			e('section', { key: 'social', className: 'zm_settings_section' }, [
 				e(SectionHeader, {
 					key: 'section-header',
-					title: 'Social Networks',
-					description: 'Select the share buttons that should be available in the output.'
+					title: text('socialNetworks', 'Social Networks'),
+					description: text('socialNetworksDescription', 'Select the share buttons that should be available in the output.')
 				}),
 					e('div', { key: 'network-columns', className: 'zm_network_columns' }, socialNetworkColumns.map(function (column, columnIndex) {
 						return e('div', { key: 'network-column-' + columnIndex, className: 'zm_network_column' }, column.map(function (icon) {
@@ -188,8 +196,8 @@ export function attachSettingsRenderer(App, dependencies) {
 							alt: ''
 						}) : icon.name.substring(0, 1)),
 						title: icon.name,
-						description: icon.id === 'mail' ? 'Share the current page by email.' : 'Share the current page on ' + icon.name + '.',
-						label: enabled ? 'Enabled' : 'Disabled',
+						description: icon.id === 'mail' ? text('shareByEmail', 'Share the current page by email.') : format(text('shareOnNetwork', 'Share the current page on %s.'), [icon.name]),
+						label: enabled ? text('enabled', 'Enabled') : text('disabled', 'Disabled'),
 						name: 'zm_shbt_fld[icons][' + icon.id + ']',
 						checked: enabled,
 						onChange: function (value) {
@@ -197,7 +205,7 @@ export function attachSettingsRenderer(App, dependencies) {
 						}
 					}, [
 							e('div', { key: 'template-heading', className: 'zm_network_template_heading' }, [
-								e('span', { key: 'label', className: 'zm_network_template_label' }, icon.name + ' share template'),
+								e('span', { key: 'label', className: 'zm_network_template_label' }, format(text('shareTemplate', '%s share template'), [icon.name])),
 								e(Button, {
 									key: 'reset',
 									isLink: true,
@@ -205,16 +213,16 @@ export function attachSettingsRenderer(App, dependencies) {
 									className: 'zm_template_reset',
 									disabled: !isCustomTemplate,
 									onClick: function () { self.resetShareTemplate(icon.id); }
-								}, 'Restore defaults')
+								}, text('restoreDefaults', 'Restore defaults'))
 							]),
 							e('p', { key: 'prefix-row', className: 'zm_template_prefix_row' }, [
-								e('span', { key: 'prefix-label' }, 'Share URL'),
+								e('span', { key: 'prefix-label' }, text('shareUrl', 'Share URL')),
 								e('code', { key: 'prefix', className: 'zm_template_prefix', title: templateParts.prefix }, templateParts.prefix)
 							]),
 							e('fieldset', { key: 'parameters', className: 'zm_template_parameters' }, [
 								e('legend', { key: 'legend' }, [
-									e('span', { key: 'label' }, 'Share parameters'),
-									e('span', { key: 'hint', className: 'zm_template_parameters_hint' }, 'Parameter names are managed automatically')
+									e('span', { key: 'label' }, text('shareParameters', 'Share parameters')),
+									e('span', { key: 'hint', className: 'zm_template_parameters_hint' }, text('parameterNamesManaged', 'Parameter names are managed automatically'))
 								]),
 								e('div', { key: 'parameter-list', className: 'zm_template_parameter_list' + (autocomplete && autocomplete.platform === icon.id ? ' is-autocomplete-active' : '') }, templateParameters.map(function (parameter, parameterIndex) {
 									var inputId = 'share_template_' + icon.id + '_' + parameterIndex;
@@ -223,7 +231,7 @@ export function attachSettingsRenderer(App, dependencies) {
 									var listboxId = 'share_template_suggestions_' + icon.id + '_' + parameterIndex;
 									var activeOptionId = isAutocompleteActive ? listboxId + '_option_' + autocomplete.selectedIndex : null;
 									return e('div', { key: inputId, className: 'zm_template_parameter' }, [
-										e('span', { key: 'name', className: 'zm_template_parameter_name' }, parameter.name || 'Parameter'),
+										e('span', { key: 'name', className: 'zm_template_parameter_name' }, parameter.name || text('parameter', 'Parameter')),
 										e('div', {
 											key: 'value-' + (self.templateEditorVersions[fieldKey] || 0),
 											id: inputId,
@@ -231,7 +239,7 @@ export function attachSettingsRenderer(App, dependencies) {
 											contentEditable: true,
 											suppressContentEditableWarning: true,
 											role: 'combobox',
-											'aria-label': icon.name + ' ' + (parameter.name || 'parameter') + ' value',
+											'aria-label': format(text('parameterValueLabel', '%1$s %2$s value'), [icon.name, parameter.name || text('parameter', 'Parameter')]),
 											'aria-autocomplete': 'list',
 											'aria-haspopup': 'listbox',
 											'aria-controls': isAutocompleteActive ? listboxId : null,
@@ -255,7 +263,7 @@ export function attachSettingsRenderer(App, dependencies) {
 								name: 'zm_shbt_fld[share_templates][' + icon.id + ']',
 								value: serializedTemplate
 							}),
-							e('p', { key: 'help', className: 'components-base-control__help' }, isCustomTemplate ? 'Custom template saved for this platform.' : 'Using the canonical template shown as the placeholder.')
+								e('p', { key: 'help', className: 'components-base-control__help' }, isCustomTemplate ? text('customTemplateSaved', 'Custom template saved for this platform.') : text('canonicalTemplateUsed', 'Using the canonical template shown as the placeholder.'))
 						]);
 						}));
 					}))
@@ -269,6 +277,7 @@ export function attachSettingsRenderer(App, dependencies) {
 				activeIcons: currentIconset ? currentIconset.icons : [],
 				previewType: networkPreviewType,
 				getIconPreview: getIconPreview,
+				text: text,
 				sectionClassName: 'zm_settings_section zm_profile_links_section',
 				fieldName: function (networkId) {
 					return 'zm_shbt_fld[profile_links][' + networkId + ']';
@@ -280,14 +289,14 @@ export function attachSettingsRenderer(App, dependencies) {
 			e('section', { key: 'advanced', className: 'zm_settings_section zm_settings_section--advanced' }, [
 				e(SectionHeader, {
 					key: 'section-header',
-					title: 'Advanced options',
-					description: 'Fine tune tracking, behavior, and link output.'
+					title: text('advancedOptions', 'Advanced options'),
+					description: text('advancedOptionsDescription', 'Fine tune tracking, behavior, and link output.')
 				}),
 					e('div', { key: 'advanced-grid', className: 'zm_network_grid' }, [
 						e(CheckboxInput, {
 							key: 'g-analytics',
 							id: 'g_analytics',
-						label: 'Google Social analytics',
+						label: text('googleAnalytics', 'Google Social analytics'),
 						name: 'zm_shbt_fld[g_analytics]',
 						checked: options.g_analytics,
 						onChange: function (value) {
@@ -297,7 +306,7 @@ export function attachSettingsRenderer(App, dependencies) {
 						e(CheckboxInput, {
 							key: 'auto-hide',
 							id: 'auto_hide_btn',
-						label: 'Auto hide button',
+						label: text('autoHide', 'Auto hide button'),
 						name: 'zm_shbt_fld[auto_hide_btn]',
 						checked: options.auto_hide_btn,
 						onChange: function (value) {
@@ -307,7 +316,7 @@ export function attachSettingsRenderer(App, dependencies) {
 						e(CheckboxInput, {
 							key: 'use-port',
 							id: 'use_port',
-						label: 'Use port on the url.',
+						label: text('usePort', 'Use port on the url.'),
 						name: 'zm_shbt_fld[use_port]',
 						checked: options.use_port,
 						onChange: function (value) {
@@ -317,7 +326,7 @@ export function attachSettingsRenderer(App, dependencies) {
 						e(CheckboxInput, {
 							key: 'nofollow',
 							id: 'nofollow',
-						label: 'No follow social link',
+						label: text('noFollow', 'No follow social link'),
 						name: 'zm_shbt_fld[nofollow]',
 						checked: options.nofollow,
 						onChange: function (value) {
@@ -329,8 +338,8 @@ export function attachSettingsRenderer(App, dependencies) {
 			e('section', { key: 'generator', className: 'zm_settings_section' }, [
 				e(SectionHeader, {
 					key: 'section-header',
-					title: 'Code generator',
-					description: 'Generate embed code from the same icon set and selected networks.'
+					title: text('codeGenerator', 'Code generator'),
+					description: text('codeGeneratorDescription', 'Generate embed code from the same icon set and selected networks.')
 				}),
 					e('div', { key: 'generator-actions', className: 'zm_settings_generator_actions' }, [
 						e('button', {
@@ -340,7 +349,7 @@ export function attachSettingsRenderer(App, dependencies) {
 							onClick: function (event) {
 							self.openModal('php', event.currentTarget);
 							}
-						}, '<\\?> Get PHP Code'),
+						}, '<\\?> ' + text('getPhpCode', 'Get PHP Code')),
 						e('button', {
 							key: 'shortcode',
 							type: 'button',
@@ -348,7 +357,7 @@ export function attachSettingsRenderer(App, dependencies) {
 							onClick: function (event) {
 							self.openModal('shortcode', event.currentTarget);
 							}
-						}, '[] Get Shortcode')
+						}, '[] ' + text('getShortcode', 'Get Shortcode'))
 				])
 			]),
 			this.state.notice ? e('div', {
@@ -379,11 +388,11 @@ export function attachSettingsRenderer(App, dependencies) {
 				e('div', { key: 'backdrop', className: 'backdrop', 'aria-hidden': 'true', onClick: function () { self.closeModal(); } }),
 				e('div', { key: 'panel', className: 'zm-tabs', onMouseDown: function (event) { event.stopPropagation(); }, onKeyDown: function (event) { self.handleModalKeyDown(event); } }, [
 					e('h3', { key: 'title', id: 'zm-sh-code-modal-title', className: 'title' }, modalTitle),
-					e('button', { key: 'close', type: 'button', className: 'close', ref: function (node) { self.modalCloseButton = node; }, onClick: function () { self.closeModal(); } }, 'Close'),
+					e('button', { key: 'close', type: 'button', className: 'close', ref: function (node) { self.modalCloseButton = node; }, onClick: function () { self.closeModal(); } }, text('close', 'Close')),
 					e(SelectControl, {
 						key: 'type-picker',
 						id: 'shortcode-iconset-type',
-						label: 'Button shape',
+						label: text('buttonShape', 'Button shape'),
 						value: self.state.modalType,
 						options: ((currentIconset && currentIconset.types) || ['square']).map(function (type) {
 							return { label: type, value: type };

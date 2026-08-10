@@ -1,27 +1,19 @@
 const { test, expect } = require( '@playwright/test' );
-
-async function login( page ) {
-	await page.goto( '/wp-login.php' );
-	await page
-		.locator( '#user_login' )
-		.fill( process.env.WP_ADMIN_USER || 'admin' );
-	await page
-		.locator( '#user_pass' )
-		.fill( process.env.WP_ADMIN_PASSWORD || 'admin' );
-	await Promise.all( [
-		page.waitForURL( /\/wp-admin\// ),
-		page.locator( '#wp-submit' ).click(),
-	] );
-}
+const {
+	assertVisibleCanonicalShareButtons,
+	builderStorage,
+	login,
+	storedElementorFixturePostId,
+} = require( './helpers/wordpress' );
 
 test.describe( 'Elementor integration', () => {
 	test( 'lists Html Social Share in the Elementor widget panel', async ( {
 		page,
 	} ) => {
-		const postId = process.env.ELEMENTOR_TEST_POST_ID;
+		const postId = storedElementorFixturePostId();
 		test.skip(
 			! postId,
-			'Set ELEMENTOR_TEST_POST_ID to an Elementor page for editor verification.'
+			'Set ELEMENTOR_STORED_FIXTURE_POST_ID to a published page containing the stored zm_social_share widget fixture.'
 		);
 
 		await login( page );
@@ -48,20 +40,31 @@ test.describe( 'Elementor integration', () => {
 		await expect( panel ).toContainText( 'Html Social Share' );
 	} );
 
-	test( 'renders the Elementor share widget on the frontend', async ( {
+	test( 'renders the real stored Elementor widget fixture with a canonical share URL', async ( {
 		page,
 	} ) => {
-		const postId = process.env.ELEMENTOR_TEST_POST_ID;
+		const postId = storedElementorFixturePostId();
 		test.skip(
 			! postId,
-			'Set ELEMENTOR_TEST_POST_ID to a published Elementor page for frontend verification.'
+			'Set ELEMENTOR_STORED_FIXTURE_POST_ID to a published page containing title="Stored title", iconset="flat", iconset_type="circle", and icons=["facebook","x"].'
 		);
 
 		await page.goto( `/?p=${ postId }` );
+		const widget = page.locator(
+			`[data-widget_type^="${ builderStorage.elementor.document_element.widgetType }"]`
+		);
+		await expect( widget ).toBeVisible();
+		await expect( widget.locator( '.zmshbt.in_elementor' ) ).toBeVisible();
+		await assertVisibleCanonicalShareButtons( page, {
+			placement: 'in_elementor',
+			iconset: builderStorage.elementor.settings.iconset,
+			shape: builderStorage.elementor.settings.iconset_type,
+		} );
 		await expect(
-			page.locator(
-				'.in_elementor, .zm_sh_btn, .zm-social-share, [class*="zm_sh"]'
-			)
+			page.locator( '.zmshbt.in_elementor a.twitter' )
 		).toBeVisible();
+		await expect(
+			page.locator( '.zmshbt.in_elementor' )
+		).not.toContainText( builderStorage.elementor.settings.title );
 	} );
 } );

@@ -7,19 +7,22 @@ use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\IconSet\LegacyRegist
 use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Network\LegacyNetworkMapper;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\CurrentPostPermalink;
 
 final class LegacyRenderFacade {
 	private $canonicalNetworks;
 	private $requestMapper;
 	private $htmlRenderer;
+	private $currentPermalink;
 
 	public function __construct( NetworkRegistry $canonicalNetworks ) {
 		$this->canonicalNetworks = $canonicalNetworks;
 		$this->requestMapper = new LegacyRenderRequestMapper();
 		$this->htmlRenderer = new LegacyHtmlRenderer( new LegacyNetworkMapper() );
+		$this->currentPermalink = new CurrentPostPermalink();
 	}
 
-	public function render( array $options, $legacyIconSets ) {
+	public function render( array $options, $legacyIconSets, $contextPostId = 0 ) {
 		$requestedIconSetId = sanitize_key(
 			isset( $options['iconset'] ) && is_scalar( $options['iconset'] )
 				? $options['iconset']
@@ -29,7 +32,12 @@ final class LegacyRenderFacade {
 			$legacyIconSets,
 			$requestedIconSetId
 		);
-		$canonicalOptions = $this->canonicalOptions( $options, $bundle, $requestedIconSetId );
+		$canonicalOptions = $this->canonicalOptions(
+			$options,
+			$bundle,
+			$requestedIconSetId,
+			$contextPostId
+		);
 		$request = $this->requestMapper->map( $canonicalOptions, $bundle->networks() );
 		$result = ( new BuildShareButtons(
 			$bundle->networks(),
@@ -59,8 +67,14 @@ final class LegacyRenderFacade {
 		);
 	}
 
-	private function canonicalOptions( array $options, $bundle, $legacyIconSetId ) {
+	private function canonicalOptions( array $options, $bundle, $legacyIconSetId, $contextPostId ) {
 		$canonical = $options;
+		$requestedUrl = isset( $canonical['url'] ) && is_scalar( $canonical['url'] )
+			? trim( (string) $canonical['url'] )
+			: '';
+		if ( $this->usesCurrentPostPermalink( $requestedUrl ) ) {
+			$canonical['url'] = $this->currentPermalink->resolve( $contextPostId );
+		}
 		$canonicalIconSetId = $bundle->canonicalIconSetId( $legacyIconSetId );
 		$canonical['iconset'] = $canonicalIconSetId;
 
@@ -114,6 +128,33 @@ final class LegacyRenderFacade {
 		}
 
 		return $canonical;
+	}
+
+	/**
+	 * The old shortcode default was escaped before it reached the renderer in
+	 * some integration paths. Accept both representations so saved content
+	 * cannot produce a literal or double-encoded permalink token.
+	 */
+	private function usesCurrentPostPermalink( $url ) {
+		$url = (string) $url;
+		for ( $attempt = 0; $attempt < 2; $attempt++ ) {
+			$decoded = rawurldecode( $url );
+			if ( $decoded === $url ) {
+				break;
+			}
+			$url = $decoded;
+		}
+
+		return in_array(
+			$url,
+			array(
+				'',
+				'%%permalink%%',
+				'http://%%permalink%%',
+				'https://%%permalink%%',
+			),
+			true
+		);
 	}
 
 	private function iconClasses( $legacyIconSets, $iconSetId, $bundle ) {

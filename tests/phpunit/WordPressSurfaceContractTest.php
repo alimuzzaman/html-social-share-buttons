@@ -52,6 +52,24 @@ final class WordPressSurfaceContractTest extends WP_UnitTestCase {
 			'var ' . $this->surface['block']['localized_object'] . ' =',
 			$script->extra['data']
 		);
+
+		$metadata = json_decode(
+			(string) file_get_contents( dirname( __DIR__, 2 ) . '/block.json' ),
+			true
+		);
+		$this->assertSame(
+			$metadata['attributes'],
+			array_intersect_key( $block->attributes, $metadata['attributes'] )
+		);
+		$this->assertSame( $metadata['usesContext'], $block->uses_context );
+		$this->assertSame( array(), $block->script_handles );
+		$this->assertSame( array(), $block->style_handles );
+		$this->assertIsArray( $block->render_callback );
+		$this->assertInstanceOf(
+			\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Integration\BlockAdapter::class,
+			$block->render_callback[0]
+		);
+		$this->assertSame( 'renderRegisteredBlock', $block->render_callback[1] );
 	}
 
 	public function testSettingsAssetsAndAjaxHooksMatchTheContract(): void {
