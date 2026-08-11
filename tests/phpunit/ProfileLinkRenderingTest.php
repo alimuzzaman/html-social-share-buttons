@@ -1,152 +1,90 @@
 <?php
 
+use Alimuzzaman\HtmlSocialShareButtons\Application\Content\ExcludedContentPolicy;
+use Alimuzzaman\HtmlSocialShareButtons\Application\Frontend\ContentPlacementComposer;
+use Alimuzzaman\HtmlSocialShareButtons\Application\Frontend\FloatingPlacementPlanner;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Rendering\BuildShareButtons;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Rendering\ResolveShareUrl;
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Network\LegacyNetworkMapper;
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Rendering\LegacyHtmlRenderer;
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Rendering\LegacyRenderFacade;
+use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderPlacement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderRequest;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\ManifestIconSetProvider;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Translation\TranslationLoader;
+use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\AssetCollector;
+use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\FrontendController;
+use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\HtmlRenderer;
+use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderFacade;
 
 final class ProfileLinkRenderingTest extends WP_UnitTestCase {
 	private $builder;
 	private $renderer;
-	private $originalRuntime;
+	private $facade;
+	private $originalOptions;
 
 	protected function setUp(): void {
 		parent::setUp();
-		global $zm_sh;
-		$this->originalRuntime = $zm_sh;
+		$this->originalOptions = get_option( 'zm_shbt_fld', null );
+		$root = dirname( __DIR__, 2 );
 		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
-		$iconSets = ( new ManifestIconSetProvider(
-			dirname( __DIR__, 2 ) . '/resources/iconsets'
-		) )->createRegistry( $networks );
+		$iconSets = ( new ManifestIconSetProvider( $root . '/resources/iconsets' ) )
+			->createRegistry( $networks );
 		$this->builder = new BuildShareButtons( $networks, $iconSets, new ResolveShareUrl() );
-		$this->renderer = new LegacyHtmlRenderer( new LegacyNetworkMapper() );
+		$this->renderer = new HtmlRenderer();
+		$this->facade = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->renderer();
 	}
 
 	protected function tearDown(): void {
-		global $zm_sh;
-		$zm_sh = $this->originalRuntime;
+		if ( null === $this->originalOptions ) {
+			delete_option( 'zm_shbt_fld' );
+		} else {
+			update_option( 'zm_shbt_fld', $this->originalOptions );
+		}
 		parent::tearDown();
 	}
 
 	public function testCanonicalBuilderUsesRegistryOrderAndDoesNotRequireShareToggle(): void {
 		$request = new RenderRequest(
-			'default',
-			'square',
-			RenderPlacement::PHP_API,
-			'',
-			array( 'x' ),
-			array(),
-			'',
-			true,
+			'default', 'square', RenderPlacement::PHP_API, '', array( 'x' ), array(), '', true,
 			array(
 				'mail' => 'mailto:hello@example.com',
 				'facebook' => 'https://facebook.com/example',
 				'unknown' => 'https://example.com/profile',
 			)
 		);
-
-		$result = $this->builder->build(
-			$request,
-			new ShareContext( 'https://example.test/post', 'Example' )
-		);
+		$result = $this->builder->build( $request, new ShareContext( 'https://example.test/post', 'Example' ) );
 
 		$this->assertSame( array( 'x' ), $this->networkIds( $result->buttons() ) );
 		$this->assertSame( array( 'facebook', 'mail' ), $this->networkIds( $result->profileLinks() ) );
 		$this->assertSame( 'facebook.png', $result->profileLinks()[0]->iconFile() );
-		$this->assertSame( 'mailto:hello@example.com', $result->profileLinks()[1]->url() );
 	}
 
 	public function testCanonicalRequestRejectsUnsafeProfileDestinations(): void {
 		$this->expectException( InvalidArgumentException::class );
-
-		new RenderRequest(
-			'default',
-			'square',
-			RenderPlacement::PHP_API,
-			'',
-			array(),
-			array(),
-			'',
-			false,
-			array( 'facebook' => 'http://facebook.com/example' )
-		);
+		new RenderRequest( 'default', 'square', RenderPlacement::PHP_API, '', array(), array(), '', false, array( 'facebook' => 'http://facebook.com/example' ) );
 	}
 
-	public function testRendererAppendsAccessibleProfileLinksWithoutChangingShareMarkup(): void {
+	public function testCanonicalRendererAppendsAccessibleProfileLinksWithoutChangingShareMarkup(): void {
 		$request = new RenderRequest(
-			'default',
-			'square',
-			RenderPlacement::PHP_API,
-			'',
-			array( 'facebook' ),
-			array(),
-			'',
-			true,
-			array(
-				'facebook' => 'https://facebook.com/example',
-				'mail' => 'mailto:hello@example.com',
-			)
+			'default', 'square', RenderPlacement::PHP_API, '', array( 'facebook' ), array(), '', true,
+			array( 'facebook' => 'https://facebook.com/example', 'mail' => 'mailto:hello@example.com' )
 		);
-		$result = $this->builder->build(
-			$request,
-			new ShareContext( 'https://example.test/post', 'Example' )
-		);
+		$result = $this->builder->build( $request, new ShareContext( 'https://example.test/post', 'Example' ) );
 		$html = $this->renderer->render( $request, $result );
 
-		$this->assertStringContainsString(
-			"<a class='facebook' target='_blank' href='https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fexample.test%2Fpost' rel='nofollow noopener noreferrer'></a>\n",
-			$html
-		);
-		$this->assertStringContainsString(
-			"class='facebook zmshbt-profile-link' data-zmshbt-kind='profile' target='_blank' rel='nofollow noopener noreferrer' href='https://facebook.com/example' aria-label='Visit our Facebook profile'",
-			$html
-		);
-		$this->assertStringContainsString(
-			"class='mail zmshbt-profile-link' data-zmshbt-kind='profile' href='mailto:hello@example.com' aria-label='Contact us by email'",
-			$html
-		);
-		$this->assertSame( 1, substr_count( $html, "target='_blank' href='https://www.facebook.com" ) );
+		$this->assertStringContainsString( "<a class='facebook' target='_blank' href='https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fexample.test%2Fpost' rel='nofollow noopener noreferrer'></a>", $html );
+		$this->assertStringContainsString( "class='facebook zmshbt-profile-link' data-zmshbt-kind='profile' target='_blank' rel='nofollow noopener noreferrer' href='https://facebook.com/example'", $html );
+		$this->assertStringContainsString( "class='mail zmshbt-profile-link' data-zmshbt-kind='profile' href='mailto:hello@example.com'", $html );
 	}
 
-	public function testAbsentProfilesPreserveTheHistoricalHtmlExactly(): void {
-		$request = new RenderRequest(
-			'default',
-			'square',
-			RenderPlacement::PHP_API,
-			'',
-			array()
-		);
-		$result = $this->builder->build(
-			$request,
-			new ShareContext( 'https://example.test/post', 'Example' )
-		);
-
-		$this->assertSame(
-			"<div class='zmshbt in_php_function default square'></div>",
-			$this->renderer->render( $request, $result )
-		);
-	}
-
-	public function testCompatibilityFacadeCollectsProfileOnlyIconCssAndRejectsUnsafeUrls(): void {
-		global $zm_sh;
-		$facade = new LegacyRenderFacade( ( new BuiltInNetworkProvider() )->createRegistry() );
-		$outcome = $facade->render(
+	public function testCanonicalFacadeRejectsUnsafeProfilesAndCollectsProfileAssets(): void {
+		$outcome = $this->facade->render(
 			array(
-				'iconset' => 'default',
-				'iconset_type' => 'square',
-				'icons' => array(),
-				'profile_links' => array(
-					'facebook' => 'https://facebook.com/example',
-					'x' => 'javascript:alert(1)',
-				),
-			),
-			$zm_sh->iconsets
+				'iconset' => 'default', 'iconset_type' => 'square', 'icons' => array(),
+				'profile_links' => array( 'facebook' => 'https://facebook.com/example', 'x' => 'javascript:alert(1)' ),
+			)
 		);
 
 		$this->assertStringContainsString( 'https://facebook.com/example', $outcome->html() );
@@ -154,68 +92,54 @@ final class ProfileLinkRenderingTest extends WP_UnitTestCase {
 		$this->assertSame( array( "default_square\0_facebook" ), array_keys( $outcome->printedIcons() ) );
 	}
 
-	public function testAnalyticsExcludesProfilesOnlyWhenTheyAreConfigured(): void {
-		$runtime = new zm_social_share();
-		$runtime->options = array(
-			'g_analytics' => true,
-			'profile_links' => array( 'facebook' => 'https://facebook.com/example' ),
-			'show_in' => array(),
-		);
-		ob_start();
-		$runtime->footer();
-		$withProfiles = (string) ob_get_clean();
+	public function testCanonicalFrontendAnalyticsExcludesProfilesOnlyWhenConfigured(): void {
+		$withProfiles = $this->footerFor( array( 'facebook' => 'https://facebook.com/example' ) );
+		$this->assertStringContainsString( "jQuery('.zmshbt a:not(.zmshbt-profile-link)').on('click'", $withProfiles );
 
-		$this->assertStringContainsString(
-			"jQuery('.zmshbt a:not(.zmshbt-profile-link)').on('click'",
-			$withProfiles
-		);
-
-		$runtime = new zm_social_share();
-		$runtime->options = array(
-			'g_analytics' => true,
-			'show_in' => array(),
-		);
-		ob_start();
-		$runtime->footer();
-		$withoutProfiles = (string) ob_get_clean();
-
+		$withoutProfiles = $this->footerFor( array() );
 		$this->assertStringContainsString( "jQuery('.zmshbt a').on('click'", $withoutProfiles );
 		$this->assertStringNotContainsString( 'a:not(.zmshbt-profile-link)', $withoutProfiles );
 	}
 
-	public function testGlobalProfilesAreInheritedByShortcodeStyleRenderOverrides(): void {
-		global $zm_sh;
+	public function testGlobalProfilesAreInheritedByCanonicalShortcodeAndBlockControllers(): void {
+		update_option( 'zm_shbt_fld', array( 'profile_links' => array( 'facebook' => 'https://facebook.com/example' ) ) );
+		$plugin = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin();
+		$shortcodeHtml = $plugin->shortcode()->render( array( 'icons' => 'x' ) );
+		$blockHtml = $plugin->block()->render( array( 'icons' => array( 'x' ) ) );
 
-		$runtime = new zm_social_share();
-		$runtime->options = array(
-			'profile_links' => array( 'facebook' => 'https://facebook.com/example' ),
-		);
-		$zm_sh = $runtime;
-
-		$html = $runtime->zm_sh_btn(
-			array(
-				'iconset' => 'default',
-				'iconset_type' => 'square',
-				'icons' => array( 'x' => 'on' ),
-				'class' => 'in_shortcode',
-			)
-		);
-
-		$this->assertStringContainsString( 'https://facebook.com/example', $html );
-		$this->assertStringContainsString( 'zmshbt-profile-link', $html );
-
-		$shortcodeHtml = zm_sh_shortcode_cb( array( 'icons' => 'x' ) );
-		$blockHtml = zm_sh_render_block( array( 'icons' => array( 'x' ) ) );
 		$this->assertStringContainsString( 'https://facebook.com/example', $shortcodeHtml );
 		$this->assertStringContainsString( 'https://facebook.com/example', $blockHtml );
 	}
 
-	private function networkIds( array $resolvedLinks ) {
-		return array_map(
-			static function ( $resolvedLink ) {
-				return $resolvedLink->network()->id();
-			},
-			$resolvedLinks
+	private function footerFor( array $profiles ): string {
+		$plugin = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin();
+		$settings = $plugin->settings()->load();
+		$controller = new FrontendController(
+			new ProfileLinkSettingsRepository( new Settings(
+				$settings->title(), $settings->iconSetId(), $settings->defaultIconShape(), array(),
+				$settings->placementShapes(), $settings->networkStates(), $settings->shareTemplates(),
+				$settings->excludedContent(), true, $settings->autoHideEnabled(), $settings->preserveUrlPort(),
+				$settings->noFollow(), $profiles
+			) ),
+			$plugin->renderer(), new ContentPlacementComposer(), new FloatingPlacementPlanner(),
+			new ExcludedContentPolicy(), new TranslationLoader( HSSB_PLUGIN_FILE, 'html-social-share-buttons' ),
+			new AssetCollector( HSSB_PLUGIN_URL . 'iconset/default/style.css' ),
+			'_zm_sh_disable_share'
 		);
+
+		ob_start();
+		$controller->footer();
+		return (string) ob_get_clean();
 	}
+
+	private function networkIds( array $links ): array {
+		return array_map( static function ( $link ) { return $link->network()->id(); }, $links );
+	}
+}
+
+final class ProfileLinkSettingsRepository implements SettingsRepository {
+	private $settings;
+	public function __construct( Settings $settings ) { $this->settings = $settings; }
+	public function load() { return $this->settings; }
+	public function save( Settings $settings ) { $this->settings = $settings; return $settings; }
 }

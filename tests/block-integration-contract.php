@@ -10,19 +10,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/../' );
 }
 
-$source = implode( '', file( __DIR__ . '/../src/Compatibility/Legacy/Integration/BlockAdapter.php' ) );
-$script = implode( '', file( __DIR__ . '/../src/js/compatibility/legacy/block/register.js' ) );
+$source = implode(
+	'',
+	file( __DIR__ . '/../src/Presentation/Integration/Block/BlockRegistrar.php' )
+);
+$script = implode( '', file( __DIR__ . '/../src/js/blocks/social-share/register.js' ) );
 $metadata = json_decode( (string) file_get_contents( __DIR__ . '/../block.json' ), true );
+$socialLinksScript = implode( '', file( __DIR__ . '/../src/js/blocks/social-links/register.js' ) );
+$socialLinksMetadata = json_decode(
+	(string) file_get_contents( __DIR__ . '/../blocks/social-links/block.json' ),
+	true
+);
 
-foreach ( array( "register_block_type( \$metadataPath", 'register_block_type_from_metadata', 'render_callback', 'renderCanonical', 'zm_sh_get_builder_iconset(', "empty( \$attributes['icons'] )", 'iconsetAssets', 'builderIconSetAssets', 'wp_set_script_translations' ) as $needle ) {
+foreach ( array( 'register_block_type_from_metadata', 'render_callback', 'renderShareBlock', 'renderSocialLinksBlock', 'renderOutcome', 'builderIconSetAssets', 'iconsetAssets', 'hssbShareBlock', 'hssbSocialLinksBlock', 'blocks/social-links/block.json', 'wp_set_script_translations' ) as $needle ) {
 	if ( false === strpos( $source, $needle ) ) {
 		exit( esc_html( sprintf( 'Block integration contract failed: %s\n', $needle ) ) );
 		exit( 1 );
 	}
 }
 
-if ( false !== strpos( $source, 'zm_sh_shortcode_cb' ) ) {
-	echo "Block integration contract failed: shortcode callback remains a renderer dependency.\n";
+if ( false !== strpos( $source, 'zm_sh_shortcode_cb' ) || false !== strpos( $source, 'LegacyRuntime' ) ) {
+	echo "Block integration contract failed: compatibility renderer dependency remains.\n";
 	exit( 1 );
 }
 
@@ -31,8 +39,42 @@ if ( ! is_array( $metadata ) || 'html-social-share/social-share' !== $metadata['
 	exit( 1 );
 }
 
-if ( false === strpos( $script, 'blocks.registerBlockType( metadata.name' ) || false === strpos( $script, "import metadata from '../../../../../block.json'" ) || false === strpos( $script, 'selected.length === 1' ) || false === strpos( $script, 'Inherit from plugin settings' ) || false === strpos( $script, 'zm-sh-block-preview__icons' ) || false === strpos( $script, 'supportedTypes' ) ) {
+if ( false === strpos( $script, 'blocks.registerBlockType( metadata.name' ) || false === strpos( $script, "import metadata from '../../../../block.json'" ) || false === strpos( $script, 'selected.length === 1' ) || false === strpos( $script, 'Inherit from plugin settings' ) || false === strpos( $script, 'hssb-block-preview__icons' ) || false === strpos( $script, 'supportedTypes' ) || false === strpos( $script, "editorData( 'hssbShareBlock' )" ) ) {
 	echo "Block integration contract failed: JavaScript registration.\n";
+	exit( 1 );
+}
+
+if (
+	! is_array( $socialLinksMetadata ) ||
+	'html-social-share/social-links' !== $socialLinksMetadata['name'] ||
+	'zm-sh-social-links-block' !== $socialLinksMetadata['editorScript'] ||
+	1 !== $socialLinksMetadata['apiVersion'] ||
+	array( 'title', 'iconset', 'iconset_type', 'profile_links_mode', 'profile_links' ) !== array_keys( $socialLinksMetadata['attributes'] )
+) {
+	echo "Block integration contract failed: social links block metadata.\n";
+	exit( 1 );
+}
+
+foreach (
+	array(
+		'blocks.registerBlockType( metadata.name',
+		"import metadata from '../../../../blocks/social-links/block.json'",
+		"editorData( 'hssbSocialLinksBlock' )",
+		'profile_links_mode',
+		'profileLinksForPreview',
+		'hssb-social-links-block-preview__icons',
+		'save() {',
+		'return null;',
+	) as $needle
+) {
+	if ( false === strpos( $socialLinksScript, $needle ) ) {
+		echo 'Block integration contract failed: social links editor implementation (' . $needle . ").\n";
+		exit( 1 );
+	}
+}
+
+if ( false !== strpos( $socialLinksScript, 'zm_sh_shortcode_cb' ) ) {
+	echo "Block integration contract failed: social links editor depends on the shortcode callback.\n";
 	exit( 1 );
 }
 

@@ -24,7 +24,13 @@ final class Plugin {
 	private $translations;
 	private $assets;
 	private $extensions;
+	private $paths;
+	private $config;
+	private $hooks;
+	private $renderer;
+	private $services;
 	private $booted = false;
+	private $booting = false;
 
 	public function __construct(
 		SettingsRepository $settings,
@@ -36,7 +42,12 @@ final class Plugin {
 		FloatingPlacementPlanner $floatingPlacement,
 		TranslationLoader $translations,
 		IconSetAssetResolver $assets,
-		ExtensionHooks $extensions
+		ExtensionHooks $extensions,
+		PluginPaths $paths = null,
+		PluginConfig $config = null,
+		HookRegistrar $hooks = null,
+		$renderer = null,
+		array $services = array()
 	) {
 		$this->settings = $settings;
 		$this->networks = $networks;
@@ -48,15 +59,26 @@ final class Plugin {
 		$this->translations = $translations;
 		$this->assets = $assets;
 		$this->extensions = $extensions;
+		$this->paths = $paths;
+		$this->config = $config;
+		$this->hooks = $hooks ? $hooks : new HookRegistrar();
+		$this->renderer = $renderer;
+		$this->services = $services;
 	}
 
 	public function boot() {
-		if ( $this->booted ) {
+		if ( $this->booted || $this->booting ) {
 			return;
 		}
 
-		$this->migrations->run();
-		$this->booted = true;
+		$this->booting = true;
+		try {
+			$this->migrations->run();
+			$this->hooks->registerHooks();
+			$this->booted = true;
+		} finally {
+			$this->booting = false;
+		}
 	}
 
 	public function isBooted() {
@@ -97,5 +119,67 @@ final class Plugin {
 
 	public function extensions() {
 		return $this->extensions;
+	}
+
+	public function paths() {
+		return $this->paths;
+	}
+
+	public function config() {
+		return $this->config;
+	}
+
+	public function hooks() {
+		return $this->hooks;
+	}
+
+	/**
+	 * The canonical render facade.  The loose type deliberately permits the
+	 * bootstrap package to be loaded before WordPress-facing presentation
+	 * classes are assembled, while callers still receive one explicit service.
+	 */
+	public function renderer() {
+		return $this->renderer;
+	}
+
+	/**
+	 * Explicit access to optional WordPress integration services.
+	 */
+	public function service( $name ) {
+		$name = (string) $name;
+
+		return isset( $this->services[ $name ] ) ? $this->services[ $name ] : null;
+	}
+
+	public function frontend() {
+		return $this->service( 'frontend' );
+	}
+
+	public function shortcode() {
+		return $this->service( 'shortcode' );
+	}
+
+	public function block() {
+		return $this->service( 'block' );
+	}
+
+	public function widgets() {
+		return $this->service( 'widgets' );
+	}
+
+	public function elementor() {
+		return $this->service( 'elementor' );
+	}
+
+	public function wpBakery() {
+		return $this->service( 'wpBakery' );
+	}
+
+	public function admin() {
+		return $this->service( 'admin' );
+	}
+
+	public function metabox() {
+		return $this->service( 'metabox' );
 	}
 }

@@ -3,11 +3,14 @@ includes:
 	- phpstan-baseline.neon
 
 parameters:
+	scanFiles:
+		- tests/stubs/elementor.php
 	level: 5
 	paths:
 		- src/Application
 		- src/Bootstrap
 		- src/Domain
 		- src/Infrastructure
+		- src/Presentation
 	treatPhpDocTypesAsCertain: false
 	tmpDir: tmp/phpstan

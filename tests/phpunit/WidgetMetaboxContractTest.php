@@ -15,7 +15,7 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 	}
 
 	public function testWidgetSavesAndRendersSelectedNetworks(): void {
-		$widget = new zm_html_share_widget();
+		$widget = $this->widget();
 		$saved = $widget->update(
 			array(
 				'title' => ' <b>Widget title</b> ',
@@ -60,7 +60,7 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 	}
 
 	public function testWidgetRendersLegacyNumericNetworkStorage(): void {
-		$widget = new zm_html_share_widget();
+		$widget = $this->widget();
 
 		ob_start();
 		$widget->widget(
@@ -80,11 +80,11 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 
 	public function testMetaboxRenderAndAuthorizedSaveMatchThePersistedContract(): void {
 		$postId = self::factory()->post->create( array( 'post_type' => 'page' ) );
-		$metabox = new zm_sh_metabox();
+		$metabox = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->metabox();
 		$post = get_post( $postId );
 
 		ob_start();
-		$metabox->render_meta_box_content( $post );
+		$metabox->render( $post );
 		$output = (string) ob_get_clean();
 
 		$this->assertStringContainsString( 'name="zm_sh_mtbox"', $output );
@@ -108,7 +108,7 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 	public function testMetaboxRejectsAnInvalidNonce(): void {
 		$postId = self::factory()->post->create( array( 'post_type' => 'post' ) );
 		update_post_meta( $postId, '_zm_sh_disable_share', 'on' );
-		$metabox = new zm_sh_metabox();
+		$metabox = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->metabox();
 
 		$_POST = array(
 			'zm_sh_mtbox' => 'invalid',
@@ -117,5 +117,18 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		$metabox->save( $postId );
 
 		$this->assertSame( 'on', get_post_meta( $postId, '_zm_sh_disable_share', true ) );
+	}
+
+	private function widget() {
+		$plugin = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin();
+
+		return new \Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\Widget\ShareWidget(
+			$plugin->renderer(),
+			$plugin->settings(),
+			$plugin->iconSets(),
+			$plugin->networks(),
+			$plugin->frontend()->assets(),
+			$plugin->config()
+		);
 	}
 }

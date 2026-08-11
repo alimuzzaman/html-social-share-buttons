@@ -1,4 +1,4 @@
-.PHONY: build watch zip frontend-capture frontend-compare frontend-drift-surface admin-react-smoke share-template-contract exclude-contract settings-local-checks ajax-contracts multisite-contracts help check-wp-root
+.PHONY: build watch zip frontend-capture frontend-compare admin-react-smoke share-template-contract exclude-contract settings-local-checks ajax-contracts multisite-contracts help check-wp-root
 
 WP_ROOT ?= $(shell [ -n "$(WP_ROOT)" ] && echo "$(WP_ROOT)" || echo "")
 
@@ -15,7 +15,6 @@ help:
 	@echo "  zip                Create the distribution archive in the project parent directory"
 	@echo "  frontend-capture   Capture frontend output baseline fixtures"
 	@echo "  frontend-compare   Compare current output against baseline"
-	@echo "  frontend-drift-surface   Verify frontend renderer files are unchanged"
 	@echo "  admin-react-smoke  Verify React settings render and legacy field names"
 	@echo "  share-template-contract  Verify platform share URL templates"
 	@echo "  exclude-contract  Verify excluded post identifiers"
@@ -44,19 +43,16 @@ frontend-compare: check-wp-root
 		--baseline=tests/fixtures/frontend-output-baseline.json \
 		--scenario-file=tests/frontend-output-scenarios.json --strict
 
-frontend-drift-surface:
-	@php tests/frontend-drift-surface.php
-
 admin-react-smoke:
 	@pnpm run build
 	@node tests/admin-react-smoke.js
 
 share-template-contract:
-	@php -l src/Compatibility/Legacy/Global/share-templates.php
+	@php -l src/Infrastructure/Definition/BuiltInNetworkProvider.php
 	@php tests/share-template-contract.php
 
 exclude-contract:
-	@php -l src/Compatibility/Legacy/Global/functions.php
+	@php -l src/Application/Content/ExcludedContentPolicy.php
 	@php tests/exclude-contract.php
 
 settings-local-checks:

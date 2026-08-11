@@ -14,6 +14,7 @@ final class RenderRequest {
 	private $permalinkOverride;
 	private $noFollow;
 	private $profileLinks;
+	private $showHeading;
 
 	public function __construct(
 		$iconSetId,
@@ -24,7 +25,8 @@ final class RenderRequest {
 		array $templateOverrides = array(),
 		$permalinkOverride = '',
 		$noFollow = false,
-		array $profileLinks = array()
+		array $profileLinks = array(),
+		$showHeading = false
 	) {
 		RenderPlacement::assertValid( $placement );
 
@@ -67,6 +69,7 @@ final class RenderRequest {
 		$this->permalinkOverride = (string) $permalinkOverride;
 		$this->noFollow = (bool) $noFollow;
 		$this->profileLinks = $normalizedProfileLinks;
+		$this->showHeading = (bool) $showHeading;
 	}
 
 	public function iconSetId() {
@@ -103,6 +106,14 @@ final class RenderRequest {
 
 	public function profileLinks() {
 		return $this->profileLinks;
+	}
+
+	/**
+	 * Profile-only dynamic blocks may opt into a heading without changing the
+	 * historic share-button block's no-heading output contract.
+	 */
+	public function showHeading() {
+		return $this->showHeading;
 	}
 
 	private function normalizeProfileUrl( $networkId, $url ) {

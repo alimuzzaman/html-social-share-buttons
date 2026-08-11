@@ -1,6 +1,6 @@
 <?php
 
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Bootstrap\LegacyRuntime;
+use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
 
 final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 	private $originalPost;
@@ -112,7 +112,7 @@ final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 
 		return array(
 			'shortcode' => zm_sh_shortcode_cb( array( 'icons' => 'facebook' ) ),
-			'Gutenberg block' => LegacyRuntime::block()->render( $attributes, $postId ),
+			'Gutenberg block' => LegacyApi::plugin()->block()->render( $attributes, $postId ),
 			'Elementor-compatible adapter input' => zm_sh_shortcode_cb(
 				array(
 					'icons' => 'facebook',

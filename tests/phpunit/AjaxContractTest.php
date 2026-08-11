@@ -4,11 +4,6 @@
  * @group ajax
  */
 final class AjaxContractTest extends WP_Ajax_UnitTestCase {
-	protected function setUp(): void {
-		parent::setUp();
-		new zm_sh_settings();
-	}
-
 	protected function tearDown(): void {
 		$_POST = array();
 		$_GET = array();
@@ -22,7 +17,9 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 		$GLOBALS['post'] = null;
 		$_REQUEST['post_id'] = (string) $postId;
 
-		$output = zm_sh_shortcode_cb( array( 'icons' => 'facebook' ) );
+		$output = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()
+			->shortcode()
+			->render( array( 'icons' => 'facebook' ) );
 
 		$this->assertStringContainsString( rawurlencode( get_permalink( $postId ) ), $output );
 		$this->assertStringNotContainsString( '%%permalink%%', $output );

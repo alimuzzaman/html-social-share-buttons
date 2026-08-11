@@ -2,93 +2,119 @@
 
 ## Release-readiness summary
 
-`v2.2.6` (`620f1ae66`) is the published baseline. The `latest` working tree
-contains the rewrite and its current uncommitted release-hardening changes; it
-is not a public 3.0 release. The plugin header, `block.json`, and `Readme.txt`
-still carry version 2.2.6, and the stable tag must not change during this work.
+`v2.2.6` (`620f1ae66`) remains the published baseline. The `latest` working
+tree contains a canonical-first rewrite and release-hardening work; it is not a
+public 3.0 release. The plugin header, both block metadata files, and
+`Readme.txt` remain at 2.2.6. Do not change the stable tag, create a release,
+or describe this work as a completed 3.0 release without explicit approval.
 
-The architecture and contracts show substantial implementation progress, but
-they are not sufficient release evidence by themselves. In particular, this
-repository does not contain evidence that a commercial WPBakery editor passed,
-that cross-browser screenshots passed, that rollback was rehearsed, or that a
-14-day soak passed. Those claims must remain absent until evidence is recorded.
+The rewrite substantially reduces the compatibility layer, but source and
+contract coverage are not release evidence on their own. The repository still
+does not establish PNG redistribution rights, a licensed WPBakery editor run,
+cross-browser visual parity, a rollback rehearsal, or a 14-day staging soak.
 
-## Current implementation evidence
+## Completed implementation work
 
-- Production bootstrap loads Composer’s autoloader and then the legacy runtime;
-  the new service graph owns canonical settings, registries, rendering,
-  placement, translations, and migration infrastructure while legacy globals
-  and adapters live below `Compatibility/Legacy`.
-- Root `block.json` now owns dynamic-block metadata. The block editor imports
-  it; server registration reads it with a WordPress-5.3-compatible fallback;
-  `save()` remains `null`; and server rendering uses `renderCanonical()` rather
-  than the shortcode callback.
-- Canonical share URL selection resolves a block context post, loop/global
-  post, queried post, or AJAX-request post before the legacy fallback. The
-  static contract specifies one encoded permalink for omitted and recognized
-  historical placeholder URLs across shortcode, block, Elementor-compatible
-  input, WPBakery stored shortcode, and direct PHP paths.
-- A missing production Composer loader blocks runtime boot, fails activation
-  with remediation guidance, and adds administrative notices. The packaging
-  script requests a no-dev classmap-authoritative loader and stages a
-  symlink-free distribution tree; archive verification requires the essential
-  Composer maps, PHP sources, `block.json`, built bundles, and icon assets.
-- Settings UI text is supplied in a PHP translation payload, block editor text
-  uses `wp.i18n`, and script translations are registered when supported. The
-  tracked localization contract covers settings/profile/template/modal/status
-  source keys, but this is not a translated-language acceptance test.
-- Canonical manifests define six built-in icon sets and the exact supported
-  network/shape combinations listed in `ICON-COVERAGE-MATRIX.md`. Canonical
-  files exist for those manifest cells; their browser parity and license status
-  are separate questions.
+- The canonical bootstrap now composes the kernel in `Bootstrap`: immutable
+  plugin configuration and paths, `PluginFactory`, `Plugin`, and a single
+  `HookRegistrar`. Canonical presentation controllers own settings, frontend
+  placement, shortcodes, blocks, widgets, Elementor, WPBakery, metaboxes, and
+  admin requests. The old root PHP forwarding files and the old compatibility
+  runtime have been removed.
+- Rendering now flows through `Presentation\\Rendering\\RenderFacade`, with a
+  request mapper, WordPress context factory, hook-aware URL resolver,
+  application button builder, and HTML renderer. The facade is the common
+  server-side renderer for automatic placement, the public API, shortcode,
+  block, widget, Elementor, and WPBakery adapters. JavaScript remains editor
+  controls and previews only; frontend markup remains PHP-owned.
+- `Compatibility/Legacy/Api` is intentionally a thin public-symbol bridge,
+  not a second runtime. It exposes retained constants, globals, functions,
+  classes, hook translation, option/icon-set value adaptation, and external
+  icon-set import by delegating into the already-booted canonical kernel.
+  `zm_shbt_fld`, `_zm_sh_disable_share`, historical handles, APIs, hooks,
+  builder identifiers, stored content, and documented markup stay public
+  compatibility surfaces.
+- The canonical `PluginConfig` owns stable identifiers while mapping them to
+  their historical values. Both shortcode names, `[zm_sh_btn]` and
+  `[html-social-share-buttons]`, are registered. Omitted URLs and recognised
+  legacy permalink placeholders resolve from the block post context, loop or
+  global post, queried post, AJAX post IDs, and then the historical fallback.
+  The canonical resolver ensures the resulting share URL is escaped and
+  percent-encoded once rather than exposing `%%permalink%%` or its encoded
+  form.
+- Root `block.json` remains the canonical definition of
+  `html-social-share/social-share`. `blocks/social-links/block.json` defines
+  the new separate `html-social-share/social-links` dynamic block. The server
+  registers both from metadata, uses the metadata API where available and a
+  WordPress-5.3 fallback otherwise, and uses PHP render callbacks directly to
+  the facade. Both editor implementations import their metadata and have
+  `save()` return `null`; neither block renderer calls the shortcode callback.
+- A source checkout without `vendor/autoload.php` stops before runtime boot,
+  fails activation with remediation guidance, and reports an admin notice for
+  incomplete active installs. The release owner prepares a no-dev,
+  classmap-authoritative Composer loader and the `zip` script verifies it before
+  writing an archive; the distribution contract requires the
+  production autoloader/maps, PHP source, metadata, built bundles, and assets.
+- Settings, builder, block, and frontend strings now use the plugin text
+  domain. PHP supplies the settings payload, editor bundles use `wp.i18n`, and
+  block scripts register translations where WordPress supports the API. The
+  localization contract covers the tracked source strings; translated-language
+  visual review remains a separate gate.
+- `resources/iconsets/*.php` is the small canonical metadata layer (ID,
+  labels, shapes, filenames, and `asset_path`), not a second icon pack. The
+  historical Default, Flat, Long Shadow, and Prajin files remain in their
+  released `iconset/` locations; duplicate copies under `assets/iconsets/`
+  were removed. New vector pack assets and their provenance records remain in
+  their own `assets/iconsets/` locations. The exact declared support matrix is
+  in `ICON-COVERAGE-MATRIX.md`.
 
-## What is not yet proven for this candidate
+## Evidence still required for a candidate
 
-| Area | Current state | Required evidence |
+| Area | Implementation status | Evidence still required |
 |---|---|---|
-| PHP, JavaScript, icon, settings, block, localization contracts | Sources and commands are present | Candidate-revision logs from the configured commands |
-| WordPress support declaration | Header/Composer say WP 5.3+ and PHP 7.0+ | Matrix runs; note that the configured WP 5.3 row does not run full PHPUnit contracts |
-| Archive | Build script and archive contract are present | Two matching ZIP checksums and fresh WordPress installation/activation |
-| Frontend compatibility | Contract/fixture sources are present | Candidate output results and manual checks for all supported surfaces |
-| Gutenberg | Metadata and dynamic renderer are present | Editor and frontend captures on supported WordPress versions |
-| Elementor | Optional integration and deterministic stubbed storage contract are present | Real plugin editor/frontend fixture and persisted-data capture |
-| WPBakery | Optional integration, stored-shortcode contracts, and bundle source are present | Licensed editor environment, editor/frontend fixture, and persisted-data capture |
-| Icon packs | Manifest coverage is present | Cross-browser matrix and source/redistribution/trademark review |
-| Rollback | No schema migration is designed; 2.2.6 is the target | Completed rehearsal with before/after storage and output comparison |
+| PHP, JavaScript, icon, settings, block, localization contracts | Passed in the 2026-08-11 candidate validation; see `RELEASE-CANDIDATE-VALIDATION.md` | Repeat after any candidate code change |
+| WordPress/PHP declaration | Header and readme declare WP 5.3+ and PHP 7.0+ | Supported matrix runs; the WP 5.3 path must not be represented as a full modern-suite certification |
+| Archive and autoloader | Two builds matched and the ZIP activated on a clean Sandbox without Composer | Repeat for the approved versioned candidate |
+| Frontend compatibility | PHPUnit, the 33-scenario golden comparison, fresh-ZIP smoke, and stored browser fixtures passed | Manual browser matrix and licensed WPBakery editor evidence |
+| Gutenberg | Dynamic metadata registration and a real stored-block browser fixture passed | Supported-version and manual browser captures |
+| Elementor | Real editor persistence, visible icon preview, and public stored-data fixture passed with Elementor 4.2.2 | Manual cross-browser captures and supported-version matrix |
+| WPBakery | Canonical optional integration and stored-shortcode contracts are present | Licensed editor environment, fixture, persisted data, and frontend capture |
+| Icon packs | Manifests, filenames, and support matrix are defined | Provenance/legal decision and desktop/mobile browser matrix |
+| Rollback | No data migration/replacement schema is designed | Completed 2.2.6 rollback rehearsal with storage and output comparison |
 | Staging | Plan only | Fourteen consecutive days of recorded evidence |
 
-The GitHub Actions workflow is a real tracked CI workflow, not an out-of-scope
-future proposal. It configures PHP syntax, JavaScript/contracts, selected
-WordPress combinations, and archive installation checks. It does not replace
-the manual browser, real-builder, provenance, rollback, or soak gates.
+## Release blockers and decisions still needed
 
-## Release blockers
-
-1. Historical PNG source and redistribution rights remain unresolved. The
-   “probable” attributions in `resources/iconsets/ASSET-SOURCES.md` are not
-   license clearance. Do not claim those packs are cleared or redistribute them
-   in 3.0 without verifiable evidence or an approved replacement decision.
-2. No candidate-specific command, archive, or fresh-install evidence is
-   recorded. The audit environment used for this document had no `php` or
-   `pnpm`, so it could not supply that evidence.
-3. No manual Chrome, Firefox, Safari, and Edge desktop/mobile parity evidence
-   is recorded.
-4. Real Elementor editor/frontend captures are missing. A licensed WPBakery
-   editor environment and its verification are also missing.
-5. A 14-day staging soak and rollback rehearsal have not started or passed.
-6. Placement-level profile-link controls remain unimplemented; decide whether
-   that is a 3.0 requirement or defer it explicitly before RC approval.
-7. Version/listing alignment, screenshots, FAQ, and release copy need final
-   review after the functional gates pass.
+1. Historical PNG source, modification, redistribution, attribution, and
+   trademark evidence remain unresolved. The notes in
+   `resources/iconsets/ASSET-SOURCES.md` are not clearance. Keep the files for
+   compatibility, but do not claim they are cleared or import replacements
+   without an approved provenance record.
+2. Manual current Chrome, Firefox, Safari, and Edge desktop/mobile icon and
+   layout parity has not been recorded.
+3. The isolated candidate E2E run now provisions a real Elementor document
+   through Elementor's `save_builder` action and verifies its visible editor
+   preview and public frontend. A licensed WPBakery editor fixture remains a
+   hard external requirement; only its stored-shortcode public fixture passed.
+4. Rollback rehearsal and the 14-day staging soak have not started or passed.
+5. Placement-level profile-link controls remain a product decision: global
+   inheritance and the Social Links block are implemented, but a per-placement
+   profile-link control is not claimed complete.
+6. Plugin Check must be recorded separately from compatibility warnings. Its
+   API-v1 findings needed for the WordPress 5.3 floor require disposition; do
+   not label those warnings as fixed without a compatibility decision.
+7. Version/listing alignment, screenshots, FAQ, and release copy remain final
+   release-owner work. The version is deliberately still 2.2.6, not
+   `3.0.0-rc.1`.
 
 ## Release sequence
 
-1. Run and record all configured quality, WordPress, Plugin Check, archive, and
-   fresh-install gates against a frozen candidate revision.
-2. Complete provenance decisions and the supported icon/browser matrix.
-3. Capture real Gutenberg and Elementor evidence and verify the WPBakery editor
-   in a licensed environment.
-4. Approve a candidate artifact, run the 14-day staging plan, and complete the
-   rollback rehearsal.
-5. Obtain release-owner approval, then—and only then—align versions, stable
-   tag, listing materials, and publication artifacts.
+1. Freeze a candidate revision and record all syntax, quality, Sandbox,
+   Plugin Check, archive, fresh-install, and compatibility-contract results.
+2. Complete the provenance/legal decision and the browser/icon matrix.
+3. Capture real Gutenberg and Elementor evidence and verify WPBakery in a
+   licensed editor environment.
+4. Approve a candidate artifact, perform the rollback rehearsal, and run the
+   documented 14-day staging soak.
+5. Obtain release-owner approval before changing version metadata, stable tag,
+   listing material, publication artifacts, or deployment state.

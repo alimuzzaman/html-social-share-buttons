@@ -1,6 +1,5 @@
 <?php
 
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\IconSet\LegacyIconSetAssetMap;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\ManifestIconSetProvider;
@@ -11,53 +10,46 @@ final class CanonicalIconAssetTest extends WP_UnitTestCase {
 		$registry = ( new ManifestIconSetProvider(
 			dirname( __DIR__, 2 ) . '/resources/iconsets'
 		) )->createRegistry( $networks );
-		$map = new LegacyIconSetAssetMap();
 
-		$this->assertSame( 'twitter.png', $map->iconFile( $registry->get( 'default' ), 'x' ) );
-		$this->assertSame( 'x.svg', $map->iconFile( $registry->get( 'bootstrap-solid' ), 'x' ) );
-		$this->assertSame( 'x.svg', $map->iconFile( $registry->get( 'tabler-outline' ), 'x' ) );
+		$this->assertSame( 'twitter.png', $registry->get( 'default' )->iconFile( 'x' ) );
+		$this->assertSame( 'x.svg', $registry->get( 'bootstrap-solid' )->iconFile( 'x' ) );
+		$this->assertSame( 'x.svg', $registry->get( 'tabler-outline' )->iconFile( 'x' ) );
 	}
-	public function testCanonicalAssetsExistAndMatchTheReleasedVisualFiles(): void {
+	public function testBuiltInAssetsUseOneReleasedSourceTreePerIconSet(): void {
 		$root = dirname( __DIR__, 2 );
 		$registry = ( new ManifestIconSetProvider( $root . '/resources/iconsets' ) )
 			->createRegistry( ( new BuiltInNetworkProvider() )->createRegistry() );
 		$resolver = new IconSetAssetResolver(
-			$root . '/assets/iconsets',
-			'https://example.test/assets/iconsets'
+			$root,
+			'https://example.test'
 		);
-		$legacyMap = new LegacyIconSetAssetMap();
 		$legacyIconSetIds = array( 'default', 'flat', 'long-shadows', 'prajin' );
 
 		foreach ( $registry->all() as $iconSet ) {
-			$this->assertFileExists( $resolver->stylesheetPath( $iconSet ) );
-			$this->assertFileExists( $resolver->previewPath( $iconSet ) );
 			$isLegacy = in_array( $iconSet->id(), $legacyIconSetIds, true );
-			$legacyDirectory = $root . '/iconset/' . $legacyMap->directory( $iconSet );
+			$stylesheet = $resolver->stylesheetPath( $iconSet );
+			$preview = $resolver->previewPath( $iconSet );
+
 			if ( $isLegacy ) {
-				$this->assertSame(
-					hash_file( 'sha256', $legacyDirectory . '/style.css' ),
-					hash_file( 'sha256', $resolver->stylesheetPath( $iconSet ) )
+				$this->assertStringStartsWith( $root . '/iconset/', $stylesheet );
+				$this->assertStringStartsWith( $root . '/iconset/', $preview );
+				$this->assertFileDoesNotExist(
+					$root . '/assets/iconsets/' . $iconSet->id() . '/style.css',
+					'Historical packs must not be duplicated under assets/iconsets.'
 				);
-				$this->assertSame(
-					hash_file( 'sha256', $legacyDirectory . '/preview.png' ),
-					hash_file( 'sha256', $resolver->previewPath( $iconSet ) )
-				);
+			} else {
+				$this->assertStringStartsWith( $root . '/assets/iconsets/', $stylesheet );
+				$this->assertStringStartsWith( $root . '/assets/iconsets/', $preview );
 			}
-			$this->assertAssetFormat( $resolver->previewPath( $iconSet ) );
+
+			$this->assertFileExists( $stylesheet );
+			$this->assertFileExists( $preview );
+			$this->assertAssetFormat( $preview );
 
 			foreach ( $iconSet->shapes() as $shape ) {
 				foreach ( array_keys( $iconSet->iconFiles() ) as $networkId ) {
 					$canonical = $resolver->iconPath( $iconSet, $shape, $networkId );
 					$this->assertFileExists( $canonical );
-					if ( $isLegacy ) {
-						$legacy = $legacyDirectory . '/' . $shape . '/' .
-							$legacyMap->iconFile( $iconSet, $networkId );
-						$this->assertSame(
-							hash_file( 'sha256', $legacy ),
-							hash_file( 'sha256', $canonical ),
-							$iconSet->id() . '/' . $shape . '/' . $networkId
-						);
-					}
 					$this->assertAssetFormat( $canonical );
 				}
 			}
@@ -89,9 +81,36 @@ final class CanonicalIconAssetTest extends WP_UnitTestCase {
 		);
 
 		$this->assertSame(
-			'https://example.test/assets/iconsets/long-shadows/circle/x.png',
+			'https://example.test/iconset/long_shadow/circle/twitter.png',
 			$resolver->iconUrl( $registry->get( 'long-shadows' ), 'circle', 'x' )
 		);
+	}
+
+	public function testHistoricalPacksRemainAtTheirReleasedUrlsWithoutCanonicalCopies(): void {
+		$root = dirname( __DIR__, 2 );
+		$registry = ( new ManifestIconSetProvider( $root . '/resources/iconsets' ) )
+			->createRegistry( ( new BuiltInNetworkProvider() )->createRegistry() );
+		$resolver = new IconSetAssetResolver(
+			$root . '/assets/iconsets',
+			'https://example.test/assets/iconsets'
+		);
+		$historicalSets = array(
+			'default'       => 'default',
+			'flat'          => 'flat',
+			'long-shadows'  => 'long_shadow',
+			'prajin'        => 'prajin',
+		);
+
+		foreach ( $historicalSets as $id => $directory ) {
+			$this->assertDirectoryExists( $root . '/iconset/' . $directory );
+			$this->assertFileExists( $root . '/iconset/' . $directory . '/style.css' );
+			$this->assertFileExists( $root . '/iconset/' . $directory . '/preview.png' );
+			$this->assertDirectoryDoesNotExist( $root . '/assets/iconsets/' . $id );
+			$this->assertSame(
+				'https://example.test/iconset/' . $directory . '/',
+				$resolver->setUrl( $registry->get( $id ) )
+			);
+		}
 	}
 
 	private function assertValidPng( $path ): void {

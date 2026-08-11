@@ -49,9 +49,9 @@ final class BuildShareButtonsTest extends WP_UnitTestCase {
 		$this->assertSame( array( 'nofollow', 'noopener', 'noreferrer' ), $result->relTokens() );
 		$this->assertCount( 2, $result->buttons() );
 		$this->assertSame( 'facebook', $result->buttons()[0]->network()->id() );
-		$this->assertSame( 'facebook.png', $result->buttons()[0]->iconFile() );
+		$this->assertSame( 'Facebook.png', $result->buttons()[0]->iconFile() );
 		$this->assertSame( 'x', $result->buttons()[1]->network()->cssClass() );
-		$this->assertSame( 'x.png', $result->buttons()[1]->iconFile() );
+		$this->assertSame( 'Twitter.png', $result->buttons()[1]->iconFile() );
 		$this->assertSame(
 			'https://example.test/share?url=https%3A%2F%2Fexample.test%2Fpost%2F%3Fa%3D1&title=Title%20%26%20more',
 			$result->buttons()[1]->url()

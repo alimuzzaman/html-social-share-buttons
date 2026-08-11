@@ -1,6 +1,10 @@
 <?php
 
 namespace Elementor {
+	class Plugin {
+		public static $instance;
+	}
+
 	class Controls_Manager {
 		const TAB_CONTENT = 'content';
 		const TEXT = 'text';
@@ -11,6 +15,12 @@ namespace Elementor {
 	class Widget_Base {
 		private $contractSettings = array();
 		private $contractControls = array();
+
+		public function __construct( array $data = array(), array $args = array() ) {
+			$this->contractSettings = isset( $data['settings'] ) && is_array( $data['settings'] )
+				? $data['settings']
+				: array();
+		}
 
 		protected function start_controls_section( $id, array $definition ) {
 			$this->contractControls[ $id ] = array(
@@ -45,6 +55,13 @@ namespace Elementor {
 
 			return (string) ob_get_clean();
 		}
+
+		public function contractRenderStoredData() {
+			ob_start();
+			$this->render();
+
+			return (string) ob_get_clean();
+		}
 	}
 }
 
@@ -52,9 +69,11 @@ namespace {
 	final class ElementorStorageContractTest extends WP_UnitTestCase {
 		private $contract;
 		private $widget;
+		private $originalOptions;
 
 		protected function setUp(): void {
 			parent::setUp();
+			$this->originalOptions = get_option( 'zm_shbt_fld', null );
 			$storage = json_decode(
 				(string) file_get_contents( dirname( __DIR__ ) . '/fixtures/builder-storage-baseline.json' ),
 				true
@@ -68,12 +87,27 @@ namespace {
 				}
 			};
 
-			zm_sh_register_elementor_widget( $manager );
+			\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()
+				->elementor()
+				->registerWidget( $manager );
 			$this->widget = $manager->widget;
 		}
 
+		protected function tearDown(): void {
+			\Elementor\Plugin::$instance = null;
+			if ( null === $this->originalOptions ) {
+				delete_option( 'zm_shbt_fld' );
+			} else {
+				update_option( 'zm_shbt_fld', $this->originalOptions );
+			}
+			parent::tearDown();
+		}
+
 		public function testElementorWidgetIdentityAndStoredDocumentShapeRemainStable(): void {
-			$this->assertInstanceOf( \ZM_SH_Elementor_Share_Widget::class, $this->widget );
+			$this->assertInstanceOf(
+				\Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\Elementor\ElementorShareWidget::class,
+				$this->widget
+			);
 			$this->assertSame( $this->contract['widget_name'], $this->widget->get_name() );
 			$this->assertSame( 'eicon-share', $this->widget->get_icon() );
 			$this->assertSame( array( 'general' ), $this->widget->get_categories() );
@@ -105,7 +139,7 @@ namespace {
 			);
 		}
 
-		public function testStoredElementorSettingsRenderThroughTheCompatibilityAdapter(): void {
+		public function testStoredElementorSettingsRenderThroughTheCanonicalWidget(): void {
 			$output = $this->widget->contractRender( $this->contract['settings'] );
 
 			$this->assertStringNotContainsString( '<h3>', $output );
@@ -114,11 +148,65 @@ namespace {
 			$this->assertStringContainsString( 'class="twitter"', $output );
 		}
 
+		public function testElementorStyleRehydrationUsesTheConfiguredCanonicalDependencies(): void {
+			$class = get_class( $this->widget );
+			$rehydrated = new $class( $this->contract['document_element'], array() );
+			$output = $rehydrated->contractRenderStoredData();
+
+			$this->assertSame( $this->contract['widget_name'], $rehydrated->get_name() );
+			$this->assertStringContainsString( 'class="zmshbt in_elementor flat circle"', $output );
+			$this->assertStringContainsString( 'class="facebook"', $output );
+		}
+
+		public function testElementorDeclaresRegisteredIconPackStylesWithoutRendering(): void {
+			$handles = $this->widget->get_style_depends();
+
+			$this->assertContains( 'social-share-default', $handles );
+			$this->assertContains( 'social-share-flat', $handles );
+			$this->assertTrue( wp_style_is( 'social-share-default', 'registered' ) );
+			$this->assertTrue( wp_style_is( 'social-share-flat', 'registered' ) );
+		}
+
+		public function testElementorEditorPreviewIncludesTheRenderedIconRules(): void {
+			\Elementor\Plugin::$instance = (object) array(
+				'editor' => new class() {
+					public function is_edit_mode() {
+						return true;
+					}
+				},
+			);
+
+			$output = $this->widget->contractRender( $this->contract['settings'] );
+
+			$this->assertStringContainsString( '<style>', $output );
+			$this->assertStringContainsString( '.zmshbt.flat.circle .facebook', $output );
+			$this->assertStringContainsString( 'Facebook.png', $output );
+		}
+
 		public function testEmptyElementorNetworkSelectionRendersNothing(): void {
 			$settings = $this->contract['settings'];
 			$settings['icons'] = array();
 
 			$this->assertSame( '', $this->widget->contractRender( $settings ) );
+		}
+
+		public function testStoredElementorSettingsInheritGlobalProfileLinks(): void {
+			update_option(
+				'zm_shbt_fld',
+				array(
+					'profile_links' => array(
+						'facebook' => 'https://www.facebook.com/hssb',
+						'mail'     => 'mailto:hello@example.com',
+					),
+				)
+			);
+
+			$output = $this->widget->contractRender( $this->contract['settings'] );
+
+			$this->assertStringContainsString( 'class="facebook zmshbt-profile-link"', $output );
+			$this->assertStringContainsString( 'class="mail zmshbt-profile-link"', $output );
+			$this->assertStringContainsString( 'https://www.facebook.com/hssb', $output );
+			$this->assertStringContainsString( 'mailto:hello@example.com', $output );
 		}
 
 		public function testMalformedElementorSettingsFailClosedWithoutTypeErrors(): void {

@@ -37,7 +37,12 @@ async function createPublishedPage( page, { content, title } ) {
 				};
 			}
 
-			const response = await fetch( `${ settings.root }wp/v2/pages`, {
+			/*
+			 * Sandbox can expose wpApiSettings.root through a different host alias
+			 * than the page Playwright is currently controlling. Keep the request
+			 * same-origin while retaining WordPress's authenticated REST nonce.
+			 */
+			const response = await fetch( `${ window.location.origin }/wp-json/wp/v2/pages`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -69,6 +74,109 @@ async function createPublishedPage( page, { content, title } ) {
 	}
 
 	return result;
+}
+
+/**
+ * Persist the fixture through Elementor's real editor save action. Elementor
+ * owns the _elementor_data and _elementor_edit_mode records; this test helper
+ * deliberately does not write those post-meta values itself.
+ *
+ * @param {import('@playwright/test').Page} page       Browser page.
+ * @param {Object}                          fixture    Fresh WordPress page.
+ * @param {Object}                          element    Stored Elementor element.
+ * @return {Promise<Object>} The published fixture page.
+ */
+async function saveElementorFixture( page, fixture, element ) {
+	await page.goto(
+		`/wp-admin/post.php?post=${ fixture.id }&action=elementor`
+	);
+
+	const panel = page.locator( '#elementor-panel, .elementor-panel' ).first();
+	await expect( panel ).toBeVisible();
+
+	const result = await page.evaluate(
+		async ( payload ) => {
+			if (
+				! window.elementorCommon ||
+				! window.elementorCommon.ajax ||
+				'function' !==
+					typeof window.elementorCommon.ajax.addRequest
+			) {
+				return {
+					error: 'Elementor editor AJAX is not available on this page.',
+				};
+			}
+
+			try {
+				const response = await window.elementorCommon.ajax.addRequest(
+					'save_builder',
+					{
+						data: {
+							elements: [ payload.element ],
+							settings: {
+								post_status: 'publish',
+								title: payload.title,
+							},
+							status: 'publish',
+						},
+					}
+				);
+
+				return { response };
+			} catch ( error ) {
+				const details =
+					error && error.responseJSON
+						? error.responseJSON
+						: error && error.data
+							? error.data
+							: error;
+				return {
+					error:
+						details && details.message
+							? details.message
+							: JSON.stringify( details ),
+				};
+			}
+		},
+		{ element, title: fixture.title }
+	);
+
+	if ( result.error ) {
+		throw new Error(
+			`Could not save the Elementor browser fixture: ${ result.error }`
+		);
+	}
+
+	return fixture;
+}
+
+/**
+ * Create and persist a public Elementor document with the actual Elementor
+ * editor. An explicit fixture post ID remains supported for external
+ * environments where a persistent fixture is preferred.
+ *
+ * @param {import('@playwright/test').Page} page Browser page.
+ * @return {Promise<Object>} Fixture post ID and public link.
+ */
+async function createStoredElementorFixture( page ) {
+	const postId = storedElementorFixturePostId();
+	if ( postId ) {
+		return {
+			id: postId,
+			link: `/?p=${ postId }`,
+		};
+	}
+
+	const fixture = await createPublishedPage( page, {
+		content: '',
+		title: 'HSSB stored Elementor fixture',
+	} );
+
+	return saveElementorFixture(
+		page,
+		fixture,
+		builderStorage.elementor.document_element
+	);
 }
 
 async function assertVisibleCanonicalShareButtons(
@@ -110,6 +218,8 @@ module.exports = {
 	assertVisibleCanonicalShareButtons,
 	builderStorage,
 	createPublishedPage,
+	createStoredElementorFixture,
 	login,
+	saveElementorFixture,
 	storedElementorFixturePostId,
 };

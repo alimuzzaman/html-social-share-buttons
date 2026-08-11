@@ -1,1 +1,1 @@
-import './compatibility/legacy/admin/app';
+import './admin/settings/app';

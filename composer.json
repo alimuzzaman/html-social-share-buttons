@@ -17,8 +17,7 @@
 			"Alimuzzaman\\HtmlSocialShareButtons\\": "src/"
 		},
 		"exclude-from-classmap": [
-			"src/Compatibility/Legacy/Global/",
-			"src/Compatibility/Legacy/IconSet/Definitions/"
+			"src/Compatibility/Legacy/Api/globals.php"
 		]
 	},
 	"scripts": {

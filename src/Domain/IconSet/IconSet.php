@@ -11,6 +11,7 @@ final class IconSet {
 	private $preview;
 	private $shapes;
 	private $iconFiles;
+	private $assetPath;
 
 	public function __construct(
 		$id,
@@ -18,12 +19,14 @@ final class IconSet {
 		$stylesheet,
 		$preview,
 		array $shapes,
-		array $iconFiles
+		array $iconFiles,
+		$assetPath = ''
 	) {
 		$id = (string) $id;
 		$label = (string) $label;
 		$stylesheet = (string) $stylesheet;
 		$preview = (string) $preview;
+		$assetPath = str_replace( '\\', '/', (string) $assetPath );
 
 		if ( ! preg_match( '/^[a-z][a-z0-9-]*$/', $id ) ) {
 			throw new InvalidArgumentException( 'Icon-set IDs must be lowercase slugs.' );
@@ -33,6 +36,8 @@ final class IconSet {
 		}
 		$this->assertFileName( $stylesheet );
 		$this->assertFileName( $preview );
+		$this->assertAssetPath( $assetPath );
+		$assetPath = trim( $assetPath, '/' );
 
 		$normalizedShapes = array();
 		foreach ( $shapes as $shape ) {
@@ -65,6 +70,7 @@ final class IconSet {
 		$this->preview = $preview;
 		$this->shapes = array_values( $normalizedShapes );
 		$this->iconFiles = $normalizedIcons;
+		$this->assetPath = $assetPath;
 	}
 
 	public function id() {
@@ -91,6 +97,16 @@ final class IconSet {
 		return $this->iconFiles;
 	}
 
+	/**
+	 * Return the plugin-relative directory that contains this icon set.
+	 *
+	 * An empty value retains the original resolver behaviour, where an icon
+	 * set lives below the resolver's configured root using its identifier.
+	 */
+	public function assetPath() {
+		return $this->assetPath;
+	}
+
 	public function hasIcon( $networkId ) {
 		return isset( $this->iconFiles[ (string) $networkId ] );
 	}
@@ -111,6 +127,20 @@ final class IconSet {
 			! preg_match( '/^[A-Za-z0-9][A-Za-z0-9._-]*$/', $fileName )
 		) {
 			throw new InvalidArgumentException( 'Icon-set asset values must be plain file names.' );
+		}
+	}
+
+	private function assertAssetPath( $assetPath ) {
+		if ( '' === $assetPath ) {
+			return;
+		}
+
+		if (
+			0 === strpos( $assetPath, '/' ) ||
+			false !== strpos( $assetPath, '..' ) ||
+			! preg_match( '#^[A-Za-z0-9][A-Za-z0-9._/-]*$#', $assetPath )
+		) {
+			throw new InvalidArgumentException( 'Icon-set asset paths must be safe relative paths.' );
 		}
 	}
 }

@@ -11,6 +11,7 @@
 	<file>src/Bootstrap</file>
 	<file>src/Domain</file>
 	<file>src/Infrastructure</file>
+	<file>src/Presentation</file>
 
 	<rule ref="WordPress-Core">
 		<!-- The PSR-4 domain layer intentionally uses StudlyCaps files and camelCase APIs. -->

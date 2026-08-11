@@ -3,20 +3,20 @@
   "private": true,
   "packageManager": "pnpm@11.5.2",
   "scripts": {
-    "build": "wp-scripts build src/js/admin-react.js src/js/social-share.js src/js/vc-scripts.js --output-path=build",
-    "start": "wp-scripts start src/js/admin-react.js src/js/social-share.js src/js/vc-scripts.js --output-path=build",
+    "build": "wp-scripts build src/js/admin-react.js src/js/social-share.js src/js/social-links.js src/js/vc-scripts.js --output-path=build",
+    "start": "wp-scripts start src/js/admin-react.js src/js/social-share.js src/js/social-links.js src/js/vc-scripts.js --output-path=build",
     "icons:build": "node scripts/generate-iconsets.js",
     "icons:check": "node scripts/generate-iconsets.js --check",
-    "zip": "pnpm run icons:check && composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative && pnpm run build && node scripts/build-archive.js && node tests/distribution-archive-contract.js",
+    "zip": "pnpm run icons:check && node scripts/verify-production-autoloader.js && pnpm run build && node scripts/build-archive.js && node tests/distribution-archive-contract.js",
     "release": "pnpm run zip",
     "lint:js": "wp-scripts lint-js \"src/js/**/*.js\"",
-    "settings:check": "pnpm run build && node tests/admin-react-smoke.js && node tests/vc-scripts-smoke.js && php tests/js-build-boundary-contract.php && php tests/javascript-localization-contract.php && php -l src/Compatibility/Legacy/Global/settings-page.php && php -l src/Compatibility/Legacy/Global/share-templates.php && php tests/share-template-contract.php && php -l src/Compatibility/Legacy/Global/functions.php && php tests/exclude-contract.php && php tests/elementor-integration-contract.php && php tests/block-integration-contract.php && php tests/missing-autoloader-contract.php && php tests/settings-menu-contract.php && php tests/legacy-shim-contract.php && php tests/frontend-drift-surface.php && php tests/architecture-boundary-contract.php",
+    "settings:check": "pnpm run build && node tests/admin-react-smoke.js && node tests/vc-scripts-smoke.js && php tests/js-build-boundary-contract.php && php tests/javascript-localization-contract.php && php -l src/Presentation/Admin/SettingsPageController.php && php -l src/Presentation/Admin/SettingsAssetEnqueuer.php && php tests/share-template-contract.php && php -l src/Application/Content/ExcludedContentPolicy.php && php tests/exclude-contract.php && php tests/elementor-integration-contract.php && php tests/block-integration-contract.php && php tests/missing-autoloader-contract.php && php tests/settings-menu-contract.php && php tests/compatibility-api-thinness-contract.php && php tests/architecture-boundary-contract.php",
     "test:unit": "node scripts/sandbox-env.js test integration",
     "test:ajax": "node scripts/sandbox-env.js test integration -- --group ajax",
     "test:multisite": "node scripts/sandbox-env.js test integration -- -c phpunit.multisite.xml.dist --filter MultisiteSettingsContractTest",
     "test:e2e": "node scripts/sandbox-env.js e2e",
     "test:e2e:elementor": "node scripts/sandbox-env.js e2e --grep Elementor",
-    "integration:check": "php tests/elementor-integration-contract.php && php -l src/Compatibility/Legacy/Global/elementor.php && php -l src/Compatibility/Legacy/Integration/WpBakeryAdapter.php",
+    "integration:check": "php tests/elementor-integration-contract.php && php -l src/Presentation/Integration/Elementor/ElementorRegistrar.php && php -l src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php",
     "test:start": "node scripts/sandbox-env.js start",
     "test:status": "node scripts/sandbox-env.js status",
     "test:destroy": "node scripts/sandbox-env.js destroy",
@@ -25,6 +25,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
-    "@wordpress/scripts": "^32.6.0"
+    "@wordpress/scripts": "^32.6.0",
+    "adm-zip": "0.5.18",
+    "ignore": "5.3.2"
   }
 }

@@ -35,7 +35,8 @@ final class ManifestIconSetProvider {
 					$definition['stylesheet'],
 					$definition['preview'],
 					$definition['shapes'],
-					$definition['icons']
+					$definition['icons'],
+					$definition['asset_path']
 				)
 			);
 		}
@@ -50,7 +51,7 @@ final class ManifestIconSetProvider {
 		}
 
 		$definition = require $file;
-		$requiredKeys = array( 'id', 'label', 'stylesheet', 'preview', 'shapes', 'icons' );
+		$requiredKeys = array( 'id', 'label', 'stylesheet', 'preview', 'shapes', 'icons', 'asset_path' );
 		if ( ! is_array( $definition ) || array_diff( $requiredKeys, array_keys( $definition ) ) ) {
 			throw new RuntimeException( 'A built-in icon-set manifest is invalid.' );
 		}

@@ -9,15 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $settings_page = implode(
 	'',
-	file( __DIR__ . '/../src/Compatibility/Legacy/Global/settings-page.php' )
+	file( __DIR__ . '/../src/Presentation/Admin/SettingsPageController.php' )
 );
 $settings_assets = implode(
 	'',
-	file( __DIR__ . '/../src/Compatibility/Legacy/Admin/LegacySettingsAssetEnqueuer.php' )
+	file( __DIR__ . '/../src/Presentation/Admin/SettingsAssetEnqueuer.php' )
 );
 $plugin_bootstrap = implode(
 	'',
-	file( __DIR__ . '/../src/Compatibility/Legacy/Global/bootstrap.php' )
+	file( __DIR__ . '/../html-social-share.php' )
 );
 
 if ( ! preg_match( "/add_submenu_page\\(\\s*'options-general\\.php'/", $settings_page ) ) {
@@ -25,8 +25,8 @@ if ( ! preg_match( "/add_submenu_page\\(\\s*'options-general\\.php'/", $settings
 	exit( 1 );
 }
 
-if ( false === strpos( $plugin_bootstrap, 'options-general.php?page=zm_shbt_opt' ) ) {
-	echo "Plugins page settings link contract failed.\n";
+if ( false === strpos( $plugin_bootstrap, 'PluginFactory' ) || false === strpos( $plugin_bootstrap, 'LegacyApiRegistrar::register' ) ) {
+	echo "Canonical plugin bootstrap contract failed.\n";
 	exit( 1 );
 }
 

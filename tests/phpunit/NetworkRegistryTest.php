@@ -1,7 +1,7 @@
 <?php
 
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\Network;
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Network\LegacyNetworkMapper;
+use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\HtmlRenderer;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
 
 final class NetworkRegistryTest extends WP_UnitTestCase {
@@ -13,7 +13,7 @@ final class NetworkRegistryTest extends WP_UnitTestCase {
 			$registry->ids()
 		);
 		$this->assertSame( 'x', $registry->get( 'x' )->cssClass() );
-		$this->assertSame( 'twitter', ( new LegacyNetworkMapper() )->cssClass( $registry->get( 'x' ) ) );
+		$this->assertSame( 'twitter', ( new HtmlRenderer() )->cssClass( $registry->get( 'x' ) ) );
 		$this->assertFalse( $registry->get( 'telegram' )->enabledByDefault() );
 		$this->assertSame(
 			'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',

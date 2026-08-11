@@ -5,6 +5,7 @@ return array(
 	'label'      => 'Bootstrap Solid',
 	'stylesheet' => 'style.css',
 	'preview'    => 'preview.svg',
+	'asset_path' => 'assets/iconsets/bootstrap-solid',
 	'shapes'     => array( 'square', 'circle' ),
 	'icons'      => array(
 		'facebook'  => 'facebook.svg',

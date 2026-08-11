@@ -1,8 +1,8 @@
 <?php
 
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Settings\LegacySettingsMapper;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsCodec;
 
 final class LegacySettingsMapperTest extends WP_UnitTestCase {
 	public function testLegacySettingsMapToTheNewDomainWithoutDatabaseChanges(): void {
@@ -11,7 +11,7 @@ final class LegacySettingsMapperTest extends WP_UnitTestCase {
 			true
 		);
 		$stored  = $fixture['sanitization_case']['expected'];
-		$mapper  = new LegacySettingsMapper();
+		$mapper  = new OptionSettingsCodec();
 		$before  = get_option( $fixture['option_name'], null );
 
 		$settings = $mapper->fromArray( $stored );
@@ -27,7 +27,7 @@ final class LegacySettingsMapperTest extends WP_UnitTestCase {
 	}
 
 	public function testLegacyTwitterAliasIsRuntimeOnly(): void {
-		$mapper = new LegacySettingsMapper();
+		$mapper = new OptionSettingsCodec();
 		$stored = array(
 			'icons' => array(
 				'twitter' => '1',
@@ -42,7 +42,7 @@ final class LegacySettingsMapperTest extends WP_UnitTestCase {
 	}
 
 	public function testEncodingCanDisableExistingEnabledNetworksWithoutRewritingFalseValues(): void {
-		$mapper = new LegacySettingsMapper();
+		$mapper = new OptionSettingsCodec();
 		$stored = array(
 			'icons' => array(
 				'facebook' => '1',
@@ -77,7 +77,7 @@ final class LegacySettingsMapperTest extends WP_UnitTestCase {
 	}
 
 	public function testEncodingCanEnableExistingFalseNetworkAndTwitterAliasValues(): void {
-		$mapper = new LegacySettingsMapper();
+		$mapper = new OptionSettingsCodec();
 		$stored = array(
 			'icons' => array(
 				'telegram' => '0',
@@ -111,7 +111,7 @@ final class LegacySettingsMapperTest extends WP_UnitTestCase {
 	}
 
 	public function testStoredLegacyValuesUseHistoricalPhpTruthiness(): void {
-		$mapper = new LegacySettingsMapper();
+		$mapper = new OptionSettingsCodec();
 		$settings = $mapper->fromArray(
 			array(
 				'show_in' => array(

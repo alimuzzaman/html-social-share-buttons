@@ -1,6 +1,6 @@
 <?php
 
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Bootstrap\LegacyRuntime;
+use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Migration\WordPressMigrationStateStore;
 
 /**
@@ -25,9 +25,10 @@ final class MultisiteSettingsContractTest extends WP_UnitTestCase {
 			$this->assertFalse( get_option( 'zm_shbt_fld', false ) );
 			$this->assertSame(
 				array( 'fallback' => true ),
-				LegacyRuntime::settings()->stored( array( 'fallback' => true ) )
+				LegacyApi::plugin()->settings()->readStored( array( 'fallback' => true ) )
 			);
-			$secondarySettings = LegacyRuntime::settings()->save(
+			$repository = LegacyApi::plugin()->settings();
+			$secondarySettings = $repository->replaceStored(
 				array(
 					'title' => 'Secondary site',
 					'icons' => array( 'x' => '1' ),

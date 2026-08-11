@@ -19,7 +19,9 @@ final class WpBakeryIntegrationContractTest extends WP_UnitTestCase {
 	}
 
 	public function testWpbakeryMapPreservesIdentityParametersAndStoredValues(): void {
-		zm_sh_integrateWithVC();
+		\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()
+			->wpBakery()
+			->registerElement();
 
 		$this->assertArrayHasKey( 'hssb_wpbakery_definition', $GLOBALS );
 		$definition = $GLOBALS['hssb_wpbakery_definition'];
@@ -49,8 +51,8 @@ final class WpBakeryIntegrationContractTest extends WP_UnitTestCase {
 	}
 
 	public function testWpbakeryEditorBundleUsesOneHandleAndReceivesItsNonce(): void {
-		$settings = new zm_sh_settings();
-		$settings->admin_scripts( 'post.php' );
+		$settings = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->admin();
+		$settings->enqueueAssets( 'post.php' );
 
 		$contract = $this->surface['wpbakery'];
 		$script = wp_scripts()->registered[ $contract['script_handle'] ];

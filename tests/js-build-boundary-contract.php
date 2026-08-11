@@ -3,16 +3,18 @@
 
 $root = dirname( __DIR__ );
 $productionPhp = array(
-	$root . '/src/Compatibility/Legacy/Global/settings-page.php',
-	$root . '/src/Compatibility/Legacy/Admin/LegacySettingsAssetEnqueuer.php',
-	$root . '/src/Compatibility/Legacy/Integration/BlockAdapter.php',
-	$root . '/src/Compatibility/Legacy/Integration/WpBakeryAdapter.php',
+	$root . '/src/Presentation/Admin/SettingsPageController.php',
+	$root . '/src/Presentation/Admin/SettingsAssetEnqueuer.php',
+	$root . '/src/Presentation/Integration/Block/BlockRegistrar.php',
+	$root . '/src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php',
 );
 $requiredBuildFiles = array(
 	'build/admin-react.js',
 	'build/admin-react.asset.php',
 	'build/social-share.js',
 	'build/social-share.asset.php',
+	'build/social-links.js',
+	'build/social-links.asset.php',
 	'build/vc-scripts.js',
 	'build/vc-scripts.asset.php',
 );
@@ -33,9 +35,11 @@ $settingsRuntime = implode(
 		array_slice( $productionPhp, 0, 2 )
 	)
 );
-$blockIntegration = (string) file_get_contents( $root . '/src/Compatibility/Legacy/Integration/BlockAdapter.php' );
+$blockIntegration = (string) file_get_contents(
+	$root . '/src/Presentation/Integration/Block/BlockRegistrar.php'
+);
 $vcIntegration = (string) file_get_contents(
-	$root . '/src/Compatibility/Legacy/Admin/LegacySettingsAssetEnqueuer.php'
+	$root . '/src/Presentation/Admin/SettingsAssetEnqueuer.php'
 );
 $package = (string) file_get_contents( $root . '/package.json' );
 $distIgnore = (string) file_get_contents( $root . '/.distignore' );
@@ -51,8 +55,13 @@ foreach (
 	}
 }
 
-if ( false === strpos( $blockIntegration, 'build/social-share.js' ) ) {
-	$failures[] = 'Block runtime does not enqueue build/social-share.js';
+if (
+	false === strpos( $blockIntegration, 'registerEditorScript' ) ||
+	false === strpos( $blockIntegration, "'social-share'" ) ||
+	false === strpos( $blockIntegration, "'social-links'" ) ||
+	false === strpos( $blockIntegration, "'/build/' . \$entry . '.js'" )
+) {
+	$failures[] = 'Block runtime does not enqueue both compiled editor bundles.';
 }
 
 foreach ( array( 'jquery', 'wp-components', 'wp-element' ) as $dependency ) {
@@ -81,8 +90,9 @@ foreach ( $productionPhp as $path ) {
 foreach (
 	array(
 		'src/js/admin-react.js',
-		'src/js/social-share.js',
-		'src/js/vc-scripts.js',
+	'src/js/social-share.js',
+	'src/js/social-links.js',
+	'src/js/vc-scripts.js',
 	) as $entry
 ) {
 	if ( false === strpos( $package, $entry ) ) {
@@ -94,15 +104,11 @@ if ( false === strpos( $distIgnore, "src/js/\n" ) ) {
 	$failures[] = 'Distribution must exclude build-time JavaScript source.';
 }
 
+if ( false !== strpos( $distIgnore, "blocks/\n" ) ) {
+	$failures[] = 'Distribution must retain discoverable block metadata.';
+}
+
 $moduleCount = 0;
-$legacyTokens = array(
-	'zm_sh',
-	'zm-sh',
-	'zmSh',
-	'html-social-share/social-share',
-	'twitter',
-	'long_shadow',
-);
 $iterator = new RecursiveIteratorIterator(
 	new RecursiveDirectoryIterator( $root . '/src/js', FilesystemIterator::SKIP_DOTS )
 );
@@ -112,18 +118,9 @@ foreach ( $iterator as $file ) {
 	}
 	$moduleCount++;
 	$contents = (string) file_get_contents( $file->getPathname() );
-	if (
-		false === strpos(
-			$file->getPathname(),
-			DIRECTORY_SEPARATOR . 'compatibility' . DIRECTORY_SEPARATOR . 'legacy' . DIRECTORY_SEPARATOR
-		)
-	) {
-		foreach ( $legacyTokens as $legacyToken ) {
-			if ( false !== stripos( $contents, $legacyToken ) ) {
-				$failures[] = 'New JavaScript contains a legacy token: ' .
-					str_replace( $root . '/', '', $file->getPathname() ) . ' (' . $legacyToken . ')';
-			}
-		}
+	if ( false !== strpos( $contents, 'compatibility/legacy' ) ) {
+		$failures[] = 'JavaScript source imports a retired compatibility path: ' .
+			str_replace( $root . '/', '', $file->getPathname() );
 	}
 	if (
 		false !== strpos( $contents, 'import ' ) ||
@@ -139,6 +136,10 @@ foreach ( $iterator as $file ) {
 	}
 }
 
+if ( is_dir( $root . '/src/js/compatibility' ) ) {
+	$failures[] = 'JavaScript compatibility source directory remains.';
+}
+
 if ( $moduleCount < 8 ) {
 	$failures[] = 'Expected modular JavaScript sources; found only ' . $moduleCount . ' module(s).';
 }
@@ -151,4 +152,4 @@ if ( $failures ) {
 	exit( 1 );
 }
 
-printf( "JavaScript build boundary passed: %d source modules, 3 runtime bundles.\n", $moduleCount );
+printf( "JavaScript build boundary passed: %d source modules, 4 runtime bundles.\n", $moduleCount );

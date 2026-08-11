@@ -14,6 +14,12 @@ importers:
       '@wordpress/scripts':
         specifier: ^32.6.0
         version: 32.6.0(@playwright/test@1.61.1)(@types/node@26.1.1)(@types/react@18.3.31)(@typescript-eslint/eslint-plugin@8.63.0(@typescript-eslint/parser@8.63.0(eslint@10.6.0)(typescript@6.0.3))(eslint@10.6.0)(typescript@6.0.3))(@typescript-eslint/parser@8.63.0(eslint@10.6.0)(typescript@6.0.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(stylelint-scss@6.14.0(stylelint@16.26.1(typescript@6.0.3)))(type-fest@4.41.0)(typescript@6.0.3)
+      adm-zip:
+        specifier: 0.5.18
+        version: 0.5.18
+      ignore:
+        specifier: 5.3.2
+        version: 5.3.2
 
 packages:
 

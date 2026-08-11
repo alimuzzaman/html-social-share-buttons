@@ -1,24 +1,39 @@
 <?php
 
-final class FrontendAssetContractTest extends WP_UnitTestCase {
-	public function testRenderedIconsetsAreCollectedAndEnqueuedOnceByHistoricalHandle(): void {
-		$runtime = new zm_social_share();
+use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
 
-		$runtime->zm_sh_btn(
+final class FrontendAssetContractTest extends WP_UnitTestCase {
+	private $styleHandles = array( 'social-share-default', 'social-share-flat' );
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->resetHistoricalStyleHandles();
+	}
+
+	protected function tearDown(): void {
+		$this->resetHistoricalStyleHandles();
+		parent::tearDown();
+	}
+
+	public function testRenderedIconsetsAreCollectedAndEnqueuedOnceByHistoricalHandle(): void {
+		$plugin = LegacyApi::plugin();
+		$frontend = $plugin->frontend();
+
+		$frontend->render(
 			array(
 				'iconset' => 'default',
 				'iconset_type' => 'square',
 				'icons' => array( 'facebook' => 1 ),
 			)
 		);
-		$runtime->zm_sh_btn(
+		$frontend->render(
 			array(
 				'iconset' => 'flat',
 				'iconset_type' => 'circle',
 				'icons' => array( 'x' => 1 ),
 			)
 		);
-		$runtime->zm_sh_btn(
+		$frontend->render(
 			array(
 				'iconset' => 'flat',
 				'iconset_type' => 'circle',
@@ -26,17 +41,17 @@ final class FrontendAssetContractTest extends WP_UnitTestCase {
 			)
 		);
 
-		$runtime->register_styles();
+		$frontend->assets()->enqueueStyles();
 		$styles = wp_styles();
 
 		$this->assertContains( 'social-share-default', $styles->queue );
 		$this->assertContains( 'social-share-flat', $styles->queue );
 		$this->assertSame(
-			$runtime->iconsets->get_iconset( 'default' )->stylesheet_url,
+			$plugin->assets()->stylesheetUrl( $plugin->iconSets()->get( 'default' ) ),
 			$styles->registered['social-share-default']->src
 		);
 		$this->assertSame(
-			$runtime->iconsets->get_iconset( 'flat' )->stylesheet_url,
+			$plugin->assets()->stylesheetUrl( $plugin->iconSets()->get( 'flat' ) ),
 			$styles->registered['social-share-flat']->src
 		);
 		$this->assertSame( '2.2.4', $styles->registered['social-share-default']->ver );
@@ -48,24 +63,23 @@ final class FrontendAssetContractTest extends WP_UnitTestCase {
 	}
 
 	public function testInlineIconRulesAreDeduplicatedAndUseLegacyAssetUrls(): void {
-		$runtime = new zm_social_share();
+		$plugin = LegacyApi::plugin();
+		$frontend = $plugin->frontend();
 		$options = array(
 			'iconset' => 'default',
 			'iconset_type' => 'square',
 			'icons' => array( 'x' => 1 ),
 		);
 
-		$runtime->zm_sh_btn( $options );
-		$runtime->zm_sh_btn( $options );
+		$frontend->render( $options );
+		$frontend->render( $options );
 
-		ob_start();
-		$runtime->icon_styles();
-		$css = (string) ob_get_clean();
-		$legacyIconSet = $runtime->iconsets->get_iconset( 'default' );
+		$css = $frontend->assets()->inlineIconStyles( false );
+		$iconSet = $plugin->iconSets()->get( 'default' );
 
 		$this->assertSame( 1, substr_count( $css, '.zmshbt.default.square .twitter' ) );
 		$this->assertStringContainsString(
-			"background-image:url('" . $legacyIconSet->url . 'square/twitter.png' . "')",
+			"background-image:url('" . $plugin->assets()->setUrl( $iconSet ) . 'square/twitter.png' . "')",
 			$css
 		);
 		$this->assertStringContainsString( '.zmshbt.left', $css );
@@ -73,14 +87,21 @@ final class FrontendAssetContractTest extends WP_UnitTestCase {
 	}
 
 	public function testNoRenderedButtonsKeepsTheHistoricalDefaultStylesheetFallback(): void {
-		$runtime = new zm_social_share();
+		$frontend = LegacyApi::plugin()->frontend();
 
-		$runtime->register_styles();
+		$frontend->assets()->enqueueStyles();
 
 		$this->assertContains( 'social-share-default', wp_styles()->queue );
 		$this->assertStringEndsWith(
 			'/iconset/default/style.css',
 			wp_styles()->registered['social-share-default']->src
 		);
+	}
+
+	private function resetHistoricalStyleHandles(): void {
+		foreach ( $this->styleHandles as $handle ) {
+			wp_dequeue_style( $handle );
+			wp_deregister_style( $handle );
+		}
 	}
 }

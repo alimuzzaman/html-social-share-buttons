@@ -36,7 +36,9 @@ Users rely on current settings and may have significant persisted values under `
 ### 2.2 Out of Scope
 - No destructive option key/schema changes. New `share_templates` data must be additive, default to canonical templates, and remain backward compatible with existing `zm_shbt_fld` values.
 - No route or form submission changes.
-- No front-end rendering logic changes.
+- No intentional public front-end output change for unchanged settings values.
+  Rendering internals may use the canonical server-side facade so long as the
+  historical option, shortcode, hook, class, and HTML contracts are retained.
 - No rewrite to React/REST/block settings.
 
 ## 3.0 Functional Requirements
@@ -47,7 +49,7 @@ Users rely on current settings and may have significant persisted values under `
 - FR-005: Code generator modal and outputs remain available and unchanged in format.
 - FR-006: Styling updates remain scoped to plugin settings page and avoid side effects to unrelated WP admin surfaces. The settings stylesheet and script must use their file modification time as an asset version so UI releases do not combine fresh markup with stale CSS.
 - FR-007: Settings page UI is rendered in React (wp-element) with the legacy field contract untouched (`zm_shbt_fld[...]`), including generated field names and code generator controls.
-- FR-008: React settings implementation must stay compatible with the plugin's WordPress 5.0+ baseline; avoid relying on modern `wp.element` APIs that may be absent there.
+- FR-008: React settings implementation must stay compatible with the plugin's WordPress 5.3+ baseline; avoid relying on modern `wp.element` APIs that may be absent there.
 - FR-009: Settings page is registered as a submenu under WordPress Settings, not as a top-level menu.
 - FR-010: The Plugins page Settings action links to `options-general.php?page=zm_shbt_opt`.
 - FR-011: Exclusions provide a searchable multi-select for published pages and posts, with results loaded through an authenticated admin request and rendered with WordPress React components.
@@ -143,6 +145,19 @@ For every proposed settings UI change, run all scenarios below and store expecte
 - Deterministic HTML snapshots are the required regression gate. Screenshots
   supplement them for manual visual review and are not the canonical output
   contract.
-- A complete JavaScript string-localization pass remains release follow-up;
-  it must cover headings, helper text, fields, and block-editor copy together
-  rather than translating isolated labels inconsistently.
+- JavaScript localization is implemented for tracked settings, profile,
+  template, modal, status, builder, and block-editor strings: settings uses a
+  translated PHP payload where appropriate and editor bundles use `wp.i18n`.
+  The source contract is not a translated-language visual acceptance test;
+  catalog completeness and manual rendered-language review remain release
+  follow-up.
+
+## 9.0 Rewrite compatibility note
+
+- Settings persistence, field names, page slug, setting group, and the
+  `zm_shbt_fld` shape remain the stable contract. The settings controller and
+  request mapper are canonical presentation/infrastructure services; legacy
+  public functions only delegate to them.
+- The canonical renderer now serves all frontend adapters, but the settings
+  specification continues to prohibit unapproved output drift. The existing
+  deterministic frontend contract is required for any candidate revision.

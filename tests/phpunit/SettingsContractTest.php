@@ -6,7 +6,7 @@ final class SettingsContractTest extends WP_UnitTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->settings = new zm_sh_settings();
+		$this->settings = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->admin();
 		$this->schema = json_decode(
 			(string) file_get_contents( dirname( __DIR__ ) . '/fixtures/settings-schema-baseline.json' ),
 			true
@@ -46,11 +46,10 @@ final class SettingsContractTest extends WP_UnitTestCase {
 		);
 		update_option( $this->schema['option_name'], $stored );
 
-		$renderer = new zm_social_share();
+		$settings = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->settings()->load();
 
 		$this->assertSame( $stored, get_option( $this->schema['option_name'] ) );
-		$this->assertArrayNotHasKey( 'twitter', $renderer->options['icons'] );
-		$this->assertSame( '1', $renderer->options['icons']['x'] );
+		$this->assertTrue( $settings->networkStates()['x'] );
 	}
 
 	public function testLegacySettingsSanitizeWithoutChangingTheSavedContract(): void {

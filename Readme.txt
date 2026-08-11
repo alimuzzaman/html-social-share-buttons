@@ -67,14 +67,16 @@ excluded from the optional share analytics handler.
 
 = Does it work with the block editor? =
 
-Yes. Add the native HTML Social Share block and select its networks, icon set,
-shape, and layout. The block is rendered dynamically on the server so it uses
-the current post URL and stays compatible with frontend filters.
+Yes. Add the native HTML Social Share block for share actions, or the Social
+Links block for profile/contact destinations. Both blocks are rendered
+dynamically on the server. The share block uses the current post URL and both
+blocks stay compatible with frontend filters and global profile-link settings.
 
 = Can I use it without the block editor? =
 
 Yes. Automatic placement, widgets, Elementor, WPBakery, shortcodes, and a PHP
-code generator are also available.
+code generator are also available. Both `[html-social-share-buttons]` and the
+historical `[zm_sh_btn]` shortcode name are supported.
 
 = Are icons loaded from a third-party CDN? =
 

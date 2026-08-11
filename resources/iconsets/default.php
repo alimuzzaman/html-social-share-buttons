@@ -5,10 +5,11 @@ return array(
 	'label'      => 'Default',
 	'stylesheet' => 'style.css',
 	'preview'    => 'preview.png',
+	'asset_path' => 'iconset/default',
 	'shapes'     => array( 'square' ),
 	'icons'      => array(
 		'facebook'  => 'facebook.png',
-		'x'         => 'x.png',
+		'x'         => 'twitter.png',
 		'linkedin'  => 'linkedin.png',
 		'pinterest' => 'pinterest.png',
 		'telegram'  => 'telegram.svg',

@@ -1,1 +1,1 @@
-import './compatibility/legacy/wpbakery/iconset-control';
+import './integrations/wpbakery/iconset-control';

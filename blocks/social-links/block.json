@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 1,
+  "name": "html-social-share/social-links",
+  "version": "2.2.6",
+  "title": "Social Links",
+  "category": "widgets",
+  "icon": "admin-links",
+  "description": "Display links to your social profiles.",
+  "textdomain": "html-social-share-buttons",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Follow us"
+    },
+    "iconset": {
+      "type": "string",
+      "default": "inherit"
+    },
+    "iconset_type": {
+      "type": "string",
+      "default": "square"
+    },
+    "profile_links_mode": {
+      "type": "string",
+      "default": "inherit"
+    },
+    "profile_links": {
+      "type": "object",
+      "default": {}
+    }
+  },
+  "usesContext": ["postId", "postType"],
+  "editorScript": "zm-sh-social-links-block"
+}

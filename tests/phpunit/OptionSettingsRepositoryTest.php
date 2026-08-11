@@ -1,7 +1,7 @@
 <?php
 
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Settings\LegacySettingsMapper;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsCodec;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsRepository;
 
 final class OptionSettingsRepositoryTest extends WP_UnitTestCase {
@@ -13,7 +13,7 @@ final class OptionSettingsRepositoryTest extends WP_UnitTestCase {
 	}
 
 	public function testMissingOptionLoadsDefaultsWithoutWriting(): void {
-		$repository = new OptionSettingsRepository( $this->optionName, new LegacySettingsMapper() );
+		$repository = new OptionSettingsRepository( $this->optionName, new OptionSettingsCodec() );
 
 		$settings = $repository->load();
 
@@ -31,7 +31,7 @@ final class OptionSettingsRepositoryTest extends WP_UnitTestCase {
 				'icons' => array( 'facebook' => '1' ),
 			)
 		);
-		$repository = new OptionSettingsRepository( $this->optionName, new LegacySettingsMapper() );
+		$repository = new OptionSettingsRepository( $this->optionName, new OptionSettingsCodec() );
 
 		$settings = $repository->load();
 
@@ -47,7 +47,7 @@ final class OptionSettingsRepositoryTest extends WP_UnitTestCase {
 			'icons' => array( 'twitter' => 'custom-truthy-value' ),
 		);
 		update_option( $this->optionName, $stored );
-		$repository = new OptionSettingsRepository( $this->optionName, new LegacySettingsMapper() );
+		$repository = new OptionSettingsRepository( $this->optionName, new OptionSettingsCodec() );
 
 		$repository->save( $repository->load() );
 		$saved = get_option( $this->optionName );
@@ -65,7 +65,7 @@ final class OptionSettingsRepositoryTest extends WP_UnitTestCase {
 				'stale_extension_key' => true,
 			)
 		);
-		$repository = new OptionSettingsRepository( $this->optionName, new LegacySettingsMapper() );
+		$repository = new OptionSettingsRepository( $this->optionName, new OptionSettingsCodec() );
 		$replacement = array(
 			'title' => 'After',
 			'icons' => array( 'facebook' => '1' ),
@@ -78,7 +78,7 @@ final class OptionSettingsRepositoryTest extends WP_UnitTestCase {
 	}
 
 	public function testFirstSaveKeepsTheHistoricalAutoloadedOptionBehavior(): void {
-		$repository = new OptionSettingsRepository( $this->optionName, new LegacySettingsMapper() );
+		$repository = new OptionSettingsRepository( $this->optionName, new OptionSettingsCodec() );
 
 		$repository->replaceStored( array( 'title' => 'Autoload contract' ) );
 		wp_cache_delete( 'alloptions', 'options' );
@@ -88,7 +88,7 @@ final class OptionSettingsRepositoryTest extends WP_UnitTestCase {
 
 	public function testSavePreservesAnExistingNonAutoloadedDecision(): void {
 		add_option( $this->optionName, array( 'title' => 'Before' ), '', 'no' );
-		$repository = new OptionSettingsRepository( $this->optionName, new LegacySettingsMapper() );
+		$repository = new OptionSettingsRepository( $this->optionName, new OptionSettingsCodec() );
 
 		$repository->replaceStored( array( 'title' => 'After' ) );
 		wp_cache_delete( 'alloptions', 'options' );

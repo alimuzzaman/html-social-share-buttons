@@ -12,11 +12,25 @@ final class TranslationLoader {
 	}
 
 	public function load() {
+		return $this->loadDomain( $this->textDomain );
+	}
+
+	/**
+	 * Load an additional catalog from this plugin's language directory.
+	 *
+	 * Compatibility policy stays with the caller; this service only resolves
+	 * the plugin-relative language path for a supplied domain.
+	 */
+	public function loadDomain( $textDomain ) {
 		return load_plugin_textdomain(
-			$this->textDomain,
+			(string) $textDomain,
 			false,
 			$this->relativeLanguagePath()
 		);
+	}
+
+	public function textDomain() {
+		return $this->textDomain;
 	}
 
 	public function relativeLanguagePath() {

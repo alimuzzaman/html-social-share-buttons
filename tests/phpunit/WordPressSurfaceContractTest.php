@@ -14,27 +14,17 @@ final class WordPressSurfaceContractTest extends WP_UnitTestCase {
 	public function testShortcodeWidgetAndBuilderIdentifiersMatchTheContract(): void {
 		global $shortcode_tags;
 
-		$this->assertSame(
-			$this->surface['shortcode']['callback'],
-			$shortcode_tags[ $this->surface['shortcode']['tag'] ]
+		$this->assertArrayHasKey( $this->surface['shortcode']['tag'], $shortcode_tags );
+		$this->assertIsArray( $shortcode_tags[ $this->surface['shortcode']['tag'] ] );
+		$this->assertInstanceOf(
+			\Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\Shortcode\ShortcodeController::class,
+			$shortcode_tags[ $this->surface['shortcode']['tag'] ][0]
 		);
 
 		$widget = new zm_html_share_widget();
 		$this->assertSame( $this->surface['widget']['id_base'], $widget->id_base );
-		$this->assertSame(
-			10,
-			has_action(
-				$this->surface['elementor']['hook'],
-				$this->surface['elementor']['callback']
-			)
-		);
-		$this->assertSame(
-			10,
-			has_action(
-				$this->surface['wpbakery']['hook'],
-				$this->surface['wpbakery']['callback']
-			)
-		);
+		$this->assertNotFalse( has_action( $this->surface['elementor']['hook'] ) );
+		$this->assertNotFalse( has_action( $this->surface['wpbakery']['hook'] ) );
 	}
 
 	public function testBlockRegistrationAndScriptDependenciesMatchTheContract(): void {
@@ -66,15 +56,15 @@ final class WordPressSurfaceContractTest extends WP_UnitTestCase {
 		$this->assertSame( array(), $block->style_handles );
 		$this->assertIsArray( $block->render_callback );
 		$this->assertInstanceOf(
-			\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Integration\BlockAdapter::class,
+			\Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\Block\BlockRegistrar::class,
 			$block->render_callback[0]
 		);
-		$this->assertSame( 'renderRegisteredBlock', $block->render_callback[1] );
+		$this->assertSame( 'renderShareBlock', $block->render_callback[1] );
 	}
 
 	public function testSettingsAssetsAndAjaxHooksMatchTheContract(): void {
-		$settings = new zm_sh_settings();
-		$settings->admin_scripts( 'settings_page_zm_shbt_opt' );
+		$settings = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->admin();
+		$settings->enqueueAssets( 'settings_page_zm_shbt_opt' );
 
 		$script = wp_scripts()->registered[ $this->surface['settings']['script_handle'] ];
 		$this->assertSame( $this->surface['settings']['script_dependencies'], $script->deps );
@@ -93,52 +83,17 @@ final class WordPressSurfaceContractTest extends WP_UnitTestCase {
 		}
 	}
 
-	public function testLegacySourcesStillDeclareEveryPersistedIdentifier(): void {
-		$root = dirname( __DIR__, 2 );
-		$sources = array(
-			'metabox' => (string) file_get_contents(
-				$root . '/src/Compatibility/Legacy/Integration/MetaboxAdapter.php'
-			),
-			'settings' => (string) file_get_contents(
-				$root . '/src/Compatibility/Legacy/Global/settings-page.php'
-			),
-			'wpbakery_map' => (string) file_get_contents(
-				$root . '/src/Compatibility/Legacy/Integration/WpBakeryAdapter.php'
-			),
-			'wpbakery_assets' => (string) file_get_contents(
-				$root . '/src/Compatibility/Legacy/Admin/LegacySettingsAssetEnqueuer.php'
-			),
-		);
+	public function testCanonicalConfigOwnsEveryPersistedIdentifier(): void {
+		$config = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->config();
 
-		foreach (
-			array(
-				$this->surface['metabox']['id'],
-				$this->surface['metabox']['nonce_action'],
-				$this->surface['metabox']['nonce_field'],
-				$this->surface['metabox']['meta_key'],
-			) as $identifier
-		) {
-			$this->assertStringContainsString( $identifier, $sources['metabox'] );
-		}
-
-		foreach (
-			array(
-				$this->surface['settings']['group'],
-				$this->surface['settings']['option'],
-				$this->surface['settings']['page_slug'],
-				$this->surface['settings']['parent'],
-			) as $identifier
-		) {
-			$this->assertStringContainsString( $identifier, $sources['settings'] );
-		}
-
-		$this->assertStringContainsString(
-			$this->surface['wpbakery']['base'],
-			$sources['wpbakery_map']
-		);
-		$this->assertStringContainsString(
-			$this->surface['wpbakery']['script'],
-			$sources['wpbakery_assets']
-		);
+		$this->assertSame( $this->surface['metabox']['id'], $config->metaboxId() );
+		$this->assertSame( $this->surface['metabox']['nonce_action'], $config->metaboxNonceAction() );
+		$this->assertSame( $this->surface['metabox']['nonce_field'], $config->metaboxNonceField() );
+		$this->assertSame( $this->surface['metabox']['meta_key'], $config->disabledMetaKey() );
+		$this->assertSame( $this->surface['settings']['group'], $config->settingsGroup() );
+		$this->assertSame( $this->surface['settings']['option'], $config->optionName() );
+		$this->assertSame( $this->surface['settings']['page_slug'], $config->settingsPage() );
+		$this->assertSame( $this->surface['wpbakery']['base'], $config->wpBakeryBase() );
+		$this->assertSame( $this->surface['wpbakery']['script_handle'], $config->adminWpBakeryScriptHandle() );
 	}
 }

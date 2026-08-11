@@ -58,7 +58,6 @@ Thumbs.db
 
 # Build and temporary files
 node_modules/
-blocks/
 src/js/
 dist/
 tmp/

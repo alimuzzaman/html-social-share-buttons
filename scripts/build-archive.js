@@ -3,9 +3,9 @@
 'use strict';
 
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
-const { spawnSync } = require('child_process');
+const AdmZip = require('adm-zip');
+const createIgnore = require('ignore');
 
 const repositoryRoot = path.resolve(__dirname, '..');
 const pluginFile = path.join(repositoryRoot, 'html-social-share.php');
@@ -18,8 +18,6 @@ if (!versionMatch) {
 
 const pluginSlug = 'html-social-share-buttons';
 const target = path.resolve(repositoryRoot, '..', `${pluginSlug}.${versionMatch[1]}.zip`);
-const stagingRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'hssb-archive-'));
-const stagedPlugin = path.join(stagingRoot, pluginSlug);
 const rootExclusions = new Set(['.git', 'node_modules']);
 const sourceDateEpoch = Number(process.env.SOURCE_DATE_EPOCH || 946684800);
 
@@ -28,69 +26,51 @@ if (!Number.isSafeInteger(sourceDateEpoch) || sourceDateEpoch < 315532800) {
 }
 
 const archiveTimestamp = new Date(sourceDateEpoch * 1000);
+const distributionIgnore = createIgnore().add(
+	fs.readFileSync(path.join(repositoryRoot, '.distignore'), 'utf8')
+);
 
-function copyTree(source, destination, relativeDirectory = '') {
-	fs.mkdirSync(destination, { recursive: true });
+function collectFiles(source, relativeDirectory = '') {
+	const files = [];
 
 	for (const entry of fs.readdirSync(source, { withFileTypes: true }).sort((left, right) => left.name.localeCompare(right.name))) {
-		const relativePath = path.join(relativeDirectory, entry.name);
+		const relativePath = path.join(relativeDirectory, entry.name).split(path.sep).join('/');
 		if (!relativeDirectory && rootExclusions.has(entry.name)) {
+			continue;
+		}
+		if (distributionIgnore.ignores(relativePath)) {
 			continue;
 		}
 
 		const sourcePath = path.join(source, entry.name);
-		const destinationPath = path.join(destination, entry.name);
 		if (entry.isSymbolicLink()) {
 			throw new Error(`Distribution source contains an included symlink: ${relativePath}`);
 		}
 		if (entry.isDirectory()) {
-			copyTree(sourcePath, destinationPath, relativePath);
+			files.push(...collectFiles(sourcePath, relativePath));
 		} else if (entry.isFile()) {
-			fs.copyFileSync(sourcePath, destinationPath);
+			files.push({ absolutePath: sourcePath, relativePath });
 		}
 	}
+
+	return files;
 }
 
-function normalizeTreeTimestamps(directory) {
-	for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-		const entryPath = path.join(directory, entry.name);
-		if (entry.isDirectory()) {
-			normalizeTreeTimestamps(entryPath);
-		}
-		fs.utimesSync(entryPath, archiveTimestamp, archiveTimestamp);
-	}
-
-	fs.utimesSync(directory, archiveTimestamp, archiveTimestamp);
+const archive = new AdmZip();
+for (const file of collectFiles(repositoryRoot)) {
+	const entryName = `${pluginSlug}/${file.relativePath}`;
+	archive.addFile(entryName, fs.readFileSync(file.absolutePath), '', 0o100644 << 16);
+	const entry = archive.getEntry(entryName);
+	entry.header.time = archiveTimestamp;
+	entry.header.attr = 0o100644 << 16;
 }
 
-try {
-	copyTree(repositoryRoot, stagedPlugin);
-	normalizeTreeTimestamps(stagedPlugin);
-
-	const result = spawnSync(
-		'wp',
-		[
-			'dist-archive',
-			stagedPlugin,
-			target,
-			'--force',
-			`--plugin-dirname=${pluginSlug}`,
-		],
-		{
-			cwd: stagingRoot,
-			encoding: 'utf8',
-			stdio: 'inherit',
-		}
-	);
-
-	if (result.error) {
-		throw result.error;
-	}
-	if (result.status !== 0 || !fs.existsSync(target)) {
-		throw new Error(`Distribution archive failed with exit code ${result.status}.`);
-	}
-
-	process.stdout.write(`Created ${target}\n`);
-} finally {
-	fs.rmSync(stagingRoot, { recursive: true, force: true });
+if (fs.existsSync(target)) {
+	fs.rmSync(target);
 }
+archive.writeZip(target);
+if (!fs.existsSync(target)) {
+	throw new Error('Distribution archive was not created.');
+}
+
+process.stdout.write(`Created ${target}\n`);

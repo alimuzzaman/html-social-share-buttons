@@ -23,7 +23,7 @@
       "wp-block-editor",
       "wp-components"
     ],
-    "localized_object": "zmShBlock"
+    "localized_object": "hssbShareBlock"
   },
   "elementor": {
     "hook": "elementor/widgets/register",

@@ -5,9 +5,6 @@ final class LegacyPublicApiContractTest extends WP_UnitTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		// This historical helper was shipped as a directly includable file rather
-		// than being loaded by the plugin bootstrap. Keep that entry point covered.
-		require_once dirname( __DIR__, 2 ) . '/schemas.php';
 		$this->contract = json_decode(
 			(string) file_get_contents( dirname( __DIR__ ) . '/fixtures/legacy-public-api-baseline.json' ),
 			true

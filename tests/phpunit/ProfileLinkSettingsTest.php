@@ -1,12 +1,12 @@
 <?php
 
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Settings\LegacySettingsMapper;
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Settings\LegacySettingsRequestMapper;
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Settings\LegacySettingsSanitizer;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsDefaults;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsSchema;
+use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsCodec;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsRequestMapper;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\SettingsRequestSanitizer;
 
 final class ProfileLinkSettingsTest extends WP_UnitTestCase {
@@ -61,11 +61,9 @@ final class ProfileLinkSettingsTest extends WP_UnitTestCase {
 		}
 	}
 
-	public function testLegacyRequestBridgeKeepsProfileMapStructuredAndSanitized(): void {
-		$sanitizer = new LegacySettingsSanitizer(
-			new SettingsRequestSanitizer( $this->schema() ),
-			new LegacySettingsRequestMapper()
-		);
+	public function testStoredRequestMappingKeepsProfileMapStructuredAndSanitized(): void {
+		$mapper = new OptionSettingsRequestMapper();
+		$sanitizer = new SettingsRequestSanitizer( $this->schema() );
 		$input = array(
 			'profile_links' => array(
 				'twitter' => 'https://x.com/example',
@@ -74,6 +72,7 @@ final class ProfileLinkSettingsTest extends WP_UnitTestCase {
 			),
 		);
 
+		$settings = $sanitizer->sanitize( $mapper->toCanonical( $input ) );
 		$this->assertEquals(
 			array(
 				'profile_links' => array(
@@ -81,12 +80,12 @@ final class ProfileLinkSettingsTest extends WP_UnitTestCase {
 					'mail' => 'mailto:hello@example.com',
 				),
 			),
-			$sanitizer->sanitize( $input )
+			$mapper->toStoredSubmission( $settings, $input )
 		);
 	}
 
 	public function testLegacyCodecPreservesTwitterAliasAndOmitsAbsentProfiles(): void {
-		$mapper = new LegacySettingsMapper();
+		$mapper = new OptionSettingsCodec();
 		$stored = array(
 			'profile_links' => array(
 				'twitter' => 'https://x.com/example',
@@ -109,8 +108,7 @@ final class ProfileLinkSettingsTest extends WP_UnitTestCase {
 				'profile_links' => array( 'twitter' => 'https://x.com/example' ),
 			)
 		);
-		$settings = new zm_sh_settings();
-		$settings->admin_scripts( 'settings_page_zm_shbt_opt' );
+		LegacyApi::plugin()->admin()->enqueueAssets( 'settings_page_zm_shbt_opt' );
 		$data = wp_scripts()->registered['zm_sh_admin_scripts']->extra['data'];
 		$this->assertSame( 1, preg_match( '/^var zm_sh_react_settings = (.+);$/', $data, $matches ) );
 		$payload = json_decode( $matches[1], true );
@@ -120,7 +118,7 @@ final class ProfileLinkSettingsTest extends WP_UnitTestCase {
 	}
 
 	public function testClearingProfilesRemovesTheCompatibilityStorageKey(): void {
-		$mapper = new LegacySettingsMapper();
+		$mapper = new OptionSettingsCodec();
 		$current = $mapper->fromArray(
 			array( 'profile_links' => array( 'facebook' => 'https://facebook.com/example' ) )
 		);

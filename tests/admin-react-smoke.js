@@ -4,31 +4,28 @@ const vm = require('vm');
 
 const scriptPath = 'build/admin-react.js';
 const code = fs.readFileSync(scriptPath, 'utf8');
-const sourceFiles = [
-	...fs
-		.readdirSync('src/js/admin')
+function sourceFilesIn(directory) {
+	return fs
+		.readdirSync(directory, { recursive: true })
 		.filter((file) => file.endsWith('.js'))
 		.sort()
-		.map((file) => `src/js/admin/${file}`),
-	...fs
-		.readdirSync('src/js/compatibility/legacy/admin')
-		.filter((file) => file.endsWith('.js'))
-		.sort()
-		.map((file) => `src/js/compatibility/legacy/admin/${file}`),
-];
+		.map((file) => `${directory}/${file}`);
+}
+
+const sourceFiles = sourceFilesIn('src/js/admin');
 const sourceCode = sourceFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
 const adminCss = fs.readFileSync('assets/admin.css', 'utf8');
 const settingsPageCode = fs.readFileSync(
-	'src/Compatibility/Legacy/Global/settings-page.php',
+	'src/Presentation/Admin/SettingsPageController.php',
 	'utf8'
 );
 const settingsImplementationCode = [
 	settingsPageCode,
 	...fs
-		.readdirSync('src/Compatibility/Legacy/Admin')
+		.readdirSync('src/Presentation/Admin')
 		.filter((file) => file.endsWith('.php'))
 		.sort()
-		.map((file) => fs.readFileSync(`src/Compatibility/Legacy/Admin/${file}`, 'utf8')),
+		.map((file) => fs.readFileSync(`src/Presentation/Admin/${file}`, 'utf8')),
 ].join('\n');
 const settingsSchema = JSON.parse(fs.readFileSync('tests/fixtures/settings-schema-baseline.json', 'utf8'));
 const schemaIconIds = Object.keys(settingsSchema.default_options.icons);

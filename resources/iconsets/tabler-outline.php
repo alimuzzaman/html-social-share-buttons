@@ -5,6 +5,7 @@ return array(
 	'label'      => 'Tabler Outline',
 	'stylesheet' => 'style.css',
 	'preview'    => 'preview.svg',
+	'asset_path' => 'assets/iconsets/tabler-outline',
 	'shapes'     => array( 'square', 'circle' ),
 	'icons'      => array(
 		'facebook'  => 'facebook.svg',

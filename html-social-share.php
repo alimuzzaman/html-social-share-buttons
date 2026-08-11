@@ -17,6 +17,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/*
+ * Canonical installation constants.  Legacy zm_sh_* names are compatibility
+ * aliases supplied after the canonical kernel is composed.
+ */
+if ( ! defined( 'HSSB_PLUGIN_FILE' ) ) {
+	define( 'HSSB_PLUGIN_FILE', __FILE__ );
+}
+if ( ! defined( 'HSSB_PLUGIN_DIR' ) ) {
+	define( 'HSSB_PLUGIN_DIR', plugin_dir_path( HSSB_PLUGIN_FILE ) );
+}
+if ( ! defined( 'HSSB_PLUGIN_URL' ) ) {
+	define( 'HSSB_PLUGIN_URL', plugin_dir_url( HSSB_PLUGIN_FILE ) );
+}
+if ( ! defined( 'HSSB_ASSETS_URL' ) ) {
+	define( 'HSSB_ASSETS_URL', HSSB_PLUGIN_URL . 'assets/' );
+}
+
 $hssb_autoload = __DIR__ . '/vendor/autoload.php';
 if ( ! is_readable( $hssb_autoload ) ) {
 	if ( ! function_exists( 'hssb_missing_autoloader_message' ) ) {
@@ -53,7 +70,31 @@ if ( ! is_readable( $hssb_autoload ) ) {
 require_once $hssb_autoload;
 unset( $hssb_autoload );
 
-if ( class_exists( '\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Bootstrap\LegacyRuntime' ) ) {
-	\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Bootstrap\LegacyRuntime::boot( __DIR__ );
-	require_once __DIR__ . '/src/Compatibility/Legacy/Global/bootstrap.php';
-}
+/*
+ * The canonical kernel owns service construction and operational hooks. The
+ * compatibility API is registered only after that graph exists, so old global
+ * functions/classes can delegate without becoming another bootstrap path.
+ */
+\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApiRegistrar::prepare(
+	HSSB_PLUGIN_FILE
+);
+$hssb_settings = new \Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsRepository(
+	\Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig::OPTION_NAME,
+	new \Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsCodec()
+);
+$hssb_plugin = ( new \Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginFactory() )->create(
+	rtrim( HSSB_PLUGIN_DIR, '/\\' ),
+	$hssb_settings,
+	array(),
+	null,
+	array(
+		'\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApiRegistrar',
+		'importThirdPartyIconSets',
+	)
+);
+$hssb_plugin->boot();
+\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApiRegistrar::register(
+	$hssb_plugin,
+	HSSB_PLUGIN_FILE
+);
+unset( $hssb_settings, $hssb_plugin );

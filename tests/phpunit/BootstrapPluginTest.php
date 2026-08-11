@@ -1,11 +1,11 @@
 <?php
 
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Bootstrap\LegacyRuntime;
+use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Extension\ExtensionHooks;
 
 final class BootstrapPluginTest extends WP_UnitTestCase {
-	public function testNewRuntimeBootsWithoutRegisteringOrWritingAMigration(): void {
-		$runtime = LegacyRuntime::plugin();
+	public function testCanonicalKernelBootsWithoutWritingAMigration(): void {
+		$runtime = LegacyApi::plugin();
 
 		$this->assertTrue( $runtime->isBooted() );
 		$this->assertSame(
@@ -16,15 +16,24 @@ final class BootstrapPluginTest extends WP_UnitTestCase {
 			array( 'default', 'flat', 'long-shadows', 'prajin', 'bootstrap-solid', 'tabler-outline' ),
 			$runtime->iconSets()->ids()
 		);
-		$this->assertSame( $runtime->excludedContent(), LegacyRuntime::excludedContent() );
-		$this->assertSame( $runtime->contentPlacement(), LegacyRuntime::contentPlacement() );
-		$this->assertSame( $runtime->floatingPlacement(), LegacyRuntime::floatingPlacement() );
+		$this->assertInstanceOf(
+			\Alimuzzaman\HtmlSocialShareButtons\Application\Content\ExcludedContentPolicy::class,
+			$runtime->excludedContent()
+		);
+		$this->assertInstanceOf(
+			\Alimuzzaman\HtmlSocialShareButtons\Application\Frontend\ContentPlacementComposer::class,
+			$runtime->contentPlacement()
+		);
+		$this->assertInstanceOf(
+			\Alimuzzaman\HtmlSocialShareButtons\Application\Frontend\FloatingPlacementPlanner::class,
+			$runtime->floatingPlacement()
+		);
 		$this->assertStringEndsWith(
 			'html-social-share-buttons/languages',
 			$runtime->translations()->relativeLanguagePath()
 		);
 		$this->assertStringEndsWith(
-			'/assets/iconsets/default/style.css',
+			'/iconset/default/style.css',
 			$runtime->assets()->stylesheetPath( $runtime->iconSets()->get( 'default' ) )
 		);
 		$this->assertInstanceOf( ExtensionHooks::class, $runtime->extensions() );

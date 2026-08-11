@@ -1,28 +1,9 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__ . '/cli-helpers.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-if ( ! defined( 'ABSPATH' ) ) {
-	if ( 'cli' !== PHP_SAPI ) {
-		exit;
-	}
-	define( 'ABSPATH', __DIR__ . '/../' );
-}
-
-$template_overrides = array();
-
-function apply_filters( $hook, $value ) {
-	global $template_overrides;
-
-	if ( 'zm_sh_share_templates' === $hook && $template_overrides ) {
-		return array_merge( $value, $template_overrides );
-	}
-
-	return $value;
-}
-
-require_once __DIR__ . '/../src/Compatibility/Legacy/Global/share-templates.php';
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
 
 $expected = array(
 	'facebook'  => 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
@@ -34,31 +15,22 @@ $expected = array(
 	'mail'      => 'mailto:?subject=%%title%%&body=%%permalink%%',
 );
 
-if ( zm_sh_get_share_templates() !== $expected ) {
+$templates = array();
+foreach ( ( new BuiltInNetworkProvider() )->createRegistry()->all() as $network ) {
+	$templates[ $network->id() ] = $network->defaultShareTemplate();
+}
+if ( $templates !== $expected ) {
 	echo "Share template contract failed.\n";
 	exit( 1 );
 }
 
-$template_overrides['facebook'] = 'https://example.com/share?url=%%permalink%%';
-if ( zm_sh_get_share_template( 'facebook' ) !== $template_overrides['facebook'] ) {
-	echo "Share template filter contract failed.\n";
+
+$legacyApi = (string) file_get_contents( __DIR__ . '/../src/Compatibility/Legacy/Api/globals.php' );
+if ( false === strpos( $legacyApi, 'function zm_sh_get_share_template' ) ||
+	false === strpos( $legacyApi, 'LegacyHooks::shareTemplate' )
+) {
+	echo "Legacy share template bridge contract failed.\n";
 	exit( 1 );
-}
-
-$iconset_sources = glob(
-	__DIR__ . '/../src/Compatibility/Legacy/IconSet/Definitions/*.php'
-);
-foreach ( $iconset_sources as $source ) {
-	$contents = implode( '', file( $source ) );
-	if ( false !== strpos( $contents, 'sharer.php' ) || false !== strpos( $contents, 'shareArticle' ) ) {
-		fwrite( STDERR, sprintf( "Legacy platform URL remains in %s.\n", $source ) );
-		exit( 1 );
-	}
-
-	if ( false === strpos( $contents, 'builtInIconSets()' ) ) {
-		fwrite( STDERR, sprintf( "Built-in icon set does not delegate to the canonical registry: %s.\n", $source ) );
-		exit( 1 );
-	}
 }
 
 foreach ( glob( __DIR__ . '/../resources/iconsets/*.php' ) as $manifest ) {

@@ -5,10 +5,11 @@ return array(
 	'label'      => 'Prajin',
 	'stylesheet' => 'style.css',
 	'preview'    => 'preview.png',
+	'asset_path' => 'iconset/prajin',
 	'shapes'     => array( 'square', 'circle' ),
 	'icons'      => array(
 		'facebook'  => 'facebook.png',
-		'x'         => 'x.png',
+		'x'         => 'twitter.png',
 		'linkedin'  => 'linkedin.png',
 		'pinterest' => 'pinterest.png',
 		'telegram'  => 'telegram.svg',

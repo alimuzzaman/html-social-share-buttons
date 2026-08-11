@@ -46,7 +46,9 @@ test.describe( 'WPBakery integration', () => {
 			iconset: 'flat',
 			shape: 'circle',
 		} );
-		await expect( page.locator( 'h3' ) ).toContainText( 'Stored title' );
+		await expect(
+			page.getByRole( 'heading', { name: 'Stored title', exact: true } )
+		).toBeVisible();
 		await expect(
 			page.locator( '.zmshbt.in_shortcode a.twitter' )
 		).toBeVisible();

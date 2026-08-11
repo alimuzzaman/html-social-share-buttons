@@ -2,7 +2,6 @@
 
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSet;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\IconSet\LegacyIconSetAssetMap;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\ManifestIconSetProvider;
 
@@ -25,15 +24,8 @@ final class IconSetRegistryTest extends WP_UnitTestCase {
 		);
 		$this->assertSame( array( 'square' ), $registry->get( 'default' )->shapes() );
 		$this->assertSame( array( 'square', 'circle' ), $registry->get( 'flat' )->shapes() );
-		$this->assertSame( 'x.png', $registry->get( 'flat' )->iconFile( 'x' ) );
-		$this->assertSame(
-			'Twitter.png',
-			( new LegacyIconSetAssetMap() )->iconFile( $registry->get( 'flat' ), 'x' )
-		);
-		$this->assertSame(
-			'long_shadow',
-			( new LegacyIconSetAssetMap() )->directory( $registry->get( 'long-shadows' ) )
-		);
+		$this->assertSame( 'Twitter.png', $registry->get( 'flat' )->iconFile( 'x' ) );
+		$this->assertSame( 'iconset/long_shadow', $registry->get( 'long-shadows' )->assetPath() );
 		$this->assertFalse( $registry->get( 'prajin' )->hasIcon( 'mail' ) );
 		foreach ( array( 'bootstrap-solid', 'tabler-outline' ) as $iconSetId ) {
 			$this->assertSame( array( 'square', 'circle' ), $registry->get( $iconSetId )->shapes() );

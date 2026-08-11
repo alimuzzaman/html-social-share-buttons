@@ -1,1 +1,1 @@
-import './compatibility/legacy/block/register';
+import './blocks/social-share/register';

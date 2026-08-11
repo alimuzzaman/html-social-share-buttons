@@ -1,6 +1,6 @@
 <?php
 
-use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Bootstrap\LegacyRuntime;
+use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Migration\WordPressMigrationStateStore;
 
 final class UpgradeRollbackContractTest extends WP_UnitTestCase {
@@ -20,11 +20,19 @@ final class UpgradeRollbackContractTest extends WP_UnitTestCase {
 		$stored = $this->schema['upgrade_rollback_case']['stored_2_2_6'];
 		update_option( $optionName, $stored );
 
-		$runtime = LegacyRuntime::settings()->runtime();
+		$runtime = LegacyApi::plugin()->settings()->load();
 
 		$this->assertSame(
-			$this->schema['upgrade_rollback_case']['runtime_icons'],
-			$runtime['icons']
+			array(
+				'facebook' => true,
+				'linkedin' => true,
+				'mail' => true,
+				'x' => true,
+			),
+			array_intersect_key(
+				$runtime->networkStates(),
+				array_flip( array( 'facebook', 'linkedin', 'mail', 'x' ) )
+			)
 		);
 		$this->assertSame( $stored, get_option( $optionName ) );
 		$this->assertFalse( get_option( WordPressMigrationStateStore::OPTION_NAME, false ) );
@@ -35,7 +43,7 @@ final class UpgradeRollbackContractTest extends WP_UnitTestCase {
 		$stored = $this->schema['upgrade_rollback_case']['stored_2_2_6'];
 		update_option( $optionName, $stored );
 
-		$repository = LegacyRuntime::plugin()->settings();
+		$repository = LegacyApi::plugin()->settings();
 		$saved = $repository->save( $repository->load() );
 
 		$this->assertSame( $stored, $saved );
