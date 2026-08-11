@@ -71,8 +71,8 @@ The following are source/contract facts, not completed release gates.
   supplies that canonical URL when a request omits a URL or supplies a
   recognised historical permalink placeholder. `ShareUrlResolutionContractTest`
   describes singular post/page, archive-loop, explicit URL, historical
-  placeholder, and AJAX expectations, including one encoding pass. It still
-  requires execution evidence.
+  placeholder, and AJAX expectations, including one encoding pass. These paths
+  passed in the candidate PHPUnit and fresh-archive smoke runs recorded above.
 - The bootstrap refuses to boot when `vendor/autoload.php` is unreadable:
   activation displays remediation through `wp_die`, and active installs show
   single-site and network-admin notices. Composer is prepared with `--no-dev
@@ -80,8 +80,8 @@ The following are source/contract facts, not completed release gates.
   development or non-authoritative loader; the archive contract requires the
   Composer autoloader, PSR-4 map, static map, PHP source, `block.json`, built
   bundles, and icon assets, while excluding source JS, tests, docs, package
-  metadata, and Composer metadata. These are safeguards in source until the
-  deterministic archive is built and installed.
+  metadata, and Composer metadata. The deterministic archive build and clean
+  install recorded above exercised these safeguards.
 - Settings UI strings are provided in a translated PHP payload where
   appropriate; admin, builder, and block source uses the plugin text domain,
   and block scripts use `wp.i18n`/register script translations when WordPress
@@ -114,7 +114,7 @@ evidence for this uncommitted candidate.
 | Plugin Check | Completed: 2 intentional API-version errors, 57 warnings | Resolve API-version/support-floor decision; do not hide with a baseline |
 | Archive reproducibility and fresh-install activation | Passed; matching checksum and clean activation recorded above | Repeat after version/package changes |
 | Browser accessibility and visual parity | Pending manual work | Captures and issue disposition for Chrome, Firefox, Safari, and Edge at desktop and mobile widths |
-| Elementor and WPBakery | Pending / blocked | Real licensed plugin fixtures, editor and frontend captures, and persisted-data comparison |
+| Elementor and WPBakery | Elementor editor/frontend passed; WPBakery frontend passed and editor is blocked | Licensed WPBakery editor fixture and persisted-data comparison |
 
 ## Rollback rehearsal
 

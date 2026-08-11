@@ -1,9 +1,10 @@
 # Icon asset provenance
 
-The canonical `assets/iconsets/` tree contains path-normalized historical
-assets from release 2.2.6 plus reproducibly generated SVG sets. Historical
-casing, the `long_shadow` directory name, and `twitter` filenames are
-translated only by the legacy asset map.
+The historical `iconset/` tree retains the released 2.2.6 assets and public
+URLs, including their casing, `long_shadow` directory name, and `twitter`
+filenames. `assets/iconsets/` contains only the reproducibly generated SVG
+sets and their license notices. Canonical manifests record each pack's actual
+asset path; no duplicate historical tree or legacy asset map is shipped.
 
 ## Recorded sources
 
