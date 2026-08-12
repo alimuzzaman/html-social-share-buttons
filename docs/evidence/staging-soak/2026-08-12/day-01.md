@@ -4,6 +4,7 @@
 - Started at (UTC): `2026-08-12T09:04:40Z`
 - Earliest valid completion: `2026-08-26T09:04:40Z`
 - Candidate archive SHA-256: `d6575a33ff120ec768b6f71a4ea29f51a083760d016cd5f9a599aa0982945b05`
+- Candidate Git revision: `78c7f2344f01620441528b00707bb77152de476c`
 - Candidate archive size / entries: 668,318 bytes / 231 files
 - Rollback archive SHA-256: `f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941`
 - Staging: Sandbox remote `scaleway-sandbox`, instance

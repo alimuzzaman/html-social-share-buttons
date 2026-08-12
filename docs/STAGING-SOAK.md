@@ -11,7 +11,7 @@ real elapsed days and the final staging rollback.
 
 | Field | Value |
 |---|---|
-| Candidate Git revision | Pending final documentation commit; archive identity is authoritative |
+| Candidate Git revision | `78c7f2344f01620441528b00707bb77152de476c` |
 | Candidate archive path | `/Users/alim/Sites/git/html-social-share-buttons.2.2.6.zip` |
 | Candidate SHA-256 | `d6575a33ff120ec768b6f71a4ea29f51a083760d016cd5f9a599aa0982945b05` |
 | Candidate size / entries | 668,318 bytes / 231 files |
