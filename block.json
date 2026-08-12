@@ -3,7 +3,7 @@
   "apiVersion": 1,
   "name": "html-social-share/social-share",
   "version": "2.2.6",
-  "title": "Html Social Share",
+  "title": "HTML Social Share",
   "category": "widgets",
   "icon": "share",
   "description": "Display share buttons for the current post or page.",

@@ -34,7 +34,7 @@ final class SettingsAssetEnqueuer {
 				$this->config->adminWidgetStyleHandle(),
 				plugins_url( 'assets/admin-widget.css', $this->pluginFile ),
 				array(),
-				'2.2.4'
+				$this->config->version()
 			);
 
 			return;

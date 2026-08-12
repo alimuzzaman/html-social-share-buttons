@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Html Social share buttons 2.2.4\n"
+"Project-Id-Version: HTML Social Share Buttons 2.2.6\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/html-social-share-buttons\n"
 "POT-Creation-Date: 2014-12-13 16:54:58+00:00\n"
 "PO-Revision-Date: 2026-07-13T06:07:18+00:00\n"

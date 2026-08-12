@@ -5,7 +5,7 @@
 `v2.2.6` (`620f1ae66`) remains the published baseline. The `latest` working
 tree contains a canonical-first rewrite and release-hardening work; it is not a
 public 3.0 release. The plugin header, both block metadata files, and
-`Readme.txt` remain at 2.2.6. Do not change the stable tag, create a release,
+`readme.txt` remain at 2.2.6. Do not change the stable tag, create a release,
 or describe this work as a completed 3.0 release without explicit approval.
 
 The rewrite substantially reduces the compatibility layer, but source and
@@ -15,7 +15,7 @@ lacks a verifiable source/license record but is retained under the release
 owner's explicit compatibility exception. WPBakery uses its official documented
 integration contract when the paid editor is unavailable. Cross-browser visual
 evidence is recorded, including Safari 26.6 and the corrected 390-pixel case.
-A 14-day staging soak remains open. A
+A 14-day staging soak started on 2026-08-12 and remains open. A
 limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now recorded in
 `RELEASE-CANDIDATE-VALIDATION.md`; it is not the staging-soak rollback gate.
 
@@ -86,8 +86,8 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
 | Elementor | Real editor persistence, visible icon preview, and public stored-data fixture passed with Elementor 4.2.2 | Manual cross-browser captures and supported-version matrix |
 | WPBakery | Canonical mapping, stored-shortcode, bundle-smoke, and public-render contracts match the official `vc_map()`/shortcode model | Live paid-editor behavior is not claimed |
 | Icon packs | Manifests, filenames, browser matrix, Safari review, and owner provenance dispositions are recorded; the 390-pixel collision is fixed and regression-tested | Physical-device/high-contrast review and trademark review are not claimed |
-| Rollback | No data migration/replacement schema is designed; isolated candidate -> published 2.2.6 -> candidate rehearsal passed on WP 5.3/PHP 7.0, including the exact current archive checksum | Staging-soak rollback rehearsal |
-| Staging | Plan only | Fourteen consecutive days of recorded evidence |
+| Rollback | No data migration/replacement schema is designed; an isolated predecessor-candidate -> published 2.2.6 -> candidate rehearsal passed on WP 5.3/PHP 7.0 | Day-7 and final rollback with the approved `d657...5b05` soak bytes |
+| Staging | Day 1 passed on the exact installed candidate; clock started `2026-08-12T09:04:40Z` | Fourteen elapsed days of recorded evidence; earliest completion `2026-08-26T09:04:40Z` |
 
 ## Closed decisions, scope limits, and remaining release operations
 
@@ -108,8 +108,9 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
    paid builders, including WPBakery, the release owner selected official API
    documentation plus exact repository mapping, persistence, bundle, and public
    rendering contracts. This is not described as a live WPBakery editor run.
-4. The isolated rollback rehearsal passed, but the 14-day staging soak has not
-   started and its staging rollback rehearsal remains required.
+4. The isolated rollback rehearsal passed for predecessor bytes. The approved
+   soak candidate started its 14-day staging run on 2026-08-12; day-7 and final
+   staging rollback rehearsals remain required.
 5. Placement-level profile-link controls are available for automatic placement
    and as opt-in `profile_links_mode` controls for the share block, shortcode,
    widget, Elementor, WPBakery, and direct facade inputs. Missing stored values

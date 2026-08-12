@@ -165,7 +165,7 @@ release approval or completed operational evidence. See
 - The intended rollback target is 2.2.6, which should read unchanged option
   and post-meta data without reverse migration. That remains a design claim
   until a documented rehearsal passes.
-- The declared floor remains WordPress 5.3 and PHP 7.0. `Readme.txt` declares
+- The declared floor remains WordPress 5.3 and PHP 7.0. `readme.txt` declares
   testing through WordPress 7.0; this is not browser/builder certification.
 - Historical Default PNG provenance is an accepted compatibility exception.
   Browser parity, Elementor, and rollback evidence are recorded in the release

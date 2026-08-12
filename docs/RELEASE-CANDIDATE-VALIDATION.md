@@ -7,8 +7,8 @@ publish an article, or deploy an archive.
 ## Support declaration and evidence scope
 
 The distributed plugin currently declares **WordPress 5.3+** and **PHP 7.0+**
-in both the plugin header and `Readme.txt`; Composer also requires PHP 7.0+.
-`Readme.txt` declares “Tested up to: 7.0”. These are repository declarations,
+in both the plugin header and `readme.txt`; Composer also requires PHP 7.0+.
+`readme.txt` declares “Tested up to: 7.0”. These are repository declarations,
 not a statement that this candidate has been manually validated in every
 intermediate WordPress/PHP/browser combination.
 
@@ -161,13 +161,13 @@ revalidated through the global Sandbox CLI and the host JavaScript toolchain:
   5.3/PHP 7.0.33 instance and activated without Composer; both shortcodes and
   dynamic blocks registered, the canonical kernel autoloaded, and a two-link
   shortcode smoke contained neither raw nor double-encoded placeholders.
-- Plugin Check 2.0.0 against the clean extracted current archive reported the
+- Plugin Check 2.0.0 against the clean extracted then-current archive reported the
   same two `block_api_version_too_low` errors and 57 warnings documented above;
   it reported no source-tree `application_detected` errors. No baseline was
   created or updated.
 
 After the responsive-rail correction and deterministic-generator update, two
-fresh production archive builds again matched byte-for-byte. The exact current
+fresh production archive builds again matched byte-for-byte. That pre-soak
 archive contains 231 files, is 668,212 bytes, and has SHA-256
 `1a8fc417b85d3b6ec261a9708609b8cb6a83b2eed7ba77eb882f7074afe523dc`.
 The distribution contract passes. Fresh-archive activation and exact-checksum
@@ -191,10 +191,10 @@ stored frontend, Gutenberg stored block, keyboard settings dialog, and stored
 WPBakery shortcode frontend. The unavailable paid WPBakery editor picker was
 the one explicit skip, handled by the documentation/contract disposition below.
 
-### 2026-08-12 exact-current-archive rollback repeat
+### 2026-08-12 pre-soak-archive rollback repeat
 
 A second disposable WordPress 5.3 / PHP 7.0.33 Sandbox repeated candidate ->
-published 2.2.6 -> candidate using the exact current archive SHA-256
+published 2.2.6 -> candidate using the then-current archive SHA-256
 `1a8fc417b85d3b6ec261a9708609b8cb6a83b2eed7ba77eb882f7074afe523dc`.
 The freshly downloaded WordPress.org 2.2.6 archive SHA-256 was
 `f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941`.
@@ -216,8 +216,28 @@ rendered five anchors with hash
 `5c46e54e1bc641650cdfa4d3df4cbfadf0f7d5483ee56dda481523afe32f2ec4`
 and reproduced its known double-encoded placeholder. The isolated instance,
 containers, DB volume, network, runtime/snapshots, archive server, and temporary
-fixtures were removed. This closes the exact-current local rollback rehearsal;
-the time-bound staging-soak rollback remains a separate release-operation gate.
+fixtures were removed. This closes the local rehearsal for those predecessor
+bytes; the final approved soak candidate differs in listing/version-alignment
+files and must still pass the time-bound staging rollback.
+
+### 2026-08-12 approved soak candidate and Day 1 baseline
+
+After the public/release documentation and metadata alignment, two final
+archive builds were byte-identical. The approved soak candidate contains 231
+files, is 668,318 bytes, and has SHA-256
+`d6575a33ff120ec768b6f71a4ea29f51a083760d016cd5f9a599aa0982945b05`.
+It was installed, rather than source-linked, on the persistent Sandbox staging
+instance `html-social-share-button` (WordPress 7.0.3 / PHP 8.3.33). The sorted
+per-file manifest hash matched independently between a local archive extraction
+and the installed staging tree at
+`8ede5b6e6789c218a10c8efe5f395a4db0d6b928167a4050334da2f78432c42b`.
+
+The clock started at `2026-08-12T09:04:40Z`, after the public probe, desktop
+and 390×844 browser checks, fixture-data hashes, exact-byte check, and error
+review passed. The earliest possible completion is
+`2026-08-26T09:04:40Z`. Day 1 and the pre-start bootstrap corrections are
+recorded in `docs/evidence/staging-soak/2026-08-12/day-01.md`. This begins the
+gate; it does not complete it or the staging rollback.
 
 ## Implementation and contract evidence present in the working tree
 
@@ -291,14 +311,14 @@ evidence for this uncommitted candidate.
 | PHP quality | PHP syntax, PHPStan and PHPCS passed on PHP 8.3.33 on 2026-08-12 | Declared PHP/WP support matrix remains required |
 | Regular, AJAX, and multisite WordPress contracts | Passed on the current working tree with the 2026-08-12 summaries above | Repeat for the finally approved candidate revision if it changes |
 | Plugin Check | Current clean archive: two accepted API-version findings and 57 warnings; no baseline | API v1 is retained with the WordPress 5.3 floor under the 2026-08-12 compatibility decision |
-| Archive reproducibility and fresh-install activation | Current `1a8...23dc` archive reproduced byte-for-byte, passed the 231-file distribution contract, activated/rendered without host Composer on WP 7.0.3/PHP 8.3.33, and passed an exact-checksum rollback repeat on WP 5.3/PHP 7.0.33 | Repeat only if the approved soak candidate bytes change; staging-soak rollback remains separate |
+| Archive reproducibility and fresh-install activation | Approved `d657...5b05` soak candidate reproduced byte-for-byte, passed the 231-file distribution contract, and is exact-byte installed/rendering on WP 7.0.3/PHP 8.3.33; the preceding `1a8...23dc` bytes passed the isolated rollback repeat | Complete the day-7 and final staging rollback with the approved soak bytes |
 | Browser matrix evidence | Chrome, Firefox, Edge, and Playwright WebKit fixture rendering/non-overlap passed after the responsive correction; the 390-pixel collision is now an executable assertion; Safari 26.6 desktop and 390×844 Responsive Design Mode captures are recorded | Physical iOS and high-contrast review are scope limits, not claims made by this record |
 | Elementor and WPBakery | Elementor editor/frontend passed; WPBakery frontend passed and its `vc_map` contract matches official documentation | Repeat the repository contracts after further integration changes |
 
 ## Rollback rehearsal
 
 The rollback target is the published 2.2.6 archive. Single-site rehearsals,
-including an exact-current-archive repeat, passed on 2026-08-12; environment,
+including a then-current-archive repeat, passed on 2026-08-12; environment,
 checksums, retained data, and the intentional URL-correction output difference
 are recorded above. The current repeat
 demonstrates a candidate -> 2.2.6 -> candidate file replacement with no
@@ -308,8 +328,9 @@ option. It does not replace the required staging rollback rehearsal during the
 
 ## Fourteen-day staging soak
 
-The soak has not started and has not passed. It starts only after a human
-approves a specific candidate artifact and staging environment. Record the
+The soak started at `2026-08-12T09:04:40Z` with the approved candidate and
+staging environment recorded above. It has not passed and cannot pass before
+`2026-08-26T09:04:40Z`. Record the
 candidate SHA-256, WordPress/PHP/theme/plugin versions, option checksum,
 fixture IDs, rollback archive checksum, and daily evidence. Review errors,
 share URLs, HTTP failures, placements, cache behavior, persisted-data drift,
@@ -338,7 +359,8 @@ time.
   certification. This record's Safari evidence is limited to desktop/Responsive
   Design Mode captures; physical iOS and high-contrast modes are outside its
   scope.
-- The 14-day staging soak has not started.
+- The 14-day staging soak is in progress; Day 1 passed. The day-7 dry rollback,
+  remaining daily evidence, and final post-day-14 rollback are still required.
 - Block API v1 is retained for the declared WordPress 5.3 floor. The release
   owner accepted the two `block_api_version_too_low` findings on 2026-08-12;
   no baseline exists. The documented v2 (5.6+) and v3 (6.3+) requirements mean

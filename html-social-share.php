@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Html Social share buttons
+Plugin Name: HTML Social Share Buttons
 Plugin URI: http://wordpress.org/plugins/html-social-share-buttons/
 Description: Lightweight HTML and CSS social share buttons. Settings and block editing use WordPress JavaScript.
 Author: Alimuzzaman Alim

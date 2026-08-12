@@ -16,7 +16,7 @@ final class AssetCollector {
 	private $fallbackStylesheet;
 	private $version;
 
-	public function __construct( $fallbackStylesheet, $version = '2.2.4' ) {
+	public function __construct( $fallbackStylesheet, $version = '2.2.6' ) {
 		$this->fallbackStylesheet = (string) $fallbackStylesheet;
 		$this->version = (string) $version;
 	}

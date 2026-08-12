@@ -94,12 +94,9 @@ The eight files are stored in
 `docs/evidence/browser-validation/2026-08-12-isolated/`.
 
 Visual sampling of the isolated artifacts found that the fixed left placement
-overlaps the matrix heading near the top of the 390-pixel viewport. The
-automated assertions intentionally verify painted assets, wrapper classes,
-link counts, and basic geometry; they do not certify collision-free responsive
-placement. Treat the overlap as an unresolved manual mobile-layout review item
-until a release owner decides whether the retained placement is compatible
-behavior or requires a separately approved runtime change.
+overlapped the matrix heading near the top of the 390-pixel viewport. That
+finding led to the mobile-rail correction documented below. It is historical
+failure evidence, not a current unresolved item.
 
 ## 2026-08-12 mobile-rail correction and Safari review
 

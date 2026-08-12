@@ -84,7 +84,7 @@ final class ElementorRegistrar {
 				'social-share-' . sanitize_key( $iconSet->id() ),
 				$this->assetResolver->stylesheetUrl( $iconSet ),
 				array(),
-				'2.2.4'
+				$this->config->version()
 			);
 		}
 	}

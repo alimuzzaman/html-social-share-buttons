@@ -10,6 +10,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Bootstrap;
  * legacy bootstrap for plugin state.
  */
 final class PluginConfig {
+	const VERSION = '2.2.6';
 	const OPTION_NAME = 'zm_shbt_fld';
 	const SHORTCODE = 'zm_sh_btn';
 	const SHORTCODE_ALIAS = 'html-social-share-buttons';
@@ -62,6 +63,10 @@ final class PluginConfig {
 
 	public function optionName() {
 		return self::OPTION_NAME;
+	}
+
+	public function version() {
+		return self::VERSION;
 	}
 
 	public function shortcode() {

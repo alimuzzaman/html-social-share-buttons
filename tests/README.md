@@ -155,8 +155,10 @@ development-only files already omitted by `.distignore`.
 pnpm run plugin:check
 ```
 
-The committed `plugin-check-baseline.json` remains empty when the release
-package has no known findings.
+The current release-candidate record intentionally accepts two Block API v1
+findings to preserve WordPress 5.3 and does not use a baseline to hide them.
+Read the command output and `docs/RELEASE-CANDIDATE-VALIDATION.md`; a zero exit
+from the wrapper is not a claim that Plugin Check reported no findings.
 
 ## Scenario authoring
 Add new scenarios in `tests/frontend-output-scenarios.json` with the same schema:

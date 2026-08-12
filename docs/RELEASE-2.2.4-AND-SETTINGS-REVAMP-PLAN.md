@@ -1,4 +1,9 @@
-# Release 2.2.4 and Settings Revamp Plan
+# Historical release 2.2.4 and settings revamp plan
+
+> **Historical record:** this plan describes work before the published 2.2.4
+> release and the subsequent canonical rewrite. It is retained for project
+> history and is not current release guidance. See
+> `POST-RELEASE-2.2.6-PLAN.md` and `RELEASE-CANDIDATE-VALIDATION.md`.
 
 ## Plan 1: Minor Compatibility + Polish Release
 

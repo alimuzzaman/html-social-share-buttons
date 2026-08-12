@@ -1,8 +1,9 @@
 # Legacy compatibility inventory
 
-This inventory is the initial migration map for the 2.2.6 public surface. It
-must be verified against real third-party integrations before the 3.0 release.
-Every legacy definition and bridge belongs under `src/Compatibility/Legacy`.
+This inventory records the retained 2.2.6 public surface after the canonical
+rewrite. Every legacy definition and bridge belongs under
+`src/Compatibility/Legacy`. Release evidence and remaining scope limits are
+tracked separately in `RELEASE-CANDIDATE-VALIDATION.md`.
 
 ## Constants and globals
 
@@ -185,15 +186,17 @@ Frontend DOM/API identifiers that must remain covered include:
 | `hssb/share_url` | bridge through `zm_sh_placeholder` |
 | `hssb/settings_schema` | typed canonical schema filter; `zm_sh_add_schema` remains compatibility-only because its arbitrary admin-schema arrays do not map safely to the typed runtime schema |
 
-## External verification still required
+## External compatibility review and evidence limits
 
 - Search WordPress.org support, GitHub, Packagist/code search, and known client
   sites for external calls to legacy symbols.
 - Confirm whether `zm_sh_ico_link`, schema APIs, `$dir_iconset`, and `zm_form`
   are used by third parties.
-- Exercise Elementor and WPBakery in real editor browsers with the actual
-  third-party plugins installed; the committed integration and VM contracts do
-  not substitute for vendor browser execution.
+- Keep the real Elementor editor/public fixture current after integration
+  changes. When the paid WPBakery editor is unavailable, the release owner has
+  accepted its official `vc_map()`/shortcode documentation plus exact mapping,
+  persistence, compiled-bundle, and public-render contracts. Do not convert
+  that accepted scope into a claim that the paid editor ran.
 
 Completed repository evidence includes hook registration/render order, all
 five AJAX success/failure surfaces, widget/block/Elementor/WPBakery storage,

@@ -74,7 +74,8 @@ final class PluginFactory {
 				new ShareContextFactory( null, $extensions )
 			);
 		$assetCollector = new AssetCollector(
-			$assets->stylesheetUrl( $iconSets->get( 'default' ) )
+			$assets->stylesheetUrl( $iconSets->get( 'default' ) ),
+			$config->version()
 		);
 		$excludedContent = new ExcludedContentPolicy();
 		$contentPlacement = new ContentPlacementComposer();

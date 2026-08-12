@@ -46,7 +46,7 @@ final class CanonicalFrontendAssetCollectorTest extends WP_UnitTestCase {
 			count( array_keys( wp_styles()->queue, 'social-share-flat', true ) )
 		);
 		$this->assertSame(
-			'2.2.4',
+			'2.2.6',
 			wp_styles()->registered['social-share-default']->ver
 		);
 

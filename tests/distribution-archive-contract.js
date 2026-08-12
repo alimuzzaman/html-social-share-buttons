@@ -43,6 +43,7 @@ function repositoryFiles(relativeDirectory, predicate = () => true) {
 
 const required = [...new Set([
 	'html-social-share-buttons/html-social-share.php',
+	'html-social-share-buttons/readme.txt',
 	'html-social-share-buttons/block.json',
 	'html-social-share-buttons/vendor/autoload.php',
 	'html-social-share-buttons/vendor/composer/autoload_psr4.php',
@@ -60,6 +61,7 @@ const required = [...new Set([
 	...repositoryFiles('build'),
 ])];
 const forbidden = [
+	/^html-social-share-buttons\/Readme\.txt$/,
 	/^html-social-share-buttons\/src\/js\//,
 	/^html-social-share-buttons\/tests\//,
 	/^html-social-share-buttons\/test-results\//,
