@@ -24,3 +24,23 @@ foreach ( array(
 }
 
 echo "Prajin canonical stylesheet selectors are present.\n";
+
+$responsive_rule = '@media (max-width:600px){.zmshbt.left,.zmshbt.right{position:static!important;display:flex;flex-wrap:wrap;justify-content:center}.zmshbt.left a,.zmshbt.right a{margin:5px!important}}';
+$responsive_stylesheets = array(
+	'iconset/default/style.css',
+	'iconset/flat/style.css',
+	'iconset/long_shadow/style.css',
+	'iconset/prajin/style.css',
+	'assets/iconsets/bootstrap-solid/style.css',
+	'assets/iconsets/tabler-outline/style.css',
+);
+
+foreach ( $responsive_stylesheets as $relative_path ) {
+	$css = file_get_contents( __DIR__ . '/../' . $relative_path );
+	if ( false === $css || false === strpos( $css, $responsive_rule ) ) {
+		fwrite( STDERR, sprintf( "Missing mobile placement rule: %s\n", $relative_path ) );
+		exit( 1 );
+	}
+}
+
+echo "All icon-set styles prevent fixed mobile rail collisions.\n";

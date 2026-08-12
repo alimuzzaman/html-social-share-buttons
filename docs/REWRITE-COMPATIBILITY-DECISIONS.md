@@ -57,7 +57,9 @@ release approval or completed operational evidence. See
   shape and WordPress termination behavior.
 - WPBakery enqueues its compiled editor bundle once, localizes its nonce once,
   accepts JSON-string or parsed icon-set responses, and inserts labels as text.
-  This does not substitute for a licensed WPBakery editor fixture.
+  When the paid editor is unavailable, the release owner accepts the official
+  WPBakery integration contract plus executable repository contracts instead
+  of requiring a licensed live-editor fixture.
 - Mixed or malformed shortcode, block, Elementor, and WPBakery attributes
   normalize safely. Valid persisted values retain their established renderer
   inputs and markup contract.
@@ -112,12 +114,11 @@ release approval or completed operational evidence. See
   second block definition and untested saved-content behavior. The blocks are
   dynamic, so an API-version increase would not improve their PHP-owned
   frontend renderer.
-- No code change is approved for this finding while WordPress 5.3 support is
-  retained. The release owner must choose one of: retain API v1 and accept the
-  Plugin Check finding with documented justification; raise the WordPress
-  floor to 5.6 and validate API v2; or raise it to 6.3 and validate API v3 and
-  its iframe-editor requirements. This is a release-policy decision, not a
-  baseline-management task.
+- The release owner selected the compatibility-preserving disposition on
+  2026-08-12: retain API v1 and the WordPress 5.3 floor, and accept the two
+  Plugin Check findings with this documented justification. No baseline is
+  created. Raising the floor and API version remains a future breaking-support
+  decision, not a metadata-only correction.
 
 ## Assets, icon metadata, and third-party extensions
 
@@ -133,7 +134,9 @@ release approval or completed operational evidence. See
   converted into canonical registries before schema construction, and their
   external filesystem/public asset locations are validated together. A new
   public manifest API is intentionally deferred.
-- Retaining a historical asset is not provenance clearance. See
+- Retaining a historical asset is not provenance clearance. The release owner
+  accepted Default-pack provenance as a compatibility exception on 2026-08-12;
+  this removes it as a release gate without creating a clearance claim. See
   `ICON-COVERAGE-MATRIX.md` and `resources/iconsets/ASSET-SOURCES.md`.
 
 ## Autoloading, distribution, and localization
@@ -164,10 +167,10 @@ release approval or completed operational evidence. See
   until a documented rehearsal passes.
 - The declared floor remains WordPress 5.3 and PHP 7.0. `Readme.txt` declares
   testing through WordPress 7.0; this is not browser/builder certification.
-- Historical PNG provenance, browser parity, a real Elementor fixture, a
-  licensed WPBakery fixture, rollback, and soak evidence remain open. Plugin
-  Check API-v1 findings required for the 5.3 floor also need explicit
-  disposition.
+- Historical Default PNG provenance is an accepted compatibility exception.
+  Browser parity, Elementor, and rollback evidence are recorded in the release
+  ledger; unavailable paid-builder editors use their documented API contract.
+  The time-bound staging soak remains a separate release-operation gate.
 - `3.0.0-rc.1` is only a future candidate label. Header version and stable tag
   remain 2.2.6 until every required gate is evidenced and a release owner
   authorizes the change.

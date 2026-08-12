@@ -27,7 +27,7 @@ That is runtime behavior, not a promise of visual equivalence.
 
 | Asset group | Repository evidence | Publication status |
 |---|---|---|
-| Default PNG pack, utility assets, previews, stylesheets | Retained in `iconset/default` from 2.2.6; no verifiable upstream source, version, or license grant recorded | **Unresolved — release blocker** |
+| Default PNG pack, utility assets, previews, stylesheets | Retained in `iconset/default` from 2.2.6; no verifiable upstream source, version, or license grant recorded; release owner accepted this compatibility exception on 2026-08-12 | **Accepted exception; no independent clearance claim** |
 | Flat PNG brand assets | Retained in `iconset/flat`; Hakan Ertan / Tonicons historical credit and a 2026-08-12 maintainer attestation of rights-holder authorization are recorded; no written authorization is archived | **Authorization attested; archival evidence incomplete** |
 | Long Shadows PNG brand assets | Retained in `iconset/long_shadow`; Hakan Ertan / Tonicons historical credit and a 2026-08-12 maintainer attestation of rights-holder authorization are recorded; no written authorization is archived | **Authorization attested; archival evidence incomplete** |
 | Prajin PNG brand assets | Retained in `iconset/prajin`; Prajin historical credit and a 2026-08-12 maintainer attestation of rights-holder authorization are recorded; no written authorization is archived | **Authorization attested; archival evidence incomplete** |
@@ -54,17 +54,18 @@ retaining its historical uppercase selectors.
 
 Playwright WebKit passed after its documented host dependencies were installed.
 The same eight-project matrix then passed in a newly provisioned strict Sandbox
-worker, with separate durable screenshots and checksums. WebKit is not Safari,
-and no Safari claim is made.
+worker, with separate durable screenshots and checksums. After the responsive
+rail correction, all eight projects passed again and Safari 26.6 was reviewed
+separately on macOS at desktop size and in Responsive Design Mode at 390×844.
+WebKit remains separate from the Safari evidence.
 
 ## Verification still required
 
 - Run the manifest/asset and deterministic-generator checks for the candidate.
-- Capture current Safari desktop/iOS evidence separately.
-- Resolve or explicitly accept the 390-pixel fixed-rail/heading overlap noted
-  in `BROWSER-VALIDATION.md` during real-device/manual layout review.
+- Physical-device iOS testing remains outside this local evidence set; Safari
+  Responsive Design Mode used the iOS 26.4 iPhone user agent at 390×844.
 - Complete trademark and platform-brand-guideline review for every network.
 - Archive the written authorization or license terms that substantiate the
-  maintainer attestation for Flat, Long Shadows, and Prajin; obtain source and
-  license evidence for Default—or approve a deliberate replacement and its
-  visual migration.
+  maintainer attestation for Flat, Long Shadows, and Prajin when available.
+  Default provenance is not a release gate under the explicit compatibility
+  exception above.

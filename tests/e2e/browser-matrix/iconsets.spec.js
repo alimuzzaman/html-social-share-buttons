@@ -73,6 +73,30 @@ test.describe( 'Icon-set browser matrix', () => {
 			);
 		}
 
+		if ( testInfo.project.name.endsWith( 'mobile-viewport' ) ) {
+			const pageHeading = page.locator( 'main h1' ).first();
+			const rails = page.locator( '.zmshbt.left, .zmshbt.right' );
+			await expect( pageHeading ).toBeVisible();
+			expect( await rails.count() ).toBeGreaterThan( 0 );
+
+			const headingBox = await pageHeading.boundingBox();
+			for ( const rail of await rails.all() ) {
+				await expect( rail ).toHaveCSS( 'position', 'static' );
+				const railBox = await rail.boundingBox();
+				expect( headingBox ).not.toBeNull();
+				expect( railBox ).not.toBeNull();
+				if ( ! headingBox || ! railBox ) {
+					continue;
+				}
+				expect(
+					railBox.x < headingBox.x + headingBox.width &&
+						railBox.x + railBox.width > headingBox.x &&
+						railBox.y < headingBox.y + headingBox.height &&
+						railBox.y + railBox.height > headingBox.y
+				).toBeFalsy();
+			}
+		}
+
 		const output = screenshotPath( testInfo );
 		await page.screenshot( { path: output, fullPage: true } );
 		await testInfo.attach( 'icon-set-matrix', {

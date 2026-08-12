@@ -65,4 +65,5 @@
 	-webkit-transform: scale(1.5);
 	transform: scale(1.5)
 }
+@media (max-width:600px){.zmshbt.left,.zmshbt.right{position:static!important;display:flex;flex-wrap:wrap;justify-content:center}.zmshbt.left a,.zmshbt.right a{margin:5px!important}}
 

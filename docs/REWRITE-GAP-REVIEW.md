@@ -11,8 +11,11 @@ or describe this work as a completed 3.0 release without explicit approval.
 The rewrite substantially reduces the compatibility layer, but source and
 contract coverage are not release evidence on their own. Maintainer
 authorization is recorded for Flat, Long Shadow, and Prajin; the Default pack
-still lacks a verifiable source/license record. A licensed WPBakery editor run,
-complete cross-browser visual parity, and a 14-day staging soak remain open. A
+lacks a verifiable source/license record but is retained under the release
+owner's explicit compatibility exception. WPBakery uses its official documented
+integration contract when the paid editor is unavailable. Cross-browser visual
+evidence is recorded, including Safari 26.6 and the corrected 390-pixel case.
+A 14-day staging soak remains open. A
 limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now recorded in
 `RELEASE-CANDIDATE-VALIDATION.md`; it is not the staging-soak rollback gate.
 
@@ -78,32 +81,33 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
 | PHP, JavaScript, icon, settings, block, localization contracts | Passed in the 2026-08-11 candidate validation; see `RELEASE-CANDIDATE-VALIDATION.md` | Repeat after any candidate code change |
 | WordPress/PHP declaration | Header and readme declare WP 5.3+ and PHP 7.0+; configured WP 6.8/PHP 8.3 and current/PHP 8.3 contract rows passed; WP 5.3/PHP 7.0 has a functional smoke | Remaining supported matrix runs; the WP 5.3 path must not be represented as a full modern-suite certification |
 | Archive and autoloader | Two builds matched and the ZIP activated on a clean Sandbox without Composer | Repeat for the approved versioned candidate |
-| Frontend compatibility | PHPUnit, the 33-scenario golden comparison, fresh-ZIP smoke, and stored browser fixtures passed | Manual browser matrix and licensed WPBakery editor evidence |
+| Frontend compatibility | PHPUnit, the 33-scenario golden comparison, fresh-ZIP smoke, and stored browser fixtures passed; the eight-project isolated fixture/non-overlap matrix passed; Safari 26.6 desktop/Responsive Design Mode captures are recorded | Physical-device/high-contrast review is not claimed |
 | Gutenberg | Dynamic metadata registration and a real stored-block browser fixture passed | Supported-version and manual browser captures |
 | Elementor | Real editor persistence, visible icon preview, and public stored-data fixture passed with Elementor 4.2.2 | Manual cross-browser captures and supported-version matrix |
-| WPBakery | Canonical optional integration and stored-shortcode contracts are present | Licensed editor environment, fixture, persisted data, and frontend capture |
-| Icon packs | Manifests, filenames, and support matrix are defined; maintainer authorization is recorded for Flat, Long Shadow, and Prajin; Chrome, Firefox, Edge, and Playwright WebKit painted-asset automation passed globally and in a fresh isolated worker | Default-pack provenance/legal decision, Safari, and manual accessibility/interaction/layout review, including the observed 390-pixel fixed-rail/heading overlap |
-| Rollback | No data migration/replacement schema is designed; isolated candidate -> published 2.2.6 -> candidate rehearsal passed on WP 5.3/PHP 7.0 | Staging-soak rollback rehearsal and licensed builder-editor evidence |
+| WPBakery | Canonical mapping, stored-shortcode, bundle-smoke, and public-render contracts match the official `vc_map()`/shortcode model | Live paid-editor behavior is not claimed |
+| Icon packs | Manifests, filenames, browser matrix, Safari review, and owner provenance dispositions are recorded; the 390-pixel collision is fixed and regression-tested | Physical-device/high-contrast review and trademark review are not claimed |
+| Rollback | No data migration/replacement schema is designed; isolated candidate -> published 2.2.6 -> candidate rehearsal passed on WP 5.3/PHP 7.0, including the exact current archive checksum | Staging-soak rollback rehearsal |
 | Staging | Plan only | Fourteen consecutive days of recorded evidence |
 
-## Release blockers and decisions still needed
+## Closed decisions, scope limits, and remaining release operations
 
-1. Flat, Long Shadow, and Prajin now carry the maintainer's dated attestation
-   of rights-holder authorization and their historical credits. The repository
-   does not archive those written authorizations. The Default pack remains the
-   unresolved provenance blocker: history/hash/source research found no
-   upstream author, version, or license grant. Keep it for compatibility, but
-   do not claim independent clearance or replace it without approval.
-2. Automated current Chrome, Firefox, Edge, and Playwright WebKit
-   desktop/mobile-viewport icon and layout checks passed globally and in a
-   fresh isolated worker. Safari, physical mobile devices, and manual
-   interaction/accessibility review have not been recorded. The isolated
-   390-pixel captures show the fixed left rail overlapping the matrix heading;
-   resolve it or explicitly accept it as retained compatibility behavior.
-3. The isolated candidate E2E run now provisions a real Elementor document
-   through Elementor's `save_builder` action and verifies its visible editor
-   preview and public frontend. A licensed WPBakery editor fixture remains a
-   hard external requirement; only its stored-shortcode public fixture passed.
+1. Flat, Long Shadow, and Prajin carry the maintainer's dated attestation of
+   rights-holder authorization and their historical credits. The repository
+   does not archive those written authorizations. The Default pack still lacks
+   an upstream author, version, or licence grant, but the release owner accepted
+   retaining it as a compatibility exception on 2026-08-12. Do not turn that
+   exception into a claim of independent clearance.
+2. Current Chrome, Firefox, Edge, and Playwright WebKit desktop/mobile fixture
+   and non-overlap checks pass in a fresh isolated worker. Safari 26.6 desktop
+   and 390×844 Responsive Design Mode captures are recorded. The mobile fixed
+   rail now enters document flow at 600 pixels or below, and the browser test
+   fails on heading intersection. Physical-device/high-contrast behavior is
+   outside the recorded claim.
+3. The isolated candidate E2E run provisions a real Elementor document and
+   verifies its visible editor preview and public frontend. For unavailable
+   paid builders, including WPBakery, the release owner selected official API
+   documentation plus exact repository mapping, persistence, bundle, and public
+   rendering contracts. This is not described as a live WPBakery editor run.
 4. The isolated rollback rehearsal passed, but the 14-day staging soak has not
    started and its staging rollback rehearsal remains required.
 5. Placement-level profile-link controls are available for automatic placement
@@ -112,9 +116,9 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
    continue to inherit global profile links. Custom per-placement profile URL
    maps remain intentionally out of scope; placement controls only inherit or
    suppress the configured global links.
-6. Plugin Check must be recorded separately from compatibility warnings. Its
-   API-v1 findings needed for the WordPress 5.3 floor require disposition; do
-   not label those warnings as fixed without a compatibility decision.
+6. Plugin Check remains recorded separately from compatibility warnings. The
+   release owner accepted its two API-v1 findings to preserve WordPress 5.3;
+   no baseline hides them.
 7. Version/listing alignment, screenshots, FAQ, and release copy remain final
    release-owner work. The version is deliberately still 2.2.6, not
    `3.0.0-rc.1`.
@@ -123,9 +127,10 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
 
 1. Freeze a candidate revision and record all syntax, quality, Sandbox,
    Plugin Check, archive, fresh-install, and compatibility-contract results.
-2. Complete the provenance/legal decision and the browser/icon matrix.
-3. Capture real Gutenberg and Elementor evidence and verify WPBakery in a
-   licensed editor environment.
+2. Re-run the closed provenance/browser/builder contract gates after relevant
+   candidate changes.
+3. Preserve the real Gutenberg/Elementor evidence and WPBakery documentation-
+   contract evidence with the candidate ledger.
 4. Approve a candidate artifact and run the documented 14-day staging soak,
    including its staging rollback rehearsal.
 5. Obtain release-owner approval before changing version metadata, stable tag,

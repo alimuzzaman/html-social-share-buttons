@@ -4,4 +4,5 @@
 .zmshbt.bootstrap-solid a{display:block;width:36px;height:36px;margin:7px;background-position:center;background-repeat:no-repeat;background-size:cover;transition:transform .16s ease,filter .16s ease}
 .zmshbt.bootstrap-solid a:hover{filter:brightness(1.06);transform:translateY(-2px) scale(1.06)}
 .zmshbt.bootstrap-solid a:focus-visible{outline:3px solid #2271b1;outline-offset:3px}
+@media (max-width:600px){.zmshbt.left,.zmshbt.right{position:static!important;display:flex;flex-wrap:wrap;justify-content:center}.zmshbt.left a,.zmshbt.right a{margin:5px!important}}
 @media (prefers-reduced-motion:reduce){.zmshbt.bootstrap-solid a{transition:none}.zmshbt.bootstrap-solid a:hover{transform:none}}

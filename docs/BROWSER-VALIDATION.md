@@ -1,7 +1,8 @@
 # Browser validation evidence
 
-This document records automated visual/browser evidence; it is not a browser
-support declaration, a Safari result, or a release approval.
+This document records automated visual/browser evidence and a separate manual
+Safari run; it is not a general browser support declaration or release
+approval.
 
 ## 2026-08-12 icon-set matrix
 
@@ -34,7 +35,7 @@ pnpm exec playwright test --config tests/browser-matrix.playwright.config.js --r
 | Mozilla Firefox | 151.0 | Passed | Passed | `firefox-desktop.png`, `firefox-mobile-viewport.png` |
 | Microsoft Edge | 151.0.4129.78 | Passed | Passed | `edge-desktop.png`, `edge-mobile-viewport.png` |
 | Playwright WebKit | 26.5 | Passed | Passed | `webkit-desktop.png`, `webkit-mobile-viewport.png` |
-| Safari | N/A | Not tested | Not tested | Playwright WebKit is **not** Safari evidence |
+| Safari | N/A | Not tested in this automated run | Not tested in this automated run | Separate manual Safari evidence appears below; Playwright WebKit is **not** Safari evidence |
 
 Screenshot SHA-256 values:
 
@@ -100,6 +101,56 @@ placement. Treat the overlap as an unresolved manual mobile-layout review item
 until a release owner decides whether the retained placement is compatible
 behavior or requires a separately approved runtime change.
 
+## 2026-08-12 mobile-rail correction and Safari review
+
+All six shipped icon-set styles now change fixed left/right rails to a static,
+centered, wrapping row at viewport widths of 600 pixels or less. The static CSS
+contract requires that rule in every pack. The browser matrix also locates each
+left/right rail at the 390×844 mobile viewport, asserts computed `position:
+static`, and fails if its box intersects the page heading.
+
+The corrected tree passed all eight projects in a newly provisioned strict
+WordPress 7.0.3 Sandbox worker:
+
+```sh
+HSSB_BROWSER_ARTIFACT_DIR=docs/evidence/browser-validation/2026-08-12-mobile-fix \
+sb e2e --local --workers 1 --strict-provision \
+  --playwright-config tests/browser-matrix.playwright.config.js \
+  --timeout 1200 --json
+```
+
+| Artifact | Dimensions | SHA-256 |
+|---|---:|---|
+| `chrome-desktop.png` | 1440×3550 | `b6d66e778062cda2fb3d566f3f473d947ab8ffe08a1141ce7ae4cd240341485f` |
+| `chrome-mobile-viewport.png` | 390×3559 | `8ed4a7c95fbc1f48cac86ecaccdf7de178a710d7b0019647b13c96eb6cd2630b` |
+| `firefox-desktop.png` | 1440×3580 | `cf308abe0d5f92eaf0fdb1834f40bba17cf3d4d2c1d93d1812392eb15e731a36` |
+| `firefox-mobile-viewport.png` | 390×3547 | `2102e02eba01e8d521eabed9241a3858c4353d9be5be0517bab209623d6a1f1e` |
+| `edge-desktop.png` | 1440×3589 | `f3fb691c7cb8b196b232acfb8ffaa10b42cf02619f412497bd9b9b14f4a8bbbb` |
+| `edge-mobile-viewport.png` | 390×3559 | `5636ea03e2c261e2e8ba552d256c81e7f7578cdd2bea9bf4b3b2f59d10548db2` |
+| `webkit-desktop.png` | 1440×3625 | `e5379c9c0c33cb284fdbd582c573a61beab4a25bbcec52ff2ca30b08b7d1c071` |
+| `webkit-mobile-viewport.png` | 390×3547 | `b616b9230ec97385bac1bedd354fc1bd2ca26a90e7e1d58531812fbc15fe445a` |
+
+Safari was tested separately through the macOS Safari application, not inferred
+from Playwright WebKit. Safari 26.6 desktop and 390×844 Responsive Design Mode
+captures were recorded. A second responsive capture selected Safari's iOS 26.4
+iPhone user agent. Both responsive captures show the heading unobstructed and
+the formerly fixed rail in document flow. The screenshots document the reviewed
+viewport states; they do not independently certify the full matrix or an
+accessibility tree. The capture PNG itself is the 1202×768 Safari window; the
+390×844 emulated viewport is visibly recorded in its toolbar.
+
+| Safari artifact | SHA-256 |
+|---|---|
+| `safari-desktop.png` | `8bf720c391c40fd19009e599f75550e196bf9c29218d65571f0e50d714187df6` |
+| `safari-responsive-390x844.png` | `ac3bcc653e17a39331dee2805e757b8979bcf5b3636a9e97ae6f5db2ff166aaf` |
+| `safari-iphone-ua-390x844.png` | `e00b046c53a668863295ba15b0027a19b97f8a40506cb70cf0bb0b67cb4ef69c` |
+
+These files are stored in
+`docs/evidence/browser-validation/2026-08-12-mobile-fix/`. Responsive Design
+Mode and an iPhone user agent are not evidence from a physical iPhone. The
+automated settings-dialog keyboard test remains the executable keyboard proof;
+no unverified manual focus screenshot is claimed.
+
 ## Defect found and corrected
 
 The first Chrome run found that the canonical wrapper uses lowercase `prajin`,
@@ -110,11 +161,9 @@ canonical aliases, including `.prajin.in_shortcode a`. The static
 `tests/iconset-css-contract.php` contract protects those aliases; the complete
 Chrome, Firefox, Edge, and WebKit matrix above passed after the correction.
 
-## Still required
+## Remaining scope limits
 
-- Test current Safari on macOS/iOS hardware or a separately provisioned Safari
-  service; do not substitute Playwright WebKit.
-- Conduct manual interaction/accessibility review (keyboard focus, hover,
-  high-contrast and real-device layout), including the observed 390-pixel
-  fixed-rail/heading overlap; the automated checks establish painted asset
-  presence and basic layout only.
+- Physical iOS-device and high-contrast-mode review are not part of this local
+  evidence set.
+- The browser matrix establishes painted assets and collision-free geometry for
+  its fixtures; it is not a universal theme/layout certification.

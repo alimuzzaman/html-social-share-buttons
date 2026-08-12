@@ -17,7 +17,7 @@ asset path; no duplicate historical tree or legacy asset map is shipped.
 | Flat brand PNGs | Historical credit: Hakan Ertan / Tonicons; visual comparison identifies a probable relationship to [Flat Social Media Icons](https://www.softicons.com/social-media-icons/flat-social-media-icons-by-hakan-ertan) | **Maintainer attestation, 2026-08-12:** the pack is used with authorization from its rights holder. Downloaded public candidates are visually related but not byte-identical; no written authorization or license instrument is archived in this repository. | **Authorization attested; archival evidence incomplete** |
 | Long Shadows brand PNGs | Historical credit: Hakan Ertan / Tonicons; visual comparison identifies a probable relationship to [Round Shadow](https://www.softicons.com/social-media-icons/round-shadow-social-icons-by-hakan-ertan) and [Square Shadow](https://www.softicons.com/social-media-icons/square-shadow-social-icons-by-hakan-ertan) | **Maintainer attestation, 2026-08-12:** the pack is used with authorization from its rights holder. Downloaded public candidates are visually related but not byte-identical; no written authorization or license instrument is archived in this repository. | **Authorization attested; archival evidence incomplete** |
 | Prajin brand PNGs | Historical credit: Prajin; visual comparison identifies a probable relationship to Prajin’s ShareIcon [Social Media pack](https://www.shareicon.net/author/prajin) | **Maintainer attestation, 2026-08-12:** the pack is used with authorization from its rights holder. Downloaded public candidates are visually related but not byte-identical; no written authorization or license instrument is archived in this repository. | **Authorization attested; archival evidence incomplete** |
-| Default pack PNGs, utility icons, previews, and style sheets | Inherited from release 2.2.6 | No verifiable upstream files, version identifiers, or license grant are recorded. | **Source and license unresolved — release blocker** |
+| Default pack PNGs, utility icons, previews, and style sheets | Inherited from release 2.2.6 | No verifiable upstream files, version identifiers, or license grant are recorded. The release owner explicitly accepted retaining this compatibility pack without further provenance work on 2026-08-12. | **Accepted compatibility exception; no independent clearance claim** |
 
 The compatibility test suite verifies byte parity for historical canonical
 files, validates every manifest asset, checks that PNG metadata is valid and
@@ -29,11 +29,11 @@ The maintainer attestation above records the maintainer's representation of
 authorization; it is not a copy of written permission and does not independently
 verify its scope, including modification, redistribution, sublicensing, or GPL
 compatibility. Preserve or obtain that evidence before treating these packs as
-independently cleared. The Default row remains unresolved and must gain a
-verifiable upstream source and license—or be replaced under an explicitly
-approved visual change—before 3.0 is published. Probable historical attribution
-is not release clearance and is therefore not listed as a cleared asset in
-`THIRD-PARTY-NOTICES.txt`.
+independently cleared. The Default pack is retained under the release owner's
+explicit compatibility exception; that decision removes provenance as a
+project release gate but does not create source, licence, or redistribution
+evidence. Probable historical attribution is not release clearance and is
+therefore not listed as a cleared asset in `THIRD-PARTY-NOTICES.txt`.
 Copyright clearance for the generated sets does not grant trademark rights in
 the represented platform names or logos; downstream use must still follow the
 relevant platform brand guidelines.

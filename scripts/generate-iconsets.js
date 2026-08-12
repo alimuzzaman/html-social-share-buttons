@@ -105,6 +105,7 @@ function stylesheet(id) {
 		`.zmshbt.${id} a{display:block;width:36px;height:36px;margin:7px;background-position:center;background-repeat:no-repeat;background-size:cover;transition:transform .16s ease,filter .16s ease}\n` +
 		`.zmshbt.${id} a:hover{filter:brightness(1.06);transform:translateY(-2px) scale(1.06)}\n` +
 		`.zmshbt.${id} a:focus-visible{outline:3px solid #2271b1;outline-offset:3px}\n` +
+		`@media (max-width:600px){.zmshbt.left,.zmshbt.right{position:static!important;display:flex;flex-wrap:wrap;justify-content:center}.zmshbt.left a,.zmshbt.right a{margin:5px!important}}\n` +
 		`@media (prefers-reduced-motion:reduce){.zmshbt.${id} a{transition:none}.zmshbt.${id} a:hover{transform:none}}\n`;
 }
 

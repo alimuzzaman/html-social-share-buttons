@@ -153,8 +153,8 @@ revalidated through the global Sandbox CLI and the host JavaScript toolchain:
 - The same functional coverage passed in a newly provisioned strict Sandbox
   worker (six passed, one licensed-WPBakery skip), and a second fresh worker
   passed all eight browser-matrix desktop/mobile projects.
-- Two production archive builds were byte-identical. Each contains 231 files
-  and is 667,676 bytes; SHA-256 is
+- Two production archive builds were byte-identical before the responsive-rail
+  correction. Each contained 231 files and was 667,676 bytes; SHA-256 was
   `d4584d5d99f2389683a56446e9687d16ebeeadb6b6302ed456819ef84bedebd5`.
   The optimized production-autoloader and distribution contracts passed. The
   exact archive then replaced the earlier candidate on the isolated WordPress
@@ -166,9 +166,58 @@ revalidated through the global Sandbox CLI and the host JavaScript toolchain:
   it reported no source-tree `application_detected` errors. No baseline was
   created or updated.
 
-The rollback rehearsal above used the earlier `ff85...2e57` candidate and is
-not retroactively claimed for this later archive. A staging soak and its final
-rollback rehearsal must pin the exact approved candidate checksum.
+After the responsive-rail correction and deterministic-generator update, two
+fresh production archive builds again matched byte-for-byte. The exact current
+archive contains 231 files, is 668,212 bytes, and has SHA-256
+`1a8fc417b85d3b6ec261a9708609b8cb6a83b2eed7ba77eb882f7074afe523dc`.
+The distribution contract passes. Fresh-archive activation and exact-checksum
+rollback results are recorded separately below; they are not inferred from the
+earlier candidate.
+
+The exact archive was then copied into a disposable WordPress 7.0.3 / PHP
+8.3.33 Sandbox and installed through WordPress without host Composer. It
+activated as version 2.2.6; packaged `vendor/autoload.php` was readable and
+Composer's installed metadata reported `dev: false`. The `zm_sh_btn` shortcode
+rendered 884 bytes with its explicit canonical URL percent-encoded, and the
+`html-social-share/social-share` dynamic block registered and rendered 876
+bytes containing the canonical wrapper. The homepage returned HTTP 200. The
+disposable instance, containers, volume, network, runtime, snapshots, and
+temporary project directory were removed after the smoke. This is a focused
+archive install/render proof, not a browser or full-settings matrix.
+
+The post-correction strict functional E2E suite was also repeated in a fresh
+WordPress 7.0.3 worker. Six tests passed: the icon fixture, Elementor picker and
+stored frontend, Gutenberg stored block, keyboard settings dialog, and stored
+WPBakery shortcode frontend. The unavailable paid WPBakery editor picker was
+the one explicit skip, handled by the documentation/contract disposition below.
+
+### 2026-08-12 exact-current-archive rollback repeat
+
+A second disposable WordPress 5.3 / PHP 7.0.33 Sandbox repeated candidate ->
+published 2.2.6 -> candidate using the exact current archive SHA-256
+`1a8fc417b85d3b6ec261a9708609b8cb6a83b2eed7ba77eb882f7074afe523dc`.
+The freshly downloaded WordPress.org 2.2.6 archive SHA-256 was
+`f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941`.
+
+Across all three states, the `zm_shbt_fld` option hash remained
+`096b811ecfea73e548c45b1fe0132b945f873418619499e88567941aae5d2e49`;
+`_zm_sh_disable_share` remained `on` with hash
+`e02909b77771044bfd812e8a931e3fc7180af1130607d326fc81b2e61bcdcf08`;
+Elementor JSON remained
+`3faa3138838ff2e49efa9e9e3101652d914523fae050d1d12192d9d729086c69`;
+and WPBakery meta remained
+`bd33979b214c285bde7c67ea252ae69df7537e88edf719bf954bcfa5bc2bb31d`.
+No `hssb_schema_version` option was created.
+
+The initial and restored candidate HTML matched exactly at
+`a1cdc23090aa1f9b9b68e0f2ccf665ea679dd06fa94f317001c0e1a6c667aa5e`
+with seven anchors and no raw or double-encoded placeholder. Published 2.2.6
+rendered five anchors with hash
+`5c46e54e1bc641650cdfa4d3df4cbfadf0f7d5483ee56dda481523afe32f2ec4`
+and reproduced its known double-encoded placeholder. The isolated instance,
+containers, DB volume, network, runtime/snapshots, archive server, and temporary
+fixtures were removed. This closes the exact-current local rollback rehearsal;
+the time-bound staging-soak rollback remains a separate release-operation gate.
 
 ## Implementation and contract evidence present in the working tree
 
@@ -214,8 +263,21 @@ The following are source/contract facts, not completed release gates.
 | Shortcode | Canonical controller and output contracts for both public tags | N/A | Fresh-ZIP smoke passed for both tags | Passed automated candidate gate |
 | Gutenberg | `block.json`, registration, stored-attribute and render contracts | Real stored block passed in isolated Sandbox | Canonical URL fixture passed | Passed automated candidate gate |
 | Elementor | Canonical widget, persisted-data and asset lifecycle contracts | Real `save_builder` document and visible icon preview passed | Real stored document and canonical URL passed | Passed automated candidate gate; manual matrix pending |
-| WPBakery | Canonical `vc_map`, stored-shortcode contracts and bundle smoke | **Not verified**; a licensed editor environment is required | Real stored shortcode and canonical URL passed | Editor gate blocked pending licensed environment |
+| WPBakery | Canonical `vc_map`, stored-shortcode contracts and bundle smoke | Official-document contract accepted when the paid editor is unavailable | Real stored shortcode and canonical URL passed | Passed the owner-approved documentation/contract gate |
 | Direct PHP API | Render and canonical-permalink contracts | N/A | Fresh-ZIP smoke and PHPUnit passed | Passed automated candidate gate |
+
+The WPBakery disposition follows its official developer documentation:
+[`vc_map()`](https://kb.wpbakery.com/docs/inner-api/vc_map/) registers an
+element, `base` is its shortcode tag, and each editable attribute's
+`param_name` must match the shortcode parameter; the official
+[custom-element guide](https://kb.wpbakery.com/docs/developers-how-tos/how-to-create-custom-element/)
+also defines elements as WordPress shortcodes registered through `vc_map()`.
+The canonical registrar uses base `zm_sh_btn` and matching `title`, `iconset`,
+`iconset_type`, `icons`, and `profile_links_mode` names. PHPUnit protects that
+map and stored-value behavior, the JavaScript bundle smoke protects editor-side
+loading, and the stored-shortcode E2E fixture protects public rendering. Under
+the release owner's 2026-08-12 instruction, that is the required gate when the
+paid editor itself is unavailable; it is not represented as a live-editor run.
 
 ## Required command gates
 
@@ -228,20 +290,21 @@ evidence for this uncommitted candidate.
 | JS lint, icon determinism, settings/block/localization contracts | Passed 2026-08-12 after the latest code changes | Repeat after further code changes |
 | PHP quality | PHP syntax, PHPStan and PHPCS passed on PHP 8.3.33 on 2026-08-12 | Declared PHP/WP support matrix remains required |
 | Regular, AJAX, and multisite WordPress contracts | Passed on the current working tree with the 2026-08-12 summaries above | Repeat for the finally approved candidate revision if it changes |
-| Plugin Check | Current clean archive: 2 unresolved API-version errors, 57 warnings; no baseline | Release owner must select v1 with documented acceptance, WP 5.6+ with v2 validation, or WP 6.3+ with v3/iframe validation; do not hide findings with a baseline |
-| Archive reproducibility and fresh-install activation | Current archive reproducibility, distribution contract, and WP 5.3/PHP 7.0.33 replacement activation passed; earlier rollback evidence used the prior checksum | Repeat rollback for the exact soak candidate |
-| Browser visual parity | Chrome, Firefox, Edge, and Playwright WebKit passed the automated painted-asset/basic-layout assertions both globally and in a fresh isolated worker on 2026-08-12; `BROWSER-VALIDATION.md` carries PNGs/checksums and an observed 390-pixel fixed-rail/heading overlap | Safari desktop/iOS and manual interaction/accessibility/layout review remain required; resolve or explicitly accept the mobile overlap |
-| Elementor and WPBakery | Elementor editor/frontend passed; WPBakery frontend passed and editor is blocked | Licensed WPBakery editor fixture and persisted-data comparison |
+| Plugin Check | Current clean archive: two accepted API-version findings and 57 warnings; no baseline | API v1 is retained with the WordPress 5.3 floor under the 2026-08-12 compatibility decision |
+| Archive reproducibility and fresh-install activation | Current `1a8...23dc` archive reproduced byte-for-byte, passed the 231-file distribution contract, activated/rendered without host Composer on WP 7.0.3/PHP 8.3.33, and passed an exact-checksum rollback repeat on WP 5.3/PHP 7.0.33 | Repeat only if the approved soak candidate bytes change; staging-soak rollback remains separate |
+| Browser matrix evidence | Chrome, Firefox, Edge, and Playwright WebKit fixture rendering/non-overlap passed after the responsive correction; the 390-pixel collision is now an executable assertion; Safari 26.6 desktop and 390×844 Responsive Design Mode captures are recorded | Physical iOS and high-contrast review are scope limits, not claims made by this record |
+| Elementor and WPBakery | Elementor editor/frontend passed; WPBakery frontend passed and its `vc_map` contract matches official documentation | Repeat the repository contracts after further integration changes |
 
 ## Rollback rehearsal
 
-The rollback target is the published 2.2.6 archive. A single-site rehearsal
-passed on 2026-08-12; exact commands, environment, checksums, retained data,
-and the intentional URL-correction output difference are recorded above. It
+The rollback target is the published 2.2.6 archive. Single-site rehearsals,
+including an exact-current-archive repeat, passed on 2026-08-12; environment,
+checksums, retained data, and the intentional URL-correction output difference
+are recorded above. The current repeat
 demonstrates a candidate -> 2.2.6 -> candidate file replacement with no
 uninstall, no option/meta loss, no reverse migration, and no rewrite schema
 option. It does not replace the required staging rollback rehearsal during the
-14-day soak or the licensed WPBakery editor fixture.
+14-day soak.
 
 ## Fourteen-day staging soak
 
@@ -256,26 +319,29 @@ or unavailable builder pauses the clock. Fourteen elapsed days of evidence and
 a final rollback rehearsal are required; automated tests do not substitute for
 time.
 
-## Open publication blockers
+## Remaining release-operation gates and accepted exceptions
 
-- Maintainer authorization is recorded for Flat, Long Shadow, and Prajin;
-  Default provenance remains unresolved. See `resources/iconsets/ASSET-SOURCES.md`.
-- Chrome, Firefox, Edge, and Playwright WebKit automated icon-set/shape evidence is recorded in
-  `BROWSER-VALIDATION.md`, including a fresh-worker repeat; Safari and manual
-  interaction/accessibility/layout evidence remain pending. The isolated mobile
-  captures show a fixed left rail overlapping the page heading at 390 pixels;
-  this requires resolution or explicit compatibility acceptance.
-- Real Elementor editor/frontend evidence passed in the isolated worker. A
-  licensed WPBakery editor environment has not been documented.
+- Default-pack provenance is an explicit release-owner compatibility exception;
+  the repository makes no independent clearance claim. See
+  `resources/iconsets/ASSET-SOURCES.md`.
+- Chrome, Firefox, Edge, Playwright WebKit, and Safari evidence is recorded in
+  `BROWSER-VALIDATION.md`. The 390-pixel collision is fixed and protected by an
+  executable geometry assertion. Physical iOS and high-contrast review remain
+  outside the evidence claim.
+- Real Elementor editor/frontend evidence passed in the isolated worker.
+  Because a paid WPBakery editor is unavailable, the release owner accepted
+  its official `vc_map`/shortcode documentation plus the repository's exact
+  mapping, persistence, bundle, and public-render contracts.
 - The configured WP 6.8/PHP 8.3 and current/PHP 8.3 contract rows passed, and
   the WP 5.3/PHP 7.0 floor has a functional smoke. The full declared support
-  matrix and manual browser gate remain pending; the floor smoke is not a full
-  modern PHPUnit certification.
+  matrix remains pending; the floor smoke is not a full modern PHPUnit
+  certification. This record's Safari evidence is limited to desktop/Responsive
+  Design Mode captures; physical iOS and high-contrast modes are outside its
+  scope.
 - The 14-day staging soak has not started.
-- Block API v1 is retained for the declared WordPress 5.3 floor. Plugin Check
-  reports two `block_api_version_too_low` errors; the documented v2 (5.6+) and
-  v3 (6.3+) requirements mean this cannot be resolved by a metadata-only
-  change. No baseline exists. A release owner must decide the support-floor
-  disposition before RC approval.
+- Block API v1 is retained for the declared WordPress 5.3 floor. The release
+  owner accepted the two `block_api_version_too_low` findings on 2026-08-12;
+  no baseline exists. The documented v2 (5.6+) and v3 (6.3+) requirements mean
+  this cannot be resolved by a metadata-only change without dropping support.
 - The version and stable tag remain 2.2.6. Do not change them until every
   required gate is green and a release owner approves the candidate.
