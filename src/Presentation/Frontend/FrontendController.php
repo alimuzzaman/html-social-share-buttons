@@ -211,7 +211,9 @@ final class FrontendController {
 			return null;
 		}
 
-		if ( ! array_key_exists( 'profile_links', $options ) && isset( $fallbackOptions['profile_links'] ) && is_array( $fallbackOptions['profile_links'] ) ) {
+		if ( 'none' === $this->profileLinksMode( $options ) ) {
+			$options['profile_links'] = array();
+		} elseif ( ! array_key_exists( 'profile_links', $options ) && isset( $fallbackOptions['profile_links'] ) && is_array( $fallbackOptions['profile_links'] ) ) {
 			$options['profile_links'] = $fallbackOptions['profile_links'];
 		} elseif ( ! array_key_exists( 'profile_links', $options ) ) {
 			$options['profile_links'] = $this->settings()->profileLinks();
@@ -299,17 +301,18 @@ final class FrontendController {
 		$shapes = $settings->placementShapes();
 
 		return array(
-			'title'           => $settings->title(),
-			'iconset'         => $settings->iconSetId(),
-			'iconset_type'    => isset( $shapes[ $placement ] )
+			'title'              => $settings->title(),
+			'iconset'            => $settings->iconSetId(),
+			'iconset_type'       => isset( $shapes[ $placement ] )
 				? $shapes[ $placement ] : $settings->defaultIconShape(),
-			'icons'           => $this->enabledNetworks( $settings ),
-			'share_templates' => $settings->shareTemplates(),
-			'nofollow'        => $settings->noFollow(),
-			'profile_links'   => $settings->profileLinks(),
-			'class'           => (string) $className,
-			'show_on'         => isset( $showOn[ $placement ] ) ? $showOn[ $placement ] : 'show_left',
-			'placement'       => isset( $renderPlacement[ $placement ] )
+			'icons'              => $this->enabledNetworks( $settings ),
+			'share_templates'    => $settings->shareTemplates(),
+			'nofollow'           => $settings->noFollow(),
+			'profile_links'      => $settings->profileLinks(),
+			'profile_links_mode' => $settings->profileLinkMode( $placement ),
+			'class'              => (string) $className,
+			'show_on'            => isset( $showOn[ $placement ] ) ? $showOn[ $placement ] : 'show_left',
+			'placement'          => isset( $renderPlacement[ $placement ] )
 				? $renderPlacement[ $placement ] : RenderPlacement::PHP_API,
 		);
 	}
@@ -332,6 +335,14 @@ final class FrontendController {
 		}
 
 		return $enabled;
+	}
+
+	private function profileLinksMode( array $options ) {
+		$mode = isset( $options['profile_links_mode'] ) && is_scalar( $options['profile_links_mode'] )
+			? strtolower( trim( (string) $options['profile_links_mode'] ) )
+			: 'inherit';
+
+		return in_array( $mode, array( 'inherit', 'none', 'custom' ), true ) ? $mode : 'inherit';
 	}
 
 	private function currentPost() {

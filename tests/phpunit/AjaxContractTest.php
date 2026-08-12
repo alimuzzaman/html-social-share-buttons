@@ -98,6 +98,33 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 		$this->assertSame( $expected, get_option( 'zm_shbt_fld' ) );
 	}
 
+	public function testSettingsSavePersistsOnlyExplicitPlacementProfileOverrides(): void {
+		$this->_setRole( 'administrator' );
+		$_POST = array(
+			'nonce' => wp_create_nonce( 'zm_sh_admin' ),
+			'settings' => http_build_query(
+				array(
+					'zm_shbt_fld' => array(
+						'profile_link_placements' => array(
+							'show_left'        => 'none',
+							'show_right'       => 'inherit',
+							'show_before_post' => 'invalid',
+						),
+					),
+				)
+			),
+		);
+
+		$response = $this->requestJson( 'zm_sh_save_settings' );
+		$expected = array(
+			'profile_link_placements' => array( 'show_left' => 'none' ),
+		);
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( $expected, $response['data']['options'] );
+		$this->assertSame( $expected, get_option( 'zm_shbt_fld' ) );
+	}
+
 	public function testSettingsSaveRejectsMissingSettings(): void {
 		$this->_setRole( 'administrator' );
 		$_POST = array(

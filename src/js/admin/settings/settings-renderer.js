@@ -158,13 +158,17 @@ export function attachSettingsRenderer(App, dependencies) {
 							description: placement.description,
 							iconset: currentIconset,
 							type: ensureType(currentIconset, options[placement.id]),
-							enabled: options.show_in[placement.id],
+								enabled: options.show_in[placement.id],
+								profileLinkMode: options.profile_link_placements[placement.id],
 							onEnabled: function (value) {
 								self.update('show_in.' + placement.id, value);
 							},
-							onType: function (type) {
-								self.update(placement.id, type);
-							}
+								onType: function (type) {
+									self.update(placement.id, type);
+								},
+								onProfileLinkMode: function (mode) {
+									self.update('profile_link_placements.' + placement.id, mode);
+								}
 						});
 					}));
 				}))

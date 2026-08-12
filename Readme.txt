@@ -84,11 +84,15 @@ No. Bundled icon assets are served from your WordPress site.
 
 == Credits ==
 
-Historical icon-pack provenance is under review; the repository does not yet
-contain verified redistribution records for all retained PNG assets. Generated
-Bootstrap Icons and Tabler Icons sources and their license notices are included
-with the plugin. See `resources/iconsets/ASSET-SOURCES.md` in the source
-repository for the current provenance record.
+Original historical-design credit: Hakan Ertan, tonicons.com. Prajin remains
+credited for the historical Prajin pack. Maintainer attestation (2026-08-12):
+the Flat, Long Shadow, and Prajin PNG packs are used with authorization from
+their respective rights holders. The repository does not archive the written
+authorizations or license instruments, so this is a maintainer statement, not
+independent legal verification. The Default PNG pack remains unresolved.
+Generated Bootstrap Icons and Tabler Icons sources and their license notices
+are included with the plugin. See `resources/iconsets/ASSET-SOURCES.md` in the
+source repository for the current provenance record.
 
 == Changelog ==
 

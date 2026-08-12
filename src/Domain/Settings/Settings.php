@@ -18,6 +18,7 @@ final class Settings {
 	private $preserveUrlPort;
 	private $noFollow;
 	private $profileLinks;
+	private $profileLinkPlacements;
 
 	public function __construct(
 		$title,
@@ -32,7 +33,8 @@ final class Settings {
 		$autoHideEnabled,
 		$preserveUrlPort,
 		$noFollow,
-		array $profileLinks = array()
+		array $profileLinks = array(),
+		array $profileLinkPlacements = array()
 	) {
 		$this->title             = (string) $title;
 		$this->iconSetId         = (string) $iconSetId;
@@ -46,7 +48,8 @@ final class Settings {
 		$this->autoHideEnabled   = (bool) $autoHideEnabled;
 		$this->preserveUrlPort   = (bool) $preserveUrlPort;
 		$this->noFollow          = (bool) $noFollow;
-		$this->profileLinks      = $profileLinks;
+		$this->profileLinks           = $profileLinks;
+		$this->profileLinkPlacements  = $profileLinkPlacements;
 	}
 
 	public function title() {
@@ -99,5 +102,20 @@ final class Settings {
 
 	public function profileLinks() {
 		return $this->profileLinks;
+	}
+
+	/**
+	 * An absent automatic-placement preference inherits global profile links.
+	 * This keeps every pre-existing option value output-compatible.
+	 */
+	public function profileLinkMode( $placement ) {
+		return isset( $this->profileLinkPlacements[ $placement ] )
+			&& 'none' === $this->profileLinkPlacements[ $placement ]
+			? 'none'
+			: 'inherit';
+	}
+
+	public function profileLinkPlacements() {
+		return $this->profileLinkPlacements;
 	}
 }

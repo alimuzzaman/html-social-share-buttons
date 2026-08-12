@@ -19,6 +19,7 @@ export function normalizeSettingsOptions($, defaults, raw) {
 	options.icons = $.extend({}, options.icons || {});
 	options.share_templates = $.extend({}, options.share_templates || {});
 	options.profile_links = normalizeProfileLinks(options.profile_links);
+	options.profile_link_placements = $.extend({}, options.profile_link_placements || {});
 	options.show_in.show_left = toBoolean(options.show_in.show_left);
 	options.show_in.show_right = toBoolean(options.show_in.show_right);
 	options.show_in.show_before_post = toBoolean(options.show_in.show_before_post);

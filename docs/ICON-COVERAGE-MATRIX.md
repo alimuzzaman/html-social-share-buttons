@@ -28,25 +28,41 @@ That is runtime behavior, not a promise of visual equivalence.
 | Asset group | Repository evidence | Publication status |
 |---|---|---|
 | Default PNG pack, utility assets, previews, stylesheets | Retained in `iconset/default` from 2.2.6; no verifiable upstream source, version, or license grant recorded | **Unresolved — release blocker** |
-| Flat PNG brand assets | Retained in `iconset/flat`; only probable visual relationship to a historical source, and no adequate redistribution grant is recorded | **Unresolved — release blocker** |
-| Long Shadows PNG brand assets | Retained in `iconset/long_shadow`; only probable historical attribution, and redistribution/modification rights are not verified | **Unresolved — release blocker** |
-| Prajin PNG brand assets | Retained in `iconset/prajin`; only probable historical attribution, and no adequate redistribution/modification rights are verified | **Unresolved — release blocker** |
+| Flat PNG brand assets | Retained in `iconset/flat`; Hakan Ertan / Tonicons historical credit and a 2026-08-12 maintainer attestation of rights-holder authorization are recorded; no written authorization is archived | **Authorization attested; archival evidence incomplete** |
+| Long Shadows PNG brand assets | Retained in `iconset/long_shadow`; Hakan Ertan / Tonicons historical credit and a 2026-08-12 maintainer attestation of rights-holder authorization are recorded; no written authorization is archived | **Authorization attested; archival evidence incomplete** |
+| Prajin PNG brand assets | Retained in `iconset/prajin`; Prajin historical credit and a 2026-08-12 maintainer attestation of rights-holder authorization are recorded; no written authorization is archived | **Authorization attested; archival evidence incomplete** |
 | Bundled Telegram and Bluesky SVG glyphs in historical sets | Source notes are recorded, but brand-guideline review remains required | Not cleared for publication by this record |
 | Bootstrap Solid SVG set | Pinned Bootstrap Icons v1.13.1 inputs, checksums, deterministic generator, MIT license text, and manifest coverage are present | Source/license record present; browser and trademark review pending |
 | Tabler Outline SVG set | Pinned Tabler Icons v3.46.0 inputs, checksums, deterministic generator, MIT license text, and manifest coverage are present | Source/license record present; browser and trademark review pending |
 
 `resources/iconsets/ASSET-SOURCES.md` is the authoritative provenance note.
-Its “probable” rows are explicitly not verification. Do not convert them into
-cleared attribution, do not claim that the historical PNG packs may be freely
-redistributed, and do not replace them with inferred/new brand artwork without
-an approved compatibility decision and source record.
+The maintainer attestation records a representation of authorization, but does
+not replace archived written permission or independently establish its scope.
+Do not convert it into a claim that the historical PNG packs are independently
+cleared or may be freely redistributed, and do not replace them with
+inferred/new brand artwork without an approved compatibility decision and source
+record.
+
+## Browser validation evidence
+
+On 2026-08-12, all 11 declared set/shape cells passed automated full-page
+rendering checks in current Google Chrome, Mozilla Firefox, Microsoft Edge,
+and Playwright WebKit at 1440×1024 and 390×844 viewport sizes. Durable PNGs, checksums, exact
+versions, and limitations are recorded in `BROWSER-VALIDATION.md`. The test
+found and corrected the lowercase canonical Prajin CSS selector gap while
+retaining its historical uppercase selectors.
+
+Playwright WebKit passed after its documented host dependencies were installed.
+It is not Safari, and no Safari claim is made.
 
 ## Verification still required
 
 - Run the manifest/asset and deterministic-generator checks for the candidate.
-- Capture desktop and mobile rendering in current Chrome, Firefox, Safari, and
-  Edge for every supported matrix cell.
+- Repeat this browser matrix in a fresh isolated Sandbox worker when Docker
+  network capacity is available, and capture current Safari desktop/iOS
+  evidence separately.
 - Complete trademark and platform-brand-guideline review for every network.
-- Obtain verifiable source, modification, redistribution, and attribution
-  evidence for each retained historical PNG—or approve a deliberate replacement
-  and its visual migration.
+- Archive the written authorization or license terms that substantiate the
+  maintainer attestation for Flat, Long Shadows, and Prajin; obtain source and
+  license evidence for Default—or approve a deliberate replacement and its
+  visual migration.

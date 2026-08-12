@@ -2,6 +2,7 @@
 
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsDefaults;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsSchema;
 use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
@@ -144,6 +145,64 @@ final class ProfileLinkSettingsTest extends WP_UnitTestCase {
 				$cleared,
 				array( 'profile_links' => array( 'facebook' => 'https://facebook.com/example' ) )
 			)
+		);
+	}
+
+	public function testAbsentPlacementModesKeepExistingProfilesAndStoredOptionsUntouched(): void {
+		$codec = new OptionSettingsCodec();
+		$stored = array(
+			'title'             => 'Existing title',
+			'iconset'           => 'default',
+			'excludes'          => '',
+			'show_in'           => array( 'show_after_post' => '1' ),
+			'show_left'         => 'square',
+			'show_right'        => 'square',
+			'show_before_post'  => 'square',
+			'show_after_post'   => 'square',
+			'icons'             => array( 'facebook' => '1' ),
+			'share_templates'   => array(),
+			'profile_links'     => array( 'facebook' => 'https://facebook.com/example' ),
+			'third_party_option' => 'preserved',
+		);
+		$settings = $codec->fromArray( $stored );
+
+		foreach ( Placement::all() as $placement ) {
+			$this->assertSame( 'inherit', $settings->profileLinkMode( $placement ) );
+		}
+		$this->assertSame( $stored['profile_links'], $settings->profileLinks() );
+		$this->assertArrayNotHasKey( 'profile_link_placements', $codec->toArray( $settings, $stored ) );
+		$this->assertSame( 'preserved', $codec->toArray( $settings, $stored )['third_party_option'] );
+	}
+
+	public function testPlacementModesOnlyPersistExplicitNoneValuesAndKeepExtensionKeys(): void {
+		$requestMapper = new OptionSettingsRequestMapper();
+		$input = array(
+			'profile_link_placements' => array(
+				'show_left'        => 'none',
+				'show_right'       => 'inherit',
+				'show_before_post' => 'unexpected',
+				'extension_slot'   => 'none',
+			),
+		);
+		$settings = ( new SettingsRequestSanitizer( $this->schema() ) )->sanitize(
+			$requestMapper->toCanonical( $input )
+		);
+
+		$this->assertSame( 'none', $settings->profileLinkMode( Placement::LEFT ) );
+		$this->assertSame( 'inherit', $settings->profileLinkMode( Placement::RIGHT ) );
+		$this->assertSame( 'inherit', $settings->profileLinkMode( Placement::BEFORE_CONTENT ) );
+		$this->assertSame(
+			array( 'profile_link_placements' => array( 'show_left' => 'none' ) ),
+			$requestMapper->toStoredSubmission( $settings, $input )
+		);
+
+		$stored = ( new OptionSettingsCodec() )->toArray(
+			$settings,
+			array( 'profile_link_placements' => array( 'extension_slot' => 'keep' ) )
+		);
+		$this->assertSame(
+			array( 'extension_slot' => 'keep', 'show_left' => 'none' ),
+			$stored['profile_link_placements']
 		);
 	}
 }

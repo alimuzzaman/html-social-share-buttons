@@ -47,11 +47,100 @@ evidence, not approval of the declared WordPress 5.3/PHP 7.0 support matrix.
   shortcodes, both blocks, canonical permalink rendering, direct PHP output,
   and inherited Social Links profiles.
 - Plugin Check 2.0.0 on the clean archive reported two errors and 57 warnings.
-  Both errors are `block_api_version_too_low` because the two block metadata
-  files intentionally retain API version 1 for the WordPress 5.3 floor while
-  WordPress 7.0 recommends API version 3. Warnings are compatibility/public-
-  API/manual-translation/static-nonce findings, including the intentionally
-  omitted Composer manifest in the production ZIP. No baseline was created.
+  Both errors are `block_api_version_too_low`: the two metadata files
+  intentionally retain API version 1 for the WordPress 5.3 floor. The
+  [official Block API-version reference](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-api-versions/)
+  sets API v2 at WordPress 5.6+ and API v3 at WordPress 6.3+; the
+  [metadata reference](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/#api-version)
+  records v1 as the default. Consequently, no safe metadata upgrade exists
+  without changing the declared support floor or maintaining incompatible
+  definitions. Warnings are compatibility/public-API/manual-translation/
+  static-nonce findings, including the intentionally omitted Composer manifest
+  in the production ZIP. **No Plugin Check baseline was created or updated.**
+
+### 2026-08-12 isolated support-floor and rollback evidence
+
+The global Sandbox CLI provisioned a fresh isolated instance
+`hssb-wp53-php7-wp53php70` with **WordPress 5.3** and **PHP 7.0.33**. The
+candidate archive installed and activated there without Composer. A real saved
+legacy shortcode post rendered four buttons with a canonical permalink, and
+the candidate emitted neither `%%permalink%%` nor its double-encoded form.
+This is a functional smoke at the declared floor, not a full PHPUnit or
+browser-matrix certification: the current test runner requires PHP 7.4+.
+
+The same clean instance was used for a candidate -> published 2.2.6 ->
+candidate rollback rehearsal. Archive identities were:
+
+- Candidate archive SHA-256:
+  `ff85bfc7c2d1c8af1d243ac3e6189e412a4b6a334c52b2d91d1fac5d3eac2e57`.
+- Published WordPress.org 2.2.6 archive, downloaded during the rehearsal,
+  SHA-256:
+  `f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941`.
+
+The rehearsal created a published post with a saved `[zm_sh_btn]` fixture,
+the `zm_shbt_fld` option, `_zm_sh_disable_share`, Elementor document/meta,
+and WPBakery markers/meta. It replaced the active candidate with the published
+archive without uninstalling or deleting data, activated 2.2.6, then repeated
+the replacement/activation with the candidate. Across all three states, the
+option serialization SHA-256 remained
+`178b3be2ce509176e9c6ba3e0ebed14c03de22d4da9a613a0cf87a7a6895b54a`;
+the disabled-meta value remained `on`; Elementor JSON remained
+`6c7cb3a70677f497dbcc39152e8db181ea89f6e92f12915ab4f65eb5aff8e79f`; and
+the WPBakery VC meta remained
+`8fea5c492f1c500b1fc902976f65056c658b426297800280dcd9e6ee1794e8cc`.
+
+The candidate's initial and restored shortcode HTML matched exactly (SHA-256
+`b87e7383ffe9ccb04007662e36ab0d72a5623bbdd31fd0efd2b0e5fa3e63e2c1`),
+with four anchors, a canonical encoded permalink, no raw placeholder, no
+double-encoded placeholder, and no rewrite schema option. Published 2.2.6
+also rendered the saved shortcode and retained all data, but its HTML hash was
+intentionally different (`7254c00395a6349dcb2bdbd448e2ec5786ffc9ef0ff10a5df0548847981b0f56`)
+because it retains the historical `%25%25permalink%25%25` bug fixed by this
+candidate. That difference is a corrected behavior, not content loss. This
+rehearsal does not validate the unlicensed WPBakery editor or Elementor editor
+on the historical package.
+
+Attempts to provision additional fresh isolated WP 6.8/PHP 8.3 and latest/PHP
+8.3 matrix instances were stopped after Sandbox reported Docker's predefined
+address pools fully subnetted. Existing evidence for those rows remains the
+2026-08-11 candidate validation above; rerun them after the Sandbox host has
+capacity rather than treating this as a pass.
+
+### 2026-08-12 current working-tree validation
+
+After adding placement-level profile-link inheritance/suppression controls and
+the Prajin lowercase-selector compatibility fix, the current working tree was
+revalidated through the global Sandbox CLI and the host JavaScript toolchain:
+
+- PHP syntax passed for every `src` PHP file. Composer strict validation
+  passed, PHPStan reported no errors, and PHPCS passed after applying its
+  array-alignment formatter to the changed PHP files.
+- Regular PHPUnit passed 171 tests and 2,296 assertions with one expected
+  multisite-only skip; AJAX passed 9 tests and 32 assertions; full unfiltered
+  multisite passed 171 tests and 2,303 assertions with no skips.
+- The strict frontend comparison passed all 33 scenarios. JavaScript lint,
+  deterministic icon generation, the four-bundle build, admin React smoke (40
+  persisted legacy fields), and WPBakery bundle smoke passed.
+- A serial Playwright run against the healthy global Sandbox instance passed
+  six tests: the icon matrix, Elementor picker and stored public fixture,
+  Gutenberg stored block, settings keyboard dialog, and WPBakery stored public
+  fixture. The licensed WPBakery editor-picker test was the sole explicit skip.
+- Two production archive builds were byte-identical. Each contains 231 files
+  and is 667,676 bytes; SHA-256 is
+  `d4584d5d99f2389683a56446e9687d16ebeeadb6b6302ed456819ef84bedebd5`.
+  The optimized production-autoloader and distribution contracts passed. The
+  exact archive then replaced the earlier candidate on the isolated WordPress
+  5.3/PHP 7.0.33 instance and activated without Composer; both shortcodes and
+  dynamic blocks registered, the canonical kernel autoloaded, and a two-link
+  shortcode smoke contained neither raw nor double-encoded placeholders.
+- Plugin Check 2.0.0 against the clean extracted current archive reported the
+  same two `block_api_version_too_low` errors and 57 warnings documented above;
+  it reported no source-tree `application_detected` errors. No baseline was
+  created or updated.
+
+The rollback rehearsal above used the earlier `ff85...2e57` candidate and is
+not retroactively claimed for this later archive. A staging soak and its final
+rollback rehearsal must pin the exact approved candidate checksum.
 
 ## Implementation and contract evidence present in the working tree
 
@@ -108,32 +197,23 @@ evidence for this uncommitted candidate.
 
 | Gate | Current state | Evidence required before RC approval |
 |---|---|---|
-| JS lint, icon determinism, settings/block/localization contracts | Passed 2026-08-11 | Repeat after code changes |
-| PHP quality | Composer validation, PHPStan and PHPCS passed on PHP 8.3.33 | Declared PHP/WP support matrix remains required |
-| Regular, AJAX, and multisite WordPress contracts | Passed in Sandbox with summaries above | Repeat for approved candidate revision |
-| Plugin Check | Completed: 2 intentional API-version errors, 57 warnings | Resolve API-version/support-floor decision; do not hide with a baseline |
-| Archive reproducibility and fresh-install activation | Passed; matching checksum and clean activation recorded above | Repeat after version/package changes |
-| Browser accessibility and visual parity | Pending manual work | Captures and issue disposition for Chrome, Firefox, Safari, and Edge at desktop and mobile widths |
+| JS lint, icon determinism, settings/block/localization contracts | Passed 2026-08-12 after the latest code changes | Repeat after further code changes |
+| PHP quality | PHP syntax, PHPStan and PHPCS passed on PHP 8.3.33 on 2026-08-12 | Declared PHP/WP support matrix remains required |
+| Regular, AJAX, and multisite WordPress contracts | Passed on the current working tree with the 2026-08-12 summaries above | Repeat for the finally approved candidate revision if it changes |
+| Plugin Check | Current clean archive: 2 unresolved API-version errors, 57 warnings; no baseline | Release owner must select v1 with documented acceptance, WP 5.6+ with v2 validation, or WP 6.3+ with v3/iframe validation; do not hide findings with a baseline |
+| Archive reproducibility and fresh-install activation | Current archive reproducibility, distribution contract, and WP 5.3/PHP 7.0.33 replacement activation passed; earlier rollback evidence used the prior checksum | Repeat rollback for the exact soak candidate |
+| Browser visual parity | Chrome, Firefox, Edge, and Playwright WebKit passed all declared icon-set/shape cells at desktop/mobile viewport sizes on 2026-08-12; `BROWSER-VALIDATION.md` carries PNGs/checksums | Repeat in fresh isolated worker; Safari desktop/iOS and manual interaction/accessibility review remain required |
 | Elementor and WPBakery | Elementor editor/frontend passed; WPBakery frontend passed and editor is blocked | Licensed WPBakery editor fixture and persisted-data comparison |
 
 ## Rollback rehearsal
 
-The proposed rollback target is 2.2.6. No rehearsal has been run or passed.
-The implementation is designed to retain `zm_shbt_fld` and
-`_zm_sh_disable_share`, write no rewrite schema option, and require no reverse
-migration; that design is not a substitute for rehearsal evidence.
-
-1. Snapshot a fresh single-site staging database and uploads.
-2. Install the deterministic candidate ZIP without running Composer in the
-   WordPress instance.
-3. Save representative settings, block content, an Elementor document, and a
-   WPBakery shortcode fixture; capture frontend output and serialized option/
-   post-meta values.
-4. Replace the candidate with the published 2.2.6 package without uninstalling
-   or deleting data.
-5. Confirm that 2.2.6 reads the unchanged option and meta, renders supported
-   saved content, and writes no rewrite schema option.
-6. Append commands, environment, checksums, output comparison, and result.
+The rollback target is the published 2.2.6 archive. A single-site rehearsal
+passed on 2026-08-12; exact commands, environment, checksums, retained data,
+and the intentional URL-correction output difference are recorded above. It
+demonstrates a candidate -> 2.2.6 -> candidate file replacement with no
+uninstall, no option/meta loss, no reverse migration, and no rewrite schema
+option. It does not replace the required staging rollback rehearsal during the
+14-day soak or the licensed WPBakery editor fixture.
 
 ## Fourteen-day staging soak
 
@@ -150,12 +230,22 @@ time.
 
 ## Open publication blockers
 
-- Historical PNG provenance and redistribution rights are unresolved; see
-  `resources/iconsets/ASSET-SOURCES.md` and `ICON-COVERAGE-MATRIX.md`.
-- Cross-browser visual/accessibility evidence is absent.
+- Maintainer authorization is recorded for Flat, Long Shadow, and Prajin;
+  Default provenance remains unresolved. See `resources/iconsets/ASSET-SOURCES.md`.
+- Chrome, Firefox, Edge, and Playwright WebKit automated icon-set/shape evidence is recorded in
+  `BROWSER-VALIDATION.md`; Safari, fresh-worker repetition, and manual
+  interaction/accessibility evidence remain pending.
 - Real Elementor editor/frontend evidence passed in the isolated worker. A
   licensed WPBakery editor environment has not been documented.
-- The declared WordPress/PHP support matrix, manual browser gate, soak, and
-  rollback rehearsal are pending.
+- The full declared WordPress/PHP support matrix and manual browser gate are
+  pending. The 5.3/PHP 7.0 functional smoke and single-site rollback rehearsal
+  are recorded above, but additional fresh matrix provisioning was blocked by
+  exhausted Sandbox Docker address pools.
+- The 14-day staging soak has not started.
+- Block API v1 is retained for the declared WordPress 5.3 floor. Plugin Check
+  reports two `block_api_version_too_low` errors; the documented v2 (5.6+) and
+  v3 (6.3+) requirements mean this cannot be resolved by a metadata-only
+  change. No baseline exists. A release owner must decide the support-floor
+  disposition before RC approval.
 - The version and stable tag remain 2.2.6. Do not change them until every
   required gate is green and a release owner approves the candidate.

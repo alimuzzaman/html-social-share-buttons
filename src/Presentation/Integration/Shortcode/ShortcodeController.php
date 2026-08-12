@@ -53,18 +53,19 @@ final class ShortcodeController {
 	public function render( $attributes = array(), $content = null, $tag = '' ) {
 		$attributes = is_array( $attributes ) ? $attributes : array();
 		$defaults = array(
-			'title'        => '',
-			'iconset'      => 'default',
-			'url'          => '',
-			'icons'        => array(
+			'title'              => '',
+			'iconset'            => 'default',
+			'url'                => '',
+			'icons'              => array(
 				'facebook'  => 'on',
 				'x'         => 'on',
 				'linkedin'  => 'on',
 				'pinterest' => 'on',
 				'mail'      => 'on',
 			),
-			'iconset_type' => 'square',
-			'class'        => 'in_shortcode',
+			'iconset_type'       => 'square',
+			'class'              => 'in_shortcode',
+			'profile_links_mode' => 'inherit',
 		);
 		$shortcode = in_array( $tag, $this->config->shortcodeAliases(), true )
 			? $tag
@@ -74,14 +75,15 @@ final class ShortcodeController {
 			: array_merge( $defaults, $attributes );
 
 		$options = array(
-			'title'         => $this->text( $attributes['title'], '' ),
-			'iconset'       => $this->iconSet( $attributes['iconset'], 'default' ),
-			'url'           => $this->url( $attributes['url'] ),
-			'icons'         => $this->icons( $attributes['icons'] ),
-			'iconset_type'  => $this->key( $attributes['iconset_type'], 'square' ),
-			'class'         => $this->className( $attributes['class'], 'in_shortcode' ),
+			'title'              => $this->text( $attributes['title'], '' ),
+			'iconset'            => $this->iconSet( $attributes['iconset'], 'default' ),
+			'url'                => $this->url( $attributes['url'] ),
+			'icons'              => $this->icons( $attributes['icons'] ),
+			'iconset_type'       => $this->key( $attributes['iconset_type'], 'square' ),
+			'class'              => $this->className( $attributes['class'], 'in_shortcode' ),
+			'profile_links_mode' => $this->profileLinksMode( $attributes['profile_links_mode'] ),
 			/* Existing shortcode calls inherited these links from the runtime settings. */
-			'profile_links' => $this->settings->load()->profileLinks(),
+			'profile_links'      => $this->settings->load()->profileLinks(),
 		);
 
 		$outcome = $this->renderer->render( $options );
@@ -166,6 +168,12 @@ final class ShortcodeController {
 		$value = $this->scalar( $value, $fallback );
 
 		return function_exists( 'sanitize_html_class' ) ? sanitize_html_class( $value ) : $value;
+	}
+
+	private function profileLinksMode( $value ) {
+		$value = strtolower( $this->scalar( $value, 'inherit' ) );
+
+		return in_array( $value, array( 'inherit', 'none', 'custom' ), true ) ? $value : 'inherit';
 	}
 
 	private function key( $value, $fallback ) {

@@ -82,6 +82,10 @@ final class RenderRequestMapper {
 	}
 
 	private function profileLinks( array $options ) {
+		if ( 'none' === $this->profileLinksMode( $options ) ) {
+			return array();
+		}
+
 		$submitted = isset( $options['profile_links'] ) && is_array( $options['profile_links'] )
 			? $options['profile_links']
 			: array();
@@ -112,6 +116,18 @@ final class RenderRequestMapper {
 		}
 
 		return $profileLinks;
+	}
+
+	/**
+	 * `profile_links_mode` is additive at every integration edge. Missing or
+	 * malformed modes deliberately retain historical inheritance behavior.
+	 */
+	private function profileLinksMode( array $options ) {
+		$mode = isset( $options['profile_links_mode'] ) && is_scalar( $options['profile_links_mode'] )
+			? strtolower( trim( (string) $options['profile_links_mode'] ) )
+			: 'inherit';
+
+		return in_array( $mode, array( 'inherit', 'none', 'custom' ), true ) ? $mode : 'inherit';
 	}
 
 	private function showOn( $value ) {

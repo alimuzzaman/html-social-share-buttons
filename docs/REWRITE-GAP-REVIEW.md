@@ -9,9 +9,12 @@ public 3.0 release. The plugin header, both block metadata files, and
 or describe this work as a completed 3.0 release without explicit approval.
 
 The rewrite substantially reduces the compatibility layer, but source and
-contract coverage are not release evidence on their own. The repository still
-does not establish PNG redistribution rights, a licensed WPBakery editor run,
-cross-browser visual parity, a rollback rehearsal, or a 14-day staging soak.
+contract coverage are not release evidence on their own. Maintainer
+authorization is recorded for Flat, Long Shadow, and Prajin; the Default pack
+still lacks a verifiable source/license record. A licensed WPBakery editor run,
+complete cross-browser visual parity, and a 14-day staging soak remain open. A
+limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now recorded in
+`RELEASE-CANDIDATE-VALIDATION.md`; it is not the staging-soak rollback gate.
 
 ## Completed implementation work
 
@@ -79,27 +82,34 @@ cross-browser visual parity, a rollback rehearsal, or a 14-day staging soak.
 | Gutenberg | Dynamic metadata registration and a real stored-block browser fixture passed | Supported-version and manual browser captures |
 | Elementor | Real editor persistence, visible icon preview, and public stored-data fixture passed with Elementor 4.2.2 | Manual cross-browser captures and supported-version matrix |
 | WPBakery | Canonical optional integration and stored-shortcode contracts are present | Licensed editor environment, fixture, persisted data, and frontend capture |
-| Icon packs | Manifests, filenames, and support matrix are defined | Provenance/legal decision and desktop/mobile browser matrix |
-| Rollback | No data migration/replacement schema is designed | Completed 2.2.6 rollback rehearsal with storage and output comparison |
+| Icon packs | Manifests, filenames, and support matrix are defined; maintainer authorization is recorded for Flat, Long Shadow, and Prajin; Chrome, Firefox, Edge, and Playwright WebKit automation passed | Default-pack provenance/legal decision, Safari, isolated-worker repetition, and manual accessibility/interaction review |
+| Rollback | No data migration/replacement schema is designed; isolated candidate -> published 2.2.6 -> candidate rehearsal passed on WP 5.3/PHP 7.0 | Staging-soak rollback rehearsal and licensed builder-editor evidence |
 | Staging | Plan only | Fourteen consecutive days of recorded evidence |
 
 ## Release blockers and decisions still needed
 
-1. Historical PNG source, modification, redistribution, attribution, and
-   trademark evidence remain unresolved. The notes in
-   `resources/iconsets/ASSET-SOURCES.md` are not clearance. Keep the files for
-   compatibility, but do not claim they are cleared or import replacements
-   without an approved provenance record.
-2. Manual current Chrome, Firefox, Safari, and Edge desktop/mobile icon and
-   layout parity has not been recorded.
+1. Flat, Long Shadow, and Prajin now carry the maintainer's dated attestation
+   of rights-holder authorization and their historical credits. The repository
+   does not archive those written authorizations. The Default pack remains the
+   unresolved provenance blocker: history/hash/source research found no
+   upstream author, version, or license grant. Keep it for compatibility, but
+   do not claim independent clearance or replace it without approval.
+2. Automated current Chrome, Firefox, Edge, and Playwright WebKit
+   desktop/mobile-viewport icon and layout checks passed. Safari, an isolated
+   worker repeat, physical mobile devices, and manual interaction/accessibility
+   review have not been recorded.
 3. The isolated candidate E2E run now provisions a real Elementor document
    through Elementor's `save_builder` action and verifies its visible editor
    preview and public frontend. A licensed WPBakery editor fixture remains a
    hard external requirement; only its stored-shortcode public fixture passed.
-4. Rollback rehearsal and the 14-day staging soak have not started or passed.
-5. Placement-level profile-link controls remain a product decision: global
-   inheritance and the Social Links block are implemented, but a per-placement
-   profile-link control is not claimed complete.
+4. The isolated rollback rehearsal passed, but the 14-day staging soak has not
+   started and its staging rollback rehearsal remains required.
+5. Placement-level profile-link controls are available for automatic placement
+   and as opt-in `profile_links_mode` controls for the share block, shortcode,
+   widget, Elementor, WPBakery, and direct facade inputs. Missing stored values
+   continue to inherit global profile links. Custom per-placement profile URL
+   maps remain intentionally out of scope; placement controls only inherit or
+   suppress the configured global links.
 6. Plugin Check must be recorded separately from compatibility warnings. Its
    API-v1 findings needed for the WordPress 5.3 floor require disposition; do
    not label those warnings as fixed without a compatibility decision.
@@ -114,7 +124,7 @@ cross-browser visual parity, a rollback rehearsal, or a 14-day staging soak.
 2. Complete the provenance/legal decision and the browser/icon matrix.
 3. Capture real Gutenberg and Elementor evidence and verify WPBakery in a
    licensed editor environment.
-4. Approve a candidate artifact, perform the rollback rehearsal, and run the
-   documented 14-day staging soak.
+4. Approve a candidate artifact and run the documented 14-day staging soak,
+   including its staging rollback rehearsal.
 5. Obtain release-owner approval before changing version metadata, stable tag,
    listing material, publication artifacts, or deployment state.

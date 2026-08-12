@@ -168,20 +168,23 @@ final class BlockRegistrar {
 
 		$settings = $this->settings->load();
 		$options = array(
-			'title'         => $this->text(
+			'title'              => $this->text(
 				isset( $attributes['title'] ) ? $attributes['title'] : 'Share this page',
 				'Share this page'
 			),
-			'iconset'       => $this->resolvedIconSet(
+			'iconset'            => $this->resolvedIconSet(
 				isset( $attributes['iconset'] ) ? $attributes['iconset'] : 'inherit'
 			),
-			'iconset_type'  => $this->key(
+			'iconset_type'       => $this->key(
 				isset( $attributes['iconset_type'] ) ? $attributes['iconset_type'] : 'square',
 				'square'
 			),
-			'icons'         => $this->icons( $icons ),
-			'class'         => 'in_block',
-			'profile_links' => $settings->profileLinks(),
+			'icons'              => $this->icons( $icons ),
+			'class'              => 'in_block',
+			'profile_links'      => $settings->profileLinks(),
+			'profile_links_mode' => $this->profileLinksMode(
+				isset( $attributes['profile_links_mode'] ) ? $attributes['profile_links_mode'] : 'inherit'
+			),
 		);
 
 		return $this->renderOutcome( $options, $contextPostId );
@@ -332,6 +335,12 @@ final class BlockRegistrar {
 		}
 
 		return $normalized;
+	}
+
+	private function profileLinksMode( $value ) {
+		$mode = strtolower( $this->key( $value, 'inherit' ) );
+
+		return in_array( $mode, array( 'inherit', 'none', 'custom' ), true ) ? $mode : 'inherit';
 	}
 
 	private function contextPostId( $block ) {

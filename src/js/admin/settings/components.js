@@ -73,6 +73,7 @@ export function createSettingsComponents(runtime) {
 	function PlacementInput(props) {
 		var iconset = props.iconset || { types: [] };
 		var types = iconset.types || [];
+		var profileLinkMode = props.profileLinkMode === 'none' ? 'none' : 'inherit';
 		return e(ExpandableTogglePanel, {
 			className: 'zm_placement_item',
 			detailsClassName: 'zm_placement_details',
@@ -88,12 +89,20 @@ export function createSettingsComponents(runtime) {
 			onChange: function (checked) {
 				props.onEnabled(checked ? 1 : 0);
 			},
-			preservedControl: e('input', {
-				key: 'preserved-type',
-				type: 'hidden',
-				name: 'zm_shbt_fld[' + props.id + ']',
-				value: props.type
-			})
+			preservedControl: e('div', { key: 'preserved-controls' }, [
+				e('input', {
+					key: 'preserved-type',
+					type: 'hidden',
+					name: 'zm_shbt_fld[' + props.id + ']',
+					value: props.type
+				}),
+				e('input', {
+					key: 'preserved-profiles',
+					type: 'hidden',
+					name: 'zm_shbt_fld[profile_link_placements][' + props.id + ']',
+					value: profileLinkMode
+				})
+			])
 		}, [
 			e(SelectControl, {
 				key: 'type',
@@ -104,6 +113,19 @@ export function createSettingsComponents(runtime) {
 					return { label: type, value: type };
 				}),
 				onChange: props.onType,
+				__next40pxDefaultSize: true,
+				__nextHasNoMarginBottom: true
+			}),
+			e(SelectControl, {
+				key: 'profile-links',
+				label: text('profileLinks', 'Profile links'),
+				name: 'zm_shbt_fld[profile_link_placements][' + props.id + ']',
+				value: profileLinkMode,
+				options: [
+					{ label: text('profileLinksInherit', 'Show configured profile links'), value: 'inherit' },
+					{ label: text('profileLinksNone', 'Hide profile links in this placement'), value: 'none' }
+				],
+				onChange: props.onProfileLinkMode,
 				__next40pxDefaultSize: true,
 				__nextHasNoMarginBottom: true
 			})

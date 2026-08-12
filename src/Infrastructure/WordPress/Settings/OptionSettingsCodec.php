@@ -35,6 +35,9 @@ final class OptionSettingsCodec implements SettingsCodec {
 		$profileLinks = isset( $stored['profile_links'] ) && is_array( $stored['profile_links'] )
 			? $stored['profile_links']
 			: array();
+		$profileLinkPlacements = isset( $stored['profile_link_placements'] ) && is_array( $stored['profile_link_placements'] )
+			? $stored['profile_link_placements']
+			: array();
 
 		if ( array_key_exists( 'twitter', $icons ) && ! array_key_exists( 'x', $icons ) ) {
 			$icons['x'] = $icons['twitter'];
@@ -67,7 +70,8 @@ final class OptionSettingsCodec implements SettingsCodec {
 			$this->toBoolean( isset( $stored['auto_hide_btn'] ) ? $stored['auto_hide_btn'] : false ),
 			$this->toBoolean( isset( $stored['use_port'] ) ? $stored['use_port'] : false ),
 			$this->toBoolean( isset( $stored['nofollow'] ) ? $stored['nofollow'] : false ),
-			$this->profileLinks( $profileLinks )
+			$this->profileLinks( $profileLinks ),
+			$this->profileLinkPlacements( $profileLinkPlacements )
 		);
 	}
 
@@ -99,6 +103,7 @@ final class OptionSettingsCodec implements SettingsCodec {
 		);
 		$original['share_templates'] = $settings->shareTemplates();
 		$this->writeProfileLinks( $original, $settings->profileLinks() );
+		$this->writeProfileLinkPlacements( $original, $settings->profileLinkPlacements() );
 		$this->writeBoolean( $original, 'g_analytics', $settings->analyticsEnabled() );
 		$this->writeBoolean( $original, 'auto_hide_btn', $settings->autoHideEnabled() );
 		$this->writeBoolean( $original, 'use_port', $settings->preserveUrlPort() );
@@ -142,6 +147,48 @@ final class OptionSettingsCodec implements SettingsCodec {
 			unset( $profileLinks['x'] );
 		}
 		$target['profile_links'] = $profileLinks;
+	}
+
+	private function profileLinkPlacements( array $stored ) {
+		$placements = array();
+		$keys = array(
+			'show_left'        => Placement::LEFT,
+			'show_right'       => Placement::RIGHT,
+			'show_before_post' => Placement::BEFORE_CONTENT,
+			'show_after_post'  => Placement::AFTER_CONTENT,
+		);
+		foreach ( $keys as $storedKey => $placement ) {
+			if ( isset( $stored[ $storedKey ] ) && 'none' === (string) $stored[ $storedKey ] ) {
+				$placements[ $placement ] = 'none';
+			}
+		}
+
+		return $placements;
+	}
+
+	private function writeProfileLinkPlacements( array &$target, array $placements ) {
+		$keys = array(
+			Placement::LEFT           => 'show_left',
+			Placement::RIGHT          => 'show_right',
+			Placement::BEFORE_CONTENT => 'show_before_post',
+			Placement::AFTER_CONTENT  => 'show_after_post',
+		);
+		/* Keep extension-owned nested keys intact when canonical settings save. */
+		$stored = isset( $target['profile_link_placements'] ) && is_array( $target['profile_link_placements'] )
+			? $target['profile_link_placements']
+			: array();
+		foreach ( $keys as $placement => $storedKey ) {
+			unset( $stored[ $storedKey ] );
+			if ( isset( $placements[ $placement ] ) && 'none' === $placements[ $placement ] ) {
+				$stored[ $storedKey ] = 'none';
+			}
+		}
+		if ( empty( $stored ) ) {
+			unset( $target['profile_link_placements'] );
+
+			return;
+		}
+		$target['profile_link_placements'] = $stored;
 	}
 
 	private function storedNetworkStates( array $states, array $original ) {

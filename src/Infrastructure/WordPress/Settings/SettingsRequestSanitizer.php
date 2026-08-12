@@ -59,6 +59,15 @@ final class SettingsRequestSanitizer {
 		$submittedProfileLinks = isset( $input['profile_links'] ) && is_array( $input['profile_links'] )
 			? $input['profile_links']
 			: array();
+		$submittedProfileLinkPlacements = isset( $input['profile_link_placements'] ) && is_array( $input['profile_link_placements'] )
+			? $input['profile_link_placements']
+			: array();
+		$profileLinkPlacements = array();
+		foreach ( $this->schema->placementIds() as $placement ) {
+			if ( isset( $submittedProfileLinkPlacements[ $placement ] ) && 'none' === $submittedProfileLinkPlacements[ $placement ] ) {
+				$profileLinkPlacements[ $placement ] = 'none';
+			}
+		}
 		foreach ( $this->schema->networkIds() as $networkId ) {
 			$networkStates[ $networkId ] = $this->toBoolean(
 				isset( $submittedNetworks[ $networkId ] )
@@ -96,7 +105,8 @@ final class SettingsRequestSanitizer {
 			$this->toBoolean( isset( $input['auto_hide_enabled'] ) ? $input['auto_hide_enabled'] : false ),
 			$this->toBoolean( isset( $input['preserve_url_port'] ) ? $input['preserve_url_port'] : false ),
 			$this->toBoolean( isset( $input['no_follow'] ) ? $input['no_follow'] : false ),
-			$profileLinks
+			$profileLinks,
+			$profileLinkPlacements
 		);
 	}
 

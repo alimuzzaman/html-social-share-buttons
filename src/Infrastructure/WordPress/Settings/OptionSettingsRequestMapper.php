@@ -42,29 +42,39 @@ final class OptionSettingsRequestMapper {
 			$profileLinks['x'] = $profileLinks['twitter'];
 			unset( $profileLinks['twitter'] );
 		}
+		$profileLinkPlacements = array();
+		$submittedProfileLinkPlacements = isset( $input['profile_link_placements'] ) && is_array( $input['profile_link_placements'] )
+			? $input['profile_link_placements']
+			: array();
+		foreach ( $this->placements as $storedKey => $canonicalPlacement ) {
+			if ( isset( $submittedProfileLinkPlacements[ $storedKey ] ) ) {
+				$profileLinkPlacements[ $canonicalPlacement ] = $submittedProfileLinkPlacements[ $storedKey ];
+			}
+		}
 
 		return array(
-			'title'             => isset( $input['title'] ) ? $input['title'] : '',
-			'icon_set'          => isset( $input['iconset'] ) ? $input['iconset'] : '',
-			'icon_shape'        => isset( $input['iconset_type'] ) ? $input['iconset_type'] : '',
-			'placements'        => $placements,
-			'placement_shapes'  => $placementShapes,
-			'networks'          => $networks,
-			'share_templates'   => isset( $input['share_templates'] ) && is_array( $input['share_templates'] )
+			'title'                   => isset( $input['title'] ) ? $input['title'] : '',
+			'icon_set'                => isset( $input['iconset'] ) ? $input['iconset'] : '',
+			'icon_shape'              => isset( $input['iconset_type'] ) ? $input['iconset_type'] : '',
+			'placements'              => $placements,
+			'placement_shapes'        => $placementShapes,
+			'networks'                => $networks,
+			'share_templates'         => isset( $input['share_templates'] ) && is_array( $input['share_templates'] )
 				? $input['share_templates']
 				: array(),
-			'profile_links'     => $profileLinks,
-			'excluded_content'  => isset( $input['excludes'] ) ? $input['excludes'] : '',
-			'analytics_enabled' => isset( $input['g_analytics'] )
+			'profile_links'           => $profileLinks,
+			'profile_link_placements' => $profileLinkPlacements,
+			'excluded_content'        => isset( $input['excludes'] ) ? $input['excludes'] : '',
+			'analytics_enabled'       => isset( $input['g_analytics'] )
 				? OptionSettingsTruthiness::isTruthy( $input['g_analytics'] )
 				: false,
-			'auto_hide_enabled' => isset( $input['auto_hide_btn'] )
+			'auto_hide_enabled'       => isset( $input['auto_hide_btn'] )
 				? OptionSettingsTruthiness::isTruthy( $input['auto_hide_btn'] )
 				: false,
-			'preserve_url_port' => isset( $input['use_port'] )
+			'preserve_url_port'       => isset( $input['use_port'] )
 				? OptionSettingsTruthiness::isTruthy( $input['use_port'] )
 				: false,
-			'no_follow'         => isset( $input['nofollow'] )
+			'no_follow'               => isset( $input['nofollow'] )
 				? OptionSettingsTruthiness::isTruthy( $input['nofollow'] )
 				: false,
 		);
@@ -107,6 +117,16 @@ final class OptionSettingsRequestMapper {
 				}
 				if ( ! empty( $profileLinks ) ) {
 					$sanitized['profile_links'] = $profileLinks;
+				}
+			} elseif ( 'profile_link_placements' === $key && is_array( $value ) ) {
+				$placementModes = array();
+				foreach ( $this->placements as $storedPlacement => $canonicalPlacement ) {
+					if ( 'none' === $settings->profileLinkMode( $canonicalPlacement ) ) {
+						$placementModes[ $storedPlacement ] = 'none';
+					}
+				}
+				if ( ! empty( $placementModes ) ) {
+					$sanitized['profile_link_placements'] = $placementModes;
 				}
 			} elseif ( 'title' === $key ) {
 				$sanitized['title'] = $settings->title();

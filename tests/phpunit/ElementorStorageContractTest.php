@@ -125,7 +125,7 @@ namespace {
 			$controls = $this->widget->contractControls();
 			$fields = $controls['content_section']['controls'];
 
-			$this->assertSame( array( 'title', 'iconset', 'iconset_type', 'icons' ), array_keys( $fields ) );
+		$this->assertSame( array( 'title', 'iconset', 'iconset_type', 'icons', 'profile_links_mode' ), array_keys( $fields ) );
 			$this->assertSame( \Elementor\Controls_Manager::TEXT, $fields['title']['type'] );
 			$this->assertSame( \Elementor\Controls_Manager::SELECT, $fields['iconset']['type'] );
 			$this->assertSame( 'inherit', $fields['iconset']['default'] );
@@ -133,10 +133,12 @@ namespace {
 			$this->assertSame( 'square', $fields['iconset_type']['default'] );
 			$this->assertSame( \Elementor\Controls_Manager::SELECT2, $fields['icons']['type'] );
 			$this->assertTrue( $fields['icons']['multiple'] );
-			$this->assertSame(
-				array( 'facebook', 'x', 'linkedin', 'pinterest', 'mail' ),
-				$fields['icons']['default']
-			);
+		$this->assertSame(
+			array( 'facebook', 'x', 'linkedin', 'pinterest', 'mail' ),
+			$fields['icons']['default']
+		);
+		$this->assertSame( \Elementor\Controls_Manager::SELECT, $fields['profile_links_mode']['type'] );
+		$this->assertSame( 'inherit', $fields['profile_links_mode']['default'] );
 		}
 
 		public function testStoredElementorSettingsRenderThroughTheCanonicalWidget(): void {
@@ -190,7 +192,7 @@ namespace {
 			$this->assertSame( '', $this->widget->contractRender( $settings ) );
 		}
 
-		public function testStoredElementorSettingsInheritGlobalProfileLinks(): void {
+	public function testStoredElementorSettingsInheritGlobalProfileLinks(): void {
 			update_option(
 				'zm_shbt_fld',
 				array(
@@ -206,8 +208,21 @@ namespace {
 			$this->assertStringContainsString( 'class="facebook zmshbt-profile-link"', $output );
 			$this->assertStringContainsString( 'class="mail zmshbt-profile-link"', $output );
 			$this->assertStringContainsString( 'https://www.facebook.com/hssb', $output );
-			$this->assertStringContainsString( 'mailto:hello@example.com', $output );
-		}
+		$this->assertStringContainsString( 'mailto:hello@example.com', $output );
+	}
+
+	public function testElementorCanHideInheritedProfileLinksWithTheAdditiveMode(): void {
+		update_option(
+			'zm_shbt_fld',
+			array( 'profile_links' => array( 'facebook' => 'https://www.facebook.com/hssb' ) )
+		);
+		$settings = $this->contract['settings'];
+		$settings['profile_links_mode'] = 'none';
+
+		$output = $this->widget->contractRender( $settings );
+
+		$this->assertStringNotContainsString( 'zmshbt-profile-link', $output );
+	}
 
 		public function testMalformedElementorSettingsFailClosedWithoutTypeErrors(): void {
 			$output = $this->widget->contractRender(

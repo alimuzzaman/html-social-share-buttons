@@ -119,6 +119,30 @@ final class CanonicalShortcodeBlockIntegrationTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'https://facebook.com/example', $html );
 	}
 
+	public function testAbsentProfileModePreservesExistingShortcodeAndBlockOutput(): void {
+		$this->settings->save( $this->settingsWithProfiles(
+			array( 'facebook' => 'https://facebook.com/example' )
+		) );
+
+		$shortcode = $this->shortcode->render( array( 'icons' => 'facebook' ) );
+		$block = $this->blocks->renderShareBlock( array( 'icons' => array( 'facebook' ) ) );
+
+		$this->assertStringContainsString( 'https://facebook.com/example', $shortcode );
+		$this->assertStringContainsString( 'https://facebook.com/example', $block );
+	}
+
+	public function testShareBlockCanHideInheritedProfilesWithTheAdditiveMode(): void {
+		$this->settings->save( $this->settingsWithProfiles(
+			array( 'facebook' => 'https://facebook.com/example' )
+		) );
+
+		$html = $this->blocks->renderShareBlock(
+			array( 'icons' => array( 'facebook' ), 'profile_links_mode' => 'none' )
+		);
+
+		$this->assertStringNotContainsString( 'zmshbt-profile-link', $html );
+	}
+
 	public function testShortcodePreservesEmptySelectionAndEncodesExplicitUrlsOnce(): void {
 		$empty = $this->shortcode->render( array( 'icons' => '' ) );
 		$url = 'https://example.test/custom path/?query=one two';

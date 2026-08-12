@@ -78,6 +78,27 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'class="twitter"', $output );
 	}
 
+	public function testWidgetCanPersistAndApplyTheAdditiveProfileLinkMode(): void {
+		update_option( 'zm_shbt_fld', array( 'profile_links' => array( 'facebook' => 'https://facebook.com/example' ) ) );
+		$widget = $this->widget();
+		$saved = $widget->update(
+			array(
+				'title'              => '',
+				'icons'              => array( 'facebook' => '1' ),
+				'iconset_type'       => 'square',
+				'iconset'            => 'default',
+				'profile_links_mode' => 'none',
+			),
+			array()
+		);
+
+		$this->assertSame( 'none', $saved['profile_links_mode'] );
+		ob_start();
+		$widget->widget( array(), $saved );
+		$output = (string) ob_get_clean();
+		$this->assertStringNotContainsString( 'zmshbt-profile-link', $output );
+	}
+
 	public function testMetaboxRenderAndAuthorizedSaveMatchThePersistedContract(): void {
 		$postId = self::factory()->post->create( array( 'post_type' => 'page' ) );
 		$metabox = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->metabox();

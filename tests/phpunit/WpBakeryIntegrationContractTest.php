@@ -38,7 +38,7 @@ final class WpBakeryIntegrationContractTest extends WP_UnitTestCase {
 		}
 
 		$this->assertSame(
-			array( 'title', 'iconset', 'iconset_type', 'icons' ),
+			array( 'title', 'iconset', 'iconset_type', 'icons', 'profile_links_mode' ),
 			array_keys( $params )
 		);
 		$this->assertSame( 'textfield', $params['title']['type'] );
@@ -48,6 +48,19 @@ final class WpBakeryIntegrationContractTest extends WP_UnitTestCase {
 		$this->assertSame( 'default', $params['iconset']['value']['Default'] );
 		$this->assertArrayHasKey( 'Facebook', $params['icons']['value'] );
 		$this->assertArrayHasKey( 'X (formerly Twitter)', $params['icons']['value'] );
+		$this->assertSame( 'inherit', $params['profile_links_mode']['std'] );
+		$this->assertSame( 'none', $params['profile_links_mode']['value']['Hide profile links in this element'] );
+	}
+
+	public function testWpbakeryProfileLinkModeIsAdditiveAndSuppressesOnlyWhenRequested(): void {
+		update_option( 'zm_shbt_fld', array( 'profile_links' => array( 'facebook' => 'https://facebook.com/example' ) ) );
+		$integration = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->wpBakery();
+
+		$inherited = $integration->render( array( 'icons' => 'facebook' ) );
+		$hidden = $integration->render( array( 'icons' => 'facebook', 'profile_links_mode' => 'none' ) );
+
+		$this->assertStringContainsString( 'https://facebook.com/example', $inherited );
+		$this->assertStringNotContainsString( 'zmshbt-profile-link', $hidden );
 	}
 
 	public function testWpbakeryEditorBundleUsesOneHandleAndReceivesItsNonce(): void {

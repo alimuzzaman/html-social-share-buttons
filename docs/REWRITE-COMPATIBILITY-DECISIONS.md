@@ -30,6 +30,11 @@ release approval or completed operational evidence. See
 - The `zm_shbt_fld` option name, submitted field shapes, defaults, unknown
   extension keys, existing autoload behavior, and `_zm_sh_disable_share` post
   meta remain the persistence contract.
+- `profile_link_placements` is an additive, sparse option map for automatic
+  placements. Its absent/default behavior is `inherit`, preserving the
+  historical global profile-link output. Only a persisted `none` value removes
+  profile links at that one automatic placement; all-inherit values are omitted
+  so a routine save does not add storage to unchanged installations.
 - Historical constants, globals, functions, classes, interfaces, public
   methods/properties, hooks, asset handles, builder identifiers, stored
   builder representations, shortcode aliases, and documented HTML classes
@@ -90,6 +95,29 @@ release approval or completed operational evidence. See
   facade. Existing block empty-selection behavior, defaults, classes, profile
   inheritance, filters, and frontend HTML remain the compatibility objective.
   Editor preview is local-only and not browser-parity evidence.
+
+### Block API-version disposition
+
+- Both canonical metadata files deliberately retain `apiVersion: 1`. The
+  declared WordPress floor is 5.3, while the [WordPress Block API-version
+  reference](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-api-versions/)
+  states that API version 2 requires WordPress 5.6 or later and API version 3
+  requires WordPress 6.3 or later. The [block metadata
+  reference](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/#api-version)
+  also records version 1 as the default and version 3 as introduced in 6.3.
+- Raising the metadata to version 2 or 3 would make the canonical editor
+  definition incompatible with the declared 5.3 floor. A conditional server
+  override is not a safe substitute: the JavaScript editor imports the same
+  canonical `block.json`, and a server/client metadata split would introduce a
+  second block definition and untested saved-content behavior. The blocks are
+  dynamic, so an API-version increase would not improve their PHP-owned
+  frontend renderer.
+- No code change is approved for this finding while WordPress 5.3 support is
+  retained. The release owner must choose one of: retain API v1 and accept the
+  Plugin Check finding with documented justification; raise the WordPress
+  floor to 5.6 and validate API v2; or raise it to 6.3 and validate API v3 and
+  its iframe-editor requirements. This is a release-policy decision, not a
+  baseline-management task.
 
 ## Assets, icon metadata, and third-party extensions
 

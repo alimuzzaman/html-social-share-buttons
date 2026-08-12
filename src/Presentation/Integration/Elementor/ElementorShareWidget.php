@@ -211,6 +211,19 @@ class ElementorShareWidget extends \Elementor\Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'profile_links_mode',
+			array(
+				'label'   => esc_html__( 'Profile links', 'html-social-share-buttons' ),
+				'type'    => \Elementor\Controls_Manager::SELECT,
+				'options' => array(
+					'inherit' => esc_html__( 'Show configured profile links', 'html-social-share-buttons' ),
+					'none'    => esc_html__( 'Hide profile links in this widget', 'html-social-share-buttons' ),
+				),
+				'default' => 'inherit',
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -226,18 +239,21 @@ class ElementorShareWidget extends \Elementor\Widget_Base {
 
 		$outcome = $this->renderer->render(
 			array(
-				'title'         => sanitize_text_field(
+				'title'              => sanitize_text_field(
 					$this->scalar( isset( $settings['title'] ) ? $settings['title'] : '', '' )
 				),
-				'iconset'       => $this->resolveIconSet(
+				'iconset'            => $this->resolveIconSet(
 					isset( $settings['iconset'] ) ? $settings['iconset'] : 'inherit'
 				),
-				'iconset_type'  => $this->resolveShape(
+				'iconset_type'       => $this->resolveShape(
 					isset( $settings['iconset_type'] ) ? $settings['iconset_type'] : 'square'
 				),
-				'icons'         => $icons,
-				'class'         => $this->config->elementorWrapperClass(),
-				'profile_links' => $this->profileLinks( $settings ),
+				'icons'              => $icons,
+				'class'              => $this->config->elementorWrapperClass(),
+				'profile_links'      => $this->profileLinks( $settings ),
+				'profile_links_mode' => $this->profileLinksMode(
+					isset( $settings['profile_links_mode'] ) ? $settings['profile_links_mode'] : 'inherit'
+				),
 			)
 		);
 		$this->assets->collect( $outcome );
@@ -313,6 +329,12 @@ class ElementorShareWidget extends \Elementor\Widget_Base {
 		}
 
 		return $this->settings->load()->profileLinks();
+	}
+
+	private function profileLinksMode( $value ) {
+		$mode = strtolower( $this->scalar( $value, 'inherit' ) );
+
+		return in_array( $mode, array( 'inherit', 'none', 'custom' ), true ) ? $mode : 'inherit';
 	}
 
 	private function normalizeIconSelection( $icons ) {

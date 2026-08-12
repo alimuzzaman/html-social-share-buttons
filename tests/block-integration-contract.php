@@ -39,8 +39,18 @@ if ( ! is_array( $metadata ) || 'html-social-share/social-share' !== $metadata['
 	exit( 1 );
 }
 
+if ( ! isset( $metadata['attributes']['profile_links_mode'] ) || 'inherit' !== $metadata['attributes']['profile_links_mode']['default'] ) {
+	echo "Block integration contract failed: share block profile-link mode metadata.\n";
+	exit( 1 );
+}
+
 if ( false === strpos( $script, 'blocks.registerBlockType( metadata.name' ) || false === strpos( $script, "import metadata from '../../../../block.json'" ) || false === strpos( $script, 'selected.length === 1' ) || false === strpos( $script, 'Inherit from plugin settings' ) || false === strpos( $script, 'hssb-block-preview__icons' ) || false === strpos( $script, 'supportedTypes' ) || false === strpos( $script, "editorData( 'hssbShareBlock' )" ) ) {
 	echo "Block integration contract failed: JavaScript registration.\n";
+	exit( 1 );
+}
+
+if ( false === strpos( $script, 'profile_links_mode' ) || false === strpos( $script, 'Hide profile links in this block' ) ) {
+	echo "Block integration contract failed: share block profile-link editor control.\n";
 	exit( 1 );
 }
 

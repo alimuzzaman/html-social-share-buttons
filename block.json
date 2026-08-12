@@ -24,6 +24,10 @@
     "icons": {
       "type": "array",
       "default": ["facebook", "x", "linkedin", "pinterest", "mail"]
+    },
+    "profile_links_mode": {
+      "type": "string",
+      "default": "inherit"
     }
   },
   "usesContext": ["postId", "postType"],

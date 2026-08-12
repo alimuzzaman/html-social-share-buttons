@@ -303,6 +303,16 @@ if (appInstance.state.options.profile_links.facebook !== 'https://www.facebook.c
 	throw new Error('Profile-link edits should update the canonical nested settings state.');
 }
 
+const placementProfileFields = nodes.filter((node) => node.props && String(node.props.name || '').indexOf('zm_shbt_fld[profile_link_placements][') === 0);
+const leftPlacementProfiles = placementProfileFields.filter((node) => node.props.name === 'zm_shbt_fld[profile_link_placements][show_left]');
+if (placementProfileFields.length !== 4 || leftPlacementProfiles.length !== 1 || leftPlacementProfiles[0].props.value !== 'inherit') {
+	throw new Error('Each automatic placement should expose an additive profile-link inheritance control.');
+}
+leftPlacementProfiles[0].props.onChange('none');
+if (appInstance.state.options.profile_link_placements.show_left !== 'none') {
+	throw new Error('Placement profile-link controls should update their isolated nested setting.');
+}
+
 const profileGridCss = adminCss.match(/\.hssb-profile-link-grid\s*\{[^}]*\}/);
 if (!profileGridCss || !profileGridCss[0].includes('grid-template-columns: repeat(2, minmax(0, 1fr))') || !adminCss.includes('@media screen and (max-width: 600px)')) {
 	throw new Error('Profile-link settings should use a responsive two-column layout.');

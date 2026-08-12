@@ -118,6 +118,34 @@ import { networks } from '../shared/networks';
 									} );
 								},
 							} ),
+							el( SelectControl, {
+								label: __(
+									'Profile links',
+									'html-social-share-buttons'
+								),
+								value: props.attributes.profile_links_mode || 'inherit',
+								options: [
+									{
+										label: __(
+											'Show configured profile links',
+											'html-social-share-buttons'
+										),
+										value: 'inherit',
+									},
+									{
+										label: __(
+											'Hide profile links in this block',
+											'html-social-share-buttons'
+										),
+										value: 'none',
+									},
+								],
+								onChange( value ) {
+									props.setAttributes( {
+										profile_links_mode: value,
+									} );
+								},
+							} ),
 							availableNetworks.map( function ( network ) {
 								return el( CheckboxControl, {
 									key: network.id,

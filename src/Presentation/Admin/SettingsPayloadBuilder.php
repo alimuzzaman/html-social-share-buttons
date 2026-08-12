@@ -56,23 +56,24 @@ final class SettingsPayloadBuilder {
 		$options = wp_parse_args(
 			$options,
 			array(
-				'title'           => __( 'Share this with your friends', 'html-social-share-buttons' ),
-				'iconset'         => 'default',
-				'show_in'         => array(
+				'title'                   => __( 'Share this with your friends', 'html-social-share-buttons' ),
+				'iconset'                 => 'default',
+				'show_in'                 => array(
 					'show_left'        => 0,
 					'show_right'       => 0,
 					'show_before_post' => 0,
 					'show_after_post'  => 0,
 				),
-				'excludes'        => '',
-				'iconset_type'    => 'square',
-				'icons'           => array(),
-				'g_analytics'     => 0,
-				'auto_hide_btn'   => 0,
-				'use_port'        => 0,
-				'nofollow'        => 0,
-				'profile_links'   => array(),
-				'share_templates' => $this->defaultTemplates(),
+				'excludes'                => '',
+				'iconset_type'            => 'square',
+				'icons'                   => array(),
+				'g_analytics'             => 0,
+				'auto_hide_btn'           => 0,
+				'use_port'                => 0,
+				'nofollow'                => 0,
+				'profile_links'           => array(),
+				'profile_link_placements' => array(),
+				'share_templates'         => $this->defaultTemplates(),
 			)
 		);
 		if ( isset( $options['icons']['twitter'] ) && ! isset( $options['icons']['x'] ) ) {
@@ -81,6 +82,9 @@ final class SettingsPayloadBuilder {
 		if ( isset( $options['profile_links']['twitter'] ) && ! isset( $options['profile_links']['x'] ) ) {
 			$options['profile_links']['x'] = $options['profile_links']['twitter'];
 			unset( $options['profile_links']['twitter'] );
+		}
+		if ( ! isset( $options['profile_link_placements'] ) || ! is_array( $options['profile_link_placements'] ) ) {
+			$options['profile_link_placements'] = array();
 		}
 
 		return $options;
@@ -112,6 +116,9 @@ final class SettingsPayloadBuilder {
 			'enabled'                     => __( 'Enabled', 'html-social-share-buttons' ),
 			'disabled'                    => __( 'Disabled', 'html-social-share-buttons' ),
 			'buttonShape'                 => __( 'Button shape', 'html-social-share-buttons' ),
+			'profileLinks'                => __( 'Profile links', 'html-social-share-buttons' ),
+			'profileLinksInherit'         => __( 'Show configured profile links', 'html-social-share-buttons' ),
+			'profileLinksNone'            => __( 'Hide profile links in this placement', 'html-social-share-buttons' ),
 			'header'                      => __( 'Header', 'html-social-share-buttons' ),
 			'headerDescription'           => __( 'Set the text shown with the share buttons and choose pages where buttons should stay hidden.', 'html-social-share-buttons' ),
 			'enterTitle'                  => __( 'Enter a title', 'html-social-share-buttons' ),

@@ -54,6 +54,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 		icons: {},
 		share_templates: {},
 		profile_links: {},
+		profile_link_placements: {},
 		g_analytics: 0,
 		auto_hide_btn: 0,
 		use_port: 0,
@@ -256,6 +257,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 			nextOptions.icons = $.extend({}, prev.options.icons || {});
 			nextOptions.share_templates = $.extend({}, prev.options.share_templates || {});
 			nextOptions.profile_links = $.extend({}, prev.options.profile_links || {});
+			nextOptions.profile_link_placements = $.extend({}, prev.options.profile_link_placements || {});
 			switch (path) {
 				case 'title':
 					nextOptions.title = value;
@@ -293,6 +295,12 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 					break;
 				case 'show_in.show_after_post':
 					nextOptions.show_in.show_after_post = toBoolean(value);
+					break;
+				case 'profile_link_placements.show_left':
+				case 'profile_link_placements.show_right':
+				case 'profile_link_placements.show_before_post':
+				case 'profile_link_placements.show_after_post':
+					nextOptions.profile_link_placements[path.substring(24)] = value === 'none' ? 'none' : 'inherit';
 					break;
 				case 'g_analytics':
 				case 'auto_hide_btn':

@@ -93,6 +93,19 @@ final class WpBakeryRegistrar {
 						'value'       => $this->networkChoices( $currentIconSet->id() ),
 						'description' => __( 'Select icons', 'html-social-share-buttons' ),
 					),
+					array(
+						'type'        => 'dropdown',
+						'holder'      => 'div',
+						'class'       => '',
+						'heading'     => __( 'Profile links', 'html-social-share-buttons' ),
+						'param_name'  => 'profile_links_mode',
+						'value'       => array(
+							__( 'Show configured profile links', 'html-social-share-buttons' ) => 'inherit',
+							__( 'Hide profile links in this element', 'html-social-share-buttons' ) => 'none',
+						),
+						'std'         => 'inherit',
+						'description' => __( 'Choose whether this element displays globally configured profile links.', 'html-social-share-buttons' ),
+					),
 				),
 			)
 		);
@@ -119,22 +132,25 @@ final class WpBakeryRegistrar {
 
 		$outcome = $this->renderer->render(
 			array(
-				'title'         => sanitize_text_field(
+				'title'              => sanitize_text_field(
 					$this->scalar( isset( $attributes['title'] ) ? $attributes['title'] : '', '' )
 				),
-				'iconset'       => $this->iconSetId(
+				'iconset'            => $this->iconSetId(
 					isset( $attributes['iconset'] ) ? $attributes['iconset'] : $settings->iconSetId()
 				),
-				'iconset_type'  => sanitize_key(
+				'iconset_type'       => sanitize_key(
 					$this->scalar(
 						isset( $attributes['iconset_type'] ) ? $attributes['iconset_type'] : $settings->defaultIconShape(),
 						'square'
 					)
 				),
-				'icons'         => $icons,
-				'url'           => $this->url( isset( $attributes['url'] ) ? $attributes['url'] : '' ),
-				'class'         => $this->config->wpBakeryWrapperClass(),
-				'profile_links' => $this->profileLinks( $attributes, $settings ),
+				'icons'              => $icons,
+				'url'                => $this->url( isset( $attributes['url'] ) ? $attributes['url'] : '' ),
+				'class'              => $this->config->wpBakeryWrapperClass(),
+				'profile_links'      => $this->profileLinks( $attributes, $settings ),
+				'profile_links_mode' => $this->profileLinksMode(
+					isset( $attributes['profile_links_mode'] ) ? $attributes['profile_links_mode'] : 'inherit'
+				),
 			)
 		);
 		$this->assets->collect( $outcome );
@@ -224,6 +240,12 @@ final class WpBakeryRegistrar {
 		}
 
 		return $settings->profileLinks();
+	}
+
+	private function profileLinksMode( $value ) {
+		$mode = strtolower( $this->scalar( $value, 'inherit' ) );
+
+		return in_array( $mode, array( 'inherit', 'none', 'custom' ), true ) ? $mode : 'inherit';
 	}
 
 	private function scalar( $value, $fallback ) {

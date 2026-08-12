@@ -9,6 +9,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderPlacement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderRequest;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\ManifestIconSetProvider;
@@ -111,25 +112,65 @@ final class ProfileLinkRenderingTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'https://facebook.com/example', $blockHtml );
 	}
 
+	public function testAutomaticPlacementCanHideProfilesWithoutChangingTheGlobalProfileMap(): void {
+		$profiles = array( 'facebook' => 'https://facebook.com/example' );
+		$hidden = $this->automaticPlacementFor(
+			$profiles,
+			array( Placement::AFTER_CONTENT => 'none' )
+		);
+		$inherited = $this->automaticPlacementFor( $profiles, array() );
+
+		$this->assertStringNotContainsString( 'zmshbt-profile-link', $hidden );
+		$this->assertStringNotContainsString( 'https://facebook.com/example', $hidden );
+		$this->assertStringContainsString( 'zmshbt-profile-link', $inherited );
+		$this->assertStringContainsString( 'https://facebook.com/example', $inherited );
+	}
+
+	public function testExplicitNoneModeSuppressesProfilesForExistingShortcodeAndBlockAttributes(): void {
+		update_option( 'zm_shbt_fld', array( 'profile_links' => array( 'facebook' => 'https://facebook.com/example' ) ) );
+		$plugin = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin();
+
+		$shortcodeHtml = $plugin->shortcode()->render(
+			array( 'icons' => 'x', 'profile_links_mode' => 'none' )
+		);
+		$blockHtml = $plugin->block()->render(
+			array( 'icons' => array( 'x' ), 'profile_links_mode' => 'none' )
+		);
+
+		$this->assertStringNotContainsString( 'zmshbt-profile-link', $shortcodeHtml );
+		$this->assertStringNotContainsString( 'zmshbt-profile-link', $blockHtml );
+	}
+
 	private function footerFor( array $profiles ): string {
+		$controller = $this->controllerFor( $profiles, array() );
+
+		ob_start();
+		$controller->footer();
+		return (string) ob_get_clean();
+	}
+
+	private function automaticPlacementFor( array $profiles, array $placementModes ): string {
+		return $this->controllerFor( $profiles, $placementModes )->renderPlacement(
+			Placement::AFTER_CONTENT,
+			'after_content'
+		);
+	}
+
+	private function controllerFor( array $profiles, array $placementModes ) {
 		$plugin = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin();
 		$settings = $plugin->settings()->load();
-		$controller = new FrontendController(
+		return new FrontendController(
 			new ProfileLinkSettingsRepository( new Settings(
 				$settings->title(), $settings->iconSetId(), $settings->defaultIconShape(), array(),
 				$settings->placementShapes(), $settings->networkStates(), $settings->shareTemplates(),
 				$settings->excludedContent(), true, $settings->autoHideEnabled(), $settings->preserveUrlPort(),
-				$settings->noFollow(), $profiles
+				$settings->noFollow(), $profiles, $placementModes
 			) ),
 			$plugin->renderer(), new ContentPlacementComposer(), new FloatingPlacementPlanner(),
 			new ExcludedContentPolicy(), new TranslationLoader( HSSB_PLUGIN_FILE, 'html-social-share-buttons' ),
 			new AssetCollector( HSSB_PLUGIN_URL . 'iconset/default/style.css' ),
 			'_zm_sh_disable_share'
 		);
-
-		ob_start();
-		$controller->footer();
-		return (string) ob_get_clean();
 	}
 
 	private function networkIds( array $links ): array {

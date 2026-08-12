@@ -81,7 +81,7 @@ class ShareWidget extends \WP_Widget {
 	public function update( $newInstance, $oldInstance ) {
 		$newInstance = is_array( $newInstance ) ? $newInstance : array();
 
-		return array(
+		$updated = array(
 			'title'        => isset( $newInstance['title'] )
 				? sanitize_text_field( $this->scalar( $newInstance['title'], '' ) )
 				: '',
@@ -95,6 +95,11 @@ class ShareWidget extends \WP_Widget {
 				$this->scalar( isset( $newInstance['iconset'] ) ? $newInstance['iconset'] : '', 'default' )
 			),
 		);
+		if ( array_key_exists( 'profile_links_mode', $newInstance ) ) {
+			$updated['profile_links_mode'] = $this->profileLinksMode( $newInstance['profile_links_mode'] );
+		}
+
+		return $updated;
 	}
 
 	public function form( $instance ) {
@@ -130,6 +135,13 @@ class ShareWidget extends \WP_Widget {
 				</label><br />
 			<?php endforeach; ?>
 		</fieldset>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'profile_links_mode' ) ); ?>"><?php esc_html_e( 'Profile links', 'html-social-share-buttons' ); ?></label>
+			<select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'profile_links_mode' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'profile_links_mode' ) ); ?>">
+				<option value="inherit" <?php selected( $options['profile_links_mode'], 'inherit' ); ?>><?php esc_html_e( 'Show configured profile links', 'html-social-share-buttons' ); ?></option>
+				<option value="none" <?php selected( $options['profile_links_mode'], 'none' ); ?>><?php esc_html_e( 'Hide profile links in this widget', 'html-social-share-buttons' ); ?></option>
+			</select>
+		</p>
 		<?php
 	}
 
@@ -147,11 +159,14 @@ class ShareWidget extends \WP_Widget {
 			: $settings->profileLinks();
 
 		return array(
-			'title'         => sanitize_text_field( $this->scalar( $options['title'], '' ) ),
-			'icons'         => isset( $options['icons'] ) ? $options['icons'] : array(),
-			'iconset_type'  => sanitize_key( $this->scalar( $options['iconset_type'], 'square' ) ),
-			'iconset'       => sanitize_key( $this->scalar( $options['iconset'], 'default' ) ),
-			'profile_links' => $profileLinks,
+			'title'              => sanitize_text_field( $this->scalar( $options['title'], '' ) ),
+			'icons'              => isset( $options['icons'] ) ? $options['icons'] : array(),
+			'iconset_type'       => sanitize_key( $this->scalar( $options['iconset_type'], 'square' ) ),
+			'iconset'            => sanitize_key( $this->scalar( $options['iconset'], 'default' ) ),
+			'profile_links'      => $profileLinks,
+			'profile_links_mode' => $this->profileLinksMode(
+				isset( $options['profile_links_mode'] ) ? $options['profile_links_mode'] : 'inherit'
+			),
 		);
 	}
 
@@ -201,5 +216,11 @@ class ShareWidget extends \WP_Widget {
 
 	private function scalar( $value, $fallback ) {
 		return is_scalar( $value ) ? (string) $value : (string) $fallback;
+	}
+
+	private function profileLinksMode( $value ) {
+		$mode = strtolower( $this->scalar( $value, 'inherit' ) );
+
+		return in_array( $mode, array( 'inherit', 'none', 'custom' ), true ) ? $mode : 'inherit';
 	}
 }

@@ -66,6 +66,12 @@ Users rely on current settings and may have significant persisted values under `
 - Preserve these existing keys and nested shape in `zm_shbt_fld`:
   - `title`, `excludes`, `g_analytics`, `auto_hide_btn`, `use_port`, `nofollow`, `iconset`, `show_in.*`, `show_left`, `show_right`, `show_before_post`, `show_after_post`, `icons`, `iconset_type`.
 - Additive key: `share_templates.<platform>` for built-in platforms only; missing values resolve to canonical defaults. New `telegram` and `bluesky` icon flags are additive and disabled by default.
+- Additive key: `profile_link_placements.<placement>` controls only automatic
+  placements (`show_left`, `show_right`, `show_before_post`, and
+  `show_after_post`). A missing key, unknown value, or explicit `inherit`
+  preserves the existing global profile-link output; only `none` suppresses
+  profile links for that placement. The key is omitted from storage while all
+  placements inherit.
 - Preserve runtime compatibility behavior (including legacy `twitter` -> `x` migration).
 
 ## 5.0 UX Requirements
