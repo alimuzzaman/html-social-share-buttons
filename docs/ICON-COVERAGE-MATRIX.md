@@ -53,14 +53,16 @@ found and corrected the lowercase canonical Prajin CSS selector gap while
 retaining its historical uppercase selectors.
 
 Playwright WebKit passed after its documented host dependencies were installed.
-It is not Safari, and no Safari claim is made.
+The same eight-project matrix then passed in a newly provisioned strict Sandbox
+worker, with separate durable screenshots and checksums. WebKit is not Safari,
+and no Safari claim is made.
 
 ## Verification still required
 
 - Run the manifest/asset and deterministic-generator checks for the candidate.
-- Repeat this browser matrix in a fresh isolated Sandbox worker when Docker
-  network capacity is available, and capture current Safari desktop/iOS
-  evidence separately.
+- Capture current Safari desktop/iOS evidence separately.
+- Resolve or explicitly accept the 390-pixel fixed-rail/heading overlap noted
+  in `BROWSER-VALIDATION.md` during real-device/manual layout review.
 - Complete trademark and platform-brand-guideline review for every network.
 - Archive the written authorization or license terms that substantiate the
   maintainer attestation for Flat, Long Shadows, and Prajin; obtain source and

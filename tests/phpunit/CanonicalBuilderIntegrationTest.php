@@ -142,8 +142,8 @@ final class CanonicalBuilderIntegrationTest extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'zmshbt-profile-link', $output );
 		$this->assertStringContainsString( 'https://www.facebook.com/hssb', $output );
-		$this->assertStringContainsString( 'class="facebook"', $output );
-		$this->assertStringContainsString( 'class="facebook zmshbt-profile-link"', $output );
+		$this->assertMatchesRegularExpression( '/class=[\'"]facebook[\'"]/', $output );
+		$this->assertMatchesRegularExpression( '/class=[\'"]facebook zmshbt-profile-link[\'"]/', $output );
 
 		ob_start();
 		$widget->widget(

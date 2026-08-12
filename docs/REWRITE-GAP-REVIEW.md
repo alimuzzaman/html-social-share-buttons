@@ -76,13 +76,13 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
 | Area | Implementation status | Evidence still required |
 |---|---|---|
 | PHP, JavaScript, icon, settings, block, localization contracts | Passed in the 2026-08-11 candidate validation; see `RELEASE-CANDIDATE-VALIDATION.md` | Repeat after any candidate code change |
-| WordPress/PHP declaration | Header and readme declare WP 5.3+ and PHP 7.0+ | Supported matrix runs; the WP 5.3 path must not be represented as a full modern-suite certification |
+| WordPress/PHP declaration | Header and readme declare WP 5.3+ and PHP 7.0+; configured WP 6.8/PHP 8.3 and current/PHP 8.3 contract rows passed; WP 5.3/PHP 7.0 has a functional smoke | Remaining supported matrix runs; the WP 5.3 path must not be represented as a full modern-suite certification |
 | Archive and autoloader | Two builds matched and the ZIP activated on a clean Sandbox without Composer | Repeat for the approved versioned candidate |
 | Frontend compatibility | PHPUnit, the 33-scenario golden comparison, fresh-ZIP smoke, and stored browser fixtures passed | Manual browser matrix and licensed WPBakery editor evidence |
 | Gutenberg | Dynamic metadata registration and a real stored-block browser fixture passed | Supported-version and manual browser captures |
 | Elementor | Real editor persistence, visible icon preview, and public stored-data fixture passed with Elementor 4.2.2 | Manual cross-browser captures and supported-version matrix |
 | WPBakery | Canonical optional integration and stored-shortcode contracts are present | Licensed editor environment, fixture, persisted data, and frontend capture |
-| Icon packs | Manifests, filenames, and support matrix are defined; maintainer authorization is recorded for Flat, Long Shadow, and Prajin; Chrome, Firefox, Edge, and Playwright WebKit automation passed | Default-pack provenance/legal decision, Safari, isolated-worker repetition, and manual accessibility/interaction review |
+| Icon packs | Manifests, filenames, and support matrix are defined; maintainer authorization is recorded for Flat, Long Shadow, and Prajin; Chrome, Firefox, Edge, and Playwright WebKit painted-asset automation passed globally and in a fresh isolated worker | Default-pack provenance/legal decision, Safari, and manual accessibility/interaction/layout review, including the observed 390-pixel fixed-rail/heading overlap |
 | Rollback | No data migration/replacement schema is designed; isolated candidate -> published 2.2.6 -> candidate rehearsal passed on WP 5.3/PHP 7.0 | Staging-soak rollback rehearsal and licensed builder-editor evidence |
 | Staging | Plan only | Fourteen consecutive days of recorded evidence |
 
@@ -95,9 +95,11 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
    upstream author, version, or license grant. Keep it for compatibility, but
    do not claim independent clearance or replace it without approval.
 2. Automated current Chrome, Firefox, Edge, and Playwright WebKit
-   desktop/mobile-viewport icon and layout checks passed. Safari, an isolated
-   worker repeat, physical mobile devices, and manual interaction/accessibility
-   review have not been recorded.
+   desktop/mobile-viewport icon and layout checks passed globally and in a
+   fresh isolated worker. Safari, physical mobile devices, and manual
+   interaction/accessibility review have not been recorded. The isolated
+   390-pixel captures show the fixed left rail overlapping the matrix heading;
+   resolve it or explicitly accept it as retained compatibility behavior.
 3. The isolated candidate E2E run now provisions a real Elementor document
    through Elementor's `save_builder` action and verifies its visible editor
    preview and public frontend. A licensed WPBakery editor fixture remains a

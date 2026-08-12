@@ -48,6 +48,29 @@ function hssb_test_normalize_frontend_output( $html ) {
 	return str_replace( array( "\r\n", "\r" ), "\n", (string) $html );
 }
 
+/**
+ * Normalize only the attribute serialization that wp_kses_post() owns.
+ *
+ * WordPress releases may choose single or double quotes and may serialize an
+ * ampersand as either &amp; or &#038;. The renderer contract remains byte-strict;
+ * this helper is only for entrypoints whose output passes through KSES.
+ */
+function hssb_test_normalize_kses_serialization( $html ) {
+	return preg_replace_callback(
+		'/<[^>]+>/',
+		static function ( $matches ) {
+			$tag = preg_replace(
+				'/\s([A-Za-z_:][A-Za-z0-9:._-]*)=\'([^\']*)\'/',
+				' $1="$2"',
+				$matches[0]
+			);
+
+			return str_replace( array( '&#038;', '&#38;' ), '&amp;', $tag );
+		},
+		(string) $html
+	);
+}
+
 function hssb_test_load_frontend_scenarios( $path ) {
 	$data = json_decode( (string) file_get_contents( $path ), true );
 	if ( ! is_array( $data ) || ! isset( $data['scenarios'] ) || ! is_array( $data['scenarios'] ) ) {

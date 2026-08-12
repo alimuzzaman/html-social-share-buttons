@@ -51,12 +51,12 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		);
 		$output = (string) ob_get_clean();
 
-		$this->assertStringStartsWith(
-			'<section><h2>Widget title</h2><div class="zmshbt in_widget flat circle">',
+		$this->assertMatchesRegularExpression(
+			'/^<section><h2>Widget title<\/h2><div class=[\'"]zmshbt in_widget flat circle[\'"]>/',
 			$output
 		);
-		$this->assertStringContainsString( 'class="facebook"', $output );
-		$this->assertStringContainsString( 'class="twitter"', $output );
+		$this->assertMatchesRegularExpression( '/class=[\'"]facebook[\'"]/', $output );
+		$this->assertMatchesRegularExpression( '/class=[\'"]twitter[\'"]/', $output );
 	}
 
 	public function testWidgetRendersLegacyNumericNetworkStorage(): void {
@@ -74,8 +74,8 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		);
 		$output = (string) ob_get_clean();
 
-		$this->assertStringContainsString( 'class="facebook"', $output );
-		$this->assertStringContainsString( 'class="twitter"', $output );
+		$this->assertMatchesRegularExpression( '/class=[\'"]facebook[\'"]/', $output );
+		$this->assertMatchesRegularExpression( '/class=[\'"]twitter[\'"]/', $output );
 	}
 
 	public function testWidgetCanPersistAndApplyTheAdditiveProfileLinkMode(): void {

@@ -40,6 +40,12 @@ final class FrontendRenderContractTest extends WP_UnitTestCase {
 		$this->assertNotEmpty( $baseline['scenarios'], 'The frontend golden master must not be empty.' );
 
 		$current = hssb_test_capture_frontend_scenarios( $scenarios );
+		$entrypoints = array();
+		foreach ( $scenarios as $scenario ) {
+			$entrypoints[ $scenario['name'] ] = isset( $scenario['entrypoint'] )
+				? $scenario['entrypoint']
+				: 'renderer';
+		}
 		$this->assertSame(
 			array_keys( $baseline['scenarios'] ),
 			array_keys( $current ),
@@ -47,9 +53,15 @@ final class FrontendRenderContractTest extends WP_UnitTestCase {
 		);
 
 		foreach ( $current as $name => $result ) {
+			$expected = $baseline['scenarios'][ $name ]['output'];
+			$actual   = $result['output'];
+			if ( 'footer' === $entrypoints[ $name ] ) {
+				$expected = hssb_test_normalize_kses_serialization( $expected );
+				$actual   = hssb_test_normalize_kses_serialization( $actual );
+			}
 			$this->assertSame(
-				$baseline['scenarios'][ $name ]['output'],
-				$result['output'],
+				$expected,
+				$actual,
 				sprintf( 'Frontend output changed for scenario "%s".', $name )
 			);
 		}

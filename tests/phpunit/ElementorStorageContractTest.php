@@ -145,9 +145,9 @@ namespace {
 			$output = $this->widget->contractRender( $this->contract['settings'] );
 
 			$this->assertStringNotContainsString( '<h3>', $output );
-			$this->assertStringContainsString( 'class="zmshbt in_elementor flat circle"', $output );
-			$this->assertStringContainsString( 'class="facebook"', $output );
-			$this->assertStringContainsString( 'class="twitter"', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]zmshbt in_elementor flat circle[\'"]/', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]facebook[\'"]/', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]twitter[\'"]/', $output );
 		}
 
 		public function testElementorStyleRehydrationUsesTheConfiguredCanonicalDependencies(): void {
@@ -156,8 +156,8 @@ namespace {
 			$output = $rehydrated->contractRenderStoredData();
 
 			$this->assertSame( $this->contract['widget_name'], $rehydrated->get_name() );
-			$this->assertStringContainsString( 'class="zmshbt in_elementor flat circle"', $output );
-			$this->assertStringContainsString( 'class="facebook"', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]zmshbt in_elementor flat circle[\'"]/', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]facebook[\'"]/', $output );
 		}
 
 		public function testElementorDeclaresRegisteredIconPackStylesWithoutRendering(): void {
@@ -205,8 +205,8 @@ namespace {
 
 			$output = $this->widget->contractRender( $this->contract['settings'] );
 
-			$this->assertStringContainsString( 'class="facebook zmshbt-profile-link"', $output );
-			$this->assertStringContainsString( 'class="mail zmshbt-profile-link"', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]facebook zmshbt-profile-link[\'"]/', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]mail zmshbt-profile-link[\'"]/', $output );
 			$this->assertStringContainsString( 'https://www.facebook.com/hssb', $output );
 		$this->assertStringContainsString( 'mailto:hello@example.com', $output );
 	}
@@ -234,9 +234,9 @@ namespace {
 				)
 			);
 
-			$this->assertStringContainsString( 'class="zmshbt in_elementor default square"', $output );
-			$this->assertStringContainsString( 'class="facebook"', $output );
-			$this->assertStringContainsString( 'class="twitter"', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]zmshbt in_elementor default square[\'"]/', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]facebook[\'"]/', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]twitter[\'"]/', $output );
 		}
 	}
 }

@@ -55,11 +55,50 @@ projects were rerun and passed. All eight projects produced the artifacts
 above. These are browser-engine desktop/mobile-viewport checks, not Safari or
 tests on physical mobile devices.
 
-An isolated `sb e2e --local --workers 1` attempt was also made first. Sandbox
-could not create the fresh worker network because Docker reported that all
-predefined address pools were fully subnetted. The visual run therefore used
-the already healthy local global-Sandbox instance and must be repeated in an
-isolated worker after Docker network capacity is recovered.
+## 2026-08-12 isolated-worker repeat
+
+After Docker capacity was restored, the complete matrix was repeated through
+the global Sandbox CLI in a newly provisioned strict worker:
+
+```sh
+HSSB_BROWSER_ARTIFACT_DIR=docs/evidence/browser-validation/2026-08-12-isolated \
+sb e2e --local --workers 1 --strict-provision \
+  --playwright-config tests/browser-matrix.playwright.config.js \
+  --timeout 1200 --json
+```
+
+The first fresh worker passed the four Chrome/Edge projects and reported four
+pre-launch environment failures because the exact Playwright Firefox and
+WebKit executables were not installed on the host. After
+`pnpm exec playwright install firefox webkit`, the command provisioned another
+fresh WordPress 7.0.3 worker and all eight projects passed: Chrome desktop and
+mobile, Firefox desktop and mobile, Edge desktop and mobile, and WebKit desktop
+and mobile. This closes the isolated-worker repetition gate; it does not turn
+WebKit into Safari evidence or cover physical mobile devices.
+
+Isolated screenshot SHA-256 values:
+
+| Artifact | Dimensions | SHA-256 |
+|---|---:|---|
+| `chrome-desktop.png` | 1440×3550 | `b6d66e778062cda2fb3d566f3f473d947ab8ffe08a1141ce7ae4cd240341485f` |
+| `chrome-mobile-viewport.png` | 390×3497 | `a48ed5809eeb8d71273abdca7564fecc71860086693b5edaae2c30d568574acc` |
+| `firefox-desktop.png` | 1440×3580 | `cf308abe0d5f92eaf0fdb1834f40bba17cf3d4d2c1d93d1812392eb15e731a36` |
+| `firefox-mobile-viewport.png` | 390×3505 | `4a3b6ee2e1b27e5d770f97bb0eee3d214d1da5efd008ccece7f9ce916c9565b0` |
+| `edge-desktop.png` | 1440×3586 | `68f71d39aa0e2b2c58825650c4e3cdd24e36053fb2cd98e0f4b420a8d5e36449` |
+| `edge-mobile-viewport.png` | 390×3517 | `7db31b02893c12bd44386ef928266dfae898e165a7dffe228cca2a8f79541666` |
+| `webkit-desktop.png` | 1440×3625 | `e5379c9c0c33cb284fdbd582c573a61beab4a25bbcec52ff2ca30b08b7d1c071` |
+| `webkit-mobile-viewport.png` | 390×3505 | `f3805f1a7413f0949883ac389e0b54f9fea7ab28c9a48b34133bdc0cf61b483f` |
+
+The eight files are stored in
+`docs/evidence/browser-validation/2026-08-12-isolated/`.
+
+Visual sampling of the isolated artifacts found that the fixed left placement
+overlaps the matrix heading near the top of the 390-pixel viewport. The
+automated assertions intentionally verify painted assets, wrapper classes,
+link counts, and basic geometry; they do not certify collision-free responsive
+placement. Treat the overlap as an unresolved manual mobile-layout review item
+until a release owner decides whether the retained placement is compatible
+behavior or requires a separately approved runtime change.
 
 ## Defect found and corrected
 
@@ -75,8 +114,7 @@ Chrome, Firefox, Edge, and WebKit matrix above passed after the correction.
 
 - Test current Safari on macOS/iOS hardware or a separately provisioned Safari
   service; do not substitute Playwright WebKit.
-- Repeat the complete matrix in a fresh isolated Sandbox worker after the
-  Docker network-pool issue is fixed.
 - Conduct manual interaction/accessibility review (keyboard focus, hover,
-  high-contrast and real-device layout) if it is a release gate; the automated
-  checks establish painted asset presence and basic layout only.
+  high-contrast and real-device layout), including the observed 390-pixel
+  fixed-rail/heading overlap; the automated checks establish painted asset
+  presence and basic layout only.

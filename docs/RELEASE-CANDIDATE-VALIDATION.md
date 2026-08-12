@@ -100,11 +100,36 @@ candidate. That difference is a corrected behavior, not content loss. This
 rehearsal does not validate the unlicensed WPBakery editor or Elementor editor
 on the historical package.
 
-Attempts to provision additional fresh isolated WP 6.8/PHP 8.3 and latest/PHP
-8.3 matrix instances were stopped after Sandbox reported Docker's predefined
-address pools fully subnetted. Existing evidence for those rows remains the
-2026-08-11 candidate validation above; rerun them after the Sandbox host has
-capacity rather than treating this as a pass.
+The first attempts to provision additional WP 6.8/PHP 8.3 and latest/PHP 8.3
+matrix instances stopped when Docker's predefined address pools were fully
+subnetted. Capacity was restored later on 2026-08-12 and both disposable rows
+were provisioned and tested as recorded below; the failed attempts are not
+treated as evidence.
+
+### 2026-08-12 additional WordPress/PHP rows and isolated repeat
+
+The global Sandbox CLI provisioned disposable rows and independently reported
+their live versions before tests:
+
+| Row | Live runtime | WordPress test library | Regular | AJAX | Multisite |
+|---|---|---|---:|---:|---:|
+| `wp68php83` | WordPress 6.8 / PHP 8.3.33 | WordPress 6.8 | 171 tests, 2,296 assertions, 1 skip | 9 tests, 32 assertions | 171 tests, 2,303 assertions |
+| `wplatestphp83` | WordPress 7.0.3 / PHP 8.3.33 | WordPress trunk | 171 tests, 2,296 assertions, 1 skip | 9 tests, 32 assertions | 171 tests, 2,303 assertions |
+
+All six commands passed. The first WP 6.8 regular run found eight test-only
+failures caused by `wp_kses_post()` choosing a different valid quote/entity
+serialization than the newer core test environment. The runtime renderer and
+published 2.2.6 both emit the same historical pre-KSES quote style. Tests were
+made portable only at WordPress-owned KSES boundaries; the direct canonical
+renderer and its golden master remain byte-strict. The passing results above
+are the post-correction reruns.
+
+A separate strict `sb e2e --local --workers 1 --strict-provision` run then
+provisioned a fresh WordPress 7.0.3 worker. The complete functional suite passed
+six tests and skipped only the licensed WPBakery editor picker. A second fresh
+worker passed all eight browser-matrix projects after the exact Playwright
+Firefox and WebKit executables were installed. Durable screenshots, dimensions,
+checksums, command, and limitations are recorded in `BROWSER-VALIDATION.md`.
 
 ### 2026-08-12 current working-tree validation
 
@@ -125,6 +150,9 @@ revalidated through the global Sandbox CLI and the host JavaScript toolchain:
   six tests: the icon matrix, Elementor picker and stored public fixture,
   Gutenberg stored block, settings keyboard dialog, and WPBakery stored public
   fixture. The licensed WPBakery editor-picker test was the sole explicit skip.
+- The same functional coverage passed in a newly provisioned strict Sandbox
+  worker (six passed, one licensed-WPBakery skip), and a second fresh worker
+  passed all eight browser-matrix desktop/mobile projects.
 - Two production archive builds were byte-identical. Each contains 231 files
   and is 667,676 bytes; SHA-256 is
   `d4584d5d99f2389683a56446e9687d16ebeeadb6b6302ed456819ef84bedebd5`.
@@ -202,7 +230,7 @@ evidence for this uncommitted candidate.
 | Regular, AJAX, and multisite WordPress contracts | Passed on the current working tree with the 2026-08-12 summaries above | Repeat for the finally approved candidate revision if it changes |
 | Plugin Check | Current clean archive: 2 unresolved API-version errors, 57 warnings; no baseline | Release owner must select v1 with documented acceptance, WP 5.6+ with v2 validation, or WP 6.3+ with v3/iframe validation; do not hide findings with a baseline |
 | Archive reproducibility and fresh-install activation | Current archive reproducibility, distribution contract, and WP 5.3/PHP 7.0.33 replacement activation passed; earlier rollback evidence used the prior checksum | Repeat rollback for the exact soak candidate |
-| Browser visual parity | Chrome, Firefox, Edge, and Playwright WebKit passed all declared icon-set/shape cells at desktop/mobile viewport sizes on 2026-08-12; `BROWSER-VALIDATION.md` carries PNGs/checksums | Repeat in fresh isolated worker; Safari desktop/iOS and manual interaction/accessibility review remain required |
+| Browser visual parity | Chrome, Firefox, Edge, and Playwright WebKit passed the automated painted-asset/basic-layout assertions both globally and in a fresh isolated worker on 2026-08-12; `BROWSER-VALIDATION.md` carries PNGs/checksums and an observed 390-pixel fixed-rail/heading overlap | Safari desktop/iOS and manual interaction/accessibility/layout review remain required; resolve or explicitly accept the mobile overlap |
 | Elementor and WPBakery | Elementor editor/frontend passed; WPBakery frontend passed and editor is blocked | Licensed WPBakery editor fixture and persisted-data comparison |
 
 ## Rollback rehearsal
@@ -233,14 +261,16 @@ time.
 - Maintainer authorization is recorded for Flat, Long Shadow, and Prajin;
   Default provenance remains unresolved. See `resources/iconsets/ASSET-SOURCES.md`.
 - Chrome, Firefox, Edge, and Playwright WebKit automated icon-set/shape evidence is recorded in
-  `BROWSER-VALIDATION.md`; Safari, fresh-worker repetition, and manual
-  interaction/accessibility evidence remain pending.
+  `BROWSER-VALIDATION.md`, including a fresh-worker repeat; Safari and manual
+  interaction/accessibility/layout evidence remain pending. The isolated mobile
+  captures show a fixed left rail overlapping the page heading at 390 pixels;
+  this requires resolution or explicit compatibility acceptance.
 - Real Elementor editor/frontend evidence passed in the isolated worker. A
   licensed WPBakery editor environment has not been documented.
-- The full declared WordPress/PHP support matrix and manual browser gate are
-  pending. The 5.3/PHP 7.0 functional smoke and single-site rollback rehearsal
-  are recorded above, but additional fresh matrix provisioning was blocked by
-  exhausted Sandbox Docker address pools.
+- The configured WP 6.8/PHP 8.3 and current/PHP 8.3 contract rows passed, and
+  the WP 5.3/PHP 7.0 floor has a functional smoke. The full declared support
+  matrix and manual browser gate remain pending; the floor smoke is not a full
+  modern PHPUnit certification.
 - The 14-day staging soak has not started.
 - Block API v1 is retained for the declared WordPress 5.3 floor. Plugin Check
   reports two `block_api_version_too_low` errors; the documented v2 (5.6+) and
