@@ -48,6 +48,12 @@ nor double-encoded permalink placeholder appeared. Cache-busted response-body
 SHA-256 was
 `fd195ec0f9613c1991dbfa2838c4421addf1a4e2771ced0272e6870e482f221e`.
 
+The probe emitted the following JSON during that observation:
+
+```json
+{"ok":true,"observed_at":"2026-08-12T09:04:40.169Z","url":"https://default-html-social-share-buttons.sandbox.asb.bd/hssb-staging-soak-fixture/","status":200,"checks":{"http_ok":true,"marker_present":true,"share_wrapper_present":true,"share_link_present":true,"no_raw_placeholder":true,"no_encoded_placeholder":true},"body_sha256":"fd195ec0f9613c1991dbfa2838c4421addf1a4e2771ced0272e6870e482f221e"}
+```
+
 The in-app browser independently loaded the final candidate:
 
 - Desktop 1280×720: three wrappers, 27 links, 27 painted buttons, no raw or
