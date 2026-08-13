@@ -9,7 +9,7 @@ hashes, browser versions, and remaining operational gates are recorded in
 
 | Surface | Current declaration | Evidence boundary |
 |---|---|---|
-| WordPress | 5.3 or newer; tested-up-to header 7.0 | Fresh WP 5.3/PHP 7.0 activation and legacy-shortcode smoke; modern contract suites on current WordPress |
+| WordPress | 5.3 or newer; tested-up-to header 7.1 | Fresh WP 5.3/PHP 7.0 activation and legacy-shortcode smoke; modern contract suites on current WordPress |
 | PHP | 7.0 or newer | PHP 7.0 syntax/bootstrap floor plus PHP 7.4, 8.0, 8.3, and 8.5 workflow rows |
 | Browsers | Modern Chrome, Firefox, Edge, WebKit, and Safari evidence | Automated desktop/mobile fixtures are not universal theme or physical-device certification |
 | Block editor | Dynamic Social Share and Social Links blocks | API v1 is retained for WordPress 5.3; two corresponding Plugin Check findings are accepted |

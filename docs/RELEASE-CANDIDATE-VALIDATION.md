@@ -1,14 +1,15 @@
 # 3.0 release-candidate validation record
 
 This is an evidence ledger, not release approval.  It must not be read as
-authority to create a tag, change the stable version, upload to WordPress.org,
-publish an article, or deploy an archive.
+authority to create a tag, upload to WordPress.org, publish an article, or
+deploy an archive. Candidate metadata is aligned before the soak; that is not
+publication.
 
 ## Support declaration and evidence scope
 
 The distributed plugin currently declares **WordPress 5.3+** and **PHP 7.0+**
 in both the plugin header and `readme.txt`; Composer also requires PHP 7.0+.
-`readme.txt` declares “Tested up to: 7.0”. These are repository declarations,
+`readme.txt` declares “Tested up to: 7.1”. These are repository declarations,
 not a statement that this candidate has been manually validated in every
 intermediate WordPress/PHP/browser combination.
 
@@ -17,9 +18,47 @@ The tracked GitHub workflow defines these automated combinations:
 | Scope | Configured combinations | What the workflow does not establish |
 |---|---|---|
 | PHP syntax/bootstrap | PHP 7.0, 7.4, 8.0, 8.3, 8.5 | Browser or builder-editor behavior |
-| WordPress activation | WP 5.3/PHP 7.0; WP 6.8/PHP 8.3; `latest`/PHP 8.3 | Full PHPUnit contracts for the WP 5.3 row |
+| WordPress functional smoke | WP 5.3/PHP 7.0; WP 6.8/PHP 8.3; `latest`/PHP 8.3 | Full PHPUnit contracts for the WP 5.3 row |
 | WordPress contracts | WP 6.8/PHP 8.3 and `latest`/PHP 8.3 | A real Elementor or WPBakery editor |
 | Archive | PHP 8.3 with Node 22, pnpm 11.5.2, Composer, and the deterministic Node archive builder | A staging soak, rollback rehearsal, or cross-browser review |
+
+## 2026-08-13 full post-2.2.6 release-diff audit
+
+The complete `v2.2.6..latest` change set was inventoried and independently
+reviewed across PHP/bootstrap/storage, JavaScript/admin/blocks, security,
+packaging, CI, documentation, and test coverage. The audit found no reportable
+security vulnerability. It did find release-changing defects, so staging
+attempt 01 was reset rather than allowing known-bad bytes to accrue time.
+
+Corrected candidate work now includes:
+
+- settings saves retain a custom template while its network panel is disabled,
+  and replace core-owned fields without deleting opaque top-level or nested
+  extension data;
+- canonical service composition again occurs at the published `init` priority,
+  allowing icon-set callbacks registered during `plugins_loaded` to participate;
+- PHP 8.4+ implicit-nullability deprecations are removed while distributed PHP
+  remains valid at the declared PHP 7.0 floor;
+- current POT/PO/MO catalogs and two block-editor JSON catalogs are generated
+  reproducibly, and French builder tests no longer depend on translated labels;
+- share anchors have translated accessible names while their classes,
+  destinations, visual behavior, and wrapper structure remain stable;
+- candidate metadata is 3.0.0, preventing collision with published 2.2.6;
+- archive builds refuse overwrite, CI compares separate outputs with a real
+  production autoloader, `latest` receives CI, PHPStan/PHPCS are gated, tag
+  deployment builds the exact distribution directory, and the deploy action is
+  commit-pinned;
+- the WP 5.3/PHP 7.0 workflow smoke now covers both shortcodes, both dynamic
+  blocks, legacy symbols, profile-link storage, extension-key retention, and
+  disabled-meta placement suppression. It remains a smoke, not a claim that
+  the modern PHPUnit suite ran on PHP 7.0.
+
+Observed post-fix checks on the working tree: JavaScript lint, icon determinism,
+settings/block/localization/integration/static contracts, Composer validation,
+PHPStan and PHPCS passed; regular PHPUnit passed 173 tests / 2,305 assertions
+with one expected skip, AJAX passed 10 / 39, and the focused multisite contract
+passed 1 / 7. The corrected exact archive, clean-install/plugin check, browser
+rerun, and new staging Day 1 are recorded only after their own commands pass.
 
 The following evidence was recorded on 2026-08-11 against the candidate
 working tree immediately before its review commit. WordPress execution used
@@ -217,13 +256,13 @@ rendered five anchors with hash
 and reproduced its known double-encoded placeholder. The isolated instance,
 containers, DB volume, network, runtime/snapshots, archive server, and temporary
 fixtures were removed. This closes the local rehearsal for those predecessor
-bytes; the final approved soak candidate differs in listing/version-alignment
-files and must still pass the time-bound staging rollback.
+bytes; the corrected candidate still requires a new exact-archive rehearsal
+and the time-bound staging rollback.
 
-### 2026-08-12 approved soak candidate and Day 1 baseline
+### 2026-08-12 superseded soak candidate and Day 1 baseline
 
 After the public/release documentation and metadata alignment, two final
-archive builds were byte-identical. The approved soak candidate contains 231
+archive builds were byte-identical. The now-superseded candidate contains 231
 files, is 668,318 bytes, and has SHA-256
 `d6575a33ff120ec768b6f71a4ea29f51a083760d016cd5f9a599aa0982945b05`.
 It was installed, rather than source-linked, on the persistent Sandbox staging
@@ -232,12 +271,16 @@ per-file manifest hash matched independently between a local archive extraction
 and the installed staging tree at
 `8ede5b6e6789c218a10c8efe5f395a4db0d6b928167a4050334da2f78432c42b`.
 
-The clock started at `2026-08-12T09:04:40Z`, after the public probe, desktop
-and 390×844 browser checks, fixture-data hashes, exact-byte check, and error
-review passed. The earliest possible completion is
-`2026-08-26T09:04:40Z`. Day 1 and the pre-start bootstrap corrections are
-recorded in `docs/evidence/staging-soak/2026-08-12/day-01.md`. This begins the
-gate; it does not complete it or the staging rollback.
+Attempt 01's clock started at `2026-08-12T09:04:40Z`, after the public probe,
+desktop and 390×844 browser checks, fixture-data hashes, exact-byte check, and
+error review passed. Its former earliest completion was
+`2026-08-26T09:04:40Z`, but that timestamp is void after the reset. Day 1 and
+the pre-start bootstrap corrections are recorded in
+`docs/evidence/staging-soak-superseded/attempt-01-2026-08-12/2026-08-12/day-01.md`.
+The attempt was reset on 2026-08-13 after the release-diff audit found defects
+that require different packaged bytes and a distinct 3.0.0 version. The real
+observation remains historical evidence but cannot count toward a corrected
+candidate soak.
 
 ## Implementation and contract evidence present in the working tree
 
@@ -311,7 +354,7 @@ evidence for this uncommitted candidate.
 | PHP quality | PHP syntax, PHPStan and PHPCS passed on PHP 8.3.33 on 2026-08-12 | Declared PHP/WP support matrix remains required |
 | Regular, AJAX, and multisite WordPress contracts | Passed on the current working tree with the 2026-08-12 summaries above | Repeat for the finally approved candidate revision if it changes |
 | Plugin Check | Current clean archive: two accepted API-version findings and 57 warnings; no baseline | API v1 is retained with the WordPress 5.3 floor under the 2026-08-12 compatibility decision |
-| Archive reproducibility and fresh-install activation | Approved `d657...5b05` soak candidate reproduced byte-for-byte, passed the 231-file distribution contract, and is exact-byte installed/rendering on WP 7.0.3/PHP 8.3.33; the preceding `1a8...23dc` bytes passed the isolated rollback repeat | Complete the day-7 and final staging rollback with the approved soak bytes |
+| Archive reproducibility and fresh-install activation | Superseded `d657...5b05` bytes reproduced and activated; their evidence is retained but cannot qualify the corrected candidate | Rebuild the corrected exact 3.0.0 archive twice, activate it cleanly, then complete its day-7 and final staging rollback |
 | Browser matrix evidence | Chrome, Firefox, Edge, and Playwright WebKit fixture rendering/non-overlap passed after the responsive correction; the 390-pixel collision is now an executable assertion; Safari 26.6 desktop and 390×844 Responsive Design Mode captures are recorded | Physical iOS and high-contrast review are scope limits, not claims made by this record |
 | Elementor and WPBakery | Elementor editor/frontend passed; WPBakery frontend passed and its `vc_map` contract matches official documentation | Repeat the repository contracts after further integration changes |
 
@@ -328,9 +371,10 @@ option. It does not replace the required staging rollback rehearsal during the
 
 ## Fourteen-day staging soak
 
-The soak started at `2026-08-12T09:04:40Z` with the approved candidate and
-staging environment recorded above. It has not passed and cannot pass before
-`2026-08-26T09:04:40Z`. Record the
+Attempt 01 started at `2026-08-12T09:04:40Z` and was reset on 2026-08-13 when
+the release audit required candidate-byte changes. The corrected 3.0.0 soak is
+not started and has no completion timestamp. Once its exact archive is
+installed and Day 1 passes, record the
 candidate SHA-256, WordPress/PHP/theme/plugin versions, option checksum,
 fixture IDs, rollback archive checksum, and daily evidence. Review errors,
 share URLs, HTTP failures, placements, cache behavior, persisted-data drift,
@@ -359,11 +403,12 @@ time.
   certification. This record's Safari evidence is limited to desktop/Responsive
   Design Mode captures; physical iOS and high-contrast modes are outside its
   scope.
-- The 14-day staging soak is in progress; Day 1 passed. The day-7 dry rollback,
-  remaining daily evidence, and final post-day-14 rollback are still required.
+- Staging attempt 01 is superseded after one real Day 1. The corrected 3.0.0
+  soak has not started; a new exact installation, fourteen daily records, the
+  day-7 dry rollback, and final post-day-14 rollback are required.
 - Block API v1 is retained for the declared WordPress 5.3 floor. The release
   owner accepted the two `block_api_version_too_low` findings on 2026-08-12;
   no baseline exists. The documented v2 (5.6+) and v3 (6.3+) requirements mean
   this cannot be resolved by a metadata-only change without dropping support.
-- The version and stable tag remain 2.2.6. Do not change them until every
-  required gate is green and a release owner approves the candidate.
+- Candidate version and stable tag are aligned at 3.0.0 to prevent collision
+  with published 2.2.6. This does not authorize a tag, upload, or release.

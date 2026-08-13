@@ -3,13 +3,13 @@ Contributors: alimuzzamanalim
 Author: Md. Alimuzzaman Alim
 Tags: social share buttons, social sharing, gutenberg block, social media, share icons
 Requires at least: 5.3
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 2.2.6
+Stable tag: 3.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Fast, privacy-friendly share buttons and profile links for WordPress, with blocks, widgets, builder integrations, local icons, and no tracking by default.
+Fast, privacy-friendly WordPress share buttons and profile links with blocks, widgets, builder integrations, local icons, and no tracking.
 
 == Description ==
 
@@ -116,13 +116,16 @@ provenance record.
 
 == Changelog ==
 
-= Unreleased =
+= 3.0.0 =
 * **REWRITE**: Moved runtime ownership to a canonical namespaced service graph while retaining the documented 2.2.6 public and storage compatibility surfaces.
 * **FEATURE**: Added optional global social profile and email links with per-placement inherit or suppress controls.
 * **FEATURE**: Added a dynamic Social Links block and complete Bootstrap Solid and Tabler Outline SVG sets.
 * **FIX**: Floating left/right rails now become centered, wrapping rows at viewport widths of 600px and below.
 * **FIX**: Saved widget network selections render correctly while preserving existing widget data.
-* **IMPROVEMENT**: Added reproducible icon generation, production-autoloader checks, deterministic archives, and broader integration/browser contracts.
+* **FIX**: Settings saves preserve collapsed custom share templates and extension-owned option fields.
+* **FIX**: Third-party icon sets registered on `plugins_loaded` are available when the canonical runtime is composed.
+* **FIX**: Share-button links now expose translated accessible names, and PHP 8.4+ no longer reports implicit-nullability deprecations.
+* **IMPROVEMENT**: Added reproducible icon and translation generation, production-autoloader checks, non-overwriting deterministic archives, and broader integration/browser contracts.
 * **COMPATIBILITY**: Retained Block API v1 for WordPress 5.3. The two corresponding Plugin Check findings are documented and accepted; no clean Plugin Check result is claimed.
 
 = 2.2.6 =
