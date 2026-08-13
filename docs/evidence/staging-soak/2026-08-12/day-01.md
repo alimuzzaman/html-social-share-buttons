@@ -82,3 +82,5 @@ as soak failures or elapsed evidence:
 The clock began only after the final archive, exact installed-tree manifest,
 public probe, desktop/mobile rendering, persisted hashes, and error review all
 passed.
+
+The authoritative machine-readable record is the adjacent `day-01.json` file.

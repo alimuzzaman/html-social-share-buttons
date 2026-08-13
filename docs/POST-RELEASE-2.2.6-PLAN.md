@@ -25,7 +25,8 @@ tag, WordPress.org upload, production deployment, or version change.
 
 ## Remaining release operations
 
-- [ ] Freeze and approve the exact candidate archive for staging.
+- [x] Freeze and install the exact candidate archive on staging; Day 1 began
+      at `2026-08-12T09:04:40Z`.
 - [ ] Complete 14 consecutive real soak days with recorded daily evidence.
 - [ ] Complete the day-7 dry rollback and final staging rollback against the
       exact candidate and published 2.2.6 archives.

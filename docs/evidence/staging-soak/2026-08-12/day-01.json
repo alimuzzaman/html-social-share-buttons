@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "day": 1,
+  "date": "2026-08-12",
+  "observed_at": "2026-08-12T09:04:40.169Z",
+  "candidate_sha256": "d6575a33ff120ec768b6f71a4ea29f51a083760d016cd5f9a599aa0982945b05",
+  "installed_manifest_sha256": "8ede5b6e6789c218a10c8efe5f395a4db0d6b928167a4050334da2f78432c42b",
+  "candidate_git_revision": "78c7f2344f01620441528b00707bb77152de476c",
+  "runtime": {
+    "wordpress": "7.0.3",
+    "php": "8.3.33",
+    "active_plugin_version": "2.2.6"
+  },
+  "fixture": {
+    "url": "https://default-html-social-share-buttons.sandbox.asb.bd/hssb-staging-soak-fixture/",
+    "probe": {
+      "ok": true,
+      "observed_at": "2026-08-12T09:04:40.169Z",
+      "url": "https://default-html-social-share-buttons.sandbox.asb.bd/hssb-staging-soak-fixture/",
+      "status": 200,
+      "checks": {
+        "http_ok": true,
+        "marker_present": true,
+        "share_wrapper_present": true,
+        "share_link_present": true,
+        "no_raw_placeholder": true,
+        "no_encoded_placeholder": true
+      },
+      "body_sha256": "fd195ec0f9613c1991dbfa2838c4421addf1a4e2771ced0272e6870e482f221e"
+    }
+  },
+  "persisted_hashes": {
+    "settings": "9c6286ffade97ba5926dafef4c328f697a4ff0e0df300e5d6c4fb41d31748aaf",
+    "disabled_share": "36761a168eb691d20edf88ace3d06fb63ec9112f257ac2f20fce1afdc331b40b",
+    "elementor": "2cb96b33cbd7c1b5080d4666f71740e5257c777e7322d0f455ad33d7359a6388",
+    "wpbakery": "d92ebdfe82b849bdc64686a4ea341e14bfa2fb668d6228bb7f34ac67059c713c",
+    "content": "a00f5e609c577e8cd87b34a79b04d71026a2e8efcd34dd0beda4140c2b910565",
+    "schema_version": "absent"
+  },
+  "error_snapshot": {
+    "source": "dedicated WordPress PHP container and nginx reviewed window",
+    "plugin_errors": 0,
+    "http_5xx": 0
+  },
+  "browser_reviewed": true,
+  "rollback": null,
+  "anomalies": [],
+  "disposition": "pass"
+}

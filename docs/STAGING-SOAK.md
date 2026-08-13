@@ -55,7 +55,8 @@ node scripts/staging-soak-probe.js \
 
 The bounded probe requires a successful HTTP response, the fixture marker, a
 rendered `zmshbt` wrapper and share link, and absence of raw or double-encoded
-permalink placeholders. It emits timestamped JSON and a response-body hash.
+permalink placeholders. Redirects are rejected so another page cannot satisfy
+the staging check. It emits timestamped JSON and a response-body hash.
 
 ## Daily record template
 
@@ -77,6 +78,43 @@ records:
 - Anomalies: none / details
 - Disposition: pass / pause / reset
 ```
+
+Each Markdown record must have an adjacent authoritative JSON sidecar with the
+same base name, matching the schema used by `day-01.json`. The validator reads
+the JSON directly; it never interprets Markdown as machine evidence. Validate
+existing records offline with:
+
+```sh
+node scripts/validate-staging-soak-evidence.js
+```
+
+After writing Day N, pass `--require-through N` so a missing daily record fails.
+The validator enforces the recorded candidate/tree identities, 24-hour UTC
+windows, contiguous records, runtime and persistence baselines, probe checks,
+zero relevant errors/5xx responses, browser days, and the Day-7 rollback.
+Response body hashes are recorded but may vary when otherwise valid markup or
+cache state changes.
+
+Day 14 remains a normal daily observation inside its elapsed window. Record the
+required post-threshold rollback separately at
+`docs/evidence/staging-soak/YYYY-MM-DD/final-rollback.md` plus an adjacent
+`final-rollback.json`, with `kind: "final_rollback"` in the JSON. Only after
+that operation succeeds, run:
+
+```sh
+node scripts/validate-staging-soak-evidence.js --require-through 14 --completion
+```
+
+Completion mode requires exactly fourteen valid daily records plus one valid
+final rollback observed no earlier than `2026-08-26T09:04:40Z`. It never treats
+Day 14 alone as completion.
+
+Day-7 and final JSON evidence must identify the intermediate published
+archive SHA-256 (`f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941`),
+its activation/version, full observed probe JSON, and persistence hashes. It
+must then contain the exact restored candidate archive/tree identities, full
+passing restored-probe JSON, and restored persistence hashes equal to the Day 1
+baseline. Rollback completion booleans alone are insufficient.
 
 ## Rollback sequence
 

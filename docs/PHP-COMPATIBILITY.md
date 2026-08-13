@@ -1,7 +1,8 @@
 # PHP compatibility
 
 - **Minimum PHP:** 7.0
-- **Current plugin metadata:** 2.2.6 pending release-owner version alignment
+- **Current candidate metadata:** internally aligned at 2.2.6; any post-soak
+  release-version change remains release-owner work
 
 The plugin header and Composer manifest both require PHP 7.0 or newer. The
 canonical rewrite deliberately avoids typed properties, union types,
