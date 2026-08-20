@@ -66,6 +66,8 @@ jobs:
           php-version: '8.3'
           coverage: none
       - run: pnpm install --frozen-lockfile
+      - name: Build the production autoloader
+        run: composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative
       - run: pnpm run lint:js
       - run: pnpm run icons:check
       - run: pnpm run settings:check
@@ -237,12 +239,11 @@ jobs:
           php-version: '8.3'
           coverage: none
           tools: composer:v2
-      - name: Install WP-CLI and archive command
+      - name: Install WP-CLI
         run: |
           curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o "$RUNNER_TEMP/wp"
           chmod +x "$RUNNER_TEMP/wp"
           sudo mv "$RUNNER_TEMP/wp" /usr/local/bin/wp
-          wp package install wp-cli/dist-archive-command:v3.2.0
       - run: pnpm install --frozen-lockfile
       - name: Build the production autoloader
         run: composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative
