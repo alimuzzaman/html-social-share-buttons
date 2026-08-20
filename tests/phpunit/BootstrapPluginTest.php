@@ -4,6 +4,10 @@ use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Extension\ExtensionHooks;
 
 final class BootstrapPluginTest extends WP_UnitTestCase {
+	public function testLegacyIconSetHookRegisteredDuringPluginsLoadedRunsBeforeComposition(): void {
+		$this->assertTrue( ! empty( $GLOBALS['hssb_test_plugins_loaded_iconset_hook'] ) );
+	}
+
 	public function testCanonicalKernelBootsWithoutWritingAMigration(): void {
 		$runtime = LegacyApi::plugin();
 

@@ -39,14 +39,26 @@ if ( ! is_array( $metadata ) || 'html-social-share/social-share' !== $metadata['
 	exit( 1 );
 }
 
+if ( 3 !== $metadata['apiVersion'] ) {
+	echo "Block integration contract failed: maintained share block must use Block API v3.\n";
+	exit( 1 );
+}
+
 if ( ! isset( $metadata['attributes']['profile_links_mode'] ) || 'inherit' !== $metadata['attributes']['profile_links_mode']['default'] ) {
 	echo "Block integration contract failed: share block profile-link mode metadata.\n";
 	exit( 1 );
 }
 
-if ( false === strpos( $script, 'blocks.registerBlockType( metadata.name' ) || false === strpos( $script, "import metadata from '../../../../block.json'" ) || false === strpos( $script, 'selected.length === 1' ) || false === strpos( $script, 'Inherit from plugin settings' ) || false === strpos( $script, 'hssb-block-preview__icons' ) || false === strpos( $script, 'supportedTypes' ) || false === strpos( $script, "editorData( 'hssbShareBlock' )" ) ) {
+if ( false === strpos( $script, 'blocks.registerBlockType( metadata.name' ) || false === strpos( $script, "import metadata from '../../../../block.json'" ) || false === strpos( $script, 'selected.length === 1' ) || false === strpos( $script, 'Inherit from plugin settings' ) || false === strpos( $script, 'hssb-block-preview__icons' ) || false === strpos( $script, 'supportedTypes' ) || false === strpos( $script, "editorData( 'hssbShareBlock' )" ) || false === strpos( $script, 'blockEditor.useBlockProps' ) || false === strpos( $script, 'legacyIconsets' ) ) {
 	echo "Block integration contract failed: JavaScript registration.\n";
 	exit( 1 );
+}
+
+foreach ( array( 'supportedBlockApiVersion', "version_compare( (string) \$wordpressVersion, '6.3', '>=' )", "'apiVersion'" ) as $needle ) {
+	if ( false === strpos( $source, $needle ) ) {
+		echo 'Block integration contract failed: supported-version API fallback (' . $needle . ").\n";
+		exit( 1 );
+	}
 }
 
 if ( false === strpos( $script, 'profile_links_mode' ) || false === strpos( $script, 'Hide profile links in this block' ) ) {
@@ -54,11 +66,18 @@ if ( false === strpos( $script, 'profile_links_mode' ) || false === strpos( $scr
 	exit( 1 );
 }
 
+foreach ( array( 'Profile links after share buttons', 'selectedProfiles', 'zmshbt-profile-separator', 'hssb-block-preview__profile-icon' ) as $needle ) {
+	if ( false === strpos( $script, $needle ) ) {
+		echo 'Block integration contract failed: mixed-link preview (' . $needle . ").\n";
+		exit( 1 );
+	}
+}
+
 if (
 	! is_array( $socialLinksMetadata ) ||
 	'html-social-share/social-links' !== $socialLinksMetadata['name'] ||
 	'zm-sh-social-links-block' !== $socialLinksMetadata['editorScript'] ||
-	1 !== $socialLinksMetadata['apiVersion'] ||
+	3 !== $socialLinksMetadata['apiVersion'] ||
 	array( 'title', 'iconset', 'iconset_type', 'profile_links_mode', 'profile_links' ) !== array_keys( $socialLinksMetadata['attributes'] )
 ) {
 	echo "Block integration contract failed: social links block metadata.\n";
@@ -73,6 +92,8 @@ foreach (
 		'profile_links_mode',
 		'profileLinksForPreview',
 		'hssb-social-links-block-preview__icons',
+		'blockEditor.useBlockProps',
+		'legacyIconsets',
 		'save() {',
 		'return null;',
 	) as $needle

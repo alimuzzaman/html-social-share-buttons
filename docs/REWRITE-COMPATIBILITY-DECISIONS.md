@@ -35,6 +35,16 @@ release approval or completed operational evidence. See
   historical global profile-link output. Only a persisted `none` value removes
   profile links at that one automatic placement; all-inherit values are omitted
   so a routine save does not add storage to unchanged installations.
+- `show_for_current_user`, `show_for_logged_in_user`, and
+  `show_for_logged_out_user` are additive booleans shared by automatic and
+  explicit rendering paths. Missing keys decode as `true`; existing sites keep
+  every audience visible until an administrator explicitly changes a setting.
+- A genuinely missing `zm_shbt_fld` option uses `bootstrap-solid` as the
+  new-install icon default. Existing option arrays that predate an `iconset`
+  key retain the historical `default` behavior, and explicit `default` values
+  are never migrated. Fresh selectors omit that retired choice; a selected
+  legacy value is reintroduced only where needed to preserve editing and save
+  behavior.
 - Historical constants, globals, functions, classes, interfaces, public
   methods/properties, hooks, asset handles, builder identifiers, stored
   builder representations, shortcode aliases, and documented HTML classes
@@ -100,25 +110,19 @@ release approval or completed operational evidence. See
 
 ### Block API-version disposition
 
-- Both canonical metadata files deliberately retain `apiVersion: 1`. The
-  declared WordPress floor is 5.3, while the [WordPress Block API-version
-  reference](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-api-versions/)
-  states that API version 2 requires WordPress 5.6 or later and API version 3
-  requires WordPress 6.3 or later. The [block metadata
-  reference](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/#api-version)
-  also records version 1 as the default and version 3 as introduced in 6.3.
-- Raising the metadata to version 2 or 3 would make the canonical editor
-  definition incompatible with the declared 5.3 floor. A conditional server
-  override is not a safe substitute: the JavaScript editor imports the same
-  canonical `block.json`, and a server/client metadata split would introduce a
-  second block definition and untested saved-content behavior. The blocks are
-  dynamic, so an API-version increase would not improve their PHP-owned
-  frontend renderer.
-- The release owner selected the compatibility-preserving disposition on
-  2026-08-12: retain API v1 and the WordPress 5.3 floor, and accept the two
-  Plugin Check findings with this documented justification. No baseline is
-  created. Raising the floor and API version remains a future breaking-support
-  decision, not a metadata-only correction.
+- Both canonical metadata files declare `apiVersion: 3`. The [WordPress Block
+  API-version reference](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-api-versions/)
+  records API v3 as available from WordPress 6.3; the editor roots therefore use
+  `useBlockProps()` when modern Core selects v3.
+- The WordPress 5.3 floor remains supported without loading unsupported v3
+  semantics. On WordPress 5.3-6.2, the server uses its manual metadata-reading
+  registration (whose Core default is API v1), localizes API v1 to the editor,
+  and the JavaScript registration overrides imported metadata accordingly.
+- This split is request-time compatibility behavior, not a second stored block
+  format: both blocks remain dynamic, retain the same names and attributes, and
+  serialize no frontend markup. WordPress 7.1 final forced-iframe tests exercise
+  v3 insertion, Inspector changes, save/reload persistence, styles, icons, and
+  canonical frontend URLs.
 
 ## Assets, icon metadata, and third-party extensions
 
@@ -130,6 +134,10 @@ release approval or completed operational evidence. See
   `assets/iconsets/` were removed. New Bootstrap and Tabler vector assets,
   generator records, and licence material remain in their dedicated assets
   directories.
+- The `default` icon-set ID, files, asset URLs, AJAX lookups, and invalid-value
+  fallback remain compatibility surfaces. Hiding the pack from a fresh choice
+  list does not unregister it or change output for stored blocks, widgets,
+  shortcodes, Elementor/WPBakery data, or direct PHP calls.
 - The existing `zm_sh_add_iconset` route is retained. Legacy add-ons are
   converted into canonical registries before schema construction, and their
   external filesystem/public asset locations are validated together. A new
@@ -166,11 +174,13 @@ release approval or completed operational evidence. See
   and post-meta data without reverse migration. That remains a design claim
   until a documented rehearsal passes.
 - The declared floor remains WordPress 5.3 and PHP 7.0. `readme.txt` declares
-  testing through WordPress 7.0; this is not browser/builder certification.
+  testing through WordPress 7.1 based on the recorded final-version compatibility run;
+  this is not universal theme, browser, or builder certification.
 - Historical Default PNG provenance is an accepted compatibility exception.
   Browser parity, Elementor, and rollback evidence are recorded in the release
   ledger; unavailable paid-builder editors use their documented API contract.
   The time-bound staging soak remains a separate release-operation gate.
-- `3.0.0-rc.1` is only a future candidate label. Header version and stable tag
-  remain 2.2.6 until every required gate is evidenced and a release owner
-  authorizes the change.
+- Candidate metadata is aligned at 3.0.0 before the exact archive soak so the
+  candidate cannot collide with the published 2.2.6 rollback release. This is
+  not a tag or publication authorization; every required gate and release-owner
+  approval still apply.

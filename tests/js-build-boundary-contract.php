@@ -131,7 +131,8 @@ foreach ( $iterator as $file ) {
 
 	// Leaf modules may expose behavior only through a bundled side effect.
 	if ( false === strpos( $file->getPathname(), DIRECTORY_SEPARATOR . 'block' . DIRECTORY_SEPARATOR ) &&
-		false === strpos( $file->getPathname(), DIRECTORY_SEPARATOR . 'wpbakery' . DIRECTORY_SEPARATOR ) ) {
+		false === strpos( $file->getPathname(), DIRECTORY_SEPARATOR . 'wpbakery' . DIRECTORY_SEPARATOR ) &&
+		false === strpos( $file->getPathname(), DIRECTORY_SEPARATOR . 'builders' . DIRECTORY_SEPARATOR ) ) {
 		$failures[] = 'JavaScript source is not a build-time module: ' . str_replace( $root . '/', '', $file->getPathname() );
 	}
 }

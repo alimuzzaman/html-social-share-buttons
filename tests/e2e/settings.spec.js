@@ -1,16 +1,67 @@
 const { test, expect } = require( '@playwright/test' );
-
-async function login( page ) {
-	await page.goto( '/wp-login.php' );
-	await page.locator( '#user_login' ).fill( process.env.WP_ADMIN_USER || 'admin' );
-	await page.locator( '#user_pass' ).fill( process.env.WP_ADMIN_PASSWORD || 'admin' );
-	await Promise.all( [
-		page.waitForURL( /\/wp-admin\// ),
-		page.locator( '#wp-submit' ).click(),
-	] );
-}
+const { login } = require( './helpers/wordpress' );
 
 test.describe( 'Settings accessibility', () => {
+	test( 'persists the three viewer audience booleans', async ( { page } ) => {
+		test.setTimeout( 60_000 );
+		await login( page );
+		await page.goto( '/wp-admin/options-general.php?page=zm_shbt_opt' );
+		const iconset = page.locator( 'select#iconset' );
+		if ( ( await iconset.inputValue() ) === 'default' ) {
+			await iconset.selectOption( 'bootstrap-solid' );
+			await saveSettings( page );
+			await page.reload();
+		}
+		await expect( iconset ).toHaveValue( 'bootstrap-solid' );
+		await expect( iconset.locator( 'option[value="default"]' ) ).toHaveCount( 0 );
+
+		const currentUser = page.getByLabel(
+			'Current user (content author)',
+			{ exact: true }
+		);
+		const loggedInUser = page.getByLabel( 'Other logged-in users', {
+			exact: true,
+		} );
+		const loggedOutUser = page.getByLabel( 'Logged-out users', {
+			exact: true,
+		} );
+		await expect( currentUser ).toBeChecked();
+		await expect( loggedInUser ).toBeChecked();
+		await expect( loggedOutUser ).toBeChecked();
+
+		await currentUser.uncheck();
+		await loggedInUser.uncheck();
+		await loggedOutUser.uncheck();
+		try {
+			await saveSettings( page );
+			await page.reload();
+
+			await expect(
+				page.getByLabel( 'Current user (content author)', {
+					exact: true,
+				} )
+			).not.toBeChecked();
+			await expect(
+				page.getByLabel( 'Other logged-in users', { exact: true } )
+			).not.toBeChecked();
+			await expect(
+				page.getByLabel( 'Logged-out users', { exact: true } )
+			).not.toBeChecked();
+		} finally {
+			await page.goto( '/wp-admin/options-general.php?page=zm_shbt_opt' );
+			await page
+				.getByLabel( 'Current user (content author)', { exact: true } )
+				.check();
+			await page
+				.getByLabel( 'Other logged-in users', { exact: true } )
+				.check();
+			await page
+				.getByLabel( 'Logged-out users', { exact: true } )
+				.check();
+			await saveSettings( page );
+		}
+	} );
+
 	test( 'opens and closes the generated-code dialog with keyboard focus', async ( { page } ) => {
 		await login( page );
 		await page.goto( '/wp-admin/options-general.php?page=zm_shbt_opt' );
@@ -40,3 +91,18 @@ test.describe( 'Settings accessibility', () => {
 
 	} );
 } );
+
+async function saveSettings( page ) {
+	const response = page.waitForResponse( ( candidate ) =>
+		candidate.url().includes( '/wp-admin/admin-ajax.php' ) &&
+		candidate.request().postData()?.includes( 'zm_sh_save_settings' )
+	);
+	await page.locator( '#submit' ).click();
+	expect( ( await response ).ok() ).toBeTruthy();
+	await expect(
+		page.locator( '.components-snackbar__content' ).getByText(
+			'Settings saved.',
+			{ exact: true }
+		)
+	).toBeVisible();
+}

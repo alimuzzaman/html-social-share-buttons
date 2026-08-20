@@ -3,6 +3,7 @@
 namespace Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api;
 
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\Plugin;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 
 /**
  * Installs public legacy names after the canonical kernel is already booted.
@@ -40,25 +41,28 @@ final class LegacyApiRegistrar {
 	private static function prepareGlobals() {
 		if ( ! isset( $GLOBALS['zm_sh_default_options'] ) || ! is_array( $GLOBALS['zm_sh_default_options'] ) ) {
 			$GLOBALS['zm_sh_default_options'] = array(
-				'title' => 'Share this with your friends',
-				'iconset' => 'default',
-				'use_port' => false,
-				'auto_hide_btn' => false,
-				'show_in' => array(
-					'show_left' => true,
-					'show_right' => false,
+				'title'                    => 'Share this with your friends',
+				'iconset'                  => IconSetSelectionPolicy::NEW_DEFAULT_ID,
+				'use_port'                 => false,
+				'auto_hide_btn'            => false,
+				'show_for_current_user'    => true,
+				'show_for_logged_in_user'  => true,
+				'show_for_logged_out_user' => true,
+				'show_in'                  => array(
+					'show_left'        => true,
+					'show_right'       => false,
 					'show_before_post' => false,
-					'show_after_post' => true,
+					'show_after_post'  => true,
 				),
-				'iconset_type' => 'square',
-				'icons' => array(
-					'facebook' => 1,
-					'x' => 1,
-					'linkedin' => 1,
+				'iconset_type'             => 'square',
+				'icons'                    => array(
+					'facebook'  => 1,
+					'x'         => 1,
+					'linkedin'  => 1,
 					'pinterest' => 1,
-					'telegram' => 0,
-					'bluesky' => 0,
-					'mail' => 1,
+					'telegram'  => 0,
+					'bluesky'   => 0,
+					'mail'      => 1,
 				),
 			);
 		}

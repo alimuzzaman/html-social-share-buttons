@@ -9,6 +9,14 @@ if ( ! is_file( $autoload ) ) {
 }
 require_once $autoload;
 
+if ( ! function_exists( 'sanitize_key' ) ) {
+	function sanitize_key( $key ) {
+		$key = strtolower( (string) $key );
+
+		return preg_replace( '/[^a-z0-9_\-]/', '', $key );
+	}
+}
+
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsRequestMapper;
@@ -20,6 +28,9 @@ $input = array(
 	'show_in' => array( 'show_left' => '1' ),
 	'icons' => array( 'facebook' => '1', 'twitter' => '1' ),
 	'use_port' => '1',
+	'show_for_current_user' => '0',
+	'show_for_logged_in_user' => '1',
+	'show_for_logged_out_user' => '0',
 );
 $canonical = $mapper->toCanonical( $input );
 if ( true !== $canonical['placements'][ Placement::LEFT ] || '1' !== $canonical['networks']['x'] ) {
@@ -49,6 +60,11 @@ $settings = new Settings(
 	false,
 	false,
 	true,
+	false,
+	array(),
+	array(),
+	false,
+	true,
 	false
 );
 $stored = $mapper->toStoredSubmission( $settings, $input );
@@ -58,6 +74,9 @@ $expected = array(
 	'show_in' => array( 'show_left' => '1' ),
 	'icons' => array( 'facebook' => '1', 'twitter' => '1' ),
 	'use_port' => true,
+	'show_for_current_user' => false,
+	'show_for_logged_in_user' => true,
+	'show_for_logged_out_user' => false,
 );
 if ( $expected !== $stored ) {
 	echo "Settings form mapper stored-shape contract failed.\n";

@@ -78,6 +78,26 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		$this->assertMatchesRegularExpression( '/class=[\'"]twitter[\'"]/', $output );
 	}
 
+	public function testWidgetHidesLegacyDefaultForNewInstancesButRetainsStoredSelection(): void {
+		delete_option( 'zm_shbt_fld' );
+		$widget = $this->widget();
+
+		ob_start();
+		$widget->form( array() );
+		$newForm = (string) ob_get_clean();
+		$this->assertStringContainsString( 'value="bootstrap-solid"', $newForm );
+		$this->assertStringNotContainsString( 'value="default"', $newForm );
+
+		ob_start();
+		$widget->form( array( 'iconset' => 'default' ) );
+		$legacyForm = (string) ob_get_clean();
+		$this->assertMatchesRegularExpression( '/value="default"\s+selected=/', $legacyForm );
+		$this->assertStringContainsString(
+			__( 'Default (legacy)', 'html-social-share-buttons' ),
+			$legacyForm
+		);
+	}
+
 	public function testWidgetCanPersistAndApplyTheAdditiveProfileLinkMode(): void {
 		update_option( 'zm_shbt_fld', array( 'profile_links' => array( 'facebook' => 'https://facebook.com/example' ) ) );
 		$widget = $this->widget();

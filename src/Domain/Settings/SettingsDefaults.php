@@ -4,6 +4,8 @@ declare( strict_types=1 );
 
 namespace Alimuzzaman\HtmlSocialShareButtons\Domain\Settings;
 
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
+
 final class SettingsDefaults {
 	private function __construct() {
 	}
@@ -11,7 +13,7 @@ final class SettingsDefaults {
 	public static function create() {
 		return new Settings(
 			'Share this with your friends',
-			'default',
+			IconSetSelectionPolicy::NEW_DEFAULT_ID,
 			'square',
 			array(
 				Placement::LEFT           => true,

@@ -302,8 +302,22 @@ if ( ! class_exists( 'zm_sh_iconset' ) ) {
 				$set = $this->create( $id );
 				if ( $set ) { $this->iconsets->$id = $set; }
 			}
+			foreach ( isset( $GLOBALS['zm_sh_iconset_classes'] ) ? (array) $GLOBALS['zm_sh_iconset_classes'] : array() as $class ) {
+				if ( ! is_string( $class ) || ! class_exists( $class ) ) { continue; }
+				$set = new $class();
+				if ( empty( $set->id ) ) { continue; }
+				$id = str_replace( '_', '-', sanitize_key( $set->id ) );
+				if ( '' !== $id ) { $this->iconsets->$id = $set; }
+			}
 		}
-		public function add_iconset( $iconset ) { return LegacyApi::delegate( 'legacyIconSets', 'register', array( $iconset ) ); }
+		public function add_iconset( $iconset ) {
+			$registered = LegacyApi::registerLegacyIconSet( $iconset );
+			if ( $registered && is_object( $iconset ) && ! empty( $iconset->id ) ) {
+				$id = str_replace( '_', '-', sanitize_key( $iconset->id ) );
+				$this->iconsets->$id = $iconset;
+			}
+			return $registered ? $iconset : false;
+		}
 		public function get_current_iconset() { return $this->get_iconset( $this->current ); }
 		public function set_current_iconset( $iconset_name ) { $this->current = (string) $iconset_name; return true; }
 		public function get_iconset( $iconset = 'default', $setAsCurrent = false ) { if ( $setAsCurrent && isset( $this->iconsets->$iconset ) ) { $this->current = (string) $iconset; } return isset( $this->iconsets->$iconset ) ? $this->iconsets->$iconset : ( isset( $this->iconsets->default ) ? $this->iconsets->default : false ); }

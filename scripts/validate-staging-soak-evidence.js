@@ -5,28 +5,69 @@
 const fs = require('fs');
 const path = require('path');
 
-const BASELINE = {
-	startedAt: '2026-08-12T09:04:40Z',
-	candidateSha256: 'd6575a33ff120ec768b6f71a4ea29f51a083760d016cd5f9a599aa0982945b05',
-	installedManifestSha256: '8ede5b6e6789c218a10c8efe5f395a4db0d6b928167a4050334da2f78432c42b',
-	candidateGitRevision: '78c7f2344f01620441528b00707bb77152de476c',
-	fixtureUrl: 'https://default-html-social-share-buttons.sandbox.asb.bd/hssb-staging-soak-fixture/',
-	persistedHashes: {
-		settings: '9c6286ffade97ba5926dafef4c328f697a4ff0e0df300e5d6c4fb41d31748aaf',
-		disabled_share: '36761a168eb691d20edf88ace3d06fb63ec9112f257ac2f20fce1afdc331b40b',
-		elementor: '2cb96b33cbd7c1b5080d4666f71740e5257c777e7322d0f455ad33d7359a6388',
-		wpbakery: 'd92ebdfe82b849bdc64686a4ea341e14bfa2fb668d6228bb7f34ac67059c713c',
-		content: 'a00f5e609c577e8cd87b34a79b04d71026a2e8efcd34dd0beda4140c2b910565',
-		schema_version: 'absent',
-	},
-};
+const PUBLISHED_ROLLBACK_SHA256 =
+	'f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941';
+const PERSISTED_HASH_KEYS = [
+	'settings',
+	'disabled_share',
+	'elementor',
+	'wpbakery',
+	'content',
+	'schema_version',
+];
 
 function argument(name) {
 	const index = process.argv.indexOf(name);
 	return index === -1 ? '' : String(process.argv[index + 1] || '');
 }
 
-function validateRecord(record, expectedDay, expectedDate, now = new Date(), finalRollback = false) {
+function loadBaseline(file) {
+	if (!fs.existsSync(file)) {
+		throw new Error(
+			`Active soak baseline is not initialized: ${file}. Install and observe the exact candidate on staging before creating baseline.json.`
+		);
+	}
+
+	const stored = JSON.parse(fs.readFileSync(file, 'utf8'));
+	const errors = [];
+	const requireValue = (condition, message) => {
+		if (!condition) errors.push(message);
+	};
+	const started = new Date(stored.started_at);
+	const hashes = stored.persisted_hashes;
+	requireValue(stored.schema_version === 1, 'baseline schema_version must be 1');
+	requireValue(stored.status === 'active', 'baseline status must be active');
+	requireValue(!Number.isNaN(started.getTime()) && stored.started_at === started.toISOString(), 'baseline started_at must be canonical UTC ISO');
+	requireValue(/^[a-f0-9]{64}$/.test(stored.candidate_sha256 || ''), 'baseline candidate SHA-256 is invalid');
+	requireValue(/^[a-f0-9]{64}$/.test(stored.installed_manifest_sha256 || ''), 'baseline installed manifest SHA-256 is invalid');
+	requireValue(/^[a-f0-9]{40}$/.test(stored.candidate_git_revision || ''), 'baseline candidate Git revision is invalid');
+	requireValue(/^https?:\/\//.test(stored.fixture_url || ''), 'baseline fixture URL is invalid');
+	requireValue(stored.runtime && typeof stored.runtime.wordpress === 'string' && stored.runtime.wordpress !== '', 'baseline WordPress runtime is missing');
+	requireValue(stored.runtime && typeof stored.runtime.php === 'string' && stored.runtime.php !== '', 'baseline PHP runtime is missing');
+	requireValue(stored.runtime && typeof stored.runtime.active_plugin_version === 'string' && stored.runtime.active_plugin_version !== '', 'baseline plugin version is missing');
+	for (const key of PERSISTED_HASH_KEYS) {
+		const value = hashes && hashes[key];
+		requireValue(
+			key === 'schema_version'
+				? value === 'absent' || /^[a-f0-9]{64}$/.test(value || '')
+				: /^[a-f0-9]{64}$/.test(value || ''),
+			`baseline persisted hash ${key} is invalid`
+		);
+	}
+	if (errors.length) throw new Error(errors.join('\n'));
+
+	return {
+		startedAt: stored.started_at,
+		candidateSha256: stored.candidate_sha256,
+		installedManifestSha256: stored.installed_manifest_sha256,
+		candidateGitRevision: stored.candidate_git_revision,
+		fixtureUrl: stored.fixture_url,
+		runtime: stored.runtime,
+		persistedHashes: hashes,
+	};
+}
+
+function validateRecord(record, expectedDay, expectedDate, now = new Date(), finalRollback = false, baseline) {
 	const errors = [];
 	const requireValue = (condition, message) => {
 		if (!condition) errors.push(message);
@@ -34,7 +75,8 @@ function validateRecord(record, expectedDay, expectedDate, now = new Date(), fin
 	const observed = new Date(record.observed_at);
 	const observedValid = !Number.isNaN(observed.getTime());
 	const observedIso = observedValid ? observed.toISOString() : '';
-	const started = new Date(BASELINE.startedAt);
+	if (!baseline) return ['active soak baseline is required'];
+	const started = new Date(baseline.startedAt);
 	const windowStart = new Date(started.getTime() + (expectedDay - 1) * 86400000);
 	const windowEnd = new Date(windowStart.getTime() + 86400000);
 	const completionThreshold = new Date(started.getTime() + 14 * 86400000);
@@ -45,7 +87,7 @@ function validateRecord(record, expectedDay, expectedDate, now = new Date(), fin
 		requireValue(probe && probeObservedValid && probe.observed_at === probeObserved.toISOString(), `${label} probe timestamp is invalid`);
 		requireValue(!requireRecordTimestamp || probe && probe.observed_at === record.observed_at, `${label} probe timestamp must match observation`);
 		requireValue(probeObservedValid && observedValid && probeObserved <= observed, `${label} probe cannot follow the record observation`);
-		requireValue(probe && probe.url === BASELINE.fixtureUrl, `${label} probe URL drifted`);
+		requireValue(probe && probe.url === baseline.fixtureUrl, `${label} probe URL drifted`);
 		requireValue(probe && probe.status >= 200 && probe.status < 300, `${label} probe HTTP status must be 2xx`);
 		for (const check of ['http_ok', 'marker_present', 'share_wrapper_present', 'share_link_present']) {
 			requireValue(probe && probe.checks && probe.checks[check] === true, `${label} probe check ${check} must pass`);
@@ -61,7 +103,7 @@ function validateRecord(record, expectedDay, expectedDate, now = new Date(), fin
 		requireValue(probe && /^[a-f0-9]{64}$/.test(probe.body_sha256), `${label} probe body SHA-256 is invalid`);
 	};
 	const validatePersistedHashes = (hashes, label) => {
-		for (const [key, value] of Object.entries(BASELINE.persistedHashes)) {
+		for (const [key, value] of Object.entries(baseline.persistedHashes)) {
 			requireValue(hashes && hashes[key] === value, `${label} persisted hash ${key} drifted`);
 		}
 	};
@@ -78,15 +120,15 @@ function validateRecord(record, expectedDay, expectedDate, now = new Date(), fin
 	);
 	requireValue(observedValid && observed <= now, 'observation cannot be in the future');
 	requireValue(observedValid && observedIso.slice(0, 10) === expectedDate, 'path date must match observed UTC date');
-	requireValue(record.candidate_sha256 === BASELINE.candidateSha256, 'candidate SHA-256 drifted');
-	requireValue(record.installed_manifest_sha256 === BASELINE.installedManifestSha256, 'installed manifest SHA-256 drifted');
-	requireValue(record.candidate_git_revision === BASELINE.candidateGitRevision, 'candidate Git revision drifted');
-	requireValue(record.runtime && record.runtime.wordpress === '7.0.3', 'WordPress runtime drifted');
-	requireValue(record.runtime && record.runtime.php === '8.3.33', 'PHP runtime drifted');
-	requireValue(record.runtime && record.runtime.active_plugin_version === '2.2.6', 'active plugin version drifted');
+	requireValue(record.candidate_sha256 === baseline.candidateSha256, 'candidate SHA-256 drifted');
+	requireValue(record.installed_manifest_sha256 === baseline.installedManifestSha256, 'installed manifest SHA-256 drifted');
+	requireValue(record.candidate_git_revision === baseline.candidateGitRevision, 'candidate Git revision drifted');
+	requireValue(record.runtime && record.runtime.wordpress === baseline.runtime.wordpress, 'WordPress runtime drifted');
+	requireValue(record.runtime && record.runtime.php === baseline.runtime.php, 'PHP runtime drifted');
+	requireValue(record.runtime && record.runtime.active_plugin_version === baseline.runtime.active_plugin_version, 'active plugin version drifted');
 
 	const probe = record.fixture && record.fixture.probe;
-	requireValue(record.fixture && record.fixture.url === BASELINE.fixtureUrl, 'fixture URL drifted');
+	requireValue(record.fixture && record.fixture.url === baseline.fixtureUrl, 'fixture URL drifted');
 	validateProbe(probe, 'fixture', true, true);
 	validatePersistedHashes(record.persisted_hashes, 'record');
 	requireValue(record.error_snapshot && record.error_snapshot.plugin_errors === 0, 'plugin error count must be zero');
@@ -97,13 +139,13 @@ function validateRecord(record, expectedDay, expectedDate, now = new Date(), fin
 	if (expectedDay === 7 || finalRollback) {
 		const label = finalRollback ? 'Final' : 'Day 7';
 		requireValue(record.rollback && record.rollback.completed === true, `${label} rollback must be complete`);
-		requireValue(record.rollback && record.rollback.published_sha256 === 'f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941', `${label} published archive SHA-256 is invalid`);
+		requireValue(record.rollback && record.rollback.published_sha256 === PUBLISHED_ROLLBACK_SHA256, `${label} published archive SHA-256 is invalid`);
 		requireValue(record.rollback && record.rollback.published_version === '2.2.6', `${label} published version is invalid`);
 		requireValue(record.rollback && record.rollback.published_activated === true, `${label} published archive must be activated`);
 		validateProbe(record.rollback && record.rollback.published_probe, `${label} published`, false);
 		validatePersistedHashes(record.rollback && record.rollback.published_persisted_hashes, `${label} published`);
-		requireValue(record.rollback && record.rollback.restored_candidate_sha256 === BASELINE.candidateSha256, `${label} candidate archive was not restored`);
-		requireValue(record.rollback && record.rollback.restored_manifest_sha256 === BASELINE.installedManifestSha256, `${label} candidate tree was not restored`);
+		requireValue(record.rollback && record.rollback.restored_candidate_sha256 === baseline.candidateSha256, `${label} candidate archive was not restored`);
+		requireValue(record.rollback && record.rollback.restored_manifest_sha256 === baseline.installedManifestSha256, `${label} candidate tree was not restored`);
 		validateProbe(record.rollback && record.rollback.restored_probe, `${label} restored`, true, true);
 		validatePersistedHashes(record.rollback && record.rollback.restored_persisted_hashes, `${label} restored`);
 		const publishedObserved = new Date(record.rollback && record.rollback.published_probe && record.rollback.published_probe.observed_at);
@@ -116,7 +158,7 @@ function validateRecord(record, expectedDay, expectedDate, now = new Date(), fin
 	return errors;
 }
 
-function validateEvidence(root, now = new Date(), requireThrough = 0, completion = false) {
+function validateEvidence(root, now = new Date(), requireThrough = 0, completion = false, baseline) {
 	const files = [];
 	const finalFiles = [];
 	const humanFiles = [];
@@ -149,7 +191,7 @@ function validateEvidence(root, now = new Date(), requireThrough = 0, completion
 		else if (!fs.readFileSync(humanPath, 'utf8').startsWith(`# Day ${String(day).padStart(2, '0')} - ${file.date}\n`)) errors.push(`${file.name}: Markdown heading does not match path`);
 		try {
 			const record = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
-			errors.push(...validateRecord(record, day, file.date, now).map((message) => `${file.name}: ${message}`));
+			errors.push(...validateRecord(record, day, file.date, now, false, baseline).map((message) => `${file.name}: ${message}`));
 		} catch (error) {
 			errors.push(`${file.name}: invalid JSON: ${error.message}`);
 		}
@@ -164,7 +206,7 @@ function validateEvidence(root, now = new Date(), requireThrough = 0, completion
 		else if (!fs.readFileSync(humanPath, 'utf8').startsWith(`# Final rollback - ${file.date}\n`)) errors.push(`${file.name}: Markdown heading does not match path`);
 		try {
 			const record = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
-			errors.push(...validateRecord(record, 14, file.date, now, true).map((message) => `${file.name}: ${message}`));
+			errors.push(...validateRecord(record, 14, file.date, now, true, baseline).map((message) => `${file.name}: ${message}`));
 		} catch (error) {
 			errors.push(`${file.name}: invalid JSON: ${error.message}`);
 		}
@@ -176,6 +218,7 @@ function validateEvidence(root, now = new Date(), requireThrough = 0, completion
 
 function main() {
 	const root = path.resolve(argument('--root') || path.join(__dirname, '..', 'docs/evidence/staging-soak'));
+	const baselinePath = path.resolve(argument('--baseline') || path.join(root, 'baseline.json'));
 	const requireThrough = Number(argument('--require-through') || 0);
 	const completion = process.argv.includes('--completion');
 	const nowArgument = argument('--now');
@@ -183,7 +226,8 @@ function main() {
 	if (!Number.isInteger(requireThrough) || requireThrough < 0 || Number.isNaN(now.getTime())) {
 		throw new Error('Invalid --require-through or --now value.');
 	}
-	const result = validateEvidence(root, now, requireThrough, completion);
+	const baseline = loadBaseline(baselinePath);
+	const result = validateEvidence(root, now, requireThrough, completion, baseline);
 	if (result.errors.length) throw new Error(result.errors.join('\n'));
 	process.stdout.write(`Validated ${result.files.length} staging soak evidence record(s).\n`);
 }
@@ -197,4 +241,4 @@ if (require.main === module) {
 	}
 }
 
-module.exports = { BASELINE, validateEvidence, validateRecord };
+module.exports = { loadBaseline, validateEvidence, validateRecord };

@@ -67,7 +67,7 @@ final class ProfileLinkRenderingTest extends WP_UnitTestCase {
 		new RenderRequest( 'default', 'square', RenderPlacement::PHP_API, '', array(), array(), '', false, array( 'facebook' => 'http://facebook.com/example' ) );
 	}
 
-	public function testCanonicalRendererAppendsAccessibleProfileLinksWithoutChangingShareMarkup(): void {
+	public function testCanonicalRendererLabelsShareButtonsAndAppendsAccessibleProfileLinks(): void {
 		$request = new RenderRequest(
 			'default', 'square', RenderPlacement::PHP_API, '', array( 'facebook' ), array(), '', true,
 			array( 'facebook' => 'https://facebook.com/example', 'mail' => 'mailto:hello@example.com' )
@@ -75,9 +75,30 @@ final class ProfileLinkRenderingTest extends WP_UnitTestCase {
 		$result = $this->builder->build( $request, new ShareContext( 'https://example.test/post', 'Example' ) );
 		$html = $this->renderer->render( $request, $result );
 
-		$this->assertStringContainsString( "<a class='facebook' target='_blank' href='https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fexample.test%2Fpost' rel='nofollow noopener noreferrer'></a>", $html );
+		$this->assertStringContainsString( "<a class='facebook' target='_blank' href='https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fexample.test%2Fpost' rel='nofollow noopener noreferrer' aria-label='Share on Facebook'></a>", $html );
+		$this->assertStringContainsString( "<span class='zmshbt-profile-separator' aria-hidden='true'></span>", $html );
 		$this->assertStringContainsString( "class='facebook zmshbt-profile-link' data-zmshbt-kind='profile' target='_blank' rel='nofollow noopener noreferrer' href='https://facebook.com/example'", $html );
 		$this->assertStringContainsString( "class='mail zmshbt-profile-link' data-zmshbt-kind='profile' href='mailto:hello@example.com'", $html );
+	}
+
+	public function testCanonicalRendererOnlySeparatesMixedShareAndProfileLinks(): void {
+		$context = new ShareContext( 'https://example.test/post', 'Example' );
+		$shareOnly = new RenderRequest(
+			'default', 'square', RenderPlacement::PHP_API, '', array( 'facebook' ), array(), '', false, array()
+		);
+		$profileOnly = new RenderRequest(
+			'default', 'square', RenderPlacement::PHP_API, '', array(), array(), '', false,
+			array( 'facebook' => 'https://facebook.com/example' )
+		);
+
+		$this->assertStringNotContainsString(
+			'zmshbt-profile-separator',
+			$this->renderer->render( $shareOnly, $this->builder->build( $shareOnly, $context ) )
+		);
+		$this->assertStringNotContainsString(
+			'zmshbt-profile-separator',
+			$this->renderer->render( $profileOnly, $this->builder->build( $profileOnly, $context ) )
+		);
 	}
 
 	public function testCanonicalFacadeRejectsUnsafeProfilesAndCollectsProfileAssets(): void {

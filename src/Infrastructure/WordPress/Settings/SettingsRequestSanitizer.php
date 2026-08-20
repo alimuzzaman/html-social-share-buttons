@@ -106,7 +106,10 @@ final class SettingsRequestSanitizer {
 			$this->toBoolean( isset( $input['preserve_url_port'] ) ? $input['preserve_url_port'] : false ),
 			$this->toBoolean( isset( $input['no_follow'] ) ? $input['no_follow'] : false ),
 			$profileLinks,
-			$profileLinkPlacements
+			$profileLinkPlacements,
+			$this->audienceValue( $input, 'show_for_current_user', $defaults->showForCurrentUser() ),
+			$this->audienceValue( $input, 'show_for_logged_in_user', $defaults->showForLoggedInUser() ),
+			$this->audienceValue( $input, 'show_for_logged_out_user', $defaults->showForLoggedOutUser() )
 		);
 	}
 
@@ -170,5 +173,11 @@ final class SettingsRequestSanitizer {
 		}
 
 		return ! empty( $value );
+	}
+
+	private function audienceValue( array $input, $key, $fallback ) {
+		return array_key_exists( $key, $input )
+			? $this->toBoolean( $input[ $key ] )
+			: (bool) $fallback;
 	}
 }

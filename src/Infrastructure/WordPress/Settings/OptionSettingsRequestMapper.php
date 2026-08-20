@@ -53,30 +53,33 @@ final class OptionSettingsRequestMapper {
 		}
 
 		return array(
-			'title'                   => isset( $input['title'] ) ? $input['title'] : '',
-			'icon_set'                => isset( $input['iconset'] ) ? $input['iconset'] : '',
-			'icon_shape'              => isset( $input['iconset_type'] ) ? $input['iconset_type'] : '',
-			'placements'              => $placements,
-			'placement_shapes'        => $placementShapes,
-			'networks'                => $networks,
-			'share_templates'         => isset( $input['share_templates'] ) && is_array( $input['share_templates'] )
+			'title'                    => isset( $input['title'] ) ? $input['title'] : '',
+			'icon_set'                 => isset( $input['iconset'] ) ? $input['iconset'] : '',
+			'icon_shape'               => isset( $input['iconset_type'] ) ? $input['iconset_type'] : '',
+			'placements'               => $placements,
+			'placement_shapes'         => $placementShapes,
+			'networks'                 => $networks,
+			'share_templates'          => isset( $input['share_templates'] ) && is_array( $input['share_templates'] )
 				? $input['share_templates']
 				: array(),
-			'profile_links'           => $profileLinks,
-			'profile_link_placements' => $profileLinkPlacements,
-			'excluded_content'        => isset( $input['excludes'] ) ? $input['excludes'] : '',
-			'analytics_enabled'       => isset( $input['g_analytics'] )
+			'profile_links'            => $profileLinks,
+			'profile_link_placements'  => $profileLinkPlacements,
+			'excluded_content'         => isset( $input['excludes'] ) ? $input['excludes'] : '',
+			'analytics_enabled'        => isset( $input['g_analytics'] )
 				? OptionSettingsTruthiness::isTruthy( $input['g_analytics'] )
 				: false,
-			'auto_hide_enabled'       => isset( $input['auto_hide_btn'] )
+			'auto_hide_enabled'        => isset( $input['auto_hide_btn'] )
 				? OptionSettingsTruthiness::isTruthy( $input['auto_hide_btn'] )
 				: false,
-			'preserve_url_port'       => isset( $input['use_port'] )
+			'preserve_url_port'        => isset( $input['use_port'] )
 				? OptionSettingsTruthiness::isTruthy( $input['use_port'] )
 				: false,
-			'no_follow'               => isset( $input['nofollow'] )
-				? OptionSettingsTruthiness::isTruthy( $input['nofollow'] )
-				: false,
+			'no_follow'                => isset( $input['nofollow'] )
+			? OptionSettingsTruthiness::isTruthy( $input['nofollow'] )
+			: false,
+			'show_for_current_user'    => $this->audienceInput( $input, 'show_for_current_user' ),
+			'show_for_logged_in_user'  => $this->audienceInput( $input, 'show_for_logged_in_user' ),
+			'show_for_logged_out_user' => $this->audienceInput( $input, 'show_for_logged_out_user' ),
 		);
 	}
 
@@ -94,6 +97,11 @@ final class OptionSettingsRequestMapper {
 			'auto_hide_btn' => $settings->autoHideEnabled(),
 			'use_port'      => $settings->preserveUrlPort(),
 			'nofollow'      => $settings->noFollow(),
+		);
+		$audienceFields = array(
+			'show_for_current_user',
+			'show_for_logged_in_user',
+			'show_for_logged_out_user',
 		);
 		$placementStates = $settings->placements();
 
@@ -128,6 +136,8 @@ final class OptionSettingsRequestMapper {
 				if ( ! empty( $placementModes ) ) {
 					$sanitized['profile_link_placements'] = $placementModes;
 				}
+			} elseif ( in_array( $key, $audienceFields, true ) ) {
+				$sanitized[ $key ] = $this->audienceInput( $input, $key );
 			} elseif ( 'title' === $key ) {
 				$sanitized['title'] = $settings->title();
 			} elseif ( 'excludes' === $key ) {
@@ -142,7 +152,71 @@ final class OptionSettingsRequestMapper {
 				$sanitized[ $key ] = true;
 			}
 		}
-
 		return $sanitized;
+	}
+
+	/**
+	 * Replace core-owned form fields while retaining opaque extension data.
+	 */
+	public function toStoredReplacement( Settings $settings, array $input, array $stored ) {
+		$replacement = $stored;
+		$scalarFields = array(
+			'title',
+			'iconset',
+			'iconset_type',
+			'excludes',
+			'show_left',
+			'show_right',
+			'show_before_post',
+			'show_after_post',
+			'g_analytics',
+			'auto_hide_btn',
+			'use_port',
+			'nofollow',
+			'show_for_current_user',
+			'show_for_logged_in_user',
+			'show_for_logged_out_user',
+		);
+		foreach ( $scalarFields as $field ) {
+			unset( $replacement[ $field ] );
+		}
+
+		$placementKeys = array_keys( $this->placements );
+		$networkKeys = array( 'facebook', 'x', 'twitter', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' );
+		$this->removeOwnedNestedKeys( $replacement, 'show_in', $placementKeys );
+		$this->removeOwnedNestedKeys( $replacement, 'profile_link_placements', $placementKeys );
+		$this->removeOwnedNestedKeys( $replacement, 'icons', $networkKeys );
+		$this->removeOwnedNestedKeys( $replacement, 'share_templates', $networkKeys );
+		$this->removeOwnedNestedKeys( $replacement, 'profile_links', $networkKeys );
+
+		foreach ( $this->toStoredSubmission( $settings, $input ) as $key => $value ) {
+			if ( is_array( $value ) && isset( $replacement[ $key ] ) && is_array( $replacement[ $key ] ) ) {
+				$replacement[ $key ] = array_replace( $replacement[ $key ], $value );
+			} else {
+				$replacement[ $key ] = $value;
+			}
+		}
+
+		return $replacement;
+	}
+
+	private function removeOwnedNestedKeys( array &$stored, $field, array $ownedKeys ) {
+		if ( ! isset( $stored[ $field ] ) || ! is_array( $stored[ $field ] ) ) {
+			unset( $stored[ $field ] );
+
+			return;
+		}
+		foreach ( $ownedKeys as $key ) {
+			unset( $stored[ $field ][ $key ] );
+		}
+		if ( empty( $stored[ $field ] ) ) {
+			unset( $stored[ $field ] );
+		}
+	}
+
+	private function audienceInput( array $input, $key ) {
+		return array_key_exists( $key, $input )
+			? OptionSettingsTruthiness::isTruthy( $input[ $key ] )
+			: true;
 	}
 }

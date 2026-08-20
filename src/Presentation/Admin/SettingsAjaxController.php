@@ -15,6 +15,7 @@ final class SettingsAjaxController {
 	private $content;
 	private $iconSets;
 	private $config;
+	private $persistingReplacement = false;
 
 	public function __construct(
 		SettingsStateStore $settings,
@@ -108,6 +109,9 @@ final class SettingsAjaxController {
 	 * without duplicating validation or persistence rules.
 	 */
 	public function sanitize( array $input ) {
+		if ( $this->persistingReplacement ) {
+			return $input;
+		}
 		$settings = $this->sanitizer->sanitize( $this->mapper->toCanonical( $input ) );
 
 		return $this->mapper->toStoredSubmission( $settings, $input );
@@ -115,9 +119,16 @@ final class SettingsAjaxController {
 
 	public function persist( array $input ) {
 		$settings = $this->sanitizer->sanitize( $this->mapper->toCanonical( $input ) );
-		$submitted = $this->mapper->toStoredSubmission( $settings, $input );
+		$storageBase = $this->settings->readStored( array() );
+		$storageBase = is_array( $storageBase ) ? $storageBase : array();
+		$replacement = $this->mapper->toStoredReplacement( $settings, $input, $storageBase );
 
-		return $this->settings->replaceStored( $submitted );
+		$this->persistingReplacement = true;
+		try {
+			return $this->settings->replaceStored( $replacement );
+		} finally {
+			$this->persistingReplacement = false;
+		}
 	}
 
 	private function verifySettingsRequest( $message ) {

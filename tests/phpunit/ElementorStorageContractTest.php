@@ -74,6 +74,7 @@ namespace {
 		protected function setUp(): void {
 			parent::setUp();
 			$this->originalOptions = get_option( 'zm_shbt_fld', null );
+			delete_option( 'zm_shbt_fld' );
 			$storage = json_decode(
 				(string) file_get_contents( dirname( __DIR__ ) . '/fixtures/builder-storage-baseline.json' ),
 				true
@@ -129,6 +130,8 @@ namespace {
 			$this->assertSame( \Elementor\Controls_Manager::TEXT, $fields['title']['type'] );
 			$this->assertSame( \Elementor\Controls_Manager::SELECT, $fields['iconset']['type'] );
 			$this->assertSame( 'inherit', $fields['iconset']['default'] );
+			$this->assertArrayHasKey( 'bootstrap-solid', $fields['iconset']['options'] );
+			$this->assertSame( 'Default (legacy)', $fields['iconset']['options']['default'] );
 			$this->assertSame( \Elementor\Controls_Manager::SELECT, $fields['iconset_type']['type'] );
 			$this->assertSame( 'square', $fields['iconset_type']['default'] );
 			$this->assertSame( \Elementor\Controls_Manager::SELECT2, $fields['icons']['type'] );
@@ -139,6 +142,19 @@ namespace {
 		);
 		$this->assertSame( \Elementor\Controls_Manager::SELECT, $fields['profile_links_mode']['type'] );
 		$this->assertSame( 'inherit', $fields['profile_links_mode']['default'] );
+		}
+
+		public function testElementorEditorLoadsSelectedLegacyOptionGuard(): void {
+			\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()
+				->elementor()
+				->enqueueEditorAssets();
+			$handle = 'hssb-elementor-editor';
+			$script = wp_scripts()->registered[ $handle ];
+
+			$this->assertContains( 'jquery', $script->deps );
+			$this->assertContains( 'elementor-editor', $script->deps );
+			$this->assertStringContainsString( '"elementorWidget":"zm_social_share"', $script->extra['data'] );
+			$this->assertStringContainsString( '"legacyIconsets":{"default":', $script->extra['data'] );
 		}
 
 		public function testStoredElementorSettingsRenderThroughTheCanonicalWidget(): void {
@@ -234,7 +250,7 @@ namespace {
 				)
 			);
 
-			$this->assertMatchesRegularExpression( '/class=[\'"]zmshbt in_elementor default square[\'"]/', $output );
+			$this->assertMatchesRegularExpression( '/class=[\'"]zmshbt in_elementor bootstrap-solid square[\'"]/', $output );
 			$this->assertMatchesRegularExpression( '/class=[\'"]facebook[\'"]/', $output );
 			$this->assertMatchesRegularExpression( '/class=[\'"]twitter[\'"]/', $output );
 		}

@@ -5,6 +5,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\Widget;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderFacade;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\AssetCollector;
@@ -92,7 +93,10 @@ class ShareWidget extends \WP_Widget {
 				$this->scalar( isset( $newInstance['iconset_type'] ) ? $newInstance['iconset_type'] : '', 'square' )
 			),
 			'iconset'      => sanitize_key(
-				$this->scalar( isset( $newInstance['iconset'] ) ? $newInstance['iconset'] : '', 'default' )
+				$this->scalar(
+					isset( $newInstance['iconset'] ) ? $newInstance['iconset'] : '',
+					IconSetSelectionPolicy::NEW_DEFAULT_ID
+				)
 			),
 		);
 		if ( array_key_exists( 'profile_links_mode', $newInstance ) ) {
@@ -113,7 +117,7 @@ class ShareWidget extends \WP_Widget {
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'iconset' ) ); ?>"><?php esc_html_e( 'Select Button Style', 'html-social-share-buttons' ); ?></label>
 			<select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'iconset' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'iconset' ) ); ?>">
-				<?php foreach ( $this->iconSets->all() as $iconSet ) : ?>
+				<?php foreach ( IconSetSelectionPolicy::choices( $this->iconSets, $options['iconset'] ) as $iconSet ) : ?>
 					<option value="<?php echo esc_attr( $iconSet->id() ); ?>" <?php selected( $options['iconset'], $iconSet->id() ); ?>><?php echo esc_html( BuilderLabels::iconSet( $iconSet->id(), $iconSet->label() ) ); ?></option>
 				<?php endforeach; ?>
 			</select>

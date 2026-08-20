@@ -4,11 +4,13 @@ includes:
 
 parameters:
 	scanFiles:
+		- html-social-share.php
 		- tests/stubs/elementor.php
 	level: 5
 	paths:
 		- src/Application
 		- src/Bootstrap
+		- src/Compatibility/Legacy/Api
 		- src/Domain
 		- src/Infrastructure
 		- src/Presentation

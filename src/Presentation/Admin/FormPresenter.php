@@ -3,6 +3,7 @@
 namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin;
 
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver;
@@ -98,9 +99,9 @@ final class FormPresenter {
 	}
 
 	public function selectIconset( array $options, $id, $label, $items = null, $name = false, $selected = 'default' ) {
-		$items = is_array( $items ) ? $items : $this->iconSetList();
-		$name = $name ? $name : $this->optionField( $id );
 		$selected = $selected ? $selected : ( isset( $options[ $id ] ) ? $options[ $id ] : 'default' );
+		$items = is_array( $items ) ? $items : $this->iconSetList( $selected );
+		$name = $name ? $name : $this->optionField( $id );
 		echo "<div class='row'><label for='" . esc_attr( $id ) . "'>" . esc_html( $label ) . "</label><select id='" . esc_attr( $id ) . "' name='" . esc_attr( $name ) . "'>";
 		foreach ( $items as $itemId => $itemLabel ) {
 			echo "<option value='" . esc_attr( $itemId ) . "' " . wp_kses_post( selected( $selected, $itemId, false ) ) . '>' . esc_html( $itemLabel ) . '</option>';
@@ -128,10 +129,12 @@ final class FormPresenter {
 		return $icons;
 	}
 
-	private function iconSetList() {
+	private function iconSetList( $selectedId = '' ) {
 		$list = array();
-		foreach ( $this->iconSets->all() as $set ) {
-			$list[ $set->id() ] = $set->label();
+		foreach ( IconSetSelectionPolicy::choices( $this->iconSets, $selectedId ) as $set ) {
+			$list[ $set->id() ] = 'default' === $set->id()
+				? __( 'Default (legacy)', 'html-social-share-buttons' )
+				: $set->label();
 		}
 
 		return $list;

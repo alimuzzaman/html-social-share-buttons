@@ -20,6 +20,10 @@ final class OptionSettingsRepositoryTest extends WP_UnitTestCase {
 		$this->assertTrue( $settings->placements()[ Placement::LEFT ] );
 		$this->assertTrue( $settings->placements()[ Placement::AFTER_CONTENT ] );
 		$this->assertTrue( $settings->networkStates()['x'] );
+		$this->assertSame( 'bootstrap-solid', $settings->iconSetId() );
+		$this->assertTrue( $settings->showForCurrentUser() );
+		$this->assertTrue( $settings->showForLoggedInUser() );
+		$this->assertTrue( $settings->showForLoggedOutUser() );
 		$this->assertFalse( get_option( $this->optionName, false ) );
 	}
 
@@ -36,8 +40,54 @@ final class OptionSettingsRepositoryTest extends WP_UnitTestCase {
 		$settings = $repository->load();
 
 		$this->assertSame( 'Partial', $settings->title() );
+		$this->assertSame( 'default', $settings->iconSetId() );
 		$this->assertTrue( $settings->networkStates()['facebook'] );
 		$this->assertFalse( $settings->placements()[ Placement::LEFT ] );
+		$this->assertTrue( $settings->showForCurrentUser() );
+		$this->assertTrue( $settings->showForLoggedInUser() );
+		$this->assertTrue( $settings->showForLoggedOutUser() );
+	}
+
+	public function testExplicitHistoricalDefaultRoundTripsWithoutMigration(): void {
+		$stored = array(
+			'iconset' => 'default',
+			'iconset_type' => 'square',
+			'extension_owned_state' => 'keep',
+		);
+		update_option( $this->optionName, $stored );
+		$repository = new OptionSettingsRepository( $this->optionName, new OptionSettingsCodec() );
+
+		$settings = $repository->load();
+		$repository->save( $settings );
+
+		$this->assertSame( 'default', $settings->iconSetId() );
+		$saved = get_option( $this->optionName );
+		$this->assertSame( 'default', $saved['iconset'] );
+		$this->assertSame( 'square', $saved['iconset_type'] );
+		$this->assertSame( 'keep', $saved['extension_owned_state'] );
+	}
+
+	public function testExplicitAudienceBooleansRoundTripWithoutLosingExtensionData(): void {
+		$stored = array(
+			'show_for_current_user' => false,
+			'show_for_logged_in_user' => true,
+			'show_for_logged_out_user' => false,
+			'extension_owned_state' => array( 'keep' => true ),
+		);
+		update_option( $this->optionName, $stored );
+		$repository = new OptionSettingsRepository( $this->optionName, new OptionSettingsCodec() );
+
+		$settings = $repository->load();
+		$repository->save( $settings );
+
+		$this->assertFalse( $settings->showForCurrentUser() );
+		$this->assertTrue( $settings->showForLoggedInUser() );
+		$this->assertFalse( $settings->showForLoggedOutUser() );
+		$saved = get_option( $this->optionName );
+		$this->assertFalse( $saved['show_for_current_user'] );
+		$this->assertTrue( $saved['show_for_logged_in_user'] );
+		$this->assertFalse( $saved['show_for_logged_out_user'] );
+		$this->assertSame( array( 'keep' => true ), $saved['extension_owned_state'] );
 	}
 
 	public function testSavePreservesUnknownAndLegacyAliasValues(): void {

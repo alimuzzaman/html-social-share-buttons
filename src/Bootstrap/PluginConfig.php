@@ -10,7 +10,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Bootstrap;
  * legacy bootstrap for plugin state.
  */
 final class PluginConfig {
-	const VERSION = '2.2.6';
+	const VERSION = '3.0.0';
 	const OPTION_NAME = 'zm_shbt_fld';
 	const SHORTCODE = 'zm_sh_btn';
 	const SHORTCODE_ALIAS = 'html-social-share-buttons';
@@ -38,6 +38,7 @@ final class PluginConfig {
 	const ADMIN_WIDGET_STYLE_HANDLE = 'zm_sh_admin_styles_scripts';
 	const ADMIN_SETTINGS_SCRIPT_HANDLE = 'zm_sh_admin_scripts';
 	const ADMIN_WPBAKERY_SCRIPT_HANDLE = 'zm_sh_vc_admin_scripts';
+	const ADMIN_ELEMENTOR_SCRIPT_HANDLE = 'hssb-elementor-editor';
 	const ADMIN_SETTINGS_OBJECT = 'zm_sh_react_settings';
 	const ADMIN_WPBAKERY_OBJECT = 'zm_sh';
 	const WIDGET_ID_BASE = 'html_share_button_widget';
@@ -179,6 +180,10 @@ final class PluginConfig {
 
 	public function adminWpBakeryScriptHandle() {
 		return self::ADMIN_WPBAKERY_SCRIPT_HANDLE;
+	}
+
+	public function adminElementorScriptHandle() {
+		return self::ADMIN_ELEMENTOR_SCRIPT_HANDLE;
 	}
 
 	public function adminSettingsObject() {

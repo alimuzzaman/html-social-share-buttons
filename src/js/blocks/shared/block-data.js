@@ -9,9 +9,11 @@ export function editorData( globalName ) {
 	const localized = window[ globalName ] || {};
 
 	return {
+		apiVersion: Number( localized.apiVersion ) || 1,
 		iconsets: localized.iconsets || {},
+		legacyIconsets: localized.legacyIconsets || {},
 		iconsetAssets: localized.iconsetAssets || {},
-		inheritedIconset: localized.inheritedIconset || 'default',
+		inheritedIconset: localized.inheritedIconset || 'bootstrap-solid',
 		profileLinks: localized.profileLinks || {},
 	};
 }

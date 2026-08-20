@@ -6,9 +6,12 @@
   },
   "default_options": {
     "title": "Share this with your friends",
-    "iconset": "default",
+    "iconset": "bootstrap-solid",
     "use_port": false,
     "auto_hide_btn": false,
+    "show_for_current_user": true,
+    "show_for_logged_in_user": true,
+    "show_for_logged_out_user": true,
     "show_in": {
       "show_left": true,
       "show_right": false,
@@ -60,6 +63,9 @@
     "zm_shbt_fld[auto_hide_btn]",
     "zm_shbt_fld[use_port]",
     "zm_shbt_fld[nofollow]",
+    "zm_shbt_fld[show_for_current_user]",
+    "zm_shbt_fld[show_for_logged_in_user]",
+    "zm_shbt_fld[show_for_logged_out_user]",
     "zm_shbt_fld[share_templates][facebook]",
     "zm_shbt_fld[share_templates][x]",
     "zm_shbt_fld[share_templates][linkedin]",
@@ -101,6 +107,9 @@
       "auto_hide_btn": "1",
       "g_analytics": "1",
       "nofollow": "1",
+      "show_for_current_user": "0",
+      "show_for_logged_in_user": "1",
+      "show_for_logged_out_user": "0",
       "share_templates": {
         "facebook": "https://example.test/share?url=%%permalink%%",
         "x": "https://example.test/x?url=%%permalink%%&text=%%title%%",
@@ -141,6 +150,9 @@
       "auto_hide_btn": true,
       "g_analytics": true,
       "nofollow": true,
+      "show_for_current_user": false,
+      "show_for_logged_in_user": true,
+      "show_for_logged_out_user": false,
       "share_templates": {
         "facebook": "https://example.test/share?url=%%permalink%%",
         "x": "https://example.test/x?url=%%permalink%%&text=%%title%%",

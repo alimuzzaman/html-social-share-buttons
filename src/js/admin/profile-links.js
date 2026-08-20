@@ -47,7 +47,6 @@ export function renderProfileLinksSection(dependencies) {
 					onChange: function (value) {
 						dependencies.onChange(network.id, value);
 					},
-					__next40pxDefaultSize: true,
 					__nextHasNoMarginBottom: true
 				})
 			]);

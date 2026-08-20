@@ -81,7 +81,6 @@ export function attachSettingsRenderer(App, dependencies) {
 					onChange: function (value) {
 						self.update('title', value);
 					},
-					__next40pxDefaultSize: true,
 					__nextHasNoMarginBottom: true
 				}),
 				e('div', { key: 'exclude-field', className: 'zm_exclude_control' }, [
@@ -93,7 +92,6 @@ export function attachSettingsRenderer(App, dependencies) {
 						help: text('excludeHelp', 'Search published pages and posts, or press Enter to add a custom value.'),
 						placeholder: text('excludePlaceholder', 'Search pages, posts, or add a custom value'),
 						tokenizeOnBlur: true,
-						__next40pxDefaultSize: true,
 						onInputChange: function (value) {
 							self.searchExcludeContent(value);
 						},
@@ -129,7 +127,6 @@ export function attachSettingsRenderer(App, dependencies) {
 						onChange: function (value) {
 							self.update('iconset', value);
 						},
-						__next40pxDefaultSize: true,
 						__nextHasNoMarginBottom: true
 					}),
 					e('div', { key: 'preview', className: 'button-style-img' }, [
@@ -203,11 +200,17 @@ export function attachSettingsRenderer(App, dependencies) {
 						description: icon.id === 'mail' ? text('shareByEmail', 'Share the current page by email.') : format(text('shareOnNetwork', 'Share the current page on %s.'), [icon.name]),
 						label: enabled ? text('enabled', 'Enabled') : text('disabled', 'Disabled'),
 						name: 'zm_shbt_fld[icons][' + icon.id + ']',
-						checked: enabled,
-						onChange: function (value) {
-							self.update('icon_' + icon.id, value);
-						}
-					}, [
+							checked: enabled,
+							onChange: function (value) {
+								self.update('icon_' + icon.id, value);
+							},
+							preservedControl: e('input', {
+								key: 'preserved-template',
+								type: 'hidden',
+								name: 'zm_shbt_fld[share_templates][' + icon.id + ']',
+								value: serializedTemplate
+							})
+						}, [
 							e('div', { key: 'template-heading', className: 'zm_network_template_heading' }, [
 								e('span', { key: 'label', className: 'zm_network_template_label' }, format(text('shareTemplate', '%s share template'), [icon.name])),
 								e(Button, {
@@ -290,6 +293,18 @@ export function attachSettingsRenderer(App, dependencies) {
 					self.update('profile_links.' + networkId, value);
 				}
 			}),
+			e('section', { key: 'audience', className: 'zm_settings_section zm_settings_section--audience' }, [
+				e(SectionHeader, {
+					key: 'section-header',
+					title: text('audience', 'Audience'),
+					description: text('audienceDescription', 'Choose which visitors can see share buttons across automatic placements, blocks, shortcodes, widgets, and builder integrations.')
+				}),
+				e('div', { key: 'audience-grid', className: 'zm_network_grid' }, [
+					audienceControl('show_for_current_user', text('currentUser', 'Current user (content author)')),
+					audienceControl('show_for_logged_in_user', text('loggedInUser', 'Other logged-in users')),
+					audienceControl('show_for_logged_out_user', text('loggedOutUser', 'Logged-out users'))
+				])
+			]),
 			e('section', { key: 'advanced', className: 'zm_settings_section zm_settings_section--advanced' }, [
 				e(SectionHeader, {
 					key: 'section-header',
@@ -404,7 +419,6 @@ export function attachSettingsRenderer(App, dependencies) {
 						onChange: function (value) {
 							self.setState({ modalType: value });
 						},
-						__next40pxDefaultSize: true,
 						__nextHasNoMarginBottom: true
 					}),
 					e('div', { key: 'output', className: 'tab', id: 'tab-2' },
@@ -418,6 +432,27 @@ export function attachSettingsRenderer(App, dependencies) {
 				])
 			])
 		]);
+
+		function audienceControl(key, label) {
+			return e('div', { key: key, className: 'zm_audience_control' }, [
+				e('input', {
+					key: 'false-value',
+					type: 'hidden',
+					name: 'zm_shbt_fld[' + key + ']',
+					value: '0'
+				}),
+				e(CheckboxInput, {
+					key: 'toggle',
+					id: key,
+					label: label,
+					name: 'zm_shbt_fld[' + key + ']',
+					checked: options[key],
+					onChange: function (value) {
+						self.update(key, value);
+					}
+				})
+			]);
+		}
 	};
 
 }

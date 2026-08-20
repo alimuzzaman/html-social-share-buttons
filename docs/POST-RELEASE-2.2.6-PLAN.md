@@ -1,7 +1,8 @@
 # Post-2.2.6 rewrite and release status
 
 This file replaces the superseded post-2.2.6 checklist. It does not authorize a
-tag, WordPress.org upload, production deployment, or version change.
+tag, WordPress.org upload, or production deployment. Candidate metadata may be
+aligned before the soak so the exact bytes carry their intended version.
 
 ## Completed implementation work
 
@@ -20,19 +21,23 @@ tag, WordPress.org upload, production deployment, or version change.
   clearance claim.
 - Unavailable paid WPBakery editor behavior is checked against official
   `vc_map()`/shortcode documentation plus executable repository contracts.
-- Block API v1 and the WordPress 5.3 floor remain. The two corresponding Plugin
-  Check findings are accepted; no clean Plugin Check result is claimed.
+- Maintained block metadata uses API v3 on WordPress 6.3+; WordPress 5.3-6.2
+  receives an API v1 compatibility registration. WordPress 7.1 final's iframe
+  editor passed the block insertion, Inspector, persistence, and frontend gate.
 
 ## Remaining release operations
 
-- [x] Freeze and install the exact candidate archive on staging; Day 1 began
-      at `2026-08-12T09:04:40Z`.
-- [ ] Complete 14 consecutive real soak days with recorded daily evidence.
-- [ ] Complete the day-7 dry rollback and final staging rollback against the
-      exact candidate and published 2.2.6 archives.
-- [ ] Align version header, stable tag, changelog, release ZIP, listing copy,
-      screenshots, and WordPress.org state after explicit release approval.
+- [x] Preserve staging attempt 01 as superseded evidence after the release
+      audit required candidate-byte changes.
+- [x] Replace the fourteen-day wait with the owner-approved 2026-08-13 manual
+      exact-archive review; WordPress 7.1 final compatibility is recorded separately.
+- [ ] Commit the reviewed snapshot, rebuild the production archive from that
+      immutable revision, and reconfirm its SHA-256 and focused package gates.
+- [x] Align candidate version header, stable tag, block metadata, and changelog
+      at 3.0.0 before freezing the corrected exact archive.
+- [ ] Align final listing copy, screenshots, and WordPress.org state only after
+      explicit release approval.
 - [ ] Tag/upload/deploy/publish only with separate authorization.
 
 The dated evidence ledger is `RELEASE-CANDIDATE-VALIDATION.md`; the active soak
-record is `STAGING-SOAK.md`.
+record and reset status are in `STAGING-SOAK.md`.

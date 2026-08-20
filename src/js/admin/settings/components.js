@@ -113,7 +113,6 @@ export function createSettingsComponents(runtime) {
 					return { label: type, value: type };
 				}),
 				onChange: props.onType,
-				__next40pxDefaultSize: true,
 				__nextHasNoMarginBottom: true
 			}),
 			e(SelectControl, {
@@ -126,7 +125,6 @@ export function createSettingsComponents(runtime) {
 					{ label: text('profileLinksNone', 'Hide profile links in this placement'), value: 'none' }
 				],
 				onChange: props.onProfileLinkMode,
-				__next40pxDefaultSize: true,
 				__nextHasNoMarginBottom: true
 			})
 		]);

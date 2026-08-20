@@ -39,6 +39,31 @@ final class ElementorRegistrar {
 
 	public function registerHooks() {
 		add_action( $this->config->elementorHook(), array( $this, 'registerWidget' ) );
+		add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'enqueueEditorAssets' ) );
+	}
+
+	public function enqueueEditorAssets() {
+		$assetPath = $this->config->paths()->directory() . 'build/vc-scripts.asset.php';
+		$asset = file_exists( $assetPath ) ? require $assetPath : array();
+		$version = isset( $asset['version'] ) ? $asset['version'] : $this->config->version();
+		wp_enqueue_script(
+			$this->config->adminElementorScriptHandle(),
+			plugins_url( 'build/vc-scripts.js', $this->config->paths()->file() ),
+			array( 'jquery', 'elementor-editor' ),
+			$version,
+			true
+		);
+		wp_localize_script(
+			$this->config->adminElementorScriptHandle(),
+			$this->config->adminWpBakeryObject(),
+			array(
+				'nonce'           => wp_create_nonce( $this->config->adminNonceAction() ),
+				'elementorWidget' => $this->config->elementorWidgetName(),
+				'legacyIconsets'  => array(
+					'default' => __( 'Default (legacy)', 'html-social-share-buttons' ),
+				),
+			)
+		);
 	}
 
 	public function registerWidget( $widgetsManager ) {

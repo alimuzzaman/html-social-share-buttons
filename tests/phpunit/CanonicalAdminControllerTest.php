@@ -10,6 +10,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\ManifestIconSet
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\MetaboxController;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\IconSetPayloadBuilder;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsRequestMapper;
+use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyOptionCodec;
 
 final class CanonicalAdminControllerTest extends WP_UnitTestCase {
 	private $originalPost;
@@ -75,6 +76,10 @@ final class CanonicalAdminControllerTest extends WP_UnitTestCase {
 			),
 			$mapper->toStoredSubmission( $settings, $input )
 		);
+		$this->assertSame(
+			$mapper->toStoredSubmission( $settings, $input ),
+			( new LegacyOptionCodec() )->toLegacySubmission( $settings, $input )
+		);
 	}
 
 	public function testMetaboxControllerRetainsTheStoredMetaAndNonceContract(): void {
@@ -114,16 +119,26 @@ final class CanonicalAdminControllerTest extends WP_UnitTestCase {
 
 		$this->assertSame(
 			array(
-				'default' => 'Default',
+				'bootstrap-solid' => 'Bootstrap Solid',
 				'flat' => 'Flat',
 				'long-shadows' => 'Long Shadows',
 				'prajin' => 'Prajin',
-				'bootstrap-solid' => 'Bootstrap Solid',
 				'tabler-outline' => 'Tabler Outline',
 			),
 			$labels
 		);
 		$this->assertSame( 'Facebook', $payload[0]['icons'][0]['name'] );
 		$this->assertSame( 'X (formerly Twitter)', $payload[0]['icons'][1]['name'] );
+
+		$legacyPayload = ( new IconSetPayloadBuilder(
+			$iconSets,
+			$networks,
+			new IconSetAssetResolver( $root, 'https://example.test/plugin' )
+		) )->settingsPayload( 'default' );
+		$legacyLabels = array();
+		foreach ( $legacyPayload as $iconSet ) {
+			$legacyLabels[ $iconSet['id'] ] = $iconSet['name'];
+		}
+		$this->assertSame( 'Default (legacy)', $legacyLabels['default'] );
 	}
 }

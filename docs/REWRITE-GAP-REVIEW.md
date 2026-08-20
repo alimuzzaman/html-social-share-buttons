@@ -4,9 +4,10 @@
 
 `v2.2.6` (`620f1ae66`) remains the published baseline. The `latest` working
 tree contains a canonical-first rewrite and release-hardening work; it is not a
-public 3.0 release. The plugin header, both block metadata files, and
-`readme.txt` remain at 2.2.6. Do not change the stable tag, create a release,
-or describe this work as a completed 3.0 release without explicit approval.
+public 3.0 release. Candidate metadata is aligned at 3.0.0 to prevent the new
+archive from colliding with published 2.2.6. Do not create a tag, upload,
+deploy, or describe this work as a completed 3.0 release without explicit
+approval and completion of the release gates.
 
 The rewrite substantially reduces the compatibility layer, but source and
 contract coverage are not release evidence on their own. Maintainer
@@ -15,9 +16,12 @@ lacks a verifiable source/license record but is retained under the release
 owner's explicit compatibility exception. WPBakery uses its official documented
 integration contract when the paid editor is unavailable. Cross-browser visual
 evidence is recorded, including Safari 26.6 and the corrected 390-pixel case.
-A 14-day staging soak started on 2026-08-12 and remains open. A
-limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now recorded in
-`RELEASE-CANDIDATE-VALIDATION.md`; it is not the staging-soak rollback gate.
+The first staging attempt started on 2026-08-12 and was reset on 2026-08-13
+after this release-diff audit found candidate-byte defects. Its Day 1 evidence
+is preserved as superseded and cannot count toward the corrected candidate. A
+limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is
+recorded in `RELEASE-CANDIDATE-VALIDATION.md`; it is not the staging-soak
+rollback gate.
 
 ## Completed implementation work
 
@@ -38,8 +42,9 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
   classes, hook translation, option/icon-set value adaptation, and external
   icon-set import by delegating into the already-booted canonical kernel.
   `zm_shbt_fld`, `_zm_sh_disable_share`, historical handles, APIs, hooks,
-  builder identifiers, stored content, and documented markup stay public
-  compatibility surfaces.
+  builder identifiers, stored content, wrapper/classes, and link destinations
+  stay public compatibility surfaces. The corrected 3.0.0 baseline adds
+  translated accessible names to otherwise-empty share anchors.
 - The canonical `PluginConfig` owns stable identifiers while mapping them to
   their historical values. Both shortcode names, `[zm_sh_btn]` and
   `[html-social-share-buttons]`, are registered. Omitted URLs and recognised
@@ -82,12 +87,12 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
 | WordPress/PHP declaration | Header and readme declare WP 5.3+ and PHP 7.0+; configured WP 6.8/PHP 8.3 and current/PHP 8.3 contract rows passed; WP 5.3/PHP 7.0 has a functional smoke | Remaining supported matrix runs; the WP 5.3 path must not be represented as a full modern-suite certification |
 | Archive and autoloader | Two builds matched and the ZIP activated on a clean Sandbox without Composer | Repeat for the approved versioned candidate |
 | Frontend compatibility | PHPUnit, the 33-scenario golden comparison, fresh-ZIP smoke, and stored browser fixtures passed; the eight-project isolated fixture/non-overlap matrix passed; Safari 26.6 desktop/Responsive Design Mode captures are recorded | Physical-device/high-contrast review is not claimed |
-| Gutenberg | Dynamic metadata registration and a real stored-block browser fixture passed | Supported-version and manual browser captures |
+| Gutenberg | Both API-v3 blocks passed forced-iframe inserter visibility, editor insertion, inspector persistence, save/reload, and frontend rendering on WordPress 7.1 final | Broader supported-version and manual browser captures |
 | Elementor | Real editor persistence, visible icon preview, and public stored-data fixture passed with Elementor 4.2.2 | Manual cross-browser captures and supported-version matrix |
 | WPBakery | Canonical mapping, stored-shortcode, bundle-smoke, and public-render contracts match the official `vc_map()`/shortcode model | Live paid-editor behavior is not claimed |
 | Icon packs | Manifests, filenames, browser matrix, Safari review, and owner provenance dispositions are recorded; the 390-pixel collision is fixed and regression-tested | Physical-device/high-contrast review and trademark review are not claimed |
-| Rollback | No data migration/replacement schema is designed; an isolated predecessor-candidate -> published 2.2.6 -> candidate rehearsal passed on WP 5.3/PHP 7.0 | Day-7 and final rollback with the approved `d657...5b05` soak bytes |
-| Staging | Day 1 passed on the exact installed candidate; clock started `2026-08-12T09:04:40Z` | Fourteen elapsed days of recorded evidence; earliest completion `2026-08-26T09:04:40Z` |
+| Rollback | No data migration/replacement schema is designed; an isolated predecessor-candidate -> published 2.2.6 -> candidate rehearsal passed on WP 5.3/PHP 7.0 | Day-7 and final rollback with the corrected exact candidate bytes |
+| Staging | Attempt 01 Day 1 passed, then the clock was reset because candidate bytes had to change | Exact installation and a new Day 1, followed by fourteen real elapsed days and final rollback |
 
 ## Closed decisions, scope limits, and remaining release operations
 
@@ -108,9 +113,11 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
    paid builders, including WPBakery, the release owner selected official API
    documentation plus exact repository mapping, persistence, bundle, and public
    rendering contracts. This is not described as a live WPBakery editor run.
-4. The isolated rollback rehearsal passed for predecessor bytes. The approved
-   soak candidate started its 14-day staging run on 2026-08-12; day-7 and final
-   staging rollback rehearsals remain required.
+4. The isolated rollback rehearsal passed. Staging attempt 01 was reset after
+   its Day 1 because the release audit required candidate-byte changes. The
+   release owner waived a replacement fourteen-day attempt on 2026-08-13 after
+   a fresh exact-archive manual review; the reviewed snapshot still needs an
+   immutable candidate revision before release.
 5. Placement-level profile-link controls are available for automatic placement
    and as opt-in `profile_links_mode` controls for the share block, shortcode,
    widget, Elementor, WPBakery, and direct facade inputs. Missing stored values
@@ -118,11 +125,12 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
    maps remain intentionally out of scope; placement controls only inherit or
    suppress the configured global links.
 6. Plugin Check remains recorded separately from compatibility warnings. The
-   release owner accepted its two API-v1 findings to preserve WordPress 5.3;
-   no baseline hides them.
-7. Version/listing alignment, screenshots, FAQ, and release copy remain final
-   release-owner work. The version is deliberately still 2.2.6, not
-   `3.0.0-rc.1`.
+   exact corrected archive has zero errors and 57 reviewed warnings: modern
+   WordPress registers the API-v3 metadata while WordPress 5.3-6.2 uses the
+   tested runtime API-v1 fallback. No baseline hides findings.
+7. Candidate version, stable tag, changelog, and block metadata are aligned at
+   3.0.0. Screenshots and WordPress.org publication remain final release-owner
+   work; metadata alignment alone does not authorize a release.
 
 ## Release sequence
 
@@ -132,7 +140,8 @@ limited single-site candidate -> 2.2.6 -> candidate rollback rehearsal is now re
    candidate changes.
 3. Preserve the real Gutenberg/Elementor evidence and WPBakery documentation-
    contract evidence with the candidate ledger.
-4. Approve a candidate artifact and run the documented 14-day staging soak,
-   including its staging rollback rehearsal.
+4. Commit the reviewed snapshot, rebuild the production archive from that
+   immutable revision, and reconfirm its identity and focused exact-archive
+   gates.
 5. Obtain release-owner approval before changing version metadata, stable tag,
    listing material, publication artifacts, or deployment state.

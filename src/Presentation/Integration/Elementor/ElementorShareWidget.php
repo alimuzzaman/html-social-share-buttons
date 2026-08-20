@@ -5,6 +5,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\Elementor;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderFacade;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\AssetCollector;
@@ -268,7 +269,12 @@ class ElementorShareWidget extends \Elementor\Widget_Base {
 		$options = array(
 			'inherit' => __( 'Inherit from plugin settings', 'html-social-share-buttons' ),
 		);
-		foreach ( $this->iconSets->all() as $iconSet ) {
+		/*
+		 * Elementor caches one control schema for both new and stored widgets.
+		 * Keep the legacy value in that schema so old elements can hydrate it;
+		 * the editor-only script hides it unless the current element selected it.
+		 */
+		foreach ( IconSetSelectionPolicy::choices( $this->iconSets, IconSetSelectionPolicy::LEGACY_DEFAULT_ID ) as $iconSet ) {
 			$options[ $iconSet->id() ] = BuilderLabels::iconSet( $iconSet->id(), $iconSet->label() );
 		}
 

@@ -3,7 +3,9 @@ const {
 	assertVisibleCanonicalShareButtons,
 	builderStorage,
 	createStoredElementorFixture,
+	createPublishedPage,
 	login,
+	saveElementorFixture,
 } = require( './helpers/wordpress' );
 
 test.describe( 'Elementor integration', () => {
@@ -58,12 +60,77 @@ test.describe( 'Elementor integration', () => {
 		).toBeVisible();
 		const previewButtons = preview.locator( '.zmshbt.in_elementor' );
 		await expect( previewButtons ).toBeVisible();
-		const previewFacebook = previewButtons.locator( 'a.facebook' );
+		const previewFacebook = previewButtons.locator(
+			'a.facebook:not(.zmshbt-profile-link)'
+		);
 		await expect( previewFacebook ).toBeVisible();
 		await expect( previewFacebook ).toHaveCSS(
 			'background-image',
 			/url\(.+Facebook\.png.+\)/
 		);
+		await preview
+			.locator(
+				`[data-widget_type^="${ builderStorage.elementor.document_element.widgetType }"]`
+			)
+			.click();
+		const iconsetControl = page.locator(
+			'.elementor-control-iconset select'
+		);
+		await expect( iconsetControl ).toHaveValue( 'flat' );
+		const legacyDefault = iconsetControl.locator(
+			'option[value="default"]'
+		);
+		await expect( legacyDefault ).toHaveAttribute( 'hidden', '' );
+		await expect( legacyDefault ).toBeDisabled();
+	} );
+
+	test( 'preserves an existing legacy Default selection in the Elementor editor', async ( {
+		page,
+	} ) => {
+		await login( page );
+		const fixture = await createPublishedPage( page, {
+			content: '',
+			title: 'HSSB legacy Elementor icon fixture',
+		} );
+		const element = JSON.parse(
+			JSON.stringify( builderStorage.elementor.document_element )
+		);
+		element.id = 'd3f4a5b';
+		element.settings.iconset = 'default';
+		await saveElementorFixture( page, fixture, element );
+		await page.goto(
+			`/wp-admin/post.php?post=${ fixture.id }&action=elementor`
+		);
+		const search = page
+			.locator(
+				'.elementor-panel-search-input, input[placeholder*="Search" i]'
+			)
+			.first();
+		await page.locator( '#elementor-loading' ).waitFor( {
+			state: 'hidden',
+			timeout: 15_000,
+		} ).catch( () => {} );
+		if ( ! ( await search.isVisible() ) ) {
+			await page.getByRole( 'button', { name: 'Add Element' } ).click();
+		}
+		await expect( search ).toBeVisible();
+		await search.fill( 'Html Social Share' );
+
+		const preview = page.frameLocator( '#elementor-preview-iframe' );
+		const widget = preview.locator(
+			`[data-widget_type^="${ builderStorage.elementor.document_element.widgetType }"]`
+		);
+		await expect( widget ).toBeVisible();
+		await widget.click();
+		const iconsetControl = page.locator(
+			'.elementor-control-iconset select'
+		);
+		await expect( iconsetControl ).toHaveValue( 'default' );
+		const legacyDefault = iconsetControl.locator(
+			'option[value="default"]'
+		);
+		await expect( legacyDefault ).not.toHaveAttribute( 'hidden', '' );
+		await expect( legacyDefault ).toBeEnabled();
 	} );
 
 	test( 'renders the real stored Elementor widget fixture with a canonical share URL', async ( {

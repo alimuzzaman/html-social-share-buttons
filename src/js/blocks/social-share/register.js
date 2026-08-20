@@ -14,6 +14,7 @@ import { networks } from '../shared/networks';
 	const TextControl = components.TextControl;
 	const CheckboxControl = components.CheckboxControl;
 	const __ = i18n.__;
+	const sprintf = i18n.sprintf;
 	const localized = editorData( 'hssbShareBlock' );
 	const iconsets = Object.keys( localized.iconsets ).length
 		? localized.iconsets
@@ -22,16 +23,34 @@ import { networks } from '../shared/networks';
 					'Inherit from plugin settings',
 					'html-social-share-buttons'
 				),
-				default: __( 'Default', 'html-social-share-buttons' ),
+				'bootstrap-solid': __(
+					'Bootstrap Solid',
+					'html-social-share-buttons'
+				),
 		  };
 	const iconsetAssets = localized.iconsetAssets;
 	const inheritedIconset = localized.inheritedIconset;
 	const availableNetworks = networks( __ );
+	const supportsBlockApiV3 =
+		localized.apiVersion === 3 &&
+		typeof blockEditor.useBlockProps === 'function';
 
 	blocks.registerBlockType( metadata.name, {
 		...metadata,
+		apiVersion: supportsBlockApiV3 ? metadata.apiVersion : 1,
 		edit( props ) {
 			const selected = props.attributes.icons || [];
+			const selectedProfiles =
+				props.attributes.profile_links_mode === 'none'
+					? []
+					: availableNetworks.filter( function ( network ) {
+							return !! localized.profileLinks[ network.id ];
+					  } );
+			const selectableIconsets = Object.assign( {}, iconsets );
+			if ( localized.legacyIconsets[ props.attributes.iconset ] ) {
+				selectableIconsets[ props.attributes.iconset ] =
+					localized.legacyIconsets[ props.attributes.iconset ];
+			}
 			const activeIconsetId =
 				props.attributes.iconset === 'inherit'
 					? inheritedIconset
@@ -43,12 +62,18 @@ import { networks } from '../shared/networks';
 			const supportedTypes = activeIconset.types.length
 				? activeIconset.types
 				: [ 'square' ];
-			const previewType = supportedTypes.indexOf(
-				props.attributes.iconset_type
-			) !== -1
-				? props.attributes.iconset_type
-				: supportedTypes[ 0 ];
-			const blockProps = { className: 'hssb-block-preview' };
+			const previewType =
+				supportedTypes.indexOf( props.attributes.iconset_type ) !== -1
+					? props.attributes.iconset_type
+					: supportedTypes[ 0 ];
+			const blockProps = Object.assign(
+				{ key: 'preview' },
+				supportsBlockApiV3
+					? blockEditor.useBlockProps( {
+							className: 'hssb-block-preview',
+					  } )
+					: { className: 'hssb-block-preview' }
+			);
 			return el( Fragment, {}, [
 				el(
 					InspectorControls,
@@ -64,6 +89,7 @@ import { networks } from '../shared/networks';
 						},
 						[
 							el( TextControl, {
+								key: 'title',
 								label: __(
 									'Title',
 									'html-social-share-buttons'
@@ -74,15 +100,16 @@ import { networks } from '../shared/networks';
 								},
 							} ),
 							el( SelectControl, {
+								key: 'iconset',
 								label: __(
 									'Icon set',
 									'html-social-share-buttons'
 								),
 								value: props.attributes.iconset,
-								options: Object.keys( iconsets ).map(
+								options: Object.keys( selectableIconsets ).map(
 									function ( id ) {
 										return {
-											label: iconsets[ id ],
+											label: selectableIconsets[ id ],
 											value: id,
 										};
 									}
@@ -92,6 +119,7 @@ import { networks } from '../shared/networks';
 								},
 							} ),
 							el( SelectControl, {
+								key: 'shape',
 								label: __(
 									'Button shape',
 									'html-social-share-buttons'
@@ -104,11 +132,11 @@ import { networks } from '../shared/networks';
 												? __(
 														'Circle',
 														'html-social-share-buttons'
-													)
+												  )
 												: __(
 														'Square',
 														'html-social-share-buttons'
-													),
+												  ),
 										value: type,
 									};
 								} ),
@@ -119,11 +147,14 @@ import { networks } from '../shared/networks';
 								},
 							} ),
 							el( SelectControl, {
+								key: 'profile-links-mode',
 								label: __(
-									'Profile links',
+									'Profile links after share buttons',
 									'html-social-share-buttons'
 								),
-								value: props.attributes.profile_links_mode || 'inherit',
+								value:
+									props.attributes.profile_links_mode ||
+									'inherit',
 								options: [
 									{
 										label: __(
@@ -158,10 +189,17 @@ import { networks } from '../shared/networks';
 									onChange( checked ) {
 										props.setAttributes( {
 											icons: checked
-												? selected.concat( [ network.id ] )
-												: selected.filter( function ( id ) {
-														return id !== network.id;
-												  } ),
+												? selected.concat( [
+														network.id,
+												  ] )
+												: selected.filter(
+														function ( id ) {
+															return (
+																id !==
+																network.id
+															);
+														}
+												  ),
 										} );
 									},
 								} );
@@ -172,7 +210,7 @@ import { networks } from '../shared/networks';
 				el(
 					'div',
 					blockProps,
-					selected.length
+					selected.length || selectedProfiles.length
 						? el(
 								'div',
 								{
@@ -185,32 +223,108 @@ import { networks } from '../shared/networks';
 										padding: '8px 0',
 									},
 								},
-								selected.map( function ( id ) {
-									const network = availableNetworks.find( function ( item ) {
-										return item.id === id;
-									} );
-									const src =
-										activeIconset.icons[ id ] &&
-										activeIconset.icons[ id ][ previewType ];
-									return src
-										? el( 'img', {
-												key: id,
-												src,
-												alt: network ? network.label : id,
-												className: 'hssb-block-preview__icon',
-												style: {
-													width: '34px',
-													height: '34px',
-													objectFit: 'contain',
-													borderRadius:
-														previewType === 'circle'
-															? '50%'
-															: '2px',
-												},
-										  } )
-										: null;
-								} )
-							)
+								selected
+									.map( function ( id ) {
+										const network = availableNetworks.find(
+											function ( item ) {
+												return item.id === id;
+											}
+										);
+										const src =
+											activeIconset.icons[ id ] &&
+											activeIconset.icons[ id ][
+												previewType
+											];
+										return src
+											? el( 'img', {
+													key: id,
+													src,
+													alt: network
+														? network.label
+														: id,
+													className:
+														'hssb-block-preview__icon',
+													style: {
+														width: '34px',
+														height: '34px',
+														objectFit: 'contain',
+														borderRadius:
+															previewType ===
+															'circle'
+																? '50%'
+																: '2px',
+													},
+											  } )
+											: null;
+									} )
+									.concat(
+										selected.length &&
+											selectedProfiles.length
+											? [
+													el( 'span', {
+														key: 'profile-separator',
+														className:
+															'zmshbt-profile-separator',
+														'aria-hidden': true,
+														style: {
+															width: '1px',
+															height: '28px',
+															margin: '3px 8px',
+															background:
+																'#c3c4c7',
+														},
+													} ),
+											  ]
+											: [],
+										selectedProfiles.map(
+											function ( network ) {
+												const src =
+													activeIconset.icons[
+														network.id
+													] &&
+													activeIconset.icons[
+														network.id
+													][ previewType ];
+												return src
+													? el( 'img', {
+															key:
+																'profile-' +
+																network.id,
+															src,
+															alt:
+																network.id ===
+																'mail'
+																	? __(
+																			'Contact email',
+																			'html-social-share-buttons'
+																	  )
+																	: sprintf(
+																			/* translators: %s is the social network name. */
+																			__(
+																				'%s profile',
+																				'html-social-share-buttons'
+																			),
+																			network.label
+																	  ),
+															className:
+																'hssb-block-preview__icon hssb-block-preview__profile-icon',
+															style: {
+																width: '34px',
+																height: '34px',
+																objectFit:
+																	'contain',
+																borderRadius:
+																	previewType ===
+																	'circle'
+																		? '50%'
+																		: '2px',
+															},
+													  } )
+													: null;
+											}
+										)
+									)
+						  )
 						: el(
 								'span',
 								{ className: 'hssb-block-preview__empty' },

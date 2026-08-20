@@ -4,6 +4,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin;
 
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsStateStore;
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 
 final class SettingsPayloadBuilder {
@@ -31,14 +32,16 @@ final class SettingsPayloadBuilder {
 	}
 
 	public function build() {
-		$options = $this->defaultOptions( $this->settings->readStored( array() ) );
+		$stored = $this->settings->readStored( null );
+		$isNewInstallation = ! is_array( $stored );
+		$options = $this->defaultOptions( $isNewInstallation ? array() : $stored, $isNewInstallation );
 		$excluded = $this->content->resolve( $options['excludes'] );
 
 		return array(
 			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
 			'nonce'                    => wp_create_nonce( $this->config->adminNonceAction() ),
 			'assets_img'               => plugins_url( 'assets/img', $this->pluginFile ),
-			'iconsets'                 => $this->iconSets->settingsPayload(),
+			'iconsets'                 => $this->iconSets->settingsPayload( $options['iconset'] ),
 			'options'                  => $options,
 			'share_template_defaults'  => $this->defaultTemplates(),
 			'share_template_overrides' => isset( $options['share_templates'] ) && is_array( $options['share_templates'] )
@@ -46,34 +49,39 @@ final class SettingsPayloadBuilder {
 				: array(),
 			'exclude_items'            => $excluded['items'],
 			'exclude_custom'           => $excluded['custom'],
-			'defaultIconset'           => 'default',
+			'defaultIconset'           => IconSetSelectionPolicy::NEW_DEFAULT_ID,
 			'strings'                  => $this->interfaceStrings(),
 		);
 	}
 
-	private function defaultOptions( $options ) {
+	private function defaultOptions( $options, $isNewInstallation ) {
 		$options = is_array( $options ) ? $options : array();
 		$options = wp_parse_args(
 			$options,
 			array(
-				'title'                   => __( 'Share this with your friends', 'html-social-share-buttons' ),
-				'iconset'                 => 'default',
-				'show_in'                 => array(
+				'title'                    => __( 'Share this with your friends', 'html-social-share-buttons' ),
+				'iconset'                  => $isNewInstallation
+					? IconSetSelectionPolicy::NEW_DEFAULT_ID
+					: IconSetSelectionPolicy::LEGACY_DEFAULT_ID,
+				'show_in'                  => array(
 					'show_left'        => 0,
 					'show_right'       => 0,
 					'show_before_post' => 0,
 					'show_after_post'  => 0,
 				),
-				'excludes'                => '',
-				'iconset_type'            => 'square',
-				'icons'                   => array(),
-				'g_analytics'             => 0,
-				'auto_hide_btn'           => 0,
-				'use_port'                => 0,
-				'nofollow'                => 0,
-				'profile_links'           => array(),
-				'profile_link_placements' => array(),
-				'share_templates'         => $this->defaultTemplates(),
+				'excludes'                 => '',
+				'iconset_type'             => 'square',
+				'icons'                    => array(),
+				'g_analytics'              => 0,
+				'auto_hide_btn'            => 0,
+				'use_port'                 => 0,
+				'nofollow'                 => 0,
+				'show_for_current_user'    => true,
+				'show_for_logged_in_user'  => true,
+				'show_for_logged_out_user' => true,
+				'profile_links'            => array(),
+				'profile_link_placements'  => array(),
+				'share_templates'          => $this->defaultTemplates(),
 			)
 		);
 		if ( isset( $options['icons']['twitter'] ) && ! isset( $options['icons']['x'] ) ) {
@@ -162,6 +170,11 @@ final class SettingsPayloadBuilder {
 			'profileUrl'                  => __( '%s profile URL', 'html-social-share-buttons' ),
 			'emailDestinationHelp'        => __( 'Use one mailto: address without subject or body parameters.', 'html-social-share-buttons' ),
 			'httpsLinksOnly'              => __( 'HTTPS links only.', 'html-social-share-buttons' ),
+			'audience'                    => __( 'Audience', 'html-social-share-buttons' ),
+			'audienceDescription'         => __( 'Choose which visitors can see share buttons across automatic placements, blocks, shortcodes, widgets, and builder integrations.', 'html-social-share-buttons' ),
+			'currentUser'                 => __( 'Current user (content author)', 'html-social-share-buttons' ),
+			'loggedInUser'                => __( 'Other logged-in users', 'html-social-share-buttons' ),
+			'loggedOutUser'               => __( 'Logged-out users', 'html-social-share-buttons' ),
 			'advancedOptions'             => __( 'Advanced options', 'html-social-share-buttons' ),
 			'advancedOptionsDescription'  => __( 'Fine tune tracking, behavior, and link output.', 'html-social-share-buttons' ),
 			'googleAnalytics'             => __( 'Google Social analytics', 'html-social-share-buttons' ),

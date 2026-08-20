@@ -13,9 +13,13 @@ final class ShareContextFactory {
 	private $permalinks;
 	private $extensions;
 
+	/**
+	 * @param CurrentPostPermalink|null $permalinks Optional permalink adapter.
+	 * @param ExtensionHooks|null        $extensions Optional extension hooks.
+	 */
 	public function __construct(
-		CurrentPostPermalink $permalinks = null,
-		ExtensionHooks $extensions = null
+		$permalinks = null,
+		$extensions = null
 	) {
 		$this->permalinks = $permalinks ? $permalinks : new CurrentPostPermalink();
 		$this->extensions = $extensions ? $extensions : new ExtensionHooks();

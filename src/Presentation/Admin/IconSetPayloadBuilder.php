@@ -4,6 +4,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin;
 
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSet;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver;
 
@@ -25,9 +26,9 @@ final class IconSetPayloadBuilder {
 		$this->assets = $assets;
 	}
 
-	public function settingsPayload() {
+	public function settingsPayload( $selectedId = '' ) {
 		$payload = array();
-		foreach ( $this->iconSets->all() as $iconSet ) {
+		foreach ( IconSetSelectionPolicy::choices( $this->iconSets, $selectedId ) as $iconSet ) {
 			$payload[] = $this->settingsIconSet( $iconSet );
 		}
 
@@ -124,7 +125,7 @@ final class IconSetPayloadBuilder {
 	private function iconSetLabel( $id, $fallback ) {
 		switch ( (string) $id ) {
 			case 'default':
-				return __( 'Default', 'html-social-share-buttons' );
+				return __( 'Default (legacy)', 'html-social-share-buttons' );
 			case 'flat':
 				return __( 'Flat', 'html-social-share-buttons' );
 			case 'long-shadows':

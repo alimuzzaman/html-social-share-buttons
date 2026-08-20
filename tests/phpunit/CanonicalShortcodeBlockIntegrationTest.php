@@ -174,7 +174,7 @@ final class CanonicalShortcodeBlockIntegrationTest extends WP_UnitTestCase {
 			$block
 		);
 
-		$this->assertStringContainsString( "class='zmshbt in_block default square'", $html );
+		$this->assertStringContainsString( "class='zmshbt in_block bootstrap-solid square'", $html );
 		$this->assertStringContainsString( rawurlencode( get_permalink( $postId ) ), $html );
 		$this->assertStringNotContainsString( '%%permalink%%', $html );
 		$this->assertStringNotContainsString( 'zm_sh_shortcode_cb', (string) file_get_contents(

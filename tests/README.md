@@ -18,6 +18,10 @@ output and persisted settings behavior during the ground-up rewrite.
   by the compatibility module.
 - `tests/support/frontend-output-contract.php`: Deterministic shared renderer
   context used by the CLI and PHPUnit contracts.
+- `tests/support/support-floor-prepare.php` and
+  `tests/support/support-floor-assert.php`: Two-request functional smoke for
+  WordPress 5.3/PHP 7.0 covering both shortcodes, both blocks, profile links,
+  legacy symbols, stored extension data, and disabled-meta placement behavior.
 - `tests/phpunit/FrontendRenderContractTest.php`: Fails on any golden-master
   frontend difference.
 - `tests/phpunit/UpgradeRollbackContractTest.php`: Proves representative 2.2.6
@@ -142,8 +146,14 @@ They cover the settings save/search actions and all three icon-set endpoints,
 including nonce, capability, persistence, and response-shape behavior.
 
 The compatibility workflow runs regular, AJAX, and multisite PHPUnit suites on
-WordPress 6.8 and latest. WordPress 5.3 receives activation and shortcode
-smokes because that test library does not support the PHPUnit 9 harness.
+WordPress 6.8 and latest. WordPress 5.3 receives an archive-style functional
+smoke because that test library does not support the PHPUnit 9 harness; this is
+broader than activation alone but is not represented as a full modern suite.
+
+The Playwright suite skips the paid WPBakery editor picker by default. Set
+`WPBAKERY_EDITOR_E2E=1` only in an environment where that plugin is installed;
+the stored-shortcode frontend test and repository `vc_map()`/bundle contracts
+remain active without it.
 
 ## WordPress Plugin Check
 
@@ -155,10 +165,16 @@ development-only files already omitted by `.distignore`.
 pnpm run plugin:check
 ```
 
-The current release-candidate record intentionally accepts two Block API v1
-findings to preserve WordPress 5.3 and does not use a baseline to hide them.
-Read the command output and `docs/RELEASE-CANDIDATE-VALIDATION.md`; a zero exit
-from the wrapper is not a claim that Plugin Check reported no findings.
+The maintained metadata uses Block API v3 on WordPress 6.3+ and a runtime API
+v1 compatibility registration on WordPress 5.3-6.2. Read the full command
+output and `docs/RELEASE-CANDIDATE-VALIDATION.md`; warnings are reported even
+when the wrapper exits successfully, and no baseline hides findings.
+
+Icon-selection contracts separately prove that fresh settings and integration
+choice lists use Bootstrap Solid without offering the historical Default pack.
+Explicit stored `default` selections remain renderable; selected-aware
+settings, block, widget, and legacy-form lists reintroduce the choice only when
+it is already in use.
 
 ## Scenario authoring
 Add new scenarios in `tests/frontend-output-scenarios.json` with the same schema:

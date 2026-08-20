@@ -2,6 +2,7 @@
 
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSet;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\ManifestIconSetProvider;
 
@@ -51,6 +52,30 @@ final class IconSetRegistryTest extends WP_UnitTestCase {
 				array( 'unknown' => 'unknown.svg' )
 			)
 		);
+	}
+
+	public function testNewSelectionsHideLegacyDefaultWithoutRemovingItFromTheRegistry(): void {
+		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
+		$registry = ( new ManifestIconSetProvider( dirname( __DIR__, 2 ) . '/resources/iconsets' ) )
+			->createRegistry( $networks );
+
+		$freshIds = array_map(
+			static function ( IconSet $iconSet ) {
+				return $iconSet->id();
+			},
+			IconSetSelectionPolicy::choices( $registry )
+		);
+		$legacyIds = array_map(
+			static function ( IconSet $iconSet ) {
+				return $iconSet->id();
+			},
+			IconSetSelectionPolicy::choices( $registry, 'default' )
+		);
+
+		$this->assertSame( 'bootstrap-solid', $freshIds[0] );
+		$this->assertNotContains( 'default', $freshIds );
+		$this->assertContains( 'default', $legacyIds );
+		$this->assertTrue( $registry->has( 'default' ) );
 	}
 
 	public function testManifestProviderDoesNotDiscoverArbitraryFiles(): void {

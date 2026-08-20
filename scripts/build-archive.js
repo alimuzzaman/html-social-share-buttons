@@ -17,7 +17,10 @@ if (!versionMatch) {
 }
 
 const pluginSlug = 'html-social-share-buttons';
-const target = path.resolve(repositoryRoot, '..', `${pluginSlug}.${versionMatch[1]}.zip`);
+const requestedTarget = process.env.HSSB_ARCHIVE_PATH;
+const target = requestedTarget
+	? path.resolve(requestedTarget)
+	: path.resolve(repositoryRoot, '..', `${pluginSlug}.${versionMatch[1]}.zip`);
 const rootExclusions = new Set(['.git', 'node_modules']);
 const sourceDateEpoch = Number(process.env.SOURCE_DATE_EPOCH || 946684800);
 
@@ -59,14 +62,12 @@ function collectFiles(source, relativeDirectory = '') {
 const archive = new AdmZip();
 for (const file of collectFiles(repositoryRoot)) {
 	const entryName = `${pluginSlug}/${file.relativePath}`;
-	archive.addFile(entryName, fs.readFileSync(file.absolutePath), '', 0o100644 << 16);
-	const entry = archive.getEntry(entryName);
+	const entry = archive.addFile(entryName, fs.readFileSync(file.absolutePath), '', 0o644);
 	entry.header.time = archiveTimestamp;
-	entry.header.attr = 0o100644 << 16;
 }
 
 if (fs.existsSync(target)) {
-	fs.rmSync(target);
+	throw new Error(`Refusing to overwrite an existing distribution archive: ${target}`);
 }
 archive.writeZip(target);
 if (!fs.existsSync(target)) {

@@ -32,6 +32,11 @@ final class Plugin {
 	private $booted = false;
 	private $booting = false;
 
+	/**
+	 * @param PluginPaths|null   $paths Optional path value for isolated tests.
+	 * @param PluginConfig|null  $config Optional configuration for isolated tests.
+	 * @param HookRegistrar|null $hooks Optional hook registrar for isolated tests.
+	 */
 	public function __construct(
 		SettingsRepository $settings,
 		NetworkRegistry $networks,
@@ -43,9 +48,9 @@ final class Plugin {
 		TranslationLoader $translations,
 		IconSetAssetResolver $assets,
 		ExtensionHooks $extensions,
-		PluginPaths $paths = null,
-		PluginConfig $config = null,
-		HookRegistrar $hooks = null,
+		$paths = null,
+		$config = null,
+		$hooks = null,
 		$renderer = null,
 		array $services = array()
 	) {

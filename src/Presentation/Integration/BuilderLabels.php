@@ -38,7 +38,7 @@ final class BuilderLabels {
 
 	public static function iconSet( $iconSetId, $fallback ) {
 		$labels = array(
-			'default'         => __( 'Default', 'html-social-share-buttons' ),
+			'default'         => __( 'Default (legacy)', 'html-social-share-buttons' ),
 			'flat'            => __( 'Flat', 'html-social-share-buttons' ),
 			'long-shadows'    => __( 'Long Shadows', 'html-social-share-buttons' ),
 			'prajin'          => __( 'Prajin', 'html-social-share-buttons' ),

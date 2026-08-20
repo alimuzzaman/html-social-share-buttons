@@ -22,11 +22,17 @@ import { networks } from '../shared/networks';
 					'Inherit from plugin settings',
 					'html-social-share-buttons'
 				),
-				default: __( 'Default', 'html-social-share-buttons' ),
+				'bootstrap-solid': __(
+					'Bootstrap Solid',
+					'html-social-share-buttons'
+				),
 		  };
 	const iconsetAssets = localized.iconsetAssets;
 	const inheritedIconset = localized.inheritedIconset;
 	const availableNetworks = networks( __ );
+	const supportsBlockApiV3 =
+		localized.apiVersion === 3 &&
+		typeof blockEditor.useBlockProps === 'function';
 
 	function profileLinksForPreview( attributes ) {
 		if ( attributes.profile_links_mode === 'none' ) {
@@ -42,8 +48,14 @@ import { networks } from '../shared/networks';
 
 	blocks.registerBlockType( metadata.name, {
 		...metadata,
+		apiVersion: supportsBlockApiV3 ? metadata.apiVersion : 1,
 		edit( props ) {
 			const attributes = props.attributes;
+			const selectableIconsets = Object.assign( {}, iconsets );
+			if ( localized.legacyIconsets[ attributes.iconset ] ) {
+				selectableIconsets[ attributes.iconset ] =
+					localized.legacyIconsets[ attributes.iconset ];
+			}
 			const activeIconsetId =
 				attributes.iconset === 'inherit'
 					? inheritedIconset
@@ -64,6 +76,14 @@ import { networks } from '../shared/networks';
 			const selectedNetworks = availableNetworks.filter( function ( network ) {
 				return !! profileLinks[ network.id ];
 			} );
+			const blockProps = Object.assign(
+				{ key: 'preview' },
+				supportsBlockApiV3
+					? blockEditor.useBlockProps( {
+							className: 'hssb-social-links-block-preview',
+					  } )
+					: { className: 'hssb-social-links-block-preview' }
+			);
 
 			return el( Fragment, {}, [
 				el(
@@ -97,8 +117,8 @@ import { networks } from '../shared/networks';
 									'html-social-share-buttons'
 								),
 								value: attributes.iconset,
-								options: Object.keys( iconsets ).map( function ( id ) {
-									return { label: iconsets[ id ], value: id };
+								options: Object.keys( selectableIconsets ).map( function ( id ) {
+									return { label: selectableIconsets[ id ], value: id };
 								} ),
 								onChange( value ) {
 									props.setAttributes( { iconset: value } );
@@ -208,7 +228,7 @@ import { networks } from '../shared/networks';
 				),
 				el(
 					'div',
-					{ className: 'hssb-social-links-block-preview' },
+					blockProps,
 					[
 						attributes.title
 							? el( 'h3', { key: 'title' }, attributes.title )

@@ -18,7 +18,7 @@ The tracked GitHub workflow defines these automated combinations:
 | Scope | Configured combinations | What the workflow does not establish |
 |---|---|---|
 | PHP syntax/bootstrap | PHP 7.0, 7.4, 8.0, 8.3, 8.5 | Browser or builder-editor behavior |
-| WordPress functional smoke | WP 5.3/PHP 7.0; WP 6.8/PHP 8.3; `latest`/PHP 8.3 | Full PHPUnit contracts for the WP 5.3 row |
+| WordPress functional smoke | WP 5.3/PHP 7.0; WP 6.8/PHP 8.3; `latest`/PHP 8.3; WP 7.1 final/PHP 8.3 | Full PHPUnit contracts for the WP 5.3 row |
 | WordPress contracts | WP 6.8/PHP 8.3 and `latest`/PHP 8.3 | A real Elementor or WPBakery editor |
 | Archive | PHP 8.3 with Node 22, pnpm 11.5.2, Composer, and the deterministic Node archive builder | A staging soak, rollback rehearsal, or cross-browser review |
 
@@ -43,6 +43,17 @@ Corrected candidate work now includes:
   reproducibly, and French builder tests no longer depend on translated labels;
 - share anchors have translated accessible names while their classes,
   destinations, visual behavior, and wrapper structure remain stable;
+- one canonical viewer policy applies three independent booleans to the content
+  author, other logged-in users, and logged-out visitors across automatic,
+  shortcode, widget, block, Elementor, WPBakery, and direct-PHP rendering;
+- Bootstrap Solid is the new-install icon default and the historical Default
+  pack is omitted from fresh selectors, while existing saved `default`
+  selections, explicit content, assets, and runtime lookups remain supported;
+- dynamic blocks and historical shortcode placeholders now resolve the current
+  post permalink at the canonical render boundary before the share template is
+  encoded, while explicit custom URLs remain supported and single-encoded;
+- both maintained blocks use API v3 on WordPress 6.3+ and a runtime-selected
+  API v1 compatibility registration on WordPress 5.3-6.2;
 - candidate metadata is 3.0.0, preventing collision with published 2.2.6;
 - archive builds refuse overwrite, CI compares separate outputs with a real
   production autoloader, `latest` receives CI, PHPStan/PHPCS are gated, tag
@@ -55,10 +66,65 @@ Corrected candidate work now includes:
 
 Observed post-fix checks on the working tree: JavaScript lint, icon determinism,
 settings/block/localization/integration/static contracts, Composer validation,
-PHPStan and PHPCS passed; regular PHPUnit passed 173 tests / 2,305 assertions
+PHPStan and PHPCS passed; regular PHPUnit passed 187 tests / 2,387 assertions
 with one expected skip, AJAX passed 10 / 39, and the focused multisite contract
-passed 1 / 7. The corrected exact archive, clean-install/plugin check, browser
-rerun, and new staging Day 1 are recorded only after their own commands pass.
+passed 1 / 7. Exact-archive and WordPress 7.1 evidence is recorded below. A new
+staging Day 1 is recorded only after a separately authorized exact staging
+installation and its own observation pass.
+
+### 2026-08-13 WordPress 7.1 corrected exact candidate
+
+The exact WordPress.org 2.2.6 ZIP was downloaded and independently identified
+at SHA-256
+`f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941`
+(564,795 bytes, 134 entries). On WordPress 7.1-RC3 its stored Social Share
+block reproduced the published defect: Facebook received
+`http%3A%2F%2F%25%25permalink%25%25`, while automatic placement used the real
+post permalink. This isolated the regression to the block/shortcode boundary.
+
+The corrected implementation resolves omitted and historical-placeholder URLs
+through `RenderFacade` before the network template encodes them. Focused
+contracts cover persisted dynamic blocks, automatic placement, both historical
+shortcodes, every maintained integration, explicit custom URLs, single
+encoding, and absence of raw or encoded permalink placeholders.
+
+Two production builds were byte-identical at SHA-256
+`0900bc11b58b5e866bd4d359071cb26bc8216245e136426de1e5e3aa30ecee92`
+(682,334 bytes, 234 entries). The distribution and authoritative production
+autoloader contracts passed. Every archive entry is a regular file with mode
+0644; an archive contract now rejects missing or malformed Unix permissions.
+The exact ZIP was installed, rather than source-linked, in a disposable
+WordPress 7.1-RC3 Sandbox as plugin 3.0.0. Its sorted per-file manifest matched
+the extracted archive at SHA-256
+`474f5bbf3e5e5f855378f53c219db47829718aff97219f07cc5aa9d225f3ee0c`.
+Archive-level execution verified both block registrations at API v3, the real
+post permalink in dynamic-block and automatic-placement output, no raw or
+encoded placeholder, an explicit custom URL encoded exactly once, and the
+logged-out audience setting suppressing shortcode output. It also verified
+that a missing option selects Bootstrap Solid and hides Default from the fresh
+settings payload, while an existing explicit Default selection round-trips,
+remains selectable, and still renders its retained assets.
+
+Plugin Check 2.0.0 against that exact ZIP exited successfully with zero errors
+and 57 warnings. No baseline was created. The warnings are the already reviewed
+production-manifest exclusion, discouraged `load_plugin_textdomain`, static
+nonce/context heuristics, and retained legacy globals/hooks/prefixes; there are
+no `block_api_version_too_low` findings.
+
+The exact-archive Playwright suite on WordPress 7.1-RC3 passed nine tests with
+one explicit licensed-WPBakery-editor skip. The forced-iframe editor was
+visible, both maintained blocks were present in Core's inserter items and
+inserted through the WordPress block data API, inspector changes persisted
+through save and reload, and the frontend contained the expected permalink,
+icons, and styles without placeholder, console, page, or block-recovery errors.
+The settings E2E also persisted all three audience values as false, reloaded
+them as false, and restored all three defaults to true.
+
+The other reviewed WordPress 7.1 surfaces require no plugin change: this code
+does not use the removed Navigation component, persistent-toolbar ownership,
+jQuery UI, client-side media processing, the SVG Icon API, or the Abilities API.
+Obsolete 40-pixel opt-in component props were removed from the settings UI.
+After these checks, `readme.txt` was aligned to `Tested up to: 7.1`.
 
 The following evidence was recorded on 2026-08-11 against the candidate
 working tree immediately before its review commit. WordPress execution used
@@ -288,9 +354,10 @@ The following are source/contract facts, not completed release gates.
 
 - Root `block.json` defines the existing share block and
   `blocks/social-links/block.json` defines the separate profile-links block.
-  `BlockRegistrar` registers both dynamic blocks from metadata (with a
-  metadata-reading fallback), and each editor imports its own metadata.
-  `save()` is `null`; previews are local and PHP produces frontend HTML.
+  On WordPress 6.3+ `BlockRegistrar` registers both at API v3 from metadata; its
+  metadata-reading compatibility path and localized editor configuration use
+  API v1 on WordPress 5.3-6.2. Each editor imports its own metadata, `save()` is
+  `null`, previews are local, and PHP produces frontend HTML.
 - Each block invokes the canonical `RenderFacade` directly. Registered render
   paths do not call the shortcode callback. Elementor and WPBakery use their
   canonical controller/adaptor inputs and the same facade for frontend output.
@@ -324,7 +391,7 @@ The following are source/contract facts, not completed release gates.
 |---|---|---|---|---|
 | Automatic placement, widget, metabox | Canonical controllers and PHPUnit contracts | N/A | PHPUnit and 33-scenario golden comparison passed | Manual browser matrix pending |
 | Shortcode | Canonical controller and output contracts for both public tags | N/A | Fresh-ZIP smoke passed for both tags | Passed automated candidate gate |
-| Gutenberg | `block.json`, registration, stored-attribute and render contracts | Real stored block passed in isolated Sandbox | Canonical URL fixture passed | Passed automated candidate gate |
+| Gutenberg | API-v3 metadata, compatibility registration, stored-attribute and render contracts | Both blocks passed insert, inspector, save/reload, and forced-iframe checks on WordPress 7.1 final | Exact-ZIP frontend passed permalink, icon, style, and placeholder checks | Passed automated candidate gate |
 | Elementor | Canonical widget, persisted-data and asset lifecycle contracts | Real `save_builder` document and visible icon preview passed | Real stored document and canonical URL passed | Passed automated candidate gate; manual matrix pending |
 | WPBakery | Canonical `vc_map`, stored-shortcode contracts and bundle smoke | Official-document contract accepted when the paid editor is unavailable | Real stored shortcode and canonical URL passed | Passed the owner-approved documentation/contract gate |
 | Direct PHP API | Render and canonical-permalink contracts | N/A | Fresh-ZIP smoke and PHPUnit passed | Passed automated candidate gate |
@@ -350,11 +417,11 @@ evidence for this uncommitted candidate.
 
 | Gate | Current state | Evidence required before RC approval |
 |---|---|---|
-| JS lint, icon determinism, settings/block/localization contracts | Passed 2026-08-12 after the latest code changes | Repeat after further code changes |
-| PHP quality | PHP syntax, PHPStan and PHPCS passed on PHP 8.3.33 on 2026-08-12 | Declared PHP/WP support matrix remains required |
-| Regular, AJAX, and multisite WordPress contracts | Passed on the current working tree with the 2026-08-12 summaries above | Repeat for the finally approved candidate revision if it changes |
-| Plugin Check | Current clean archive: two accepted API-version findings and 57 warnings; no baseline | API v1 is retained with the WordPress 5.3 floor under the 2026-08-12 compatibility decision |
-| Archive reproducibility and fresh-install activation | Superseded `d657...5b05` bytes reproduced and activated; their evidence is retained but cannot qualify the corrected candidate | Rebuild the corrected exact 3.0.0 archive twice, activate it cleanly, then complete its day-7 and final staging rollback |
+| JS lint, icon determinism, settings/block/localization contracts | Passed 2026-08-13 after the WordPress 7.1, permalink, and audience changes | Repeat after further included-source changes |
+| PHP quality | Composer validation, PHP syntax, PHPStan, and PHPCS passed on PHP 8.3.33 on 2026-08-13 | Declared PHP/WP support matrix remains required |
+| Regular, AJAX, and multisite WordPress contracts | Passed: 187 tests / 2,387 assertions / one expected skip; AJAX 10 / 39; multisite 1 / 7 | Repeat for the finally approved candidate revision if included source changes |
+| Plugin Check | Exact corrected ZIP: zero errors and 57 reviewed warnings; no baseline | Re-run if candidate bytes change |
+| Archive reproducibility and fresh-install activation | The earlier working-tree archive `0900bc11...cee92` passed exact-install smoke on WordPress 7.1 RC3; it is superseded evidence, not the final immutable archive | Commit the reviewed snapshot, rebuild from that revision, and reconfirm the exact ZIP identity before release |
 | Browser matrix evidence | Chrome, Firefox, Edge, and Playwright WebKit fixture rendering/non-overlap passed after the responsive correction; the 390-pixel collision is now an executable assertion; Safari 26.6 desktop and 390×844 Responsive Design Mode captures are recorded | Physical iOS and high-contrast review are scope limits, not claims made by this record |
 | Elementor and WPBakery | Elementor editor/frontend passed; WPBakery frontend passed and its `vc_map` contract matches official documentation | Repeat the repository contracts after further integration changes |
 
@@ -366,23 +433,44 @@ checksums, retained data, and the intentional URL-correction output difference
 are recorded above. The current repeat
 demonstrates a candidate -> 2.2.6 -> candidate file replacement with no
 uninstall, no option/meta loss, no reverse migration, and no rewrite schema
-option. It does not replace the required staging rollback rehearsal during the
-14-day soak.
+option. The release owner waived the elapsed fourteen-day staging requirement
+on 2026-08-13. The rollback rehearsal remains useful exact-archive evidence,
+but is no longer a timed-soak prerequisite.
 
-## Fourteen-day staging soak
+## Manual release review and timed-soak waiver
 
 Attempt 01 started at `2026-08-12T09:04:40Z` and was reset on 2026-08-13 when
-the release audit required candidate-byte changes. The corrected 3.0.0 soak is
-not started and has no completion timestamp. Once its exact archive is
-installed and Day 1 passes, record the
-candidate SHA-256, WordPress/PHP/theme/plugin versions, option checksum,
-fixture IDs, rollback archive checksum, and daily evidence. Review errors,
-share URLs, HTTP failures, placements, cache behavior, persisted-data drift,
-and the available editor fixtures daily; conduct browser checks on days 1, 7,
-and 13 and a rollback dry run on day 7. Any unexplained error, missing browser,
-or unavailable builder pauses the clock. Fourteen elapsed days of evidence and
-a final rollback rehearsal are required; automated tests do not substitute for
-time.
+the release audit required candidate-byte changes. The corrected 3.0.0 soak
+never started. On 2026-08-13, the release owner explicitly waived the
+fourteen-day wait and selected a manual exact-archive review with a 3–4 day
+release schedule before WordPress 7.1. The recurring soak automation was
+deleted and the superseded evidence remains historical only.
+
+The earlier RC3 manual review installed exact ZIP SHA-256
+`0900bc11b58b5e866bd4d359071cb26bc8216245e136426de1e5e3aa30ecee92`
+on WordPress 7.1-RC3 / PHP 8.3.33 as plugin 3.0.0. The in-container archive
+identity matched. Desktop and 390×844 settings layouts were reviewed; the
+fresh Bootstrap Solid default and hidden historical Default selector state
+were visible; all three audience controls were present and the logged-out
+control persisted false across a save/reload before being restored true.
+
+Both maintained blocks appeared in the inserter and saved from the forced
+iframe editor. The focused real-Chromium test passed 2/2, proving API v3,
+visible canvas previews, Inspector edits, save/reload persistence, and frontend
+rendering. Manual frontend review confirmed desktop and mobile layouts without
+horizontal overflow, accessible link names, real encoded permalinks, loaded
+icon styles, and no `%%permalink%%` or `%25%25permalink%25%25`. Plugin Check
+reported zero errors and the same 57 reviewed warnings. The bounded nginx and
+PHP-FPM review window contained no 5xx, fatal, uncaught, or error entry.
+The editor console contained two non-HSSB deprecation warnings for
+`core/edit-post.isEditorPanelEnabled` and custom toolbar controls; neither API
+is referenced by the plugin source or generated bundles, and the focused test
+recorded no console error or page error.
+
+This owner-approved replacement removes elapsed soak time as a blocker. It
+does not authorize a tag, upload, deployment, or release, and it does not
+remove the need to commit the reviewed source, rebuild from that immutable
+revision, and reconfirm the exact archive before release.
 
 ## Remaining release-operation gates and accepted exceptions
 
@@ -403,12 +491,11 @@ time.
   certification. This record's Safari evidence is limited to desktop/Responsive
   Design Mode captures; physical iOS and high-contrast modes are outside its
   scope.
-- Staging attempt 01 is superseded after one real Day 1. The corrected 3.0.0
-  soak has not started; a new exact installation, fourteen daily records, the
-  day-7 dry rollback, and final post-day-14 rollback are required.
-- Block API v1 is retained for the declared WordPress 5.3 floor. The release
-  owner accepted the two `block_api_version_too_low` findings on 2026-08-12;
-  no baseline exists. The documented v2 (5.6+) and v3 (6.3+) requirements mean
-  this cannot be resolved by a metadata-only change without dropping support.
+- Staging attempt 01 is superseded after one real Day 1. The release owner
+  waived the fourteen-day replacement attempt on 2026-08-13 in favor of the
+  recorded manual exact-archive review and a 3–4 day release schedule.
+- Maintained metadata is API v3 and Plugin Check reports no API-version errors.
+  WordPress 5.3-6.2 retain the explicit runtime API v1 compatibility path, so
+  the support floor does not receive unsupported v3 editor semantics.
 - Candidate version and stable tag are aligned at 3.0.0 to prevent collision
   with published 2.2.6. This does not authorize a tag, upload, or release.

@@ -179,7 +179,7 @@ final class CanonicalBuilderIntegrationTest extends WP_UnitTestCase {
 
 	public function testBundledBuilderChoiceLabelsUseThePluginTextDomain(): void {
 		$this->assertSame(
-			__( 'Default', 'html-social-share-buttons' ),
+			__( 'Default (legacy)', 'html-social-share-buttons' ),
 			BuilderLabels::iconSet( 'default', 'not used' )
 		);
 		$this->assertSame(

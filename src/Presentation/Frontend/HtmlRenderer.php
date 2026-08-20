@@ -36,13 +36,24 @@ final class HtmlRenderer {
 			esc_attr( '' !== $shapeClass ? $shapeClass : $result->shape() ) . "'>";
 
 		foreach ( $result->buttons() as $button ) {
+			$label = sprintf(
+				/* translators: %s is the social network name. */
+				__( 'Share on %s', 'html-social-share-buttons' ),
+				$button->network()->label()
+			);
 			$output .= "<a class='" .
 				esc_attr( $this->cssClass( $button->network() ) ) .
 				"' target='_blank' href='" .
 				esc_url( $button->url() ) .
 				"' rel='" .
 				esc_attr( implode( ' ', $result->relTokens() ) ) .
+				"' aria-label='" .
+				esc_attr( $label ) .
 				"'></a>\n";
+		}
+
+		if ( ! empty( $result->buttons() ) && ! empty( $result->profileLinks() ) ) {
+			$output .= "<span class='zmshbt-profile-separator' aria-hidden='true'></span>\n";
 		}
 
 		foreach ( $result->profileLinks() as $profileLink ) {

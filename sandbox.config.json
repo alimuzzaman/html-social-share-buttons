@@ -1,5 +1,6 @@
 {
 	"slug": "html-social-share-buttons",
+	"wpVersion": "7.1",
 	"plugins": {
 		"html-social-share-buttons": ".",
 		"plugin-check": true,

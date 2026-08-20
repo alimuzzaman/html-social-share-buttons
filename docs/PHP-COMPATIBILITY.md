@@ -1,8 +1,8 @@
 # PHP compatibility
 
 - **Minimum PHP:** 7.0
-- **Current candidate metadata:** internally aligned at 2.2.6; any post-soak
-  release-version change remains release-owner work
+- **Current candidate metadata:** internally aligned at 3.0.0; this does not
+  authorize a tag or release
 
 The plugin header and Composer manifest both require PHP 7.0 or newer. The
 canonical rewrite deliberately avoids typed properties, union types,
@@ -15,6 +15,10 @@ The compatibility workflow defines syntax/bootstrap checks for PHP 7.0, 7.4,
 exact candidate archive and rendered a saved legacy shortcode with a canonical
 permalink. Modern PHPUnit and browser suites run on newer PHP because the
 current test runner itself requires PHP 7.4 or newer.
+
+The static compatibility contract also rejects implicitly nullable typed
+parameters (`Type $value = null`), which PHP 8.4 deprecates, without introducing
+post-PHP-7.0 syntax into distributed files.
 
 This supports the declared runtime floor; it does not claim that the complete
 modern test suite ran on PHP 7.0 or every intermediate PHP version.

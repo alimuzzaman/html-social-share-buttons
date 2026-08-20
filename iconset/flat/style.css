@@ -53,4 +53,7 @@
 	-webkit-transform: scale(1.5);
 	transform: scale(1.5)
 }
+.zmshbt.flat .zmshbt-profile-separator{display:inline-block;width:1px;height:28px;margin:11px 14px;vertical-align:top;background:#c3c4c7}
+.zmshbt.flat.left .zmshbt-profile-separator,.zmshbt.flat.right .zmshbt-profile-separator{display:block;width:28px;height:1px;margin:14px 11px}
 @media (max-width:600px){.zmshbt.left,.zmshbt.right{position:static!important;display:flex;flex-wrap:wrap;justify-content:center}.zmshbt.left a,.zmshbt.right a{margin:5px!important}}
+@media (max-width:600px){.zmshbt.flat.left .zmshbt-profile-separator,.zmshbt.flat.right .zmshbt-profile-separator{display:inline-block;width:1px;height:28px;margin:9px 12px}}

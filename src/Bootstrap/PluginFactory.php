@@ -16,6 +16,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Migration\Migrat
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Migration\WordPressMigrationStateStore;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Extension\ExtensionHooks;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\ShareContextFactory;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\ViewerVisibilityPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsRequestMapper;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\SettingsRequestSanitizer;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Translation\TranslationLoader;
@@ -64,6 +65,7 @@ final class PluginFactory {
 		}
 
 		$translations = new TranslationLoader( $paths->file(), $config->textDomain() );
+		$visibility = new ViewerVisibilityPolicy();
 		$facade = $renderer instanceof RenderFacade
 			? $renderer
 			: new RenderFacade(
@@ -71,7 +73,11 @@ final class PluginFactory {
 				$iconSets,
 				$assets,
 				$extensions,
-				new ShareContextFactory( null, $extensions )
+				new ShareContextFactory( null, $extensions ),
+				null,
+				null,
+				$settings,
+				$visibility
 			);
 		$assetCollector = new AssetCollector(
 			$assets->stylesheetUrl( $iconSets->get( 'default' ) ),
@@ -92,7 +98,8 @@ final class PluginFactory {
 				$assetCollector,
 				$config->disabledMetaKey(),
 				null,
-				$config->legacyTextDomain()
+				$config->legacyTextDomain(),
+				$visibility
 			),
 			'shortcode' => new ShortcodeController(
 				$facade,

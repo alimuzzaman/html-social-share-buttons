@@ -29,6 +29,7 @@ const settingsImplementationCode = [
 ].join('\n');
 const settingsSchema = JSON.parse(fs.readFileSync('tests/fixtures/settings-schema-baseline.json', 'utf8'));
 const schemaIconIds = Object.keys(settingsSchema.default_options.icons);
+const enabledSchemaIconIds = schemaIconIds.filter((id) => id !== 'telegram');
 const roots = {
 	'zmsh-react-settings-root': {},
 };
@@ -75,12 +76,12 @@ const context = {
 };
 
 context.window.zm_sh_react_settings = {
-	defaultIconset: 'default',
+	defaultIconset: 'bootstrap-solid',
 	assets_img: '/assets/image/',
 	iconsets: [
 		{
-			id: 'default',
-			name: 'Default',
+			id: 'bootstrap-solid',
+			name: 'Bootstrap Solid',
 			preview_img: '/preview.png',
 			types: ['square', 'circle'],
 			icons: schemaIconIds.map((id) => ({
@@ -103,7 +104,7 @@ context.window.zm_sh_react_settings = {
 		show_before_post: 'square',
 		show_after_post: 'circle',
 		icons: Object.fromEntries(
-			schemaIconIds.map((id) => [id, 1])
+			schemaIconIds.map((id) => [id, id === 'telegram' ? 0 : 1])
 		),
 		share_templates: settingsSchema.share_template_defaults,
 		profile_links: {
@@ -114,11 +115,15 @@ context.window.zm_sh_react_settings = {
 		auto_hide_btn: 0,
 		use_port: 0,
 		nofollow: 0,
+		show_for_current_user: 0,
+		show_for_logged_in_user: 1,
+		show_for_logged_out_user: 1,
 	}),
 	share_template_defaults: settingsSchema.share_template_defaults,
 	share_template_overrides: {
 		facebook: 'https://www.facebook.com/sharer/sharer.php?u=%%permalink%%',
 		x: 'https://example.com/custom?url=%%permalink%%',
+		telegram: 'https://t.me/share/url?url=%%permalink%%',
 	},
 	exclude_items: [
 		{ id: '42', token: '#42 - About (page)' },
@@ -291,6 +296,37 @@ if (missing.length > 0) {
 	throw new Error(`Missing legacy field names: ${missing.join(', ')}`);
 }
 
+const audienceKeys = [
+	'show_for_current_user',
+	'show_for_logged_in_user',
+	'show_for_logged_out_user',
+];
+audienceKeys.forEach((key) => {
+	const audienceFields = nodes.filter(
+		(node) =>
+			node.props &&
+			node.props.name === `zm_shbt_fld[${key}]`
+	);
+	const hidden = audienceFields.find((node) => node.props.type === 'hidden');
+	const toggle = audienceFields.find((node) => node.props.type === 'checkbox');
+	if (!hidden || hidden.props.value !== '0' || !toggle) {
+		throw new Error(`Audience ${key} must serialize an explicit true or false value.`);
+	}
+});
+const currentUserToggle = nodes.find(
+	(node) =>
+		node.props &&
+		node.props.name === 'zm_shbt_fld[show_for_current_user]' &&
+		node.props.type === 'checkbox'
+);
+if (!currentUserToggle || currentUserToggle.props.checked !== false) {
+	throw new Error('Current-user audience setting did not retain its saved false value.');
+}
+currentUserToggle.props.onChange(true);
+if (appInstance.state.options.show_for_current_user !== true) {
+	throw new Error('Audience toggles should update canonical settings state.');
+}
+
 const profileFields = nodes.filter((node) => node.props && String(node.props.name || '').indexOf('zm_shbt_fld[profile_links][') === 0);
 const facebookProfile = profileFields.find((node) => node.props.name === 'zm_shbt_fld[profile_links][facebook]');
 const xProfile = profileFields.find((node) => node.props.name === 'zm_shbt_fld[profile_links][x]');
@@ -324,6 +360,7 @@ const networkColumns = nodes.filter((node) => node.props && node.props.className
 const facebookPrefix = nodes.find((node) => node.props && node.props.className === 'zm_template_prefix' && node.children && node.children[0].includes('facebook.com'));
 const facebookSerializedTemplate = nodes.find((node) => node.props && node.props.name === 'zm_shbt_fld[share_templates][facebook]');
 const xInitialSerializedTemplate = nodes.find((node) => node.props && node.props.name === 'zm_shbt_fld[share_templates][x]');
+const telegramSerializedTemplate = nodes.find((node) => node.props && node.props.name === 'zm_shbt_fld[share_templates][telegram]');
 const facebookPlaceholder = nodes.find((node) => node.props && node.props.className === 'zm_template_placeholder' && node.children && node.children[0] === '%%permalink%%');
 if (!facebookTemplate || facebookTemplate.props.className !== 'zm_template_parameter_editor' || !facebookTemplate.props.contentEditable || !facebookPrefix || !facebookPlaceholder || !facebookSerializedTemplate || facebookSerializedTemplate.props.value !== '' || networkColumns.length !== 2) {
 	throw new Error('Canonical templates should show a fixed URL and separately editable parameter values.');
@@ -334,6 +371,9 @@ if (!xTemplate || xTemplate.props.className !== 'zm_template_parameter_editor' |
 }
 if (!xInitialSerializedTemplate || xInitialSerializedTemplate.props.value !== 'https://example.com/custom?url=%%permalink%%') {
 	throw new Error('Hidden templates should retain the exact saved full URL.');
+}
+if (!telegramSerializedTemplate || telegramSerializedTemplate.props.value !== 'https://t.me/share/url?url=%%permalink%%') {
+	throw new Error('Collapsed network panels should preserve saved template overrides.');
 }
 
 if (nodes.some((node) => node.props && node.props.className === 'zm_template_placeholders') || sourceCode.includes('Insert into selected value') || sourceCode.includes('zm_template_parameter_value')) {
@@ -566,7 +606,7 @@ if (!shortcodeTextarea) {
 	throw new Error('Code generator textarea was not rendered.');
 }
 
-const expectedShortcode = `[zm_sh_btn iconset='default' iconset_type='square' icons='${schemaIconIds.join(',')}']`;
+const expectedShortcode = `[zm_sh_btn iconset='bootstrap-solid' iconset_type='square' icons='${enabledSchemaIconIds.join(',')}']`;
 if (shortcodeTextarea.props.value !== expectedShortcode) {
 	throw new Error(`Unexpected shortcode output: ${shortcodeTextarea.props.value}`);
 }
@@ -596,7 +636,7 @@ if (!appInstance) {
 const rerenderedTree = appInstance.render();
 const rerenderedNodes = collectNodes(rerenderedTree);
 const phpTextarea = rerenderedNodes.find((node) => node.type === 'textarea' && node.props && node.props.id === 'copy_shortcode');
-const expectedPhpFragment = `$options['icons']\t\t\t= array( '${schemaIconIds.join("', '")}' );`;
+const expectedPhpFragment = `$options['icons']\t\t\t= array( '${enabledSchemaIconIds.join("', '")}' );`;
 
 if (!phpTextarea || !phpTextarea.props.value.includes(expectedPhpFragment)) {
 	throw new Error('PHP code generator output did not include the expected legacy icon assignment.');

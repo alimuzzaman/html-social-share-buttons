@@ -41,6 +41,11 @@ foreach ( $responsive_stylesheets as $relative_path ) {
 		fwrite( STDERR, sprintf( "Missing mobile placement rule: %s\n", $relative_path ) );
 		exit( 1 );
 	}
+	if ( false === strpos( $css, '.zmshbt-profile-separator' ) ) {
+		fwrite( STDERR, sprintf( "Missing mixed share/profile separator rule: %s\n", $relative_path ) );
+		exit( 1 );
+	}
 }
 
 echo "All icon-set styles prevent fixed mobile rail collisions.\n";
+echo "All icon-set styles distinguish mixed share and profile links.\n";

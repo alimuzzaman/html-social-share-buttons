@@ -39,7 +39,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 	];
 	var defaults = {
 		title: text('defaultTitle', 'Share this with your friends'),
-		iconset: data.defaultIconset || 'default',
+		iconset: data.defaultIconset || 'bootstrap-solid',
 		excludes: '',
 		show_in: {
 			show_left: 0,
@@ -59,6 +59,9 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 		auto_hide_btn: 0,
 		use_port: 0,
 		nofollow: 0,
+		show_for_current_user: true,
+		show_for_logged_in_user: true,
+		show_for_logged_out_user: true,
 	};
 
 	function findIconset(id) {
@@ -306,6 +309,9 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 				case 'auto_hide_btn':
 				case 'use_port':
 				case 'nofollow':
+				case 'show_for_current_user':
+				case 'show_for_logged_in_user':
+				case 'show_for_logged_out_user':
 					nextOptions[path] = toBoolean(value);
 					break;
 				default:

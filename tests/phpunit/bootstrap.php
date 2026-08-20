@@ -19,7 +19,13 @@ if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 }
 
 if ( ! is_string( $tests_dir ) || ! is_dir( $tests_dir . '/includes' ) ) {
-	exit( 'WP_TESTS_DIR must point to the WordPress test library. Run this suite through Sandbox.\n' );
+	$message = "WP_TESTS_DIR must point to the WordPress test library. Run this suite through Sandbox.\n";
+	if ( defined( 'STDERR' ) ) {
+		fwrite( STDERR, $message );
+	} else {
+		echo $message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed CLI diagnostic.
+	}
+	exit( 1 );
 }
 
 if ( ! function_exists( 'tests_add_filter' ) ) {
@@ -32,6 +38,18 @@ tests_add_filter(
 		global $zm_sh_default_options;
 
 		require $plugin_file;
+	}
+);
+
+tests_add_filter(
+	'plugins_loaded',
+	static function () {
+		add_action(
+			'zm_sh_add_iconset',
+			static function () {
+				$GLOBALS['hssb_test_plugins_loaded_iconset_hook'] = true;
+			}
+		);
 	}
 );
 

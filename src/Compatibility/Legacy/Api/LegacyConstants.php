@@ -15,12 +15,15 @@ final class LegacyConstants {
 	public static function define( $pluginFile ) {
 		$pluginFile = (string) $pluginFile;
 		self::canonical( $pluginFile );
+		$pluginDir = (string) constant( 'HSSB_PLUGIN_DIR' );
+		$pluginUrl = (string) constant( 'HSSB_PLUGIN_URL' );
+		$assetsUrl = (string) constant( 'HSSB_ASSETS_URL' );
 
-		self::alias( 'zm_sh_dir', HSSB_PLUGIN_DIR );
-		self::alias( 'zm_sh_url', HSSB_PLUGIN_URL );
-		self::alias( 'zm_sh_url_iconset', HSSB_PLUGIN_URL . 'iconset/' );
-		self::alias( 'zm_sh_url_assets', HSSB_ASSETS_URL );
-		self::alias( 'zm_sh_url_assets_img', HSSB_ASSETS_URL . 'image/' );
+		self::alias( 'zm_sh_dir', $pluginDir );
+		self::alias( 'zm_sh_url', $pluginUrl );
+		self::alias( 'zm_sh_url_iconset', $pluginUrl . 'iconset/' );
+		self::alias( 'zm_sh_url_assets', $assetsUrl );
+		self::alias( 'zm_sh_url_assets_img', $assetsUrl . 'image/' );
 	}
 
 	private static function canonical( $pluginFile ) {

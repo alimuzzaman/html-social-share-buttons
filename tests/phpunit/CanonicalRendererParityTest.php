@@ -6,8 +6,8 @@ use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderFacade;
 
 /**
  * Characterizes the renderer through its canonical facade. The JSON fixture
- * remains the historical HTML contract; neither a global runtime nor a legacy
- * renderer is involved in producing the candidate output.
+ * records the approved 3.0.0 HTML contract, including additive accessible
+ * names; neither a global runtime nor a legacy renderer produces the output.
  */
 final class CanonicalRendererParityTest extends WP_UnitTestCase {
 	private $facade;

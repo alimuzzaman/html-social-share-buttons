@@ -1,34 +1,106 @@
-# Fourteen-day staging soak
+# Superseded fourteen-day staging soak
 
 ## Status
 
-**In progress.** The exact candidate archive was installed and verified on the
-declared staging environment before the clock started at
-`2026-08-12T09:04:40Z`. The soak has not passed. It cannot pass before fourteen
-real elapsed days and the final staging rollback.
+**Waived by the release owner on 2026-08-13; this is not a current release
+gate.** The owner chose a manual exact-archive review and a 3–4 day release
+schedule before WordPress 7.1 instead of waiting fourteen elapsed days. The
+recurring soak automation was deleted, and no active baseline or daily record
+may be created for this superseded procedure.
 
-## Candidate baseline
+The 2026-08-12 attempt was stopped after the release-diff audit found
+packaged-runtime defects and a version collision with the already published
+2.2.6 release. Its original evidence remains under
+`docs/evidence/staging-soak-superseded/attempt-01-2026-08-12/`; nothing was
+backfilled or reused for the corrected candidate.
+
+## Current replacement gate
+
+The superseded working-tree 3.0.0 ZIP received a manual review on 2026-08-13 in a
+disposable WordPress 7.1-RC3 / PHP 8.3.33 instance. The settings UI was
+reviewed at desktop and 390×844 widths; both API-v3 blocks were inserted and
+saved; the Chromium forced-iframe test edited Inspector controls, reloaded the
+stored attributes, and rendered the frontend; desktop and mobile frontend
+layouts were reviewed; audience-setting persistence passed; rendered URLs
+contained the real permalink and no raw or encoded placeholder; Plugin Check
+reported zero errors and the same 57 reviewed warnings; and the bounded nginx
+and PHP-FPM log window contained no 5xx, fatal, uncaught, or error entry.
+Two editor deprecation warnings referenced legacy `core/edit-post` panel and
+custom-toolbar APIs that do not occur in the plugin source or generated
+bundles; the focused run recorded no console error or page error.
+
+This manual gate does not make an uncommitted working tree immutable. Before a
+release is authorized, the reviewed source must be committed intentionally,
+the production ZIP rebuilt from that revision, and its exact SHA-256 and
+archive contract reconfirmed. Any packaged-byte change requires rerunning the
+focused exact-archive checks.
+
+## Historical soak candidate baseline
 
 | Field | Value |
 |---|---|
-| Candidate Git revision | `78c7f2344f01620441528b00707bb77152de476c` |
-| Candidate archive path | `/Users/alim/Sites/git/html-social-share-buttons.2.2.6.zip` |
-| Candidate SHA-256 | `d6575a33ff120ec768b6f71a4ea29f51a083760d016cd5f9a599aa0982945b05` |
-| Candidate size / entries | 668,318 bytes / 231 files |
-| Installed tree manifest SHA-256 | `8ede5b6e6789c218a10c8efe5f395a4db0d6b928167a4050334da2f78432c42b` (matches local archive extraction) |
+| Candidate version | 3.0.0 |
+| Candidate Git revision | Pending final validated commit |
+| Candidate archive path | `/Users/alim/Sites/git/html-social-share-buttons.3.0.0.zip` |
+| Candidate SHA-256 | `0900bc11b58b5e866bd4d359071cb26bc8216245e136426de1e5e3aa30ecee92` (working-tree validation build) |
+| Candidate size / entries | 682,334 bytes / 234 files |
+| Installed tree manifest SHA-256 | Pending exact staging installation |
 | Rollback release | Published WordPress.org 2.2.6 |
 | Rollback SHA-256 | `f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941` |
 | Staging environment | Sandbox `scaleway-sandbox`, instance `html-social-share-button`, WordPress 7.0.3 / PHP 8.3.33 |
 | Fixture URL | `https://default-html-social-share-buttons.sandbox.asb.bd/hssb-staging-soak-fixture/` (page ID 12) |
-| Started at | `2026-08-12T09:04:40Z` |
-| Earliest valid completion | `2026-08-26T09:04:40Z` |
+| Started at | Not started |
+| Earliest valid completion | Start time plus fourteen real elapsed days |
 
-Day 1 evidence is recorded at
-`docs/evidence/staging-soak/2026-08-12/day-01.md`. The initial staging
-bootstrap/path-cache failures occurred and were corrected before the start
-timestamp; they are recorded there rather than omitted from the history.
+The active `docs/evidence/staging-soak/` directory intentionally contains no
+daily record until the corrected exact archive is installed and observed.
+The superseded recorded archive was reproduced twice and passed exact-install checks on a
+disposable WordPress 7.1-RC3 runtime. Its installed 234-file manifest matched
+the local extraction at
+`474f5bbf3e5e5f855378f53c219db47829718aff97219f07cc5aa9d225f3ee0c`.
+That disposable proof is not the pending staging-tree identity. The candidate
+is not yet an approved Git-revision baseline and has not been deployed to the
+declared staging environment.
 
-## Pass criteria
+## Historical baseline initialization
+
+If the release owner reactivates this optional procedure, the validator is
+fail-closed until the exact staging installation and Day 1 observation have
+produced `docs/evidence/staging-soak/baseline.json`. Never copy values from the
+superseded attempt or from the disposable WordPress 7.1 runtime. The active
+baseline must be one JSON object with this shape:
+
+```json
+{
+  "schema_version": 1,
+  "status": "active",
+  "started_at": "DAY-1-OBSERVED-UTC",
+  "candidate_sha256": "0900bc11b58b5e866bd4d359071cb26bc8216245e136426de1e5e3aa30ecee92",
+  "installed_manifest_sha256": "STAGING-INSTALLED-TREE-SHA256",
+  "candidate_git_revision": "APPROVED-40-CHARACTER-GIT-REVISION",
+  "fixture_url": "https://default-html-social-share-buttons.sandbox.asb.bd/hssb-staging-soak-fixture/",
+  "runtime": {
+    "wordpress": "OBSERVED-WORDPRESS-VERSION",
+    "php": "OBSERVED-PHP-VERSION",
+    "active_plugin_version": "3.0.0"
+  },
+  "persisted_hashes": {
+    "settings": "SHA256",
+    "disabled_share": "SHA256",
+    "elementor": "SHA256",
+    "wpbakery": "SHA256",
+    "content": "SHA256",
+    "schema_version": "absent"
+  }
+}
+```
+
+Create it from the same bounded observation that creates Day 1, then keep it
+immutable for that attempt. A byte change, environment replacement, or reset
+requires moving the whole attempt to the superseded evidence area and creating
+a new observed baseline; editing the old baseline is not a continuation.
+
+## Historical pass criteria
 
 - Fourteen consecutive elapsed 24-hour periods on the same exact candidate
   bytes and declared staging environment.
@@ -82,11 +154,16 @@ records:
 Each Markdown record must have an adjacent authoritative JSON sidecar with the
 same base name, matching the schema used by `day-01.json`. The validator reads
 the JSON directly; it never interprets Markdown as machine evidence. Validate
-existing records offline with:
+existing records against the active baseline with:
 
 ```sh
 node scripts/validate-staging-soak-evidence.js
 ```
+
+Use `--baseline /absolute/path/to/baseline.json` only for an isolated rehearsal
+or validator test. The default always reads the active evidence directory's
+`baseline.json`; it contains no built-in candidate, runtime, timestamp, or
+persistence identity that could accidentally accept a superseded attempt.
 
 After writing Day N, pass `--require-through N` so a missing daily record fails.
 The validator enforces the recorded candidate/tree identities, 24-hour UTC
@@ -106,8 +183,8 @@ node scripts/validate-staging-soak-evidence.js --require-through 14 --completion
 ```
 
 Completion mode requires exactly fourteen valid daily records plus one valid
-final rollback observed no earlier than `2026-08-26T09:04:40Z`. It never treats
-Day 14 alone as completion.
+final rollback observed no earlier than the active Day 1 timestamp plus
+fourteen elapsed days. It never treats Day 14 alone as completion.
 
 Day-7 and final JSON evidence must identify the intermediate published
 archive SHA-256 (`f056820bf7377ca4e228fe28792f23a3e6bf226db4d1a98c85bb26be9d23f941`),

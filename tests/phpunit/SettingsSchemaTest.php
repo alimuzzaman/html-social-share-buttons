@@ -55,6 +55,9 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 		$this->assertTrue( $settings->networkStates()['facebook'] );
 		$this->assertArrayNotHasKey( 'unknown', $settings->networkStates() );
 		$this->assertTrue( $settings->noFollow() );
+		$this->assertTrue( $settings->showForCurrentUser() );
+		$this->assertTrue( $settings->showForLoggedInUser() );
+		$this->assertTrue( $settings->showForLoggedOutUser() );
 	}
 
 	public function testCanonicalBooleanInputsUseExplicitSemanticValues(): void {
@@ -70,6 +73,9 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 				'auto_hide_enabled' => 'no',
 				'preserve_url_port' => 'yes',
 				'no_follow' => '1',
+				'show_for_current_user' => '0',
+				'show_for_logged_in_user' => '1',
+				'show_for_logged_out_user' => 'false',
 			)
 		);
 
@@ -81,5 +87,8 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 		$this->assertFalse( $settings->autoHideEnabled() );
 		$this->assertTrue( $settings->preserveUrlPort() );
 		$this->assertTrue( $settings->noFollow() );
+		$this->assertFalse( $settings->showForCurrentUser() );
+		$this->assertTrue( $settings->showForLoggedInUser() );
+		$this->assertFalse( $settings->showForLoggedOutUser() );
 	}
 }

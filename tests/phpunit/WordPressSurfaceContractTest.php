@@ -33,6 +33,7 @@ final class WordPressSurfaceContractTest extends WP_UnitTestCase {
 		);
 
 		$this->assertInstanceOf( WP_Block_Type::class, $block );
+		$this->assertSame( 3, $block->api_version );
 		$this->assertSame( $this->surface['block']['script_handle'], $block->editor_script_handles[0] );
 
 		$script = wp_scripts()->registered[ $this->surface['block']['script_handle'] ];
@@ -42,6 +43,8 @@ final class WordPressSurfaceContractTest extends WP_UnitTestCase {
 			'var ' . $this->surface['block']['localized_object'] . ' =',
 			$script->extra['data']
 		);
+		$this->assertStringContainsString( '"bootstrap-solid"', $script->extra['data'] );
+		$this->assertStringContainsString( '"legacyIconsets":{"default":', $script->extra['data'] );
 
 		$metadata = json_decode(
 			(string) file_get_contents( dirname( __DIR__, 2 ) . '/block.json' ),
@@ -60,9 +63,19 @@ final class WordPressSurfaceContractTest extends WP_UnitTestCase {
 			$block->render_callback[0]
 		);
 		$this->assertSame( 'renderShareBlock', $block->render_callback[1] );
+
+		$socialLinks = WP_Block_Type_Registry::get_instance()->get_registered(
+			'html-social-share/social-links'
+		);
+		$this->assertInstanceOf( WP_Block_Type::class, $socialLinks );
+		$this->assertSame( 3, $socialLinks->api_version );
+		$this->assertSame( 'zm-sh-social-links-block', $socialLinks->editor_script_handles[0] );
+		$this->assertIsArray( $socialLinks->render_callback );
+		$this->assertSame( 'renderSocialLinksBlock', $socialLinks->render_callback[1] );
 	}
 
 	public function testSettingsAssetsAndAjaxHooksMatchTheContract(): void {
+		delete_option( 'zm_shbt_fld' );
 		$settings = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->admin();
 		$settings->enqueueAssets( 'settings_page_zm_shbt_opt' );
 
@@ -73,6 +86,17 @@ final class WordPressSurfaceContractTest extends WP_UnitTestCase {
 			'var ' . $this->surface['settings']['localized_object'] . ' =',
 			$script->extra['data']
 		);
+		preg_match_all(
+			'/^var ' . preg_quote( $this->surface['settings']['localized_object'], '/' ) . ' = (.+);$/m',
+			$script->extra['data'],
+			$matches
+		);
+		$this->assertNotEmpty( $matches[1] );
+		$payload = json_decode( end( $matches[1] ), true );
+		$this->assertIsArray( $payload );
+		$this->assertSame( 'bootstrap-solid', $payload['defaultIconset'] );
+		$this->assertSame( 'bootstrap-solid', $payload['options']['iconset'] );
+		$this->assertNotContains( 'default', wp_list_pluck( $payload['iconsets'], 'id' ) );
 		$this->assertTrue( wp_style_is( $this->surface['settings']['style_handle'], 'enqueued' ) );
 
 		foreach ( $this->surface['ajax_actions'] as $action ) {
@@ -95,5 +119,6 @@ final class WordPressSurfaceContractTest extends WP_UnitTestCase {
 		$this->assertSame( $this->surface['settings']['page_slug'], $config->settingsPage() );
 		$this->assertSame( $this->surface['wpbakery']['base'], $config->wpBakeryBase() );
 		$this->assertSame( $this->surface['wpbakery']['script_handle'], $config->adminWpBakeryScriptHandle() );
+		$this->assertSame( 'hssb-elementor-editor', $config->adminElementorScriptHandle() );
 	}
 }

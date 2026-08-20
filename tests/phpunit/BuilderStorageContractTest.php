@@ -32,7 +32,7 @@ final class BuilderStorageContractTest extends WP_UnitTestCase {
 	public function testStoredBlockRendersThroughTheExistingCompatibilityAdapter(): void {
 		$output = do_blocks( $this->storage['block']['serialized'] );
 
-		$this->assertStringContainsString( "class='zmshbt in_block default square'", $output );
+		$this->assertStringContainsString( "class='zmshbt in_block bootstrap-solid circle'", $output );
 		$this->assertStringContainsString( "class='facebook'", $output );
 		$this->assertStringContainsString( "class='twitter'", $output );
 		$this->assertStringNotContainsString( '<h3>', $output );
@@ -73,7 +73,7 @@ final class BuilderStorageContractTest extends WP_UnitTestCase {
 			}
 		}
 
-		$this->assertStringContainsString( "class='zmshbt in_block default square'", $output );
+		$this->assertStringContainsString( "class='zmshbt in_block bootstrap-solid circle'", $output );
 		$this->assertStringContainsString( "class='facebook'", $output );
 	}
 
@@ -87,7 +87,7 @@ final class BuilderStorageContractTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertStringContainsString( "class='zmshbt in_block default square'", $blockOutput );
+		$this->assertStringContainsString( "class='zmshbt in_block bootstrap-solid square'", $blockOutput );
 		$this->assertStringContainsString( "class='facebook'", $blockOutput );
 		$this->assertStringContainsString( "class='twitter'", $blockOutput );
 
@@ -106,10 +106,10 @@ final class BuilderStorageContractTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( "class='facebook'", $shortcodeOutput );
 	}
 
-	public function testNonArrayBlockAttributesUseTheHistoricalDefaults(): void {
+	public function testNonArrayBlockAttributesUseTheCurrentDefaults(): void {
 		$output = zm_sh_render_block( 'invalid-storage' );
 
-		$this->assertStringContainsString( "class='zmshbt in_block default square'", $output );
+		$this->assertStringContainsString( "class='zmshbt in_block bootstrap-solid square'", $output );
 		$this->assertStringContainsString( "class='facebook'", $output );
 		$this->assertStringContainsString( "class='twitter'", $output );
 		$this->assertStringContainsString( "class='linkedin'", $output );

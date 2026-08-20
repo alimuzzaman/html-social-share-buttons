@@ -4,7 +4,7 @@ Plugin Name: HTML Social Share Buttons
 Plugin URI: http://wordpress.org/plugins/html-social-share-buttons/
 Description: Lightweight HTML and CSS social share buttons. Settings and block editing use WordPress JavaScript.
 Author: Alimuzzaman Alim
-Version: 2.2.6
+Version: 3.0.0
 Author URI: https://alim.dev
 Text Domain: html-social-share-buttons
 Domain Path: /languages
@@ -78,23 +78,40 @@ unset( $hssb_autoload );
 \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApiRegistrar::prepare(
 	HSSB_PLUGIN_FILE
 );
-$hssb_settings = new \Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsRepository(
-	\Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig::OPTION_NAME,
-	new \Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsCodec()
+
+/*
+ * The published runtime was composed on init priority 1. Preserve that timing
+ * so add-ons can register zm_sh_add_iconset callbacks during plugins_loaded
+ * before the canonical settings schema and integration services are built.
+ */
+add_action(
+	'init',
+	function () {
+		static $hssb_booted = false;
+		if ( $hssb_booted ) {
+			return;
+		}
+		$hssb_booted = true;
+
+		$hssb_settings = new \Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsRepository(
+			\Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig::OPTION_NAME,
+			new \Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsCodec()
+		);
+		$hssb_plugin = ( new \Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginFactory() )->create(
+			rtrim( HSSB_PLUGIN_DIR, '/\\' ),
+			$hssb_settings,
+			array(),
+			null,
+			array(
+				'\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApiRegistrar',
+				'importThirdPartyIconSets',
+			)
+		);
+		$hssb_plugin->boot();
+		\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApiRegistrar::register(
+			$hssb_plugin,
+			HSSB_PLUGIN_FILE
+		);
+	},
+	1
 );
-$hssb_plugin = ( new \Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginFactory() )->create(
-	rtrim( HSSB_PLUGIN_DIR, '/\\' ),
-	$hssb_settings,
-	array(),
-	null,
-	array(
-		'\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApiRegistrar',
-		'importThirdPartyIconSets',
-	)
-);
-$hssb_plugin->boot();
-\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApiRegistrar::register(
-	$hssb_plugin,
-	HSSB_PLUGIN_FILE
-);
-unset( $hssb_settings, $hssb_plugin );

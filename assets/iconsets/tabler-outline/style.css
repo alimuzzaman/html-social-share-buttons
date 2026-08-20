@@ -4,5 +4,8 @@
 .zmshbt.tabler-outline a{display:block;width:36px;height:36px;margin:7px;background-position:center;background-repeat:no-repeat;background-size:cover;transition:transform .16s ease,filter .16s ease}
 .zmshbt.tabler-outline a:hover{filter:brightness(1.06);transform:translateY(-2px) scale(1.06)}
 .zmshbt.tabler-outline a:focus-visible{outline:3px solid #2271b1;outline-offset:3px}
+.zmshbt.tabler-outline .zmshbt-profile-separator{display:inline-block;width:1px;height:28px;margin:11px 14px;vertical-align:top;background:#c3c4c7}
+.zmshbt.tabler-outline.left .zmshbt-profile-separator,.zmshbt.tabler-outline.right .zmshbt-profile-separator{display:block;width:28px;height:1px;margin:14px 11px}
 @media (max-width:600px){.zmshbt.left,.zmshbt.right{position:static!important;display:flex;flex-wrap:wrap;justify-content:center}.zmshbt.left a,.zmshbt.right a{margin:5px!important}}
+@media (max-width:600px){.zmshbt.tabler-outline.left .zmshbt-profile-separator,.zmshbt.tabler-outline.right .zmshbt-profile-separator{display:inline-block;width:1px;height:28px;margin:9px 12px}}
 @media (prefers-reduced-motion:reduce){.zmshbt.tabler-outline a{transition:none}.zmshbt.tabler-outline a:hover{transform:none}}

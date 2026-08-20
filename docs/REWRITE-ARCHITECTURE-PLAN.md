@@ -19,7 +19,7 @@ topology or an assertion that release operations have passed.
   shortcode, blocks, widgets, Elementor, WPBakery, metaboxes, and render facade.
 - `Compatibility/Legacy/Api` is the single retained adapter boundary. Historical
   root forwarding implementations and parallel legacy runtime are gone.
-- JavaScript builds four entry bundles from 20 source modules: settings admin,
+- JavaScript builds four entry bundles from 21 source modules: settings admin,
   Social Share block, Social Links block, and WPBakery controls.
 
 Historical icon filenames, directories, URLs, CSS classes, and `twitter`
@@ -60,10 +60,11 @@ runtime ownership.
 
 ## Remaining non-code gates
 
-The real 14-day staging soak, its day-7 and final staging rollback, candidate
-version/listing alignment, and explicit release approval remain outstanding.
-These do not make the canonical implementation partial; they make the release
-not yet complete.
+The release owner waived the earlier fourteen-day staging requirement on
+2026-08-13 after a fresh exact-archive manual review. An immutable candidate
+revision, final archive rebuild/identity check, listing alignment, and explicit
+release approval remain outstanding. These do not make the canonical
+implementation partial; they make the release not yet complete.
 
 See `REWRITE-COMPATIBILITY-DECISIONS.md` for exact retained surfaces and
 `RELEASE-CANDIDATE-VALIDATION.md` for dated evidence and limitations.

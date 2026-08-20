@@ -29,9 +29,11 @@ Elementor, WPBakery, a shortcode, or the generated PHP snippet.
 
 * Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, and email sharing.
 * Optional global profile/contact links with per-placement inherit or suppress controls.
+* Audience controls for the content author, other logged-in users, and logged-out visitors.
 * Dynamic Social Share and Social Links blocks for the block editor.
 * Classic widget, Elementor, WPBakery, shortcode, and PHP integrations.
-* Default, Flat, Long Shadow, Prajin, Bootstrap Solid, and Tabler Outline icon sets.
+* Bootstrap Solid as the default for new installations, plus Flat, Long Shadow, Prajin, and Tabler Outline.
+* Existing content configured with the historical Default pack keeps rendering it without migration.
 * Square buttons in every set; circle buttons in Flat, Long Shadow, Prajin, Bootstrap Solid, and Tabler Outline.
 * Automatic before/after placement and floating left/right placement.
 * Responsive floating rails that become centered, wrapping rows at 600px and below.
@@ -53,7 +55,7 @@ for a horizontal row.
 1. Install the plugin from the WordPress plugin directory, or upload the release ZIP.
 2. Activate **HTML Social Share Buttons**.
 3. Open **Settings > HTML Social Share**.
-4. Choose networks, icon style, button shape, and automatic placements.
+4. Choose networks, icon style, button shape, automatic placements, and viewer audiences.
 5. Optionally configure profile/contact links, share URL templates, exclusions, or analytics.
 6. Add a block, widget, builder element, shortcode, or generated PHP snippet where needed.
 
@@ -82,10 +84,23 @@ Yes. Automatic placement, widgets, Elementor, WPBakery, shortcodes, and a PHP
 code generator are supported. Both `[html-social-share-buttons]` and the
 historical `[zm_sh_btn]` shortcode tags are available.
 
+= Can I control who sees the buttons? =
+
+Yes. Audience settings independently control the content author viewing their
+own post, other logged-in users, and logged-out visitors. All three are enabled
+by default for existing and new installations, and the settings apply to
+automatic placement, blocks, widgets, builders, shortcodes, and PHP output.
+
 = Which button shapes are available? =
 
 The Default set supports square buttons. Flat, Long Shadow, Prajin, Bootstrap
 Solid, and Tabler Outline support square and circle buttons.
+
+= Which icon set does a new installation use? =
+
+Bootstrap Solid. The historical Default pack is hidden from normal selectors
+on a fresh installation. Existing settings and content that already select
+Default keep that selection and continue using the retained local assets.
 
 = Are icons loaded from a third-party CDN? =
 
@@ -120,13 +135,16 @@ provenance record.
 * **REWRITE**: Moved runtime ownership to a canonical namespaced service graph while retaining the documented 2.2.6 public and storage compatibility surfaces.
 * **FEATURE**: Added optional global social profile and email links with per-placement inherit or suppress controls.
 * **FEATURE**: Added a dynamic Social Links block and complete Bootstrap Solid and Tabler Outline SVG sets.
+* **FEATURE**: Made Bootstrap Solid the new-install icon default while retaining the historical Default pack for existing saved settings and content.
+* **FEATURE**: Added independent true/false audience controls for the content author, other logged-in users, and logged-out visitors across every rendering integration.
+* **FIX**: Dynamic blocks and historical shortcodes resolve the current post permalink before share templates are encoded, preventing raw or encoded `%%permalink%%` output while preserving custom URLs.
 * **FIX**: Floating left/right rails now become centered, wrapping rows at viewport widths of 600px and below.
 * **FIX**: Saved widget network selections render correctly while preserving existing widget data.
 * **FIX**: Settings saves preserve collapsed custom share templates and extension-owned option fields.
 * **FIX**: Third-party icon sets registered on `plugins_loaded` are available when the canonical runtime is composed.
 * **FIX**: Share-button links now expose translated accessible names, and PHP 8.4+ no longer reports implicit-nullability deprecations.
 * **IMPROVEMENT**: Added reproducible icon and translation generation, production-autoloader checks, non-overwriting deterministic archives, and broader integration/browser contracts.
-* **COMPATIBILITY**: Retained Block API v1 for WordPress 5.3. The two corresponding Plugin Check findings are documented and accepted; no clean Plugin Check result is claimed.
+* **COMPATIBILITY**: Migrated both maintained blocks to Block API v3 on WordPress 6.3+ with a tested API v1 registration fallback for WordPress 5.3-6.2, and verified the forced-iframe editor on WordPress 7.1 final.
 
 = 2.2.6 =
 * **SECURITY**: Hardened rendering, icon-set, widget, shortcode, and integration paths against malformed input and missing runtime objects.

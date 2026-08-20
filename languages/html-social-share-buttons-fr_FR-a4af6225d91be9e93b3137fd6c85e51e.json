@@ -1,0 +1,78 @@
+{
+    "translation-revision-date": "2026-08-13T07:20:00+00:00",
+    "generator": "WP-CLI\/2.13.0-alpha-16cc7a8",
+    "source": "build\/social-links.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "Facebook": [
+                "Facebook"
+            ],
+            "LinkedIn": [
+                "LinkedIn"
+            ],
+            "Pinterest": [
+                "Pinterest"
+            ],
+            "Telegram": [
+                "Telegram"
+            ],
+            "Bluesky": [
+                "Bluesky"
+            ],
+            "Email": [
+                "E-mail"
+            ],
+            "Bootstrap Solid": [
+                "Bootstrap plein"
+            ],
+            "Button shape": [
+                "Forme des boutons"
+            ],
+            "Profile links": [
+                "Liens de profil"
+            ],
+            "Email destination": [
+                "Adresse e-mail de destination"
+            ],
+            "%s profile URL": [
+                "URL du profil %s"
+            ],
+            "Inherit from plugin settings": [
+                "H\u00e9riter des r\u00e9glages de l\u2019extension"
+            ],
+            "X": [
+                "X"
+            ],
+            "Square": [
+                "Carr\u00e9"
+            ],
+            "Circle": [
+                "Cercle"
+            ],
+            "Title": [
+                "Titre"
+            ],
+            "Icon set": [
+                "Jeu d\u2019ic\u00f4nes"
+            ],
+            "Social links": [
+                "Liens sociaux"
+            ],
+            "Use custom profile links": [
+                "Utiliser des liens de profil personnalis\u00e9s"
+            ],
+            "Do not display profile links": [
+                "Ne pas afficher les liens de profil"
+            ],
+            "Add profile links in the plugin settings or choose custom links.": [
+                "Ajoutez des liens de profil dans les r\u00e9glages de l\u2019extension ou choisissez des liens personnalis\u00e9s."
+            ]
+        }
+    }
+}

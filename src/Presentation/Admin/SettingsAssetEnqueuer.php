@@ -47,7 +47,7 @@ final class SettingsAssetEnqueuer {
 
 	private function enqueueSettingsPage() {
 		$adminStylePath = $this->pluginRoot . '/assets/admin.css';
-		$adminStyleVersion = file_exists( $adminStylePath ) ? filemtime( $adminStylePath ) : '2.2.8';
+		$adminStyleVersion = file_exists( $adminStylePath ) ? filemtime( $adminStylePath ) : $this->config->version();
 		wp_enqueue_style(
 			$this->config->adminSettingsStyleHandle(),
 			plugins_url( 'assets/admin.css', $this->pluginFile ),
@@ -97,7 +97,13 @@ final class SettingsAssetEnqueuer {
 		wp_localize_script(
 			$this->config->adminWpBakeryScriptHandle(),
 			$this->config->adminWpBakeryObject(),
-			array( 'nonce' => wp_create_nonce( $this->config->adminNonceAction() ) )
+			array(
+				'nonce'           => wp_create_nonce( $this->config->adminNonceAction() ),
+				'elementorWidget' => $this->config->elementorWidgetName(),
+				'legacyIconsets'  => array(
+					'default' => __( 'Default (legacy)', 'html-social-share-buttons' ),
+				),
+			)
 		);
 	}
 
@@ -109,7 +115,7 @@ final class SettingsAssetEnqueuer {
 			'dependencies' => isset( $asset['dependencies'] ) && is_array( $asset['dependencies'] )
 				? $asset['dependencies']
 				: array(),
-			'version'      => isset( $asset['version'] ) ? $asset['version'] : '2.2.8',
+			'version'      => isset( $asset['version'] ) ? $asset['version'] : $this->config->version(),
 		);
 	}
 

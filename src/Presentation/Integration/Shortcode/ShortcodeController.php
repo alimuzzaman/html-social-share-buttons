@@ -5,6 +5,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\Shortcode;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderFacade;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\AssetCollector;
 
@@ -114,7 +115,8 @@ final class ShortcodeController {
 		$options = array(
 			'inherit' => __( 'Inherit from plugin settings', 'html-social-share-buttons' ),
 		);
-		foreach ( $this->iconSets->all() as $iconSet ) {
+		$selectedId = $this->settings->load()->iconSetId();
+		foreach ( IconSetSelectionPolicy::choices( $this->iconSets, $selectedId ) as $iconSet ) {
 			$options[ $iconSet->id() ] = $this->iconSetLabel( $iconSet->id(), $iconSet->label() );
 		}
 
@@ -189,7 +191,7 @@ final class ShortcodeController {
 	private function iconSetLabel( $id, $fallback ) {
 		switch ( (string) $id ) {
 			case 'default':
-				return __( 'Default', 'html-social-share-buttons' );
+				return __( 'Default (legacy)', 'html-social-share-buttons' );
 			case 'flat':
 				return __( 'Flat', 'html-social-share-buttons' );
 			case 'long-shadows':

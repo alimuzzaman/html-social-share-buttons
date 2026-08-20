@@ -16,6 +16,7 @@ use LogicException;
  */
 final class LegacyApi {
 	private static $plugin;
+	private static $iconSetAdapter;
 
 	private function __construct() {
 	}
@@ -93,6 +94,23 @@ final class LegacyApi {
 
 	public static function iconSets() {
 		return self::service( 'iconSets' );
+	}
+
+	public static function registerLegacyIconSet( $iconSet ) {
+		$registry = self::iconSets();
+		if ( ! is_object( $registry ) ) {
+			return false;
+		}
+		if ( ! self::$iconSetAdapter instanceof LegacyIconSetAdapter ) {
+			self::$iconSetAdapter = new LegacyIconSetAdapter();
+		}
+
+		return self::$iconSetAdapter->register(
+			$iconSet,
+			$registry,
+			self::networks(),
+			self::service( 'assets' )
+		);
 	}
 
 	public static function extensions() {
@@ -195,17 +213,17 @@ final class LegacyApi {
 			}
 			$network = $networks->get( $networkId );
 			$legacy->icons[ $networkId ] = array(
-				'id' => $networkId,
+				'id'    => $networkId,
 				/*
 				 * The public legacy object advertised X under this longer label.
 				 * Rendering consumes the canonical Network and continues to use the
 				 * historical `twitter` CSS class; this value adapter only preserves
 				 * the old object contract for extensions inspecting ->icons.
 				 */
-				'name' => self::legacyNetworkLabel( $networkId, $network->label() ),
+				'name'  => self::legacyNetworkLabel( $networkId, $network->label() ),
 				'class' => 'x' === $networkId ? 'twitter' : $network->cssClass(),
 				'image' => $file,
-				'url' => $network->defaultShareTemplate(),
+				'url'   => $network->defaultShareTemplate(),
 			);
 		}
 

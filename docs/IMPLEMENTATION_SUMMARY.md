@@ -43,6 +43,8 @@ rollback contracts protect the rewrite. WPBakery's unavailable paid editor and
 physical-device/high-contrast review remain documented evidence limits, not
 unimplemented runtime paths.
 
-The complete implementation does not imply release completion. A genuine
-14-day staging soak, staging rollback, and release-owner approval still must
-occur before versioning or publication.
+The complete implementation does not imply release completion. The release
+owner waived the earlier fourteen-day staging requirement on 2026-08-13 after
+a fresh exact-archive manual review. The reviewed snapshot must still be
+committed, rebuilt from that immutable revision, and explicitly approved
+before publication.

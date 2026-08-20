@@ -67,6 +67,28 @@ final class LegacyApiRenderBridgeTest extends WP_UnitTestCase {
 		$this->assertSame( $share->options, $form->options );
 	}
 
+	public function testLegacyFormHidesDefaultForNewSettingsAndRetainsAnExplicitSelection(): void {
+		delete_option( 'zm_shbt_fld' );
+		$newForm = new zm_form();
+		ob_start();
+		$newForm->select_iconset( 'iconset', 'Icon set' );
+		$newMarkup = (string) ob_get_clean();
+
+		$this->assertStringContainsString( "value='bootstrap-solid'", $newMarkup );
+		$this->assertStringNotContainsString( "value='default'", $newMarkup );
+
+		update_option( 'zm_shbt_fld', array( 'iconset' => 'default' ) );
+		$legacyForm = new zm_form();
+		ob_start();
+		$legacyForm->select_iconset( 'iconset', 'Icon set' );
+		$legacyMarkup = (string) ob_get_clean();
+
+		$this->assertMatchesRegularExpression(
+			"/value='default'[^>]*selected='selected'/",
+			$legacyMarkup
+		);
+	}
+
 	public function testLegacyPhpApiHonorsCanonicalFrontendExclusionState(): void {
 		$postId = self::factory()->post->create();
 		update_post_meta( $postId, '_zm_sh_disable_share', 'on' );

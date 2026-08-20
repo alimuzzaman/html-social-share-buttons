@@ -45,11 +45,27 @@ final class WpBakeryIntegrationContractTest extends WP_UnitTestCase {
 		$this->assertSame( 'dropdown', $params['iconset']['type'] );
 		$this->assertSame( 'dropdown', $params['iconset_type']['type'] );
 		$this->assertSame( 'checkbox', $params['icons']['type'] );
-		$this->assertSame( 'default', $params['iconset']['value']['Default'] );
-		$this->assertArrayHasKey( 'Facebook', $params['icons']['value'] );
-		$this->assertArrayHasKey( 'X (formerly Twitter)', $params['icons']['value'] );
+		$this->assertContains( 'bootstrap-solid', $params['iconset']['value'] );
+		$this->assertContains( 'default', $params['iconset']['value'] );
+		$this->assertContains( 'facebook', $params['icons']['value'] );
+		$this->assertContains( 'x', $params['icons']['value'] );
 		$this->assertSame( 'inherit', $params['profile_links_mode']['std'] );
-		$this->assertSame( 'none', $params['profile_links_mode']['value']['Hide profile links in this element'] );
+		$this->assertContains( 'none', $params['profile_links_mode']['value'] );
+	}
+
+	public function testStoredLegacyDefaultStillRendersThroughWpbakery(): void {
+		$output = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()
+			->wpBakery()
+			->render(
+				array(
+					'iconset' => 'default',
+					'iconset_type' => 'square',
+					'icons' => 'facebook',
+				)
+			);
+
+		$this->assertMatchesRegularExpression( '/class=[\'\"]zmshbt in_shortcode default square[\'\"]/', $output );
+		$this->assertStringContainsString( 'facebook', $output );
 	}
 
 	public function testWpbakeryProfileLinkModeIsAdditiveAndSuppressesOnlyWhenRequested(): void {
@@ -78,5 +94,6 @@ final class WpBakeryIntegrationContractTest extends WP_UnitTestCase {
 			$script->extra['data']
 		);
 		$this->assertStringContainsString( '"nonce"', $script->extra['data'] );
+		$this->assertStringContainsString( '"legacyIconsets":{"default":', $script->extra['data'] );
 	}
 }

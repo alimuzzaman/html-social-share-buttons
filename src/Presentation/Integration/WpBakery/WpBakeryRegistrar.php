@@ -5,6 +5,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\WpBakery;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderFacade;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\AssetCollector;
@@ -169,7 +170,12 @@ final class WpBakeryRegistrar {
 
 	private function iconSetChoices() {
 		$choices = array();
-		foreach ( $this->iconSets->all() as $iconSet ) {
+		/*
+		 * WPBakery also registers one shared parameter schema. Include the legacy
+		 * value for stored shortcode hydration; the editor bundle hides it for a
+		 * new element and reveals it only when that element already selected it.
+		 */
+		foreach ( IconSetSelectionPolicy::choices( $this->iconSets, IconSetSelectionPolicy::LEGACY_DEFAULT_ID ) as $iconSet ) {
 			$choices[ BuilderLabels::iconSet( $iconSet->id(), $iconSet->label() ) ] = $iconSet->id();
 		}
 

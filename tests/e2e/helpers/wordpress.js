@@ -2,17 +2,25 @@ const { expect } = require( '@playwright/test' );
 const builderStorage = require( '../../fixtures/builder-storage-baseline.json' );
 
 async function login( page ) {
-	await page.goto( '/wp-login.php' );
-	await page
-		.locator( '#user_login' )
-		.fill( process.env.WP_ADMIN_USER || 'admin' );
-	await page
-		.locator( '#user_pass' )
-		.fill( process.env.WP_ADMIN_PASSWORD || 'admin' );
-	await Promise.all( [
-		page.waitForURL( /\/wp-admin\// ),
-		page.locator( '#wp-submit' ).click(),
-	] );
+	await page.goto( '/wp-login.php', { waitUntil: 'domcontentloaded' } );
+	if ( /\/wp-admin\//.test( page.url() ) ) {
+		return;
+	}
+	const origin = new URL( page.url() ).origin;
+	const response = await page.context().request.post( `${ origin }/wp-login.php`, {
+		form: {
+			log: process.env.WP_ADMIN_USER || 'admin',
+			pwd: process.env.WP_ADMIN_PASSWORD || 'admin',
+			rememberme: 'forever',
+			redirect_to: `${ origin }/wp-admin/`,
+			testcookie: '1',
+			'wp-submit': 'Log In',
+		},
+	} );
+	if ( ! /\/wp-admin\//.test( response.url() ) ) {
+		throw new Error( 'WordPress test login did not reach wp-admin.' );
+	}
+	await page.goto( '/wp-admin/', { waitUntil: 'domcontentloaded' } );
 }
 
 /**
@@ -194,7 +202,9 @@ async function assertVisibleCanonicalShareButtons(
 		await expect( wrapper ).toHaveClass( new RegExp( `\\b${ shape }\\b` ) );
 	}
 
-	const shareButton = wrapper.locator( 'a.facebook' );
+	const shareButton = wrapper.locator(
+		'a.facebook:not(.zmshbt-profile-link)'
+	);
 	await expect( shareButton ).toBeVisible();
 	const href = await shareButton.getAttribute( 'href' );
 	expect( href ).toBeTruthy();

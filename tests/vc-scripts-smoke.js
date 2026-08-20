@@ -7,9 +7,28 @@ const vm = require( 'node:vm' );
 
 const bundlePath = path.join( __dirname, '..', 'build', 'vc-scripts.js' );
 const bundle = fs.readFileSync( bundlePath, 'utf8' );
-let changeHandler;
+const changeHandlers = {};
 let responseHandler;
 let request;
+
+function option( value ) {
+	return { value, hidden: false, disabled: false };
+}
+
+const wpBakeryIconset = {
+	value: 'bootstrap-solid',
+	options: [ option( 'bootstrap-solid' ), option( 'default' ) ],
+	appendChild( child ) {
+		this.options.push( child );
+	},
+};
+const elementorIconset = {
+	value: 'default',
+	options: [ option( 'bootstrap-solid' ), option( 'default' ) ],
+	appendChild( child ) {
+		this.options.push( child );
+	},
+};
 
 const container = {
 	children: [],
@@ -25,8 +44,12 @@ const container = {
 	},
 };
 const documentStub = {
+	body: {},
 	querySelector() {
 		return container;
+	},
+	querySelectorAll( selector ) {
+		return selector.includes( 'wpb_vc_param_value' ) ? [ wpBakeryIconset ] : [];
 	},
 	createElement( tagName ) {
 		return {
@@ -50,8 +73,7 @@ function jQuery( subject ) {
 			},
 			on( event, selector, callback ) {
 				assert.equal( event, 'change' );
-				assert.equal( selector, '.iconset' );
-				changeHandler = callback;
+				changeHandlers[ selector ] = callback;
 			},
 		};
 	}
@@ -70,20 +92,37 @@ jQuery.post = function ( url, data, callback ) {
 };
 
 const context = {
+	Array,
 	document: documentStub,
 	JSON,
 	Object,
 	String,
 	window: {
 		ajaxurl: '/wp-admin/admin-ajax.php',
+		addEventListener() {},
+		requestAnimationFrame( callback ) {
+			callback();
+		},
+		elementor: {
+			hooks: {
+				addAction( name, callback ) {
+					context.elementorHook = { name, callback };
+				},
+			},
+		},
 		jQuery,
-		zm_sh: { nonce: 'contract-nonce' },
+		zm_sh: {
+			nonce: 'contract-nonce',
+			elementorWidget: 'zm_social_share',
+			legacyIconsets: { default: 'Default (legacy)' },
+		},
 	},
 };
 vm.runInNewContext( bundle, context, { filename: bundlePath } );
 
-assert.equal( typeof changeHandler, 'function' );
-changeHandler.call( selectedIconset );
+const wpBakeryDetailsHandler = changeHandlers[ '.iconset' ];
+assert.equal( typeof wpBakeryDetailsHandler, 'function' );
+wpBakeryDetailsHandler.call( selectedIconset );
 assert.equal( request.url, '/wp-admin/admin-ajax.php' );
 assert.equal( request.data.action, 'get_iconset_details' );
 assert.equal( request.data.iconset, 'flat' );
@@ -106,4 +145,35 @@ assert.equal( container.children.length, 1 );
 assert.equal( container.children[ 0 ].children[ 0 ].value, 'telegram' );
 assert.equal( container.children[ 0 ].children[ 1 ].textContent, 'Telegram' );
 
-console.log( 'WPBakery editor bundle smoke test passed.' );
+const legacyVisibilityHandler =
+	changeHandlers[ 'select.wpb_vc_param_value.iconset, select.iconset' ];
+assert.equal( typeof legacyVisibilityHandler, 'function' );
+assert.equal( wpBakeryIconset.options[ 1 ].hidden, true );
+assert.equal( wpBakeryIconset.options[ 1 ].disabled, true );
+wpBakeryIconset.value = 'default';
+legacyVisibilityHandler.call( wpBakeryIconset );
+assert.equal( wpBakeryIconset.options[ 1 ].hidden, false );
+assert.equal( wpBakeryIconset.options[ 1 ].disabled, false );
+
+assert.equal(
+	context.elementorHook.name,
+	'panel/open_editor/widget/zm_social_share'
+);
+context.elementorHook.callback(
+	{
+		$el: [ {
+			querySelectorAll() {
+				return [ elementorIconset ];
+			},
+		} ],
+	},
+	{
+		getSetting() {
+			return 'default';
+		},
+	}
+);
+assert.equal( elementorIconset.options[ 1 ].hidden, false );
+assert.equal( elementorIconset.options[ 1 ].disabled, false );
+
+console.log( 'Builder editor bundle smoke test passed.' );

@@ -12,6 +12,8 @@ use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Extension\ExtensionHooks;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\HookedShareUrlResolver;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\ShareContextFactory;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\ViewerVisibilityPolicy;
+use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\HtmlRenderer;
 
 /**
@@ -27,15 +29,25 @@ final class RenderFacade {
 	private $builder;
 	private $contexts;
 	private $extensions;
+	private $settings;
+	private $visibility;
 
+	/**
+	 * @param ExtensionHooks|null       $extensions Optional extension hooks.
+	 * @param ShareContextFactory|null  $contexts Optional context factory.
+	 * @param RenderRequestMapper|null  $mapper Optional request mapper.
+	 * @param HtmlRenderer|null         $renderer Optional HTML renderer.
+	 */
 	public function __construct(
 		NetworkRegistry $networks,
 		IconSetRegistry $iconSets,
 		IconSetAssetResolver $assets,
-		ExtensionHooks $extensions = null,
-		ShareContextFactory $contexts = null,
-		RenderRequestMapper $mapper = null,
-		HtmlRenderer $renderer = null
+		$extensions = null,
+		$contexts = null,
+		$mapper = null,
+		$renderer = null,
+		$settings = null,
+		$visibility = null
 	) {
 		$this->networks = $networks;
 		$this->assets = $assets;
@@ -43,6 +55,8 @@ final class RenderFacade {
 		$this->mapper = $mapper ? $mapper : new RenderRequestMapper();
 		$this->renderer = $renderer ? $renderer : new HtmlRenderer();
 		$this->contexts = $contexts ? $contexts : new ShareContextFactory( null, $this->extensions );
+		$this->settings = $settings instanceof SettingsRepository ? $settings : null;
+		$this->visibility = $visibility ? $visibility : new ViewerVisibilityPolicy();
 		$this->builder = new BuildShareButtons(
 			$networks,
 			$iconSets,
@@ -50,7 +64,16 @@ final class RenderFacade {
 		);
 	}
 
-	public function render( array $options, $contextPostId = 0, ShareContext $context = null ) {
+	/**
+	 * @param ShareContext|null $context Optional explicit render context.
+	 */
+	public function render( array $options, $contextPostId = 0, $context = null ) {
+		if (
+			$this->settings &&
+			! $this->visibility->allows( $this->settings->load(), $contextPostId )
+		) {
+			return new RenderOutcome( '', array(), array() );
+		}
 		$options = $this->normalizeOptions( $options, $contextPostId );
 		$request = $this->mapper->map( $options );
 		$context = $context ? $context : $this->contexts->create( $contextPostId );

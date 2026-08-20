@@ -21,6 +21,7 @@ $widget = implode(
 
 $checks = array(
 	'add_action( $this->config->elementorHook()' => 'Elementor registration hook',
+	"add_action( 'elementor/editor/after_enqueue_scripts'" => 'Elementor editor asset hook',
 	'Elementor\\Widget_Base'                 => 'optional Elementor base class',
 	'ElementorShareWidget'                    => 'canonical Elementor widget',
 	'->renderer->render('                    => 'canonical render facade',

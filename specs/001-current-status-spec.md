@@ -1,28 +1,33 @@
-# [SPECKIT-001] Spec: Current Status of Html Social Share Buttons Codebase
+# [SPECKIT-001] Spec: Current Status of HTML Social Share Buttons
 
 ## Metadata
 - **Spec Number:** SPECKIT-001
 - **Spec ID:** SPEC-BASELINE-2026-07-09
 - **Title:** Current implementation baseline (single source of truth)
 - **Owner:** Product + Engineering
-- **Status:** Draft
+- **Status:** Current
 - **Created:** 2026-07-09
-- **Last Updated:** 2026-07-09
-- **Version:** 1.1
+- **Last Updated:** 2026-08-13
+- **Version:** 2.0
 - **Source of Truth:** Single file in `/specs/`
 
 ## 1.0 Context
 ### 1.1 Purpose
-Capture the exact baseline behavior before any settings revamp work begins so we can prevent accidental regressions while iterating on admin UX.
+Record the current implementation and compatibility baseline after the
+canonical rewrite so later changes do not regress existing installations.
 
 ### 1.2 Why this is critical
 The plugin is in active use with saved options in `wp_options`; any schema or serialization mismatch can break user settings or front-end output.
 
 ## 2.0 Baseline Scope
-- Plugin version is `2.2.6`; the production PHP is still legacy while the
-  settings screen and block editor use compiled JavaScript bundles.
+- Candidate metadata is `3.0.0`; publication remains gated by the exact-archive
+  staging soak and rollback in `docs/STAGING-SOAK.md`.
+- Production runtime ownership is canonical and namespaced. Thin legacy
+  facades retain the published public symbols, hooks, identifiers, and storage
+  contracts.
 - Compatibility targets are WordPress `5.3+` and PHP `7.0+`.
-- Settings page, form renderer, iconset rendering, and share output are all in PHP+JS and share existing option contracts.
+- Settings, icon-set rendering, integrations, and frontend output share the
+  canonical service graph. Runtime JavaScript is compiled into four bundles.
 
 ## 3.0 Persistence and DB Schema (Critical)
 ### 3.1 Storage table
@@ -44,14 +49,23 @@ The plugin is in active use with saved options in `wp_options`; any schema or se
   - `show_before_post` (bool-like/int)
   - `show_after_post` (bool-like/int)
 - `iconset_type` (string): one of iconset display variants.
-- `icons` (assoc array): feature flags by icon id (e.g., `facebook`, `x`, `linkedin`, `pinterest`, `mail`).
+- `icons` (assoc array): feature flags by icon id (for example `facebook`, `x`,
+  `linkedin`, `pinterest`, `telegram`, `bluesky`, and `mail`).
+- `share_templates` (assoc array): optional per-network share URL overrides.
+- `profile_links` (assoc array): optional per-network profile/contact
+  destinations.
+- `profile_link_placements` (assoc array): explicit per-placement suppression;
+  omitted values inherit configured profiles.
 - Optional/legacy keys observed in runtime path:
   - `g_analytics` (bool-like/int)
   - `nofollow` (bool-like/int)
   - `excludes` (string list: IDs, titles, slugs)
 
 ### 3.4 Migration behavior that must be preserved
-- Runtime migration from `icons['twitter']` to `icons['x']` is expected for backward compatibility and must remain behaviorally intact.
+- Decode and submission boundaries map the historical `twitter` key to `x`
+  without requiring a destructive stored-data migration.
+- Unknown top-level and nested extension-owned option data must survive a core
+  settings save.
 
 ### 3.5 Critical compatibility constraints
 - Do not rename or flatten `zm_shbt_fld`.
@@ -60,24 +74,33 @@ The plugin is in active use with saved options in `wp_options`; any schema or se
 
 ## 4.0 Runtime Baseline Behavior
 ### 4.1 Front-end generation
-- Main output path via `zm_sh_btn` wrapper and internal renderer.
-- Front page injection via footer for left/right floats, and `the_content` filter for before/after post placement.
+- Canonical shortcode, block, widget, Elementor, WPBakery, automatic-placement,
+  and direct-PHP controllers delegate to one render facade.
+- Frontend output retains the `zmshbt` wrappers/classes and established link
+  behavior. Empty share anchors have translated `aria-label` values.
+- Left/right rails render through the footer, and before/after placements use
+  `the_content`.
 - Exclusion behavior via settings `excludes` and post meta `_zm_sh_disable_share`.
 
 ### 4.2 Settings baseline
 - Admin page remains at `admin.php?page=zm_shbt_opt`.
 - Settings are registered with `register_setting('zm_shbt_opt', 'zm_shbt_fld', ...)` and sanitized.
-- Form rendering uses `zm_form` helper methods in `form.php`.
+- The settings page uses the canonical React application and AJAX controller;
+  the option remains registered through the WordPress Settings API.
 
 ### 4.3 Admin assets baseline
-- `assets/admin.css`, compiled `build/admin-react.js`, and the localized
-  settings data are part of current behavior. JavaScript source lives under
-  `src/js/` and is never loaded directly at runtime.
+- `assets/admin.css`, the four compiled `build/*.js` entry bundles, localized
+  settings data, and block script-translation JSON are part of current
+  behavior. JavaScript source lives under `src/js/` and is never loaded
+  directly at runtime.
 
 ## 5.0 Requirement Baseline (Do Not Break)
 - Preserve existing settings field names and data keys.
 - Preserve output format for generated shortcode/PHP snippets.
-- Preserve rendering behavior for icon choices and visibility positioning.
+- Preserve rendering behavior for icon choices, profile links, and visibility
+  positioning.
+- Treat additive accessibility markup as an explicit, regression-tested public
+  contract change.
 
 ## 6.0 Frontend Regression Rules (Required Before Settings Work Starts)
 ### 6.1 Test protocol for any settings change
@@ -100,4 +123,7 @@ The plugin is in active use with saved options in `wp_options`; any schema or se
 ## 7.0 Risks and Open Questions
 - Risk: accidental option schema drift may invalidate legacy options for existing users.
 - Risk: inline script/asset coupling may create behavior drift if reordered without diff-based checks.
-- Open Question: should a dedicated output-capture fixture format be standardized (HTML + screenshot vs raw HTML-only)?
+- Risk: candidate metadata can be mistaken for publication authorization; the
+  release ledger and exact-archive soak remain authoritative.
+- Browser screenshots are supporting evidence. The executable HTML golden
+  fixture remains the deterministic rendering contract.

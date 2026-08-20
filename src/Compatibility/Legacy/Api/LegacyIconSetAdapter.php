@@ -15,11 +15,15 @@ use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver
 final class LegacyIconSetAdapter {
 	private $adapted = array();
 
+	/**
+	 * @param NetworkRegistry|null       $networks Optional canonical networks.
+	 * @param IconSetAssetResolver|null  $assets Optional external asset resolver.
+	 */
 	public function register(
 		$legacyIconSet,
 		IconSetRegistry $registry,
-		NetworkRegistry $networks = null,
-		IconSetAssetResolver $assets = null
+		$networks = null,
+		$assets = null
 	) {
 		if ( ! is_object( $legacyIconSet ) || empty( $legacyIconSet->id ) ) {
 			return false;

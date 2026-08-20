@@ -13,9 +13,13 @@ final class LegacyOptionCodec {
 	private $storage;
 	private $request;
 
+	/**
+	 * @param OptionSettingsCodec|null         $storage Optional storage codec.
+	 * @param OptionSettingsRequestMapper|null $request Optional request mapper.
+	 */
 	public function __construct(
-		OptionSettingsCodec $storage = null,
-		OptionSettingsRequestMapper $request = null
+		$storage = null,
+		$request = null
 	) {
 		$this->storage = $storage ? $storage : new OptionSettingsCodec();
 		$this->request = $request ? $request : new OptionSettingsRequestMapper();
@@ -34,6 +38,6 @@ final class LegacyOptionCodec {
 	}
 
 	public function toLegacySubmission( Settings $settings, array $input ) {
-		return $this->request->toLegacySubmission( $settings, $input );
+		return $this->request->toStoredSubmission( $settings, $input );
 	}
 }

@@ -5,6 +5,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\Block;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderFacade;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver;
@@ -196,7 +197,7 @@ final class BlockRegistrar {
 		}
 
 		$args = array( 'render_callback' => $callback );
-		if ( function_exists( 'register_block_type_from_metadata' ) ) {
+		if ( 3 === $this->supportedBlockApiVersion() && function_exists( 'register_block_type_from_metadata' ) ) {
 			call_user_func( 'register_block_type_from_metadata', $metadataPath, $args );
 
 			return;
@@ -206,16 +207,14 @@ final class BlockRegistrar {
 		if ( ! is_array( $metadata ) || empty( $metadata['name'] ) ) {
 			return;
 		}
-		register_block_type(
-			$metadata['name'],
-			array_merge(
-				$args,
-				array(
-					'attributes'    => isset( $metadata['attributes'] ) ? $metadata['attributes'] : array(),
-					'editor_script' => $editorScript,
-				)
-			)
+		$fallback = array(
+			'attributes'    => isset( $metadata['attributes'] ) ? $metadata['attributes'] : array(),
+			'editor_script' => $editorScript,
 		);
+		if ( class_exists( 'WP_Block_Type' ) && property_exists( 'WP_Block_Type', 'uses_context' ) && isset( $metadata['usesContext'] ) ) {
+			$fallback['uses_context'] = $metadata['usesContext'];
+		}
+		register_block_type( $metadata['name'], array_merge( $args, $fallback ) );
 	}
 
 	private function renderOutcome( array $options, $contextPostId ) {
@@ -240,7 +239,7 @@ final class BlockRegistrar {
 			)
 		);
 		$scriptPath = $this->pluginRoot . '/build/' . $entry . '.js';
-		$version = isset( $asset['version'] ) ? $asset['version'] : ( file_exists( $scriptPath ) ? filemtime( $scriptPath ) : '2.2.6' );
+		$version = isset( $asset['version'] ) ? $asset['version'] : ( file_exists( $scriptPath ) ? filemtime( $scriptPath ) : '3.0.0' );
 
 		wp_register_script(
 			$handle,
@@ -268,17 +267,30 @@ final class BlockRegistrar {
 		$iconSets = array(
 			'inherit' => __( 'Inherit from plugin settings', 'html-social-share-buttons' ),
 		);
-		foreach ( $this->iconSets->all() as $iconSet ) {
+		foreach ( IconSetSelectionPolicy::choices( $this->iconSets, $settings->iconSetId() ) as $iconSet ) {
 			$iconSets[ $iconSet->id() ] = $this->iconSetLabel( $iconSet->id(), $iconSet->label() );
+		}
+		$legacyIconSets = array();
+		if ( $this->iconSets->has( IconSetSelectionPolicy::LEGACY_DEFAULT_ID ) ) {
+			$legacy = $this->iconSets->get( IconSetSelectionPolicy::LEGACY_DEFAULT_ID );
+			$legacyIconSets[ $legacy->id() ] = $this->iconSetLabel( $legacy->id(), $legacy->label() );
 		}
 
 		return array(
+			'apiVersion'       => $this->supportedBlockApiVersion(),
 			'networks'         => $networks,
 			'iconsets'         => $iconSets,
+			'legacyIconsets'   => $legacyIconSets,
 			'iconsetAssets'    => $this->builderIconSetAssets(),
 			'inheritedIconset' => $this->resolvedIconSet( 'inherit' ),
 			'profileLinks'     => $settings->profileLinks(),
 		);
+	}
+
+	private function supportedBlockApiVersion() {
+		$wordpressVersion = function_exists( 'get_bloginfo' ) ? get_bloginfo( 'version' ) : '';
+
+		return version_compare( (string) $wordpressVersion, '6.3', '>=' ) ? 3 : 1;
 	}
 
 	private function resolvedIconSet( $value ) {
@@ -383,7 +395,7 @@ final class BlockRegistrar {
 	private function iconSetLabel( $id, $fallback ) {
 		switch ( (string) $id ) {
 			case 'default':
-				return __( 'Default', 'html-social-share-buttons' );
+				return __( 'Default (legacy)', 'html-social-share-buttons' );
 			case 'flat':
 				return __( 'Flat', 'html-social-share-buttons' );
 			case 'long-shadows':

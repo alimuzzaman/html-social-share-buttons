@@ -16,14 +16,15 @@ if (!versionMatch) {
 
 const archive = process.argv[2]
 	? path.resolve(process.argv[2])
-	: path.resolve(repositoryRoot, '..', `html-social-share-buttons.${versionMatch[1]}.zip`);
+	: process.env.HSSB_ARCHIVE_PATH
+		? path.resolve(process.env.HSSB_ARCHIVE_PATH)
+		: path.resolve(repositoryRoot, '..', `html-social-share-buttons.${versionMatch[1]}.zip`);
 if (!fs.existsSync(archive)) {
 	throw new Error(`Distribution archive does not exist: ${archive}`);
 }
 
-const files = new Set(
-	new AdmZip(archive).getEntries().map((entry) => entry.entryName).filter(Boolean)
-);
+const entries = new AdmZip(archive).getEntries().filter((entry) => entry.entryName);
+const files = new Set(entries.map((entry) => entry.entryName));
 
 function repositoryFiles(relativeDirectory, predicate = () => true) {
 	const absoluteDirectory = path.join(repositoryRoot, relativeDirectory);
@@ -70,6 +71,10 @@ const forbidden = [
 	/^html-social-share-buttons\/node_modules\//,
 	/^html-social-share-buttons\/composer\.(?:json|lock)$/,
 	/^html-social-share-buttons\/package\.json$/,
+	/^html-social-share-buttons\/package-lock\.json$/,
+	/^html-social-share-buttons\/pnpm-lock\.yaml$/,
+	/^html-social-share-buttons\/scripts\//,
+	/^html-social-share-buttons\/.*\.md$/i,
 	/^html-social-share-buttons\/vendor\/(?!autoload\.php$|composer\/)/,
 	/^html-social-share-buttons\/\.env/,
 	// Do not restore duplicated historical packs below the canonical asset
@@ -80,6 +85,15 @@ const forbidden = [
 	/^html-social-share-buttons\/src\/Compatibility\/Legacy\/(?:Admin|Bootstrap|Global|Hook|IconSet|Integration|Network|Rendering|Runtime)\//,
 ];
 const failures = [];
+
+for (const entry of entries) {
+	const unixMode = (entry.attr >>> 16) & 0xffff;
+	if ((unixMode & 0o170000) !== 0o100000 || (unixMode & 0o777) !== 0o644) {
+		failures.push(
+			`invalid archive mode ${unixMode.toString(8).padStart(6, '0')} for ${entry.entryName}`
+		);
+	}
+}
 
 for (const requiredFile of required) {
 	if (!files.has(requiredFile)) {

@@ -36,6 +36,9 @@ $blockSource = (string) file_get_contents( $root . '/src/js/blocks/social-share/
 $socialLinksBlockSource = (string) file_get_contents(
 	$root . '/src/js/blocks/social-links/register.js'
 );
+$sharedBlockSource = (string) file_get_contents(
+	$root . '/src/js/blocks/shared/networks.js'
+);
 if (
 	false === strpos( $blockSource, "const __ = i18n.__" ) ||
 	false === strpos( $blockSource, "'html-social-share-buttons'" ) ||
@@ -45,6 +48,54 @@ if (
 ) {
 	echo "JavaScript localization contract failed: block or settings translation boundary.\n";
 	exit( 1 );
+}
+
+$pot = (string) file_get_contents(
+	$root . '/languages/html-social-share-buttons.pot'
+);
+if ( is_file( $root . '/languages/zm-sh.pot' ) ) {
+	echo "JavaScript localization contract failed: obsolete legacy POT is still distributed.\n";
+	exit( 1 );
+}
+foreach ( array( 'settings_page.php:', 'form.php:', 'metabox.php:', 'share-templates.php:' ) as $deletedReference ) {
+	if ( false !== strpos( $pot, $deletedReference ) ) {
+		echo 'JavaScript localization contract failed: stale POT reference ' . $deletedReference . "\n";
+		exit( 1 );
+	}
+}
+
+$sharedBlockStrings = array( 'Square', 'Circle' );
+preg_match_all( "/__\(\s*['\"]([^'\"]+)['\"]\s*,/", $sharedBlockSource, $sharedMatches );
+$sharedBlockStrings = array_merge( $sharedBlockStrings, $sharedMatches[1] );
+$entryBlockStrings = array();
+foreach ( array( 'social-share' => $blockSource, 'social-links' => $socialLinksBlockSource ) as $entry => $source ) {
+	preg_match_all( "/__\(\s*['\"]([^'\"]+)['\"]\s*,/", $source, $matches );
+	$entryBlockStrings[ $entry ] = array_values(
+		array_unique( array_merge( $sharedBlockStrings, $matches[1] ) )
+	);
+}
+$blockStrings = array_values( array_unique( array_merge( $entryBlockStrings['social-share'], $entryBlockStrings['social-links'] ) ) );
+foreach ( $blockStrings as $message ) {
+	if ( false === strpos( $pot, 'msgid "' . addcslashes( $message, "\\\"" ) . '"' ) ) {
+		echo 'JavaScript localization contract failed: POT is missing ' . esc_html( $message ) . ".\n";
+		exit( 1 );
+	}
+}
+
+foreach ( array( 'social-share', 'social-links' ) as $entry ) {
+	$translationPath = $root . '/languages/html-social-share-buttons-fr_FR-' . md5( 'build/' . $entry . '.js' ) . '.json';
+	$catalog = is_file( $translationPath )
+		? json_decode( (string) file_get_contents( $translationPath ), true )
+		: null;
+	$messages = is_array( $catalog ) && isset( $catalog['locale_data']['messages'] )
+		? $catalog['locale_data']['messages']
+		: array();
+	foreach ( $entryBlockStrings[ $entry ] as $message ) {
+		if ( ! isset( $messages[ $message ][0] ) || '' === $messages[ $message ][0] ) {
+			echo 'JavaScript localization contract failed: ' . $entry . ' French catalog is missing ' . esc_html( $message ) . ".\n";
+			exit( 1 );
+		}
+	}
 }
 
 echo 'JavaScript localization contract passed: ' . count( $keys ) . " settings strings mapped through WordPress translations.\n";

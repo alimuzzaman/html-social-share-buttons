@@ -6,25 +6,34 @@ server-rendered HTML and CSS, icon assets are served locally, and tracking is
 off by default.
 
 The current `latest` branch contains the completed canonical implementation
-rewrite after the published 2.2.6 release. The plugin header and WordPress.org
-stable tag intentionally remain 2.2.6 until the release owner approves the
-candidate, its real 14-day staging soak and rollback have passed, and final
-version/listing alignment is authorized.
+rewrite after the published 2.2.6 release. Candidate metadata is aligned at
+3.0.0 so the new archive cannot be confused with the published rollback
+release. Version alignment is not a release: no tag, WordPress.org upload, or
+production deployment is authorized until the reviewed snapshot is committed,
+rebuilt from that immutable revision, and explicitly approved. The release
+owner waived the earlier fourteen-day soak requirement on 2026-08-13 after a
+fresh exact-archive manual review.
 
 ## Features
 
 - Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, and email share actions.
 - Separate global profile/contact links with placement-level inherit or
   suppress controls.
+- Audience controls independently show or hide every share-button surface for
+  the content author, other logged-in users, and logged-out visitors. Existing
+  installations default all three audiences to visible.
 - Automatic placement, dynamic Social Share and Social Links blocks, classic
   widget, Elementor, WPBakery, shortcodes, and a direct PHP facade.
-- Six local icon sets: Default (square), plus Flat, Long Shadow, Prajin,
-  Bootstrap Solid, and Tabler Outline (square and circle).
+- Six local icon sets. Bootstrap Solid is the new-install default. The
+  historical Default pack remains available only to existing selections;
+  Flat, Long Shadow, Prajin, Bootstrap Solid, and Tabler Outline support
+  square and circle buttons.
 - Responsive floating rails that enter document flow as centered, wrapping
   rows at viewport widths of 600px and below.
 - Existing `zm_shbt_fld` settings, `_zm_sh_disable_share` metadata, legacy
-  symbols/hooks, builder identifiers, and public markup preserved through a
-  thin compatibility boundary.
+  symbols/hooks, builder identifiers, wrapper/CSS contracts, and link behavior
+  preserved through a thin compatibility boundary. Share anchors add translated
+  `aria-label` values without changing their visual classes or destinations.
 
 ## Requirements
 
@@ -47,6 +56,14 @@ Historical and descriptive shortcode tags are both supported:
 
 Share actions use the current page by default. Profile links are separate
 destinations and are not treated as share events.
+
+Fresh installations do not offer the historical Default pack in normal icon
+style selectors. Existing settings, blocks, widgets, shortcodes, and builder
+content that explicitly use `default` continue to render the retained assets.
+
+The maintained block metadata uses Block API v3 on WordPress 6.3 and newer.
+The server and editor select the historical API v1 registration path on older
+supported WordPress versions, preserving the declared WordPress 5.3 floor.
 
 ## Architecture
 
@@ -71,14 +88,18 @@ Install dependencies with Composer and pnpm, then use the focused checks:
 
 ```sh
 composer validate --strict
+composer test
+composer quality
 pnpm run lint:js
 pnpm run icons:check
+pnpm run i18n:build
 pnpm run settings:check
 pnpm run integration:check
 pnpm run test:unit
 pnpm run test:ajax
 pnpm run test:multisite
 pnpm run test:e2e
+pnpm run plugin:check
 ```
 
 Build the deterministic distribution archive only with a production Composer
@@ -88,6 +109,10 @@ autoloader:
 composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative
 pnpm run zip
 ```
+
+The archive builder refuses to overwrite an existing ZIP. Set
+`HSSB_ARCHIVE_PATH` to a new path for reproducibility comparisons or another
+candidate build.
 
 The test commands use the project's Sandbox WordPress runtime. See
 [tests/README.md](tests/README.md) for the contract and fixture inventory.
@@ -102,13 +127,15 @@ The test commands use the project's Sandbox WordPress runtime. See
   available, evidence is limited to official `vc_map()`/shortcode documentation
   plus mapping, persistence, compiled-bundle, and public-render contracts; no
   live paid-editor run is claimed.
-- Both dynamic blocks retain Block API v1 for the WordPress 5.3 floor. The two
-  resulting Plugin Check findings are accepted and documented; the project
-  does not claim a clean Plugin Check result.
+- Both dynamic blocks use Block API v3 in modern WordPress and were exercised
+  in WordPress 7.1 final's iframe editor. WordPress 5.3-6.2 use the tested API v1
+  compatibility registration instead of loading unsupported v3 semantics.
 - The Default PNG pack is retained under an accepted compatibility exception.
   That is not an independent provenance or clearance claim.
-- A local exact-archive rollback rehearsal has passed. The real 14-day staging
-  soak and staging rollback are a separate time-bound release gate.
+- A local exact-archive rollback rehearsal and a fresh WordPress 7.1 final manual
+  review have passed. The earlier fourteen-day staging requirement was waived
+  by the release owner; an immutable candidate revision and final approval are
+  still required.
 
 ## Security and licensing
 

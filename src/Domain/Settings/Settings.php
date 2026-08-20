@@ -19,6 +19,9 @@ final class Settings {
 	private $noFollow;
 	private $profileLinks;
 	private $profileLinkPlacements;
+	private $showForCurrentUser;
+	private $showForLoggedInUser;
+	private $showForLoggedOutUser;
 
 	public function __construct(
 		$title,
@@ -34,7 +37,10 @@ final class Settings {
 		$preserveUrlPort,
 		$noFollow,
 		array $profileLinks = array(),
-		array $profileLinkPlacements = array()
+		array $profileLinkPlacements = array(),
+		$showForCurrentUser = true,
+		$showForLoggedInUser = true,
+		$showForLoggedOutUser = true
 	) {
 		$this->title             = (string) $title;
 		$this->iconSetId         = (string) $iconSetId;
@@ -50,6 +56,9 @@ final class Settings {
 		$this->noFollow          = (bool) $noFollow;
 		$this->profileLinks           = $profileLinks;
 		$this->profileLinkPlacements  = $profileLinkPlacements;
+		$this->showForCurrentUser     = (bool) $showForCurrentUser;
+		$this->showForLoggedInUser    = (bool) $showForLoggedInUser;
+		$this->showForLoggedOutUser   = (bool) $showForLoggedOutUser;
 	}
 
 	public function title() {
@@ -117,5 +126,17 @@ final class Settings {
 
 	public function profileLinkPlacements() {
 		return $this->profileLinkPlacements;
+	}
+
+	public function showForCurrentUser() {
+		return $this->showForCurrentUser;
+	}
+
+	public function showForLoggedInUser() {
+		return $this->showForLoggedInUser;
+	}
+
+	public function showForLoggedOutUser() {
+		return $this->showForLoggedOutUser;
 	}
 }

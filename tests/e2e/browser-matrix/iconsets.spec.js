@@ -66,8 +66,12 @@ test.describe( 'Icon-set browser matrix', () => {
 			await expect( wrapper ).toHaveClass(
 				new RegExp( `\\b${ cell.shape }\\b` )
 			);
-			await expect( wrapper.locator( 'a' ) ).toHaveCount( cell.links );
-			await expect( wrapper.locator( 'a.facebook' ) ).toHaveCSS(
+			await expect(
+				wrapper.locator( 'a:not(.zmshbt-profile-link)' )
+			).toHaveCount( cell.links );
+			await expect(
+				wrapper.locator( 'a.facebook:not(.zmshbt-profile-link)' )
+			).toHaveCSS(
 				'background-image',
 				/url\(.+\)/
 			);

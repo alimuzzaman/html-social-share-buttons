@@ -2,15 +2,46 @@ name: Deploy to WordPress.org
 on:
   push:
     tags:
-    - "*"
+      - "v*"
+
+permissions:
+  contents: read
+
 jobs:
   tag:
     name: New tag
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: WordPress Plugin Deploy
-      uses: 10up/action-wordpress-plugin-deploy@stable
-      env:
-        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 11.5.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+      - run: pnpm install --frozen-lockfile
+      - run: composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative
+      - name: Verify tag and build the exact release directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(sed -n 's/^Version:[[:space:]]*//p' html-social-share.php | head -n 1)"
+          tag="${GITHUB_REF_NAME#v}"
+          test "$tag" = "$version"
+          archive="$RUNNER_TEMP/html-social-share-buttons.${version}.zip"
+          HSSB_ARCHIVE_PATH="$archive" pnpm run zip
+          mkdir -p "$RUNNER_TEMP/wordpress-org"
+          unzip -q "$archive" -d "$RUNNER_TEMP/wordpress-org"
+      - name: WordPress Plugin Deploy
+        uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          BUILD_DIR: ${{ runner.temp }}/wordpress-org/html-social-share-buttons

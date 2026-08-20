@@ -9,6 +9,7 @@
 
 	<file>src/Application</file>
 	<file>src/Bootstrap</file>
+	<file>src/Compatibility/Legacy/Api</file>
 	<file>src/Domain</file>
 	<file>src/Infrastructure</file>
 	<file>src/Presentation</file>
@@ -20,5 +21,6 @@
 		<exclude name="WordPress.NamingConventions.ValidVariableName" />
 		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
 	</rule>
+	<exclude-pattern>src/Compatibility/Legacy/Api/globals.php</exclude-pattern>
 	<config name="minimum_supported_wp_version" value="5.3" />
 </ruleset>

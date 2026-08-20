@@ -105,7 +105,10 @@ function stylesheet(id) {
 		`.zmshbt.${id} a{display:block;width:36px;height:36px;margin:7px;background-position:center;background-repeat:no-repeat;background-size:cover;transition:transform .16s ease,filter .16s ease}\n` +
 		`.zmshbt.${id} a:hover{filter:brightness(1.06);transform:translateY(-2px) scale(1.06)}\n` +
 		`.zmshbt.${id} a:focus-visible{outline:3px solid #2271b1;outline-offset:3px}\n` +
+		`.zmshbt.${id} .zmshbt-profile-separator{display:inline-block;width:1px;height:28px;margin:11px 14px;vertical-align:top;background:#c3c4c7}\n` +
+		`.zmshbt.${id}.left .zmshbt-profile-separator,.zmshbt.${id}.right .zmshbt-profile-separator{display:block;width:28px;height:1px;margin:14px 11px}\n` +
 		`@media (max-width:600px){.zmshbt.left,.zmshbt.right{position:static!important;display:flex;flex-wrap:wrap;justify-content:center}.zmshbt.left a,.zmshbt.right a{margin:5px!important}}\n` +
+		`@media (max-width:600px){.zmshbt.${id}.left .zmshbt-profile-separator,.zmshbt.${id}.right .zmshbt-profile-separator{display:inline-block;width:1px;height:28px;margin:9px 12px}}\n` +
 		`@media (prefers-reduced-motion:reduce){.zmshbt.${id} a{transition:none}.zmshbt.${id} a:hover{transform:none}}\n`;
 }
 

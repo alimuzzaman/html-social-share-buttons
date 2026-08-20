@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings;
 
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsCodec;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsDefaults;
@@ -49,7 +50,7 @@ final class OptionSettingsCodec implements SettingsCodec {
 
 		return new Settings(
 			isset( $stored['title'] ) ? $stored['title'] : $defaults->title(),
-			isset( $stored['iconset'] ) ? $stored['iconset'] : $defaults->iconSetId(),
+			isset( $stored['iconset'] ) ? $stored['iconset'] : IconSetSelectionPolicy::LEGACY_DEFAULT_ID,
 			isset( $stored['iconset_type'] ) ? $stored['iconset_type'] : $defaults->defaultIconShape(),
 			array(
 				Placement::LEFT           => $this->toBoolean( isset( $showIn['show_left'] ) ? $showIn['show_left'] : false ),
@@ -71,7 +72,10 @@ final class OptionSettingsCodec implements SettingsCodec {
 			$this->toBoolean( isset( $stored['use_port'] ) ? $stored['use_port'] : false ),
 			$this->toBoolean( isset( $stored['nofollow'] ) ? $stored['nofollow'] : false ),
 			$this->profileLinks( $profileLinks ),
-			$this->profileLinkPlacements( $profileLinkPlacements )
+			$this->profileLinkPlacements( $profileLinkPlacements ),
+			$this->audienceValue( $stored, 'show_for_current_user' ),
+			$this->audienceValue( $stored, 'show_for_logged_in_user' ),
+			$this->audienceValue( $stored, 'show_for_logged_out_user' )
 		);
 	}
 
@@ -108,6 +112,9 @@ final class OptionSettingsCodec implements SettingsCodec {
 		$this->writeBoolean( $original, 'auto_hide_btn', $settings->autoHideEnabled() );
 		$this->writeBoolean( $original, 'use_port', $settings->preserveUrlPort() );
 		$this->writeBoolean( $original, 'nofollow', $settings->noFollow() );
+		$this->writeAudience( $original, 'show_for_current_user', $settings->showForCurrentUser() );
+		$this->writeAudience( $original, 'show_for_logged_in_user', $settings->showForLoggedInUser() );
+		$this->writeAudience( $original, 'show_for_logged_out_user', $settings->showForLoggedOutUser() );
 
 		return $original;
 	}
@@ -225,5 +232,17 @@ final class OptionSettingsCodec implements SettingsCodec {
 			return;
 		}
 		unset( $target[ $key ] );
+	}
+
+	private function audienceValue( array $stored, $key ) {
+		return array_key_exists( $key, $stored )
+			? $this->toBoolean( $stored[ $key ] )
+			: true;
+	}
+
+	private function writeAudience( array &$target, $key, $enabled ) {
+		if ( array_key_exists( $key, $target ) || ! $enabled ) {
+			$target[ $key ] = (bool) $enabled;
+		}
 	}
 }

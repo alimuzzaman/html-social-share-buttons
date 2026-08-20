@@ -1,0 +1,78 @@
+{
+    "translation-revision-date": "2026-08-13T07:20:00+00:00",
+    "generator": "WP-CLI\/2.13.0-alpha-16cc7a8",
+    "source": "build\/social-share.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "Facebook": [
+                "Facebook"
+            ],
+            "LinkedIn": [
+                "LinkedIn"
+            ],
+            "Pinterest": [
+                "Pinterest"
+            ],
+            "Telegram": [
+                "Telegram"
+            ],
+            "Bluesky": [
+                "Bluesky"
+            ],
+            "Email": [
+                "E-mail"
+            ],
+            "Bootstrap Solid": [
+                "Bootstrap plein"
+            ],
+            "Button shape": [
+                "Forme des boutons"
+            ],
+            "Show configured profile links": [
+                "Afficher les liens de profil configur\u00e9s"
+            ],
+            "Inherit from plugin settings": [
+                "H\u00e9riter des r\u00e9glages de l\u2019extension"
+            ],
+            "X": [
+                "X"
+            ],
+            "Square": [
+                "Carr\u00e9"
+            ],
+            "Circle": [
+                "Cercle"
+            ],
+            "Share buttons": [
+                "Boutons de partage"
+            ],
+            "Title": [
+                "Titre"
+            ],
+            "Icon set": [
+                "Jeu d\u2019ic\u00f4nes"
+            ],
+            "Profile links after share buttons": [
+                "Liens de profil apr\u00e8s les boutons de partage"
+            ],
+            "Hide profile links in this block": [
+                "Masquer les liens de profil dans ce bloc"
+            ],
+            "Contact email": [
+                "Adresse e-mail de contact"
+            ],
+            "%s profile": [
+                "Profil %s"
+            ],
+            "Select share networks": [
+                "S\u00e9lectionner les r\u00e9seaux de partage"
+            ]
+        }
+    }
+}

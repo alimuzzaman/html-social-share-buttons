@@ -13,6 +13,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsCodec;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Translation\TranslationLoader;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\ViewerVisibilityPolicy;
 
 /**
  * The canonical owner of automatic frontend placement and frontend assets.
@@ -34,7 +35,11 @@ final class FrontendController {
 	private $excluded = false;
 	private $registered = false;
 	private $legacyTranslationFilterRegistered = false;
+	private $visibility;
 
+	/**
+	 * @param SettingsCodec|null $optionCodec Optional durable-option codec.
+	 */
 	public function __construct(
 		SettingsRepository $settings,
 		RenderFacade $renderer,
@@ -44,8 +49,9 @@ final class FrontendController {
 		TranslationLoader $translations,
 		AssetCollector $assets,
 		$disabledMetaKey,
-		SettingsCodec $optionCodec = null,
-		$legacyTextDomain = ''
+		$optionCodec = null,
+		$legacyTextDomain = '',
+		$visibility = null
 	) {
 		$this->settings = $settings;
 		$this->renderer = $renderer;
@@ -57,6 +63,7 @@ final class FrontendController {
 		$this->disabledMetaKey = (string) $disabledMetaKey;
 		$this->optionCodec = $optionCodec ? $optionCodec : new OptionSettingsCodec();
 		$this->legacyTextDomain = (string) $legacyTextDomain;
+		$this->visibility = $visibility ? $visibility : new ViewerVisibilityPolicy();
 	}
 
 	public function registerHooks() {
@@ -148,7 +155,10 @@ final class FrontendController {
 	/**
 	 * Canonical rendering path for an isolated public-object render session.
 	 */
-	public function filterContentWithOptionsAndAssets( $content, array $options, AssetCollector $assets = null ) {
+	/**
+	 * @param AssetCollector|null $assets Optional isolated asset collector.
+	 */
+	public function filterContentWithOptionsAndAssets( $content, array $options, $assets = null ) {
 		return $this->filterContentWithSettings(
 			$content,
 			$this->optionCodec->decode( $options ),
@@ -157,8 +167,11 @@ final class FrontendController {
 		);
 	}
 
-	private function filterContentWithSettings( $content, Settings $settings, AssetCollector $assets = null, array $fallbackOptions = array() ) {
-		if ( $this->excluded ) {
+	/**
+	 * @param AssetCollector|null $assets Optional isolated asset collector.
+	 */
+	private function filterContentWithSettings( $content, Settings $settings, $assets = null, array $fallbackOptions = array() ) {
+		if ( $this->excluded || ! $this->visibility->allows( $settings, $this->currentPostId() ) ) {
 			return $content;
 		}
 
@@ -178,11 +191,11 @@ final class FrontendController {
 	}
 
 	public function footer() {
-		if ( is_admin() || $this->excluded ) {
+		$settings = $this->settings();
+		if ( is_admin() || $this->excluded || ! $this->visibility->allows( $settings, $this->currentPostId() ) ) {
 			return;
 		}
 
-		$settings = $this->settings();
 		if ( $settings->analyticsEnabled() ) {
 			echo $this->analyticsScript( ! empty( $settings->profileLinks() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
@@ -206,7 +219,10 @@ final class FrontendController {
 	 * Render through a supplied request-local collector when a public object
 	 * owns an isolated render session; normal runtime calls omit it.
 	 */
-	public function renderWithOptions( array $options, $contextPostId = 0, AssetCollector $assets = null, array $fallbackOptions = array() ) {
+	/**
+	 * @param AssetCollector|null $assets Optional isolated asset collector.
+	 */
+	public function renderWithOptions( array $options, $contextPostId = 0, $assets = null, array $fallbackOptions = array() ) {
 		if ( $this->excluded ) {
 			return null;
 		}
@@ -240,11 +256,11 @@ final class FrontendController {
 	 * request footer remains below and retains its request-scoped collector.
 	 */
 	public function footerWithOptions( array $options, AssetCollector $assets ) {
-		if ( is_admin() || $this->excluded ) {
+		$settings = $this->optionCodec->decode( $options );
+		if ( is_admin() || $this->excluded || ! $this->visibility->allows( $settings, $this->currentPostId() ) ) {
 			return '';
 		}
 
-		$settings = $this->optionCodec->decode( $options );
 		$html = $settings->analyticsEnabled()
 			? $this->analyticsScript( ! empty( $settings->profileLinks() ) )
 			: '';

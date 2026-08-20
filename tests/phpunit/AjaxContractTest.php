@@ -78,6 +78,9 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 						'show_in' => array( 'show_left' => '1' ),
 						'icons' => array( 'facebook' => '1', 'x' => '1' ),
 						'use_port' => '1',
+						'show_for_current_user' => '0',
+						'show_for_logged_in_user' => '1',
+						'show_for_logged_out_user' => '0',
 					),
 				)
 			),
@@ -90,12 +93,74 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 			'show_in' => array( 'show_left' => '1' ),
 			'icons' => array( 'facebook' => '1', 'x' => '1' ),
 			'use_port' => true,
+			'show_for_current_user' => false,
+			'show_for_logged_in_user' => true,
+			'show_for_logged_out_user' => false,
 		);
 
 		$this->assertTrue( $response['success'] );
 		$this->assertSame( 'Settings saved.', $response['data']['message'] );
 		$this->assertSame( $expected, $response['data']['options'] );
 		$this->assertSame( $expected, get_option( 'zm_shbt_fld' ) );
+	}
+
+	public function testSettingsSavePreservesExtensionKeysAndDisabledNetworkTemplates(): void {
+		$this->_setRole( 'administrator' );
+		$this->seedStoredOption(
+			array(
+				'title'                 => 'Before',
+				'extension_owned_state' => array( 'keep' => true ),
+				'icons'                 => array( 'extension-network' => 'custom-state' ),
+				'share_templates'       => array(
+					'telegram' => 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
+					'extension-network' => 'https://example.test/share?url=%%permalink%%',
+				),
+				'profile_link_placements' => array( 'extension-placement' => 'custom-mode' ),
+			)
+		);
+		$_POST = array(
+			'nonce'    => wp_create_nonce( 'zm_sh_admin' ),
+			'settings' => http_build_query(
+				array(
+					'zm_shbt_fld' => array(
+						'title'           => 'After',
+						'iconset'         => 'default',
+						'icons'           => array( 'facebook' => '1' ),
+						'share_templates' => array(
+							'telegram' => 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
+						),
+					),
+				)
+			),
+		);
+
+		$response = $this->requestJson( 'zm_sh_save_settings' );
+		$stored = get_option( 'zm_shbt_fld' );
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( array( 'keep' => true ), $stored['extension_owned_state'] );
+		$this->assertSame( 'custom-state', $stored['icons']['extension-network'] );
+		$this->assertSame(
+			'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
+			$stored['share_templates']['telegram']
+		);
+		$this->assertSame(
+			'https://example.test/share?url=%%permalink%%',
+			$stored['share_templates']['extension-network']
+		);
+		$this->assertSame( 'custom-mode', $stored['profile_link_placements']['extension-placement'] );
+	}
+
+	private function seedStoredOption( array $value ) {
+		global $wpdb;
+		update_option( 'zm_shbt_fld', array( 'title' => 'seed' ) );
+		$wpdb->update(
+			$wpdb->options,
+			array( 'option_value' => maybe_serialize( $value ) ),
+			array( 'option_name' => 'zm_shbt_fld' )
+		);
+		wp_cache_delete( 'zm_shbt_fld', 'options' );
+		wp_cache_delete( 'alloptions', 'options' );
 	}
 
 	public function testSettingsSavePersistsOnlyExplicitPlacementProfileOverrides(): void {

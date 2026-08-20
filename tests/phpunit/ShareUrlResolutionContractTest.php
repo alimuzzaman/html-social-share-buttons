@@ -79,6 +79,47 @@ final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 		$this->assertNoPlaceholderOrDoubleEncoding( $output, 'explicit shortcode URL' );
 	}
 
+	public function testPersistedDynamicBlockUsesTheActualCurrentPostPermalink(): void {
+		$postId = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title' => 'Persisted block permalink contract',
+			)
+		);
+		$this->go_to( get_permalink( $postId ) );
+		$GLOBALS['post'] = get_post( $postId );
+
+		$output = do_blocks(
+			'<!-- wp:html-social-share/social-share {"icons":["facebook"],"profile_links_mode":"none"} /-->'
+		);
+
+		$this->assertStringContainsString( rawurlencode( get_permalink( $postId ) ), $output );
+		$this->assertNoPlaceholderOrDoubleEncoding( $output, 'persisted dynamic block' );
+	}
+
+	public function testAutomaticPlacementUsesTheActualCurrentPostPermalink(): void {
+		$postId = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title' => 'Automatic placement permalink contract',
+			)
+		);
+		$this->go_to( get_permalink( $postId ) );
+		$GLOBALS['post'] = get_post( $postId );
+
+		$output = LegacyApi::plugin()->frontend()->filterContentWithOptions(
+			'<p>Original content.</p>',
+			array(
+				'iconset' => 'default',
+				'icons' => array( 'facebook' => '1' ),
+				'show_in' => array( 'show_after_post' => '1' ),
+			)
+		);
+
+		$this->assertStringContainsString( rawurlencode( get_permalink( $postId ) ), $output );
+		$this->assertNoPlaceholderOrDoubleEncoding( $output, 'automatic placement' );
+	}
+
 	/**
 	 * Older shortcode attributes could reach the renderer after the token had
 	 * already been URL-escaped. Treat that stored representation as the same
