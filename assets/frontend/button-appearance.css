@@ -1,0 +1,269 @@
+.zmshbt.hssb-appearance--minimal,
+.zmshbt.hssb-appearance--framed,
+.zmshbt.hssb-appearance--soft-shadow {
+	--hssb-target-size: 44px;
+	--hssb-gap: 8px;
+	--hssb-square-radius: 10px;
+	--hssb-circle-radius: 50%;
+	--hssb-surface: #fff;
+	--hssb-surface: Canvas;
+	--hssb-border: #c3c4c7;
+	--hssb-shadow: 0 2px 8px rgb(0 0 0 / 16%);
+	--hssb-focus-inner: #f9f9f9;
+	--hssb-focus-outer: #193146;
+	--hssb-motion-duration: 160ms;
+	--hssb-motion-easing: cubic-bezier(.2, .8, .2, 1);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	gap: var(--hssb-gap);
+}
+
+.zmshbt.hssb-appearance--minimal.left,
+.zmshbt.hssb-appearance--minimal.right,
+.zmshbt.hssb-appearance--framed.left,
+.zmshbt.hssb-appearance--framed.right,
+.zmshbt.hssb-appearance--soft-shadow.left,
+.zmshbt.hssb-appearance--soft-shadow.right {
+	left: auto;
+	right: auto;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+}
+
+.zmshbt.hssb-appearance--minimal.left,
+.zmshbt.hssb-appearance--framed.left,
+.zmshbt.hssb-appearance--soft-shadow.left {
+	left: 0;
+}
+
+.zmshbt.hssb-appearance--minimal.right,
+.zmshbt.hssb-appearance--framed.right,
+.zmshbt.hssb-appearance--soft-shadow.right {
+	right: 0;
+}
+
+.zmshbt[class].hssb-appearance--minimal a,
+.zmshbt[class].hssb-appearance--framed a,
+.zmshbt[class].hssb-appearance--soft-shadow a {
+	box-sizing: border-box;
+	display: block;
+	width: 44px;
+	width: var(--hssb-target-size);
+	height: 44px;
+	height: var(--hssb-target-size);
+	margin: 0;
+	background-color: transparent;
+	background-origin: content-box;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	border: 0 solid transparent;
+	border-radius: 10px;
+	border-radius: var(--hssb-square-radius);
+	filter: none;
+	transform: none;
+	transition: transform 160ms cubic-bezier(.2, .8, .2, 1);
+	transition: transform var(--hssb-motion-duration) var(--hssb-motion-easing);
+}
+
+.zmshbt.hssb-appearance--minimal.circle a,
+.zmshbt.hssb-appearance--framed.circle a,
+.zmshbt.hssb-appearance--soft-shadow.circle a {
+	border-radius: 50%;
+	border-radius: var(--hssb-circle-radius);
+}
+
+.zmshbt.hssb-appearance--minimal a {
+	padding: 4px;
+}
+
+.zmshbt[class].hssb-appearance--framed a,
+.zmshbt[class].hssb-appearance--soft-shadow a {
+	padding: 6px;
+	border-width: 1px;
+	border-color: #c3c4c7;
+	border-color: var(--hssb-border);
+}
+
+.zmshbt[class].hssb-appearance--soft-shadow a {
+	background-color: #fff;
+	background-color: var(--hssb-surface);
+	box-shadow: 0 2px 8px rgb(0 0 0 / 16%);
+	box-shadow: var(--hssb-shadow);
+}
+
+.zmshbt.hssb-appearance--minimal a:focus,
+.zmshbt.hssb-appearance--framed a:focus,
+.zmshbt.hssb-appearance--soft-shadow a:focus {
+	outline: 2px solid #f9f9f9;
+	outline: 2px solid var(--hssb-focus-inner);
+	outline-offset: 2px;
+	box-shadow: 0 0 0 4px #193146;
+	box-shadow: 0 0 0 4px var(--hssb-focus-outer);
+}
+
+.zmshbt.hssb-appearance--soft-shadow a:focus {
+	box-shadow: 0 2px 8px rgb(0 0 0 / 16%), 0 0 0 4px #193146;
+	box-shadow: var(--hssb-shadow), 0 0 0 4px var(--hssb-focus-outer);
+}
+
+.zmshbt.hssb-appearance--minimal a:focus:not(:focus-visible),
+.zmshbt.hssb-appearance--framed a:focus:not(:focus-visible),
+.zmshbt.hssb-appearance--soft-shadow a:focus:not(:focus-visible) {
+	outline: 0;
+	box-shadow: none;
+}
+
+.zmshbt.hssb-appearance--soft-shadow a:focus:not(:focus-visible) {
+	box-shadow: 0 2px 8px rgb(0 0 0 / 16%);
+	box-shadow: var(--hssb-shadow);
+}
+
+.zmshbt[class].hssb-appearance--minimal a:active,
+.zmshbt[class].hssb-appearance--framed a:active,
+.zmshbt[class].hssb-appearance--soft-shadow a:active {
+	filter: none;
+	transform: translateY(0) scale(.98);
+}
+
+.zmshbt.hssb-appearance--minimal .zmshbt-profile-separator,
+.zmshbt.hssb-appearance--framed .zmshbt-profile-separator,
+.zmshbt.hssb-appearance--soft-shadow .zmshbt-profile-separator {
+	display: block;
+	align-self: center;
+	width: 1px;
+	height: 32px;
+	margin: 0;
+	background: #c3c4c7;
+	background: var(--hssb-border);
+}
+
+.zmshbt.hssb-appearance--minimal.left .zmshbt-profile-separator,
+.zmshbt.hssb-appearance--minimal.right .zmshbt-profile-separator,
+.zmshbt.hssb-appearance--framed.left .zmshbt-profile-separator,
+.zmshbt.hssb-appearance--framed.right .zmshbt-profile-separator,
+.zmshbt.hssb-appearance--soft-shadow.left .zmshbt-profile-separator,
+.zmshbt.hssb-appearance--soft-shadow.right .zmshbt-profile-separator {
+	width: 32px;
+	height: 1px;
+	margin: 0;
+}
+
+.zmshbt.hssb-appearance--minimal.hssb-rail--auto-hide.left,
+.zmshbt.hssb-appearance--framed.hssb-rail--auto-hide.left,
+.zmshbt.hssb-appearance--soft-shadow.hssb-rail--auto-hide.left {
+	transform: translateX(calc(-1 * (var(--hssb-target-size) - 12px)));
+}
+
+.zmshbt.hssb-appearance--minimal.hssb-rail--auto-hide.right,
+.zmshbt.hssb-appearance--framed.hssb-rail--auto-hide.right,
+.zmshbt.hssb-appearance--soft-shadow.hssb-rail--auto-hide.right {
+	transform: translateX(calc(var(--hssb-target-size) - 12px));
+}
+
+.zmshbt[class].hssb-rail--auto-hide {
+	transition: transform 160ms cubic-bezier(.2, .8, .2, 1);
+	transition: transform var(--hssb-motion-duration) var(--hssb-motion-easing);
+}
+
+.zmshbt[class].hssb-rail--auto-hide:focus-within {
+	transform: translateX(0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.zmshbt[class].hssb-rail--auto-hide:hover {
+		transform: translateX(0);
+	}
+
+	.zmshbt[class].hssb-appearance--minimal a:hover,
+	.zmshbt[class].hssb-appearance--framed a:hover {
+		filter: none;
+		margin: 0;
+		transform: translateY(-1px) scale(1.03);
+	}
+
+	.zmshbt[class].hssb-appearance--soft-shadow a:hover {
+		filter: none;
+		margin: 0;
+		transform: translateY(-2px) scale(1.02);
+	}
+
+	.zmshbt[class].hssb-appearance--minimal a:active,
+	.zmshbt[class].hssb-appearance--framed a:active,
+	.zmshbt[class].hssb-appearance--soft-shadow a:active {
+		transform: translateY(0) scale(.98);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.zmshbt[class].hssb-appearance--minimal a,
+	.zmshbt[class].hssb-appearance--framed a,
+	.zmshbt[class].hssb-appearance--soft-shadow a,
+	.zmshbt[class].hssb-rail--auto-hide {
+		transition: none;
+	}
+
+	.zmshbt[class].hssb-appearance--minimal a:hover,
+	.zmshbt[class].hssb-appearance--minimal a:active,
+	.zmshbt[class].hssb-appearance--framed a:hover,
+	.zmshbt[class].hssb-appearance--framed a:active,
+	.zmshbt[class].hssb-appearance--soft-shadow a:hover,
+	.zmshbt[class].hssb-appearance--soft-shadow a:active,
+	.zmshbt[class].hssb-appearance--minimal.hssb-rail--auto-hide,
+	.zmshbt[class].hssb-appearance--framed.hssb-rail--auto-hide,
+	.zmshbt[class].hssb-appearance--soft-shadow.hssb-rail--auto-hide {
+		transform: none;
+	}
+}
+
+@media (forced-colors: active) {
+	.zmshbt[class].hssb-appearance--framed a,
+	.zmshbt[class].hssb-appearance--soft-shadow a {
+		border: 2px solid ButtonText;
+		box-shadow: none;
+	}
+
+	.zmshbt[class].hssb-appearance--minimal a:focus,
+	.zmshbt[class].hssb-appearance--framed a:focus,
+	.zmshbt[class].hssb-appearance--soft-shadow a:focus {
+		outline-color: Highlight;
+		box-shadow: none;
+	}
+}
+
+@media (max-width: 600px) {
+	.zmshbt[class].hssb-appearance--minimal.left,
+	.zmshbt[class].hssb-appearance--minimal.right,
+	.zmshbt[class].hssb-appearance--framed.left,
+	.zmshbt[class].hssb-appearance--framed.right,
+	.zmshbt[class].hssb-appearance--soft-shadow.left,
+	.zmshbt[class].hssb-appearance--soft-shadow.right {
+		position: static !important;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		transform: none;
+	}
+
+	.zmshbt.hssb-appearance--minimal.left a,
+	.zmshbt.hssb-appearance--minimal.right a,
+	.zmshbt.hssb-appearance--framed.left a,
+	.zmshbt.hssb-appearance--framed.right a,
+	.zmshbt.hssb-appearance--soft-shadow.left a,
+	.zmshbt.hssb-appearance--soft-shadow.right a {
+		margin: 0 !important;
+	}
+
+	.zmshbt.hssb-appearance--minimal.left .zmshbt-profile-separator,
+	.zmshbt.hssb-appearance--minimal.right .zmshbt-profile-separator,
+	.zmshbt.hssb-appearance--framed.left .zmshbt-profile-separator,
+	.zmshbt.hssb-appearance--framed.right .zmshbt-profile-separator,
+	.zmshbt.hssb-appearance--soft-shadow.left .zmshbt-profile-separator,
+	.zmshbt.hssb-appearance--soft-shadow.right .zmshbt-profile-separator {
+		width: 1px;
+		height: 32px;
+	}
+}

@@ -112,5 +112,11 @@ final class ElementorRegistrar {
 				$this->config->version()
 			);
 		}
+		wp_register_style(
+			$this->config->buttonAppearanceStyleHandle(),
+			$this->config->buttonAppearanceStyleUrl(),
+			array(),
+			$this->config->version()
+		);
 	}
 }

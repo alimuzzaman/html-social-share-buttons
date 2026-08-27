@@ -3,6 +3,7 @@
 namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend;
 
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\Network;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderPlacement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderRequest;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderResult;
@@ -26,6 +27,16 @@ final class HtmlRenderer {
 			$output = '<h3>' . esc_html( $request->heading() ) . '</h3>';
 		}
 
+		$appearanceClass = ButtonAppearance::modifier( $request->buttonAppearance() );
+		$autoHideClass = '';
+		if (
+			'' !== $appearanceClass &&
+			$request->autoHideEnabled() &&
+			in_array( $request->placement(), array( RenderPlacement::FLOATING_LEFT, RenderPlacement::FLOATING_RIGHT ), true )
+		) {
+			$autoHideClass = 'hssb-rail--auto-hide';
+		}
+
 		$output .= "<div class='zmshbt " .
 			esc_attr(
 				'' !== $wrapperClass
@@ -33,7 +44,14 @@ final class HtmlRenderer {
 					: $this->wrapperClass( $request->placement() )
 			) . ' ' .
 			esc_attr( '' !== $iconSetClass ? $iconSetClass : $request->iconSetId() ) . ' ' .
-			esc_attr( '' !== $shapeClass ? $shapeClass : $result->shape() ) . "'>";
+			esc_attr( '' !== $shapeClass ? $shapeClass : $result->shape() );
+		if ( '' !== $appearanceClass ) {
+			$output .= ' ' . esc_attr( $appearanceClass );
+		}
+		if ( '' !== $autoHideClass ) {
+			$output .= ' ' . esc_attr( $autoHideClass );
+		}
+		$output .= "'>";
 
 		foreach ( $result->buttons() as $button ) {
 			$label = sprintf(

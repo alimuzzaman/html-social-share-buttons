@@ -37,6 +37,9 @@
             "Show configured profile links": [
                 "Afficher les liens de profil configur\u00e9s"
             ],
+            "Icon set": [
+                "Jeu d\u2019ic\u00f4nes"
+            ],
             "Inherit from plugin settings": [
                 "H\u00e9riter des r\u00e9glages de l\u2019extension"
             ],
@@ -54,9 +57,6 @@
             ],
             "Title": [
                 "Titre"
-            ],
-            "Icon set": [
-                "Jeu d\u2019ic\u00f4nes"
             ],
             "Profile links after share buttons": [
                 "Liens de profil apr\u00e8s les boutons de partage"

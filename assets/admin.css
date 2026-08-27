@@ -558,6 +558,11 @@
 	padding-top: 8px;
 }
 
+.zm_appearance_controls {
+	display: grid;
+	gap: 16px;
+}
+
 .zm_icon_style_panel .components-select-control {
 	width: 100%;
 	max-width: 420px;
@@ -585,6 +590,17 @@
 	display: block;
 	max-width: 100%;
 	height: auto;
+}
+
+.zm_appearance_preview_row {
+	display: grid;
+	gap: 6px;
+}
+
+.zm_appearance_preview_shape {
+	color: var(--zmsh-muted);
+	font-size: 11px;
+	text-transform: capitalize;
 }
 
 .zm_placement_item {

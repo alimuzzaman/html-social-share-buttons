@@ -36,7 +36,14 @@ export function normalizeSettingsOptions($, defaults, raw) {
 	options.show_for_logged_in_user = toBoolean(options.show_for_logged_in_user);
 	options.show_for_logged_out_user = toBoolean(options.show_for_logged_out_user);
 	options.excludes = options.excludes || '';
+	options.button_appearance = normalizeButtonAppearance(options.button_appearance);
 	return options;
+}
+
+export function normalizeButtonAppearance(value) {
+	return ['legacy', 'minimal', 'framed', 'soft-shadow'].indexOf(value) === -1
+		? 'legacy'
+		: value;
 }
 
 export function ensureIconsetType($, iconset, value) {

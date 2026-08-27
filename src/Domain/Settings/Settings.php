@@ -22,6 +22,7 @@ final class Settings {
 	private $showForCurrentUser;
 	private $showForLoggedInUser;
 	private $showForLoggedOutUser;
+	private $buttonAppearance;
 
 	public function __construct(
 		$title,
@@ -40,7 +41,8 @@ final class Settings {
 		array $profileLinkPlacements = array(),
 		$showForCurrentUser = true,
 		$showForLoggedInUser = true,
-		$showForLoggedOutUser = true
+		$showForLoggedOutUser = true,
+		$buttonAppearance = ButtonAppearance::LEGACY
 	) {
 		$this->title             = (string) $title;
 		$this->iconSetId         = (string) $iconSetId;
@@ -59,6 +61,7 @@ final class Settings {
 		$this->showForCurrentUser     = (bool) $showForCurrentUser;
 		$this->showForLoggedInUser    = (bool) $showForLoggedInUser;
 		$this->showForLoggedOutUser   = (bool) $showForLoggedOutUser;
+		$this->buttonAppearance       = ButtonAppearance::normalize( $buttonAppearance );
 	}
 
 	public function title() {
@@ -138,5 +141,9 @@ final class Settings {
 
 	public function showForLoggedOutUser() {
 		return $this->showForLoggedOutUser;
+	}
+
+	public function buttonAppearance() {
+		return $this->buttonAppearance;
 	}
 }

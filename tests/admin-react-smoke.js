@@ -77,6 +77,12 @@ const context = {
 
 context.window.zm_sh_react_settings = {
 	defaultIconset: 'bootstrap-solid',
+	button_appearances: [
+		{ value: 'legacy', label: 'Legacy (current)', help: 'Keep current presentation.' },
+		{ value: 'minimal', label: 'Minimal (recommended)', help: 'Use consistent targets.' },
+		{ value: 'framed', label: 'Framed', help: 'Add an outline.' },
+		{ value: 'soft-shadow', label: 'Soft shadow', help: 'Add a shadow.' },
+	],
 	assets_img: '/assets/image/',
 	iconsets: [
 		{
@@ -92,6 +98,7 @@ context.window.zm_sh_react_settings = {
 		},
 	],
 	options: Object.assign({}, settingsSchema.default_options, {
+		button_appearance: 'minimal',
 		excludes: '42,43,44',
 		show_in: {
 			show_left: 'square',
@@ -294,6 +301,20 @@ const requiredNames = settingsSchema.field_names;
 const missing = requiredNames.filter((name) => !names.has(name));
 if (missing.length > 0) {
 	throw new Error(`Missing legacy field names: ${missing.join(', ')}`);
+}
+
+const appearanceField = nodes.find(
+	(node) => node.props && node.props.name === 'zm_shbt_fld[button_appearance]'
+);
+const appearancePreview = nodes.find(
+	(node) => node.props && String(node.props.className || '').includes('hssb-appearance--minimal')
+);
+if (!appearanceField || appearanceField.props.value !== 'minimal' || appearanceField.props.options.length !== 4 || !appearancePreview) {
+	throw new Error('Button appearance control and shared-CSS live preview did not render.');
+}
+appearanceField.props.onChange('framed');
+if (appInstance.state.options.button_appearance !== 'framed') {
+	throw new Error('Button appearance changes should update canonical settings state.');
 }
 
 const audienceKeys = [

@@ -5,6 +5,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsStateStore;
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 
 final class SettingsPayloadBuilder {
@@ -50,6 +51,7 @@ final class SettingsPayloadBuilder {
 			'exclude_items'            => $excluded['items'],
 			'exclude_custom'           => $excluded['custom'],
 			'defaultIconset'           => IconSetSelectionPolicy::NEW_DEFAULT_ID,
+			'button_appearances'       => $this->buttonAppearances(),
 			'strings'                  => $this->interfaceStrings(),
 		);
 	}
@@ -71,6 +73,7 @@ final class SettingsPayloadBuilder {
 				),
 				'excludes'                 => '',
 				'iconset_type'             => 'square',
+				'button_appearance'        => ButtonAppearance::LEGACY,
 				'icons'                    => array(),
 				'g_analytics'              => 0,
 				'auto_hide_btn'            => 0,
@@ -94,6 +97,7 @@ final class SettingsPayloadBuilder {
 		if ( ! isset( $options['profile_link_placements'] ) || ! is_array( $options['profile_link_placements'] ) ) {
 			$options['profile_link_placements'] = array();
 		}
+		$options['button_appearance'] = ButtonAppearance::normalize( $options['button_appearance'] );
 
 		return $options;
 	}
@@ -105,6 +109,31 @@ final class SettingsPayloadBuilder {
 		}
 
 		return $templates;
+	}
+
+	private function buttonAppearances() {
+		return array(
+			array(
+				'value' => ButtonAppearance::LEGACY,
+				'label' => __( 'Legacy (current)', 'html-social-share-buttons' ),
+				'help'  => __( 'Keep the current size, spacing, and hover behavior for the selected icon set.', 'html-social-share-buttons' ),
+			),
+			array(
+				'value' => ButtonAppearance::MINIMAL,
+				'label' => __( 'Minimal (recommended)', 'html-social-share-buttons' ),
+				'help'  => __( 'Use consistent 44-pixel targets, balanced spacing, and a subtle hover lift.', 'html-social-share-buttons' ),
+			),
+			array(
+				'value' => ButtonAppearance::FRAMED,
+				'label' => __( 'Framed', 'html-social-share-buttons' ),
+				'help'  => __( 'Add a clean, shape-aware outline around each button.', 'html-social-share-buttons' ),
+			),
+			array(
+				'value' => ButtonAppearance::SOFT_SHADOW,
+				'label' => __( 'Soft shadow', 'html-social-share-buttons' ),
+				'help'  => __( 'Place each icon on a quiet raised surface with a subtle shadow.', 'html-social-share-buttons' ),
+			),
+		);
 	}
 
 	private function interfaceStrings() {
@@ -133,9 +162,10 @@ final class SettingsPayloadBuilder {
 			'excludeContent'              => __( 'Exclude pages or posts', 'html-social-share-buttons' ),
 			'excludeHelp'                 => __( 'Search published pages and posts, or press Enter to add a custom value.', 'html-social-share-buttons' ),
 			'excludePlaceholder'          => __( 'Search pages, posts, or add a custom value', 'html-social-share-buttons' ),
-			'iconStyle'                   => __( 'Icon Style', 'html-social-share-buttons' ),
-			'iconStyleDescription'        => __( 'Choose the icon pack used for every placement and generated code snippet.', 'html-social-share-buttons' ),
-			'buttonStyle'                 => __( 'Button style', 'html-social-share-buttons' ),
+			'appearance'                  => __( 'Appearance', 'html-social-share-buttons' ),
+			'appearanceDescription'       => __( 'Choose the icon set and how the buttons are presented on your site. Appearance applies everywhere the plugin renders buttons.', 'html-social-share-buttons' ),
+			'iconSet'                     => __( 'Icon set', 'html-social-share-buttons' ),
+			'buttonAppearance'            => __( 'Button appearance', 'html-social-share-buttons' ),
 			'preview'                     => __( 'Preview', 'html-social-share-buttons' ),
 			'displayPlacement'            => __( 'Display placement', 'html-social-share-buttons' ),
 			'displayPlacementDescription' => __( 'Turn each placement on or off and pick its shape.', 'html-social-share-buttons' ),

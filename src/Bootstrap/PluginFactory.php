@@ -77,11 +77,14 @@ final class PluginFactory {
 				null,
 				null,
 				$settings,
-				$visibility
+				$visibility,
+				$config->buttonAppearanceStyleUrl(),
+				$config->buttonAppearanceStyleHandle()
 			);
 		$assetCollector = new AssetCollector(
 			$assets->stylesheetUrl( $iconSets->get( 'default' ) ),
-			$config->version()
+			$config->version(),
+			$config->buttonAppearanceStyleHandle()
 		);
 		$excludedContent = new ExcludedContentPolicy();
 		$contentPlacement = new ContentPlacementComposer();

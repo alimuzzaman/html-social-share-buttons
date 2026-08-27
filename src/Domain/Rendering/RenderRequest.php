@@ -2,6 +2,7 @@
 
 namespace Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering;
 
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use InvalidArgumentException;
 
 final class RenderRequest {
@@ -15,6 +16,8 @@ final class RenderRequest {
 	private $noFollow;
 	private $profileLinks;
 	private $showHeading;
+	private $buttonAppearance;
+	private $autoHideEnabled;
 
 	public function __construct(
 		$iconSetId,
@@ -26,7 +29,9 @@ final class RenderRequest {
 		$permalinkOverride = '',
 		$noFollow = false,
 		array $profileLinks = array(),
-		$showHeading = false
+		$showHeading = false,
+		$buttonAppearance = ButtonAppearance::LEGACY,
+		$autoHideEnabled = false
 	) {
 		RenderPlacement::assertValid( $placement );
 
@@ -70,6 +75,8 @@ final class RenderRequest {
 		$this->noFollow = (bool) $noFollow;
 		$this->profileLinks = $normalizedProfileLinks;
 		$this->showHeading = (bool) $showHeading;
+		$this->buttonAppearance = ButtonAppearance::normalize( $buttonAppearance );
+		$this->autoHideEnabled = (bool) $autoHideEnabled;
 	}
 
 	public function iconSetId() {
@@ -114,6 +121,14 @@ final class RenderRequest {
 	 */
 	public function showHeading() {
 		return $this->showHeading;
+	}
+
+	public function buttonAppearance() {
+		return $this->buttonAppearance;
+	}
+
+	public function autoHideEnabled() {
+		return $this->autoHideEnabled;
 	}
 
 	private function normalizeProfileUrl( $networkId, $url ) {

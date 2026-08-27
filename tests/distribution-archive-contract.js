@@ -59,6 +59,7 @@ const required = [...new Set([
 	// canonical SVG-only sets live under assets/iconsets.
 	...repositoryFiles('iconset'),
 	...repositoryFiles('assets/iconsets'),
+	...repositoryFiles('assets/frontend'),
 	...repositoryFiles('build'),
 ])];
 const forbidden = [

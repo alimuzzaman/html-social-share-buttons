@@ -23,6 +23,7 @@ final class PluginConfig {
 	const LEGACY_TEXT_DOMAIN = 'zm-sh';
 	const FRONTEND_STYLE_HANDLE_PREFIX = 'social-share-';
 	const DEFAULT_STYLE_HANDLE = 'social-share-default';
+	const BUTTON_APPEARANCE_STYLE_HANDLE = 'hssb-button-appearance';
 	const SHARE_BLOCK_EDITOR_HANDLE = 'zm-sh-social-share-block';
 	const SOCIAL_LINKS_BLOCK_EDITOR_HANDLE = 'zm-sh-social-links-block';
 	const ADMIN_NONCE_ACTION = 'zm_sh_admin';
@@ -120,6 +121,14 @@ final class PluginConfig {
 
 	public function defaultStyleHandle() {
 		return self::DEFAULT_STYLE_HANDLE;
+	}
+
+	public function buttonAppearanceStyleHandle() {
+		return self::BUTTON_APPEARANCE_STYLE_HANDLE;
+	}
+
+	public function buttonAppearanceStyleUrl() {
+		return $this->paths->assetsUrl() . 'frontend/button-appearance.css';
 	}
 
 	public function shareBlockEditorHandle() {

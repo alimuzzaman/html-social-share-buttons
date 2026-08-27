@@ -29,6 +29,7 @@ import { networks } from '../shared/networks';
 		  };
 	const iconsetAssets = localized.iconsetAssets;
 	const inheritedIconset = localized.inheritedIconset;
+	const buttonAppearance = localized.buttonAppearance;
 	const availableNetworks = networks( __ );
 	const supportsBlockApiV3 =
 		localized.apiVersion === 3 &&
@@ -50,6 +51,7 @@ import { networks } from '../shared/networks';
 		...metadata,
 		apiVersion: supportsBlockApiV3 ? metadata.apiVersion : 1,
 		edit( props ) {
+			const modernAppearance = buttonAppearance !== 'legacy';
 			const attributes = props.attributes;
 			const selectableIconsets = Object.assign( {}, iconsets );
 			if ( localized.legacyIconsets[ attributes.iconset ] ) {
@@ -238,8 +240,10 @@ import { networks } from '../shared/networks';
 									'div',
 									{
 										key: 'icons',
-										className: 'hssb-social-links-block-preview__icons',
-										style: {
+										className: modernAppearance
+											? 'zmshbt in_block ' + activeIconsetId + ' ' + previewType + ' hssb-appearance--' + buttonAppearance
+											: 'hssb-social-links-block-preview__icons',
+										style: modernAppearance ? { padding: '8px 0' } : {
 											display: 'flex',
 											flexWrap: 'wrap',
 											gap: '8px',
@@ -251,8 +255,19 @@ import { networks } from '../shared/networks';
 										const src =
 											activeIconset.icons[ network.id ] &&
 											activeIconset.icons[ network.id ][ previewType ];
-										return src
-											? el( 'img', {
+										if ( ! src ) {
+											return null;
+										}
+										if ( modernAppearance ) {
+											return el( 'a', {
+													key: network.id,
+													role: 'img',
+													className: 'zmshbt-profile-link',
+													'aria-label': network.label,
+													style: { backgroundImage: 'url("' + src + '")' },
+											  } );
+										}
+										return el( 'img', {
 													key: network.id,
 													src,
 													alt: network.label,
@@ -267,8 +282,7 @@ import { networks } from '../shared/networks';
 																? '50%'
 																: '2px',
 													},
-											  } )
-											: null;
+												  } );
 									} )
 								  )
 							: el(

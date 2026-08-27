@@ -8,6 +8,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderRequest;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Extension\ExtensionHooks;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\HookedShareUrlResolver;
@@ -31,6 +32,8 @@ final class RenderFacade {
 	private $extensions;
 	private $settings;
 	private $visibility;
+	private $buttonAppearanceStylesheet;
+	private $buttonAppearanceStyleHandle;
 
 	/**
 	 * @param ExtensionHooks|null       $extensions Optional extension hooks.
@@ -47,7 +50,9 @@ final class RenderFacade {
 		$mapper = null,
 		$renderer = null,
 		$settings = null,
-		$visibility = null
+		$visibility = null,
+		$buttonAppearanceStylesheet = '',
+		$buttonAppearanceStyleHandle = 'hssb-button-appearance'
 	) {
 		$this->networks = $networks;
 		$this->assets = $assets;
@@ -57,6 +62,8 @@ final class RenderFacade {
 		$this->contexts = $contexts ? $contexts : new ShareContextFactory( null, $this->extensions );
 		$this->settings = $settings instanceof SettingsRepository ? $settings : null;
 		$this->visibility = $visibility ? $visibility : new ViewerVisibilityPolicy();
+		$this->buttonAppearanceStylesheet = (string) $buttonAppearanceStylesheet;
+		$this->buttonAppearanceStyleHandle = (string) $buttonAppearanceStyleHandle;
 		$this->builder = new BuildShareButtons(
 			$networks,
 			$iconSets,
@@ -68,17 +75,32 @@ final class RenderFacade {
 	 * @param ShareContext|null $context Optional explicit render context.
 	 */
 	public function render( array $options, $contextPostId = 0, $context = null ) {
+		$settings = $this->settings ? $this->settings->load() : null;
 		if (
-			$this->settings &&
-			! $this->visibility->allows( $this->settings->load(), $contextPostId )
+			$settings &&
+			! $this->visibility->allows( $settings, $contextPostId )
 		) {
 			return new RenderOutcome( '', array(), array() );
 		}
+		$options['button_appearance'] = $settings
+			? $settings->buttonAppearance()
+			: ButtonAppearance::LEGACY;
+		$options['auto_hide_enabled'] = $settings
+			? $settings->autoHideEnabled()
+			: false;
 		$options = $this->normalizeOptions( $options, $contextPostId );
 		$request = $this->mapper->map( $options );
 		$context = $context ? $context : $this->contexts->create( $contextPostId );
 		$result = $this->builder->build( $request, $context );
 		$iconSet = $result->iconSet();
+
+		$stylesheets = array( $iconSet->id() => $this->assets->stylesheetUrl( $iconSet ) );
+		if (
+			ButtonAppearance::LEGACY !== $request->buttonAppearance() &&
+			'' !== $this->buttonAppearanceStylesheet
+		) {
+			$stylesheets[ $this->buttonAppearanceStyleHandle ] = $this->buttonAppearanceStylesheet;
+		}
 
 		return new RenderOutcome(
 			$this->renderer->render(
@@ -88,7 +110,7 @@ final class RenderFacade {
 				$this->iconSetClass( $request, $iconSet->id() ),
 				$result->shape()
 			),
-			array( $iconSet->id() => $this->assets->stylesheetUrl( $iconSet ) ),
+			$stylesheets,
 			$this->printedIcons( $result )
 		);
 	}

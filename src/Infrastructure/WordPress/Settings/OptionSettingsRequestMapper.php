@@ -55,6 +55,7 @@ final class OptionSettingsRequestMapper {
 		return array(
 			'title'                    => isset( $input['title'] ) ? $input['title'] : '',
 			'icon_set'                 => isset( $input['iconset'] ) ? $input['iconset'] : '',
+			'button_appearance'        => isset( $input['button_appearance'] ) ? $input['button_appearance'] : '',
 			'icon_shape'               => isset( $input['iconset_type'] ) ? $input['iconset_type'] : '',
 			'placements'               => $placements,
 			'placement_shapes'         => $placementShapes,
@@ -144,6 +145,8 @@ final class OptionSettingsRequestMapper {
 				$sanitized['excludes'] = $settings->excludedContent();
 			} elseif ( 'iconset' === $key ) {
 				$sanitized['iconset'] = sanitize_key( $value );
+			} elseif ( 'button_appearance' === $key ) {
+				$sanitized['button_appearance'] = $settings->buttonAppearance();
 			} elseif ( in_array( $key, $literalFields, true ) ) {
 				$sanitized[ $key ] = $value;
 			} elseif ( isset( $booleanFields[ $key ] ) && $booleanFields[ $key ] ) {
@@ -163,6 +166,7 @@ final class OptionSettingsRequestMapper {
 		$scalarFields = array(
 			'title',
 			'iconset',
+			'button_appearance',
 			'iconset_type',
 			'excludes',
 			'show_left',

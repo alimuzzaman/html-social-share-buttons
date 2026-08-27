@@ -47,6 +47,39 @@ export function attachSettingsRenderer(App, dependencies) {
 		var socialNetworkColumns = [[], []];
 		var networkPreviewType = ensureType(currentIconset, options.show_before_post || options.show_after_post || options.show_left || options.show_right);
 		var profileNetworks = iconsets.length ? (iconsets[0].icons || []) : [];
+		var buttonAppearances = data.button_appearances || [];
+		var currentAppearance = buttonAppearances.filter(function (appearance) {
+			return appearance.value === options.button_appearance;
+		})[0] || buttonAppearances[0] || { value: 'legacy', label: 'Legacy (current)', help: '' };
+		function livePreview() {
+			if (!currentIconset || options.button_appearance === 'legacy') {
+				return e('img', {
+					key: 'image',
+					src: currentIconset ? currentIconset.preview_img : '',
+					alt: currentIconset ? currentIconset.name : ''
+				});
+			}
+
+			return (currentIconset.types || ['square']).map(function (shape) {
+				return e('div', { key: shape, className: 'zm_appearance_preview_row' }, [
+					e('span', { key: 'shape', className: 'zm_appearance_preview_shape' }, shape),
+					e('div', {
+						key: 'buttons',
+						className: 'zmshbt in_block ' + currentIconset.id + ' ' + shape + ' hssb-appearance--' + options.button_appearance,
+						role: 'group',
+						'aria-label': currentAppearance.label + ' ' + shape + ' ' + text('preview', 'Preview')
+					}, (currentIconset.icons || []).slice(0, 3).map(function (icon) {
+						return e('a', {
+							key: icon.id,
+							href: '#',
+							style: { backgroundImage: 'url("' + getIconPreview(icon, shape) + '")' },
+							'aria-label': icon.name + ' ' + text('preview', 'Preview'),
+							onClick: function (event) { event.preventDefault(); }
+						});
+					}))
+				]);
+			});
+		}
 
 		if (currentIconset && currentIconset.icons && currentIconset.icons.length) {
 			currentIconset.icons.forEach(function (icon, index) {
@@ -108,34 +141,47 @@ export function attachSettingsRenderer(App, dependencies) {
 					})
 				])
 				]),
-				e('section', { key: 'icon-style', className: 'zm_settings_section' }, [
+				e('section', { key: 'appearance', className: 'zm_settings_section' }, [
 				e(SectionHeader, {
 					key: 'section-header',
-					title: text('iconStyle', 'Icon Style'),
-					description: text('iconStyleDescription', 'Choose the icon pack used for every placement and generated code snippet.')
+					title: text('appearance', 'Appearance'),
+					description: text('appearanceDescription', 'Choose the icon set and how the buttons are presented on your site. Appearance applies everywhere the plugin renders buttons.')
 				}),
 				e('div', { key: 'icon-style-panel', className: 'zm_icon_style_panel' }, [
-					e(SelectControl, {
-						key: 'iconset-field',
-						id: 'iconset',
-						label: text('buttonStyle', 'Button style'),
-						name: 'zm_shbt_fld[iconset]',
-						value: options.iconset,
-						options: iconsets.map(function (item) {
-							return { label: item.name, value: item.id };
+					e('div', { key: 'controls', className: 'zm_appearance_controls' }, [
+						e(SelectControl, {
+							key: 'iconset-field',
+							id: 'iconset',
+							label: text('iconSet', 'Icon set'),
+							name: 'zm_shbt_fld[iconset]',
+							value: options.iconset,
+							options: iconsets.map(function (item) {
+								return { label: item.name, value: item.id };
+							}),
+							onChange: function (value) {
+								self.update('iconset', value);
+							},
+							__nextHasNoMarginBottom: true
 						}),
-						onChange: function (value) {
-							self.update('iconset', value);
-						},
-						__nextHasNoMarginBottom: true
-					}),
+						e(SelectControl, {
+							key: 'appearance-field',
+							id: 'button_appearance',
+							label: text('buttonAppearance', 'Button appearance'),
+							name: 'zm_shbt_fld[button_appearance]',
+							value: options.button_appearance,
+							help: currentAppearance.help,
+							options: buttonAppearances.map(function (appearance) {
+								return { label: appearance.label, value: appearance.value };
+							}),
+							onChange: function (value) {
+								self.update('button_appearance', value);
+							},
+							__nextHasNoMarginBottom: true
+						})
+					]),
 					e('div', { key: 'preview', className: 'button-style-img' }, [
 						e('span', { key: 'label' }, text('preview', 'Preview')),
-						e('img', {
-							key: 'image',
-							src: currentIconset ? currentIconset.preview_img : '',
-							alt: options.iconset
-						})
+						livePreview()
 					])
 					])
 				])

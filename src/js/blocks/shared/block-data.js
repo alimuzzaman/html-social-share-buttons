@@ -14,6 +14,9 @@ export function editorData( globalName ) {
 		legacyIconsets: localized.legacyIconsets || {},
 		iconsetAssets: localized.iconsetAssets || {},
 		inheritedIconset: localized.inheritedIconset || 'bootstrap-solid',
+		buttonAppearance: [ 'minimal', 'framed', 'soft-shadow' ].indexOf( localized.buttonAppearance ) === -1
+			? 'legacy'
+			: localized.buttonAppearance,
 		profileLinks: localized.profileLinks || {},
 	};
 }

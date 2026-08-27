@@ -35,6 +35,7 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 				'title' => '<b>Canonical title</b>',
 				'icon_set' => 'flat',
 				'icon_shape' => 'circle',
+				'button_appearance' => 'minimal',
 				'placements' => array( Placement::LEFT => '1' ),
 				'placement_shapes' => array( Placement::LEFT => 'invalid' ),
 				'networks' => array( 'facebook' => '1', 'unknown' => '1' ),
@@ -49,6 +50,7 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 
 		$this->assertSame( 'Canonical title', $settings->title() );
 		$this->assertSame( 'flat', $settings->iconSetId() );
+		$this->assertSame( 'minimal', $settings->buttonAppearance() );
 		$this->assertSame( 'circle', $settings->placementShapes()[ Placement::LEFT ] );
 		$this->assertTrue( $settings->placements()[ Placement::LEFT ] );
 		$this->assertFalse( $settings->placements()[ Placement::RIGHT ] );
@@ -73,6 +75,7 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 				'auto_hide_enabled' => 'no',
 				'preserve_url_port' => 'yes',
 				'no_follow' => '1',
+				'button_appearance' => array( 'soft-shadow' ),
 				'show_for_current_user' => '0',
 				'show_for_logged_in_user' => '1',
 				'show_for_logged_out_user' => 'false',
@@ -90,5 +93,6 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 		$this->assertFalse( $settings->showForCurrentUser() );
 		$this->assertTrue( $settings->showForLoggedInUser() );
 		$this->assertFalse( $settings->showForLoggedOutUser() );
+		$this->assertSame( 'legacy', $settings->buttonAppearance() );
 	}
 }

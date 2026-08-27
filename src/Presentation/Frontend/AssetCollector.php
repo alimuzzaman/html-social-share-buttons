@@ -15,10 +15,12 @@ final class AssetCollector {
 	private $printedIcons = array();
 	private $fallbackStylesheet;
 	private $version;
+	private $buttonAppearanceStyleHandle;
 
-	public function __construct( $fallbackStylesheet, $version = '3.0.0' ) {
+	public function __construct( $fallbackStylesheet, $version = '3.0.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance' ) {
 		$this->fallbackStylesheet = (string) $fallbackStylesheet;
 		$this->version = (string) $version;
+		$this->buttonAppearanceStyleHandle = (string) $buttonAppearanceStyleHandle;
 	}
 
 	/**
@@ -53,7 +55,7 @@ final class AssetCollector {
 	 * use this request-scoped instance.
 	 */
 	public function fresh() {
-		return new self( $this->fallbackStylesheet, $this->version );
+		return new self( $this->fallbackStylesheet, $this->version, $this->buttonAppearanceStyleHandle );
 	}
 
 	public function enqueueStyles() {
@@ -63,8 +65,11 @@ final class AssetCollector {
 		}
 
 		foreach ( $stylesheets as $id => $stylesheet ) {
+			$handle = $this->buttonAppearanceStyleHandle === $id
+				? $this->buttonAppearanceStyleHandle
+				: 'social-share-' . sanitize_key( $id );
 			wp_enqueue_style(
-				'social-share-' . sanitize_key( $id ),
+				$handle,
 				(string) $stylesheet,
 				array(),
 				$this->version

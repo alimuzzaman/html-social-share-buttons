@@ -2,6 +2,7 @@
 
 namespace Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings;
 
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsDefaults;
@@ -109,7 +110,10 @@ final class SettingsRequestSanitizer {
 			$profileLinkPlacements,
 			$this->audienceValue( $input, 'show_for_current_user', $defaults->showForCurrentUser() ),
 			$this->audienceValue( $input, 'show_for_logged_in_user', $defaults->showForLoggedInUser() ),
-			$this->audienceValue( $input, 'show_for_logged_out_user', $defaults->showForLoggedOutUser() )
+			$this->audienceValue( $input, 'show_for_logged_out_user', $defaults->showForLoggedOutUser() ),
+			ButtonAppearance::normalize(
+				isset( $input['button_appearance'] ) ? $input['button_appearance'] : null
+			)
 		);
 	}
 

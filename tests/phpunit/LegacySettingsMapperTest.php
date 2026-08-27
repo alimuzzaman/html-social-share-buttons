@@ -23,7 +23,9 @@ final class LegacySettingsMapperTest extends WP_UnitTestCase {
 		$this->assertFalse( $settings->placements()[ Placement::RIGHT ] );
 		$this->assertTrue( $settings->networkStates()['x'] );
 		$this->assertSame( $before, get_option( $fixture['option_name'], null ) );
-		$this->assertSame( $stored, $mapper->toArray( $settings, $stored ) );
+		$expected = $stored;
+		$expected['button_appearance'] = 'legacy';
+		$this->assertSame( $expected, $mapper->toArray( $settings, $stored ) );
 	}
 
 	public function testLegacyTwitterAliasIsRuntimeOnly(): void {

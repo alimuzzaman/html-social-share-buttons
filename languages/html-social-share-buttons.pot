@@ -59,8 +59,8 @@ msgstr ""
 
 #: src/Presentation/Admin/FormPresenter.php:136
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:128
-#: src/Presentation/Admin/SettingsAssetEnqueuer.php:104
-#: src/Presentation/Integration/Block/BlockRegistrar.php:398
+#: src/Presentation/Admin/SettingsAssetEnqueuer.php:111
+#: src/Presentation/Integration/Block/BlockRegistrar.php:414
 #: src/Presentation/Integration/BuilderLabels.php:41
 #: src/Presentation/Integration/Elementor/ElementorRegistrar.php:63
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:194
@@ -68,7 +68,7 @@ msgid "Default (legacy)"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:107
-#: src/Presentation/Integration/Block/BlockRegistrar.php:377
+#: src/Presentation/Integration/Block/BlockRegistrar.php:393
 #: src/Presentation/Integration/BuilderLabels.php:17
 #: src/js/blocks/shared/networks.js:3
 msgid "Facebook"
@@ -80,63 +80,63 @@ msgid "X (formerly Twitter)"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:111
-#: src/Presentation/Integration/Block/BlockRegistrar.php:381
+#: src/Presentation/Integration/Block/BlockRegistrar.php:397
 #: src/Presentation/Integration/BuilderLabels.php:19
 #: src/js/blocks/shared/networks.js:5
 msgid "LinkedIn"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:113
-#: src/Presentation/Integration/Block/BlockRegistrar.php:383
+#: src/Presentation/Integration/Block/BlockRegistrar.php:399
 #: src/Presentation/Integration/BuilderLabels.php:20
 #: src/js/blocks/shared/networks.js:6
 msgid "Pinterest"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:115
-#: src/Presentation/Integration/Block/BlockRegistrar.php:385
+#: src/Presentation/Integration/Block/BlockRegistrar.php:401
 #: src/Presentation/Integration/BuilderLabels.php:21
 #: src/js/blocks/shared/networks.js:7
 msgid "Telegram"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:117
-#: src/Presentation/Integration/Block/BlockRegistrar.php:387
+#: src/Presentation/Integration/Block/BlockRegistrar.php:403
 #: src/Presentation/Integration/BuilderLabels.php:22
 #: src/js/blocks/shared/networks.js:8
 msgid "Bluesky"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:119
-#: src/Presentation/Integration/Block/BlockRegistrar.php:389
+#: src/Presentation/Integration/Block/BlockRegistrar.php:405
 #: src/Presentation/Integration/BuilderLabels.php:23
 #: src/js/blocks/shared/networks.js:9
 msgid "Email"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:130
-#: src/Presentation/Integration/Block/BlockRegistrar.php:400
+#: src/Presentation/Integration/Block/BlockRegistrar.php:416
 #: src/Presentation/Integration/BuilderLabels.php:42
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:196
 msgid "Flat"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:132
-#: src/Presentation/Integration/Block/BlockRegistrar.php:402
+#: src/Presentation/Integration/Block/BlockRegistrar.php:418
 #: src/Presentation/Integration/BuilderLabels.php:43
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:198
 msgid "Long Shadows"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:134
-#: src/Presentation/Integration/Block/BlockRegistrar.php:404
+#: src/Presentation/Integration/Block/BlockRegistrar.php:420
 #: src/Presentation/Integration/BuilderLabels.php:44
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:200
 msgid "Prajin"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:136
-#: src/Presentation/Integration/Block/BlockRegistrar.php:406
+#: src/Presentation/Integration/Block/BlockRegistrar.php:422
 #: src/Presentation/Integration/BuilderLabels.php:45
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:202
 #: src/js/blocks/social-links/register.js:25
@@ -145,7 +145,7 @@ msgid "Bootstrap Solid"
 msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:138
-#: src/Presentation/Integration/Block/BlockRegistrar.php:408
+#: src/Presentation/Integration/Block/BlockRegistrar.php:424
 #: src/Presentation/Integration/BuilderLabels.php:46
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:204
 msgid "Tabler Outline"
@@ -154,7 +154,7 @@ msgstr ""
 #: src/Presentation/Admin/MetaboxController.php:30
 #: src/Presentation/Admin/SettingsPageController.php:36
 #: src/Presentation/Admin/SettingsPageController.php:37
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:134
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:135
 #: src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php:54
 #: src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php:55
 msgid "Html Social Share"
@@ -177,7 +177,7 @@ msgid "No settings were received."
 msgstr ""
 
 #: src/Presentation/Admin/SettingsAjaxController.php:71
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:114
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:143
 msgid "Settings saved."
 msgstr ""
 
@@ -194,7 +194,7 @@ msgid "Configure share buttons, placement, and output format from a single setti
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPageController.php:104
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:112
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:141
 msgid "Loading settings..."
 msgstr ""
 
@@ -202,391 +202,424 @@ msgstr ""
 msgid "Designed By Hakan Ertan"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:62
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:123
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:64
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:152
 msgid "Share this with your friends"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:113
-msgid "Saving..."
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:115
-msgid "Settings could not be saved. Try again."
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:116
-msgid "Save Changes"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:117
-msgid "Post title"
-msgstr ""
-
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:118
-msgid "The title of the shared post"
+msgid "Legacy (current)"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:119
-msgid "Permalink"
+msgid "Keep the current size, spacing, and hover behavior for the selected icon set."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:120
-msgid "The canonical post URL"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:121
-msgid "Featured image URL"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:122
-msgid "The post's featured image"
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:123
+msgid "Minimal (recommended)"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:124
-msgid "Enabled"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:125
-msgid "Disabled"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:126
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:192
-#: src/js/blocks/social-links/register.js:129
-#: src/js/blocks/social-share/register.js:123
-msgid "Button shape"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:127
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:218
-#: src/Presentation/Integration/Widget/ShareWidget.php:143
-#: src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php:101
-#: src/js/blocks/social-links/register.js:155
-msgid "Profile links"
+msgid "Use consistent 44-pixel targets, balanced spacing, and a subtle hover lift."
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:128
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:221
-#: src/Presentation/Integration/Widget/ShareWidget.php:145
-#: src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php:104
-#: src/js/blocks/social-share/register.js:160
-msgid "Show configured profile links"
+msgid "Framed"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:129
-msgid "Hide profile links in this placement"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:130
-msgid "Header"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:131
-msgid "Set the text shown with the share buttons and choose pages where buttons should stay hidden."
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:132
-msgid "Enter a title"
+msgid "Add a clean, shape-aware outline around each button."
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:133
-msgid "Exclude pages or posts"
+msgid "Soft shadow"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:134
-msgid "Search published pages and posts, or press Enter to add a custom value."
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:135
-msgid "Search pages, posts, or add a custom value"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:136
-msgid "Icon Style"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:137
-msgid "Choose the icon pack used for every placement and generated code snippet."
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:138
-msgid "Button style"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:139
-msgid "Preview"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:140
-msgid "Display placement"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:141
-msgid "Turn each placement on or off and pick its shape."
+msgid "Place each icon on a quiet raised surface with a subtle shadow."
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:142
-msgid "Left side"
-msgstr ""
-
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:143
-msgid "A vertical rail on the left edge of the screen."
+msgid "Saving..."
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:144
-msgid "Before post"
+msgid "Settings could not be saved. Try again."
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:145
-msgid "A row of buttons placed above post content."
+msgid "Save Changes"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:146
-msgid "Right side"
+msgid "Post title"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:147
-msgid "A vertical rail on the right edge of the screen."
+msgid "The title of the shared post"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:148
-msgid "After post"
+msgid "Permalink"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:149
-msgid "A row of buttons placed below post content."
+msgid "The canonical post URL"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:150
-msgid "Social Networks"
+msgid "Featured image URL"
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:151
+msgid "The post's featured image"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:153
+msgid "Enabled"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:154
+msgid "Disabled"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:155
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:196
+#: src/js/blocks/social-links/register.js:131
+#: src/js/blocks/social-share/register.js:125
+msgid "Button shape"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:156
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:222
+#: src/Presentation/Integration/Widget/ShareWidget.php:143
+#: src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php:101
+#: src/js/blocks/social-links/register.js:157
+msgid "Profile links"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:157
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:225
+#: src/Presentation/Integration/Widget/ShareWidget.php:145
+#: src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php:104
+#: src/js/blocks/social-share/register.js:162
+msgid "Show configured profile links"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:158
+msgid "Hide profile links in this placement"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:159
+msgid "Header"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:160
+msgid "Set the text shown with the share buttons and choose pages where buttons should stay hidden."
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:161
+msgid "Enter a title"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:162
+msgid "Exclude pages or posts"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:163
+msgid "Search published pages and posts, or press Enter to add a custom value."
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:164
+msgid "Search pages, posts, or add a custom value"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:165
+msgid "Appearance"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:166
+msgid "Choose the icon set and how the buttons are presented on your site. Appearance applies everywhere the plugin renders buttons."
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:167
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:186
+#: src/js/blocks/social-links/register.js:117
+#: src/js/blocks/social-share/register.js:106
+msgid "Icon set"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:168
+msgid "Button appearance"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:169
+msgid "Preview"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:170
+msgid "Display placement"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:171
+msgid "Turn each placement on or off and pick its shape."
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:172
+msgid "Left side"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:173
+msgid "A vertical rail on the left edge of the screen."
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:174
+msgid "Before post"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:175
+msgid "A row of buttons placed above post content."
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:176
+msgid "Right side"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:177
+msgid "A vertical rail on the right edge of the screen."
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:178
+msgid "After post"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:179
+msgid "A row of buttons placed below post content."
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:180
+msgid "Social Networks"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:181
 msgid "Select the share buttons that should be available in the output."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:152
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:182
 msgid "Share the current page by email."
 msgstr ""
 
 #. translators: %s is the social network name.
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:154
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:184
 #, php-format
 msgid "Share the current page on %s."
 msgstr ""
 
 #. translators: %s is the social network name.
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:156
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:186
 #, php-format
 msgid "%s share template"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:157
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:187
 msgid "Restore defaults"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:158
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:188
 msgid "Share URL"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:159
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:189
 msgid "Share parameters"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:160
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:190
 msgid "Parameter names are managed automatically"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:161
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:191
 msgid "Parameter"
 msgstr ""
 
 #. translators: 1: social network name, 2: parameter name.
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:163
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:193
 #, php-format
 msgid "%1$s %2$s value"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:164
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:194
 msgid "Custom template saved for this platform."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:165
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:195
 msgid "Using the canonical template shown as the placeholder."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:166
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:196
 msgid "Social profile links"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:167
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:197
 msgid "Add direct profile or contact destinations beside the share buttons. Leave a field empty to hide it."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:168
-#: src/js/blocks/social-links/register.js:195
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:198
+#: src/js/blocks/social-links/register.js:197
 msgid "Email destination"
 msgstr ""
 
 #. translators: %s is the social network name.
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:170
-#: src/js/blocks/social-links/register.js:201
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:200
+#: src/js/blocks/social-links/register.js:203
 #, php-format,js-format
 msgid "%s profile URL"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:171
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:201
 msgid "Use one mailto: address without subject or body parameters."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:172
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:202
 msgid "HTTPS links only."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:173
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:203
 msgid "Audience"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:174
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:204
 msgid "Choose which visitors can see share buttons across automatic placements, blocks, shortcodes, widgets, and builder integrations."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:175
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:205
 msgid "Current user (content author)"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:176
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:206
 msgid "Other logged-in users"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:177
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:207
 msgid "Logged-out users"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:178
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:208
 msgid "Advanced options"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:179
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:209
 msgid "Fine tune tracking, behavior, and link output."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:180
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:210
 msgid "Google Social analytics"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:181
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:211
 msgid "Auto hide button"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:182
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:212
 msgid "Use port on the url."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:183
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:213
 msgid "No follow social link"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:184
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:214
 msgid "Code generator"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:185
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:215
 msgid "Generate embed code from the same icon set and selected networks."
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:186
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:216
 msgid "Get PHP Code"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:187
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:217
 msgid "Get Shortcode"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:188
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:218
 msgid "Close"
 msgstr ""
 
-#: src/Presentation/Admin/SettingsPayloadBuilder.php:189
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:219
 msgid "Insert share parameter placeholder"
 msgstr ""
 
 #. translators: %s is the social network name.
-#: src/Presentation/Frontend/HtmlRenderer.php:41
+#: src/Presentation/Frontend/HtmlRenderer.php:59
 #, php-format
 msgid "Share on %s"
 msgstr ""
 
-#: src/Presentation/Frontend/HtmlRenderer.php:63
+#: src/Presentation/Frontend/HtmlRenderer.php:81
 msgid "Contact us by email"
 msgstr ""
 
 #. translators: %s is the social network name.
-#: src/Presentation/Frontend/HtmlRenderer.php:66
+#: src/Presentation/Frontend/HtmlRenderer.php:84
 #, php-format
 msgid "Visit our %s profile"
 msgstr ""
 
-#: src/Presentation/Integration/Block/BlockRegistrar.php:268
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:270
+#: src/Presentation/Integration/Block/BlockRegistrar.php:283
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:274
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:116
 #: src/js/blocks/social-links/register.js:21
-#: src/js/blocks/social-links/register.js:162
+#: src/js/blocks/social-links/register.js:164
 #: src/js/blocks/social-share/register.js:22
 msgid "Inherit from plugin settings"
 msgstr ""
 
-#: src/Presentation/Integration/Block/BlockRegistrar.php:379
+#: src/Presentation/Integration/Block/BlockRegistrar.php:395
 #: src/Presentation/Integration/BuilderLabels.php:18
 #: src/js/blocks/shared/networks.js:4
 msgid "X"
 msgstr ""
 
 #: src/Presentation/Integration/BuilderLabels.php:56
-#: src/js/blocks/social-links/register.js:142
-#: src/js/blocks/social-share/register.js:136
+#: src/js/blocks/social-links/register.js:144
+#: src/js/blocks/social-share/register.js:138
 msgid "Square"
 msgstr ""
 
 #: src/Presentation/Integration/BuilderLabels.php:57
-#: src/js/blocks/social-links/register.js:138
-#: src/js/blocks/social-share/register.js:132
+#: src/js/blocks/social-links/register.js:140
+#: src/js/blocks/social-share/register.js:134
 msgid "Circle"
 msgstr ""
 
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:164
-#: src/js/blocks/social-share/register.js:84
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:168
+#: src/js/blocks/social-share/register.js:86
 msgid "Share buttons"
 msgstr ""
 
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:172
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:176
 #: src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php:65
-#: src/js/blocks/social-links/register.js:104
-#: src/js/blocks/social-share/register.js:93
+#: src/js/blocks/social-links/register.js:106
+#: src/js/blocks/social-share/register.js:95
 msgid "Title"
 msgstr ""
 
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:174
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:178
 #: src/Presentation/Integration/WpBakery/WpBakeryRegistrar.php:67
 msgid "Share this page"
 msgstr ""
 
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:182
-#: src/js/blocks/social-links/register.js:115
-#: src/js/blocks/social-share/register.js:104
-msgid "Icon set"
-msgstr ""
-
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:202
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:206
 msgid "Networks"
 msgstr ""
 
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:205
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:209
 msgid "Keep at least one network selected. Clearing all networks hides this widget on the frontend."
 msgstr ""
 
-#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:222
+#: src/Presentation/Integration/Elementor/ElementorShareWidget.php:226
 #: src/Presentation/Integration/Widget/ShareWidget.php:146
 msgid "Hide profile links in this widget"
 msgstr ""
@@ -655,41 +688,41 @@ msgstr ""
 msgid "Choose whether this element displays globally configured profile links."
 msgstr ""
 
-#: src/js/blocks/social-links/register.js:95
+#: src/js/blocks/social-links/register.js:97
 msgid "Social links"
 msgstr ""
 
-#: src/js/blocks/social-links/register.js:169
+#: src/js/blocks/social-links/register.js:171
 msgid "Use custom profile links"
 msgstr ""
 
-#: src/js/blocks/social-links/register.js:176
+#: src/js/blocks/social-links/register.js:178
 msgid "Do not display profile links"
 msgstr ""
 
-#: src/js/blocks/social-links/register.js:281
+#: src/js/blocks/social-links/register.js:295
 msgid "Add profile links in the plugin settings or choose custom links."
 msgstr ""
 
-#: src/js/blocks/social-share/register.js:151
+#: src/js/blocks/social-share/register.js:153
 msgid "Profile links after share buttons"
 msgstr ""
 
-#: src/js/blocks/social-share/register.js:167
+#: src/js/blocks/social-share/register.js:169
 msgid "Hide profile links in this block"
 msgstr ""
 
-#: src/js/blocks/social-share/register.js:297
+#: src/js/blocks/social-share/register.js:321
 msgid "Contact email"
 msgstr ""
 
 #. translators: %s is the social network name.
-#: src/js/blocks/social-share/register.js:303
+#: src/js/blocks/social-share/register.js:327
 #, js-format
 msgid "%s profile"
 msgstr ""
 
-#: src/js/blocks/social-share/register.js:331
+#: src/js/blocks/social-share/register.js:354
 msgid "Select share networks"
 msgstr ""
 

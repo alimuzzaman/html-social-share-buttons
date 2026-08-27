@@ -2,6 +2,7 @@
 
 namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Integration\Elementor;
 
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderFacade;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
@@ -152,6 +153,9 @@ class ElementorShareWidget extends \Elementor\Widget_Base {
 		$handles = array();
 		foreach ( $this->iconSets->all() as $iconSet ) {
 			$handles[] = 'social-share-' . sanitize_key( $iconSet->id() );
+		}
+		if ( ButtonAppearance::LEGACY !== $this->settings->load()->buttonAppearance() ) {
+			$handles[] = $this->config->buttonAppearanceStyleHandle();
 		}
 
 		return $handles;

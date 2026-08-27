@@ -54,6 +54,13 @@ final class SettingsAssetEnqueuer {
 			array(),
 			$adminStyleVersion
 		);
+		$appearanceStylePath = $this->pluginRoot . '/assets/frontend/button-appearance.css';
+		wp_enqueue_style(
+			$this->config->buttonAppearanceStyleHandle(),
+			$this->config->buttonAppearanceStyleUrl(),
+			array( $this->config->adminSettingsStyleHandle() ),
+			file_exists( $appearanceStylePath ) ? filemtime( $appearanceStylePath ) : $this->config->version()
+		);
 
 		$tokens = $this->adminColorSchemeTokens();
 		wp_add_inline_style(

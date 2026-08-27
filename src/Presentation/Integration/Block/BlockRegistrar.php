@@ -8,6 +8,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\AssetCollector;
 
@@ -48,7 +49,21 @@ final class BlockRegistrar {
 	public function registerHooks() {
 		if ( function_exists( 'add_action' ) ) {
 			add_action( 'init', array( $this, 'registerBlocks' ) );
+			add_action( 'enqueue_block_editor_assets', array( $this, 'enqueueEditorAppearanceStyle' ) );
 		}
+	}
+
+	public function enqueueEditorAppearanceStyle() {
+		if ( ButtonAppearance::LEGACY === $this->settings->load()->buttonAppearance() ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			$this->config->buttonAppearanceStyleHandle(),
+			$this->config->buttonAppearanceStyleUrl(),
+			array(),
+			$this->config->version()
+		);
 	}
 
 	public function register() {
@@ -283,6 +298,7 @@ final class BlockRegistrar {
 			'legacyIconsets'   => $legacyIconSets,
 			'iconsetAssets'    => $this->builderIconSetAssets(),
 			'inheritedIconset' => $this->resolvedIconSet( 'inherit' ),
+			'buttonAppearance' => $settings->buttonAppearance(),
 			'profileLinks'     => $settings->profileLinks(),
 		);
 	}

@@ -40,6 +40,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 	var defaults = {
 		title: text('defaultTitle', 'Share this with your friends'),
 		iconset: data.defaultIconset || 'bootstrap-solid',
+		button_appearance: 'legacy',
 		excludes: '',
 		show_in: {
 			show_left: 0,
@@ -280,6 +281,9 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 				case 'iconset':
 					nextOptions.iconset = value;
 					nextOptions = normalizeForIconset(nextOptions);
+					break;
+				case 'button_appearance':
+					nextOptions.button_appearance = value;
 					break;
 				case 'show_left':
 				case 'show_right':

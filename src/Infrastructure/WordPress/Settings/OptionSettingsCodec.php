@@ -6,6 +6,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings;
 
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsCodec;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Settings;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsDefaults;
@@ -75,7 +76,10 @@ final class OptionSettingsCodec implements SettingsCodec {
 			$this->profileLinkPlacements( $profileLinkPlacements ),
 			$this->audienceValue( $stored, 'show_for_current_user' ),
 			$this->audienceValue( $stored, 'show_for_logged_in_user' ),
-			$this->audienceValue( $stored, 'show_for_logged_out_user' )
+			$this->audienceValue( $stored, 'show_for_logged_out_user' ),
+			ButtonAppearance::normalize(
+				isset( $stored['button_appearance'] ) ? $stored['button_appearance'] : null
+			)
 		);
 	}
 
@@ -85,6 +89,7 @@ final class OptionSettingsCodec implements SettingsCodec {
 
 		$original['title'] = $settings->title();
 		$original['iconset'] = $settings->iconSetId();
+		$original['button_appearance'] = $settings->buttonAppearance();
 		$original['excludes'] = $settings->excludedContent();
 		if ( array_key_exists( 'iconset_type', $original ) ) {
 			$original['iconset_type'] = $settings->defaultIconShape();

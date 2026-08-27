@@ -15,12 +15,14 @@ final class RenderRequestMapper {
 	public function map( array $options ) {
 		$options = array_merge(
 			array(
-				'iconset'      => 'default',
-				'icons'        => array(),
-				'class'        => 'left',
-				'show_on'      => 'show_left',
-				'iconset_type' => '',
-				'title'        => '',
+				'iconset'           => 'default',
+				'icons'             => array(),
+				'class'             => 'left',
+				'show_on'           => 'show_left',
+				'iconset_type'      => '',
+				'button_appearance' => 'legacy',
+				'auto_hide_enabled' => false,
+				'title'             => '',
 			),
 			$options
 		);
@@ -38,7 +40,9 @@ final class RenderRequestMapper {
 			isset( $options['url'] ) && is_scalar( $options['url'] ) ? (string) $options['url'] : '',
 			! empty( $options['nofollow'] ),
 			$this->profileLinks( $options ),
-			! empty( $options['profiles_only'] ) && ! empty( $options['title'] )
+			! empty( $options['profiles_only'] ) && ! empty( $options['title'] ),
+			is_string( $options['button_appearance'] ) ? $options['button_appearance'] : 'legacy',
+			! empty( $options['auto_hide_enabled'] )
 		);
 	}
 

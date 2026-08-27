@@ -30,6 +30,7 @@ import { networks } from '../shared/networks';
 		  };
 	const iconsetAssets = localized.iconsetAssets;
 	const inheritedIconset = localized.inheritedIconset;
+	const buttonAppearance = localized.buttonAppearance;
 	const availableNetworks = networks( __ );
 	const supportsBlockApiV3 =
 		localized.apiVersion === 3 &&
@@ -39,6 +40,7 @@ import { networks } from '../shared/networks';
 		...metadata,
 		apiVersion: supportsBlockApiV3 ? metadata.apiVersion : 1,
 		edit( props ) {
+			const modernAppearance = buttonAppearance !== 'legacy';
 			const selected = props.attributes.icons || [];
 			const selectedProfiles =
 				props.attributes.profile_links_mode === 'none'
@@ -214,8 +216,10 @@ import { networks } from '../shared/networks';
 						? el(
 								'div',
 								{
-									className: 'hssb-block-preview__icons',
-									style: {
+									className: modernAppearance
+										? 'zmshbt in_block ' + activeIconsetId + ' ' + previewType + ' hssb-appearance--' + buttonAppearance
+										: 'hssb-block-preview__icons',
+									style: modernAppearance ? { padding: '8px 0' } : {
 										display: 'flex',
 										flexWrap: 'wrap',
 										gap: '8px',
@@ -225,18 +229,28 @@ import { networks } from '../shared/networks';
 								},
 								selected
 									.map( function ( id ) {
-										const network = availableNetworks.find(
-											function ( item ) {
-												return item.id === id;
-											}
-										);
 										const src =
 											activeIconset.icons[ id ] &&
 											activeIconset.icons[ id ][
 												previewType
 											];
-										return src
-											? el( 'img', {
+										if ( ! src ) {
+											return null;
+										}
+										const network = availableNetworks.find(
+											function ( item ) {
+												return item.id === id;
+											}
+										);
+										if ( modernAppearance ) {
+											return el( 'a', {
+													key: id,
+													role: 'img',
+													'aria-label': network ? network.label : id,
+													style: { backgroundImage: 'url("' + src + '")' },
+											  } );
+										}
+										return el( 'img', {
 													key: id,
 													src,
 													alt: network
@@ -254,8 +268,7 @@ import { networks } from '../shared/networks';
 																? '50%'
 																: '2px',
 													},
-											  } )
-											: null;
+												  } );
 									} )
 									.concat(
 										selected.length &&
@@ -266,7 +279,7 @@ import { networks } from '../shared/networks';
 														className:
 															'zmshbt-profile-separator',
 														'aria-hidden': true,
-														style: {
+													style: modernAppearance ? null : {
 															width: '1px',
 															height: '28px',
 															margin: '3px 8px',
@@ -285,8 +298,19 @@ import { networks } from '../shared/networks';
 													activeIconset.icons[
 														network.id
 													][ previewType ];
-												return src
-													? el( 'img', {
+												if ( ! src ) {
+													return null;
+												}
+												if ( modernAppearance ) {
+													return el( 'a', {
+															key: 'profile-' + network.id,
+															role: 'img',
+															className: 'zmshbt-profile-link',
+															'aria-label': network.label,
+															style: { backgroundImage: 'url("' + src + '")' },
+													  } );
+												}
+												return el( 'img', {
 															key:
 																'profile-' +
 																network.id,
@@ -319,8 +343,7 @@ import { networks } from '../shared/networks';
 																		? '50%'
 																		: '2px',
 															},
-													  } )
-													: null;
+														  } );
 											}
 										)
 									)
