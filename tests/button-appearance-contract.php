@@ -158,7 +158,10 @@ foreach ( array( array(), array( 'button_appearance' => 'unknown' ), array( 'but
 }
 foreach ( $supported as $appearance ) {
 	$stored = $codec->encode( hssb_appearance_settings( $appearance ), array( 'extension_key' => 'kept' ) );
-	if ( $appearance !== $stored['button_appearance'] || 'kept' !== $stored['extension_key'] ) {
+	$appearanceMatchesStorage = ButtonAppearance::LEGACY === $appearance
+		? ! array_key_exists( 'button_appearance', $stored )
+		: isset( $stored['button_appearance'] ) && $appearance === $stored['button_appearance'];
+	if ( ! $appearanceMatchesStorage || 'kept' !== $stored['extension_key'] ) {
 		hssb_appearance_fail( 'Button appearance storage round trip failed for ' . $appearance . '.' );
 	}
 }

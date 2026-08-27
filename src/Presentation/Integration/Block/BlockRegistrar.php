@@ -254,7 +254,7 @@ final class BlockRegistrar {
 			)
 		);
 		$scriptPath = $this->pluginRoot . '/build/' . $entry . '.js';
-		$version = isset( $asset['version'] ) ? $asset['version'] : ( file_exists( $scriptPath ) ? filemtime( $scriptPath ) : '3.0.0' );
+		$version = isset( $asset['version'] ) ? $asset['version'] : ( file_exists( $scriptPath ) ? filemtime( $scriptPath ) : '3.1.0' );
 
 		wp_register_script(
 			$handle,

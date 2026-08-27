@@ -22,6 +22,10 @@ The XHigh refinement intentionally did not use image generation. The dark field,
 - `icon-128x128.png` — required standard icon
 - `icon-256x256.png` — required 2x icon
 - `icon.svg` — clean static vector icon; keep the PNG fallbacks
+- `screenshots/screenshot-1.png` — current post output with inline buttons and a floating rail
+- `screenshots/screenshot-2.png` — current Appearance and placement settings
+- `screenshots/screenshot-3.png` — Social Share and Social Links in the WordPress 7.1 block inserter
+- `screenshots/screenshot-4.png` — profile-link and audience settings
 - `source/banner-master.svg` — editable 1544 by 500 vector master with outlined type
 - `source/type/*.outlined.svg` — HarfBuzz-shaped Inter outlines used by the master
 - `source/build-artwork.mjs` — single source of truth for mark geometry, palette, and composition
@@ -52,4 +56,4 @@ node ./design/wordpress-org/source/validate-assets.mjs
 
 Both banners are exported from `source/banner-master.svg`; do not compose the 1x and 2x files separately. To regenerate the current support-line outlines from the pinned Inter release, run `./design/wordpress-org/source/generate-tagline-outline.sh /path/to/Inter-4.1.zip`, then run the export script. The outline generator verifies the archive SHA-256 before shaping the exact copy with Inter Medium at the committed size and a transparent background.
 
-Before SVN upload, verify the exact filenames, dimensions, RGB/RGBA color mode, and size limits. Set `svn:mime-type` to `image/png` for PNG files if needed. Upload and cache verification are separate release actions and require explicit authorization.
+Before SVN upload, verify the exact filenames, dimensions, RGB/RGBA color mode, and size limits. The four screenshots were captured from a fresh local WordPress 7.1 instance running plugin version 3.1.0 and converted to true PNG files at 1800 by 1250 pixels. Set `svn:mime-type` to `image/png` for PNG files if needed. Upload and cache verification are separate release actions and require explicit authorization.

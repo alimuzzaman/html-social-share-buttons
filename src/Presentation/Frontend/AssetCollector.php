@@ -17,7 +17,7 @@ final class AssetCollector {
 	private $version;
 	private $buttonAppearanceStyleHandle;
 
-	public function __construct( $fallbackStylesheet, $version = '3.0.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance' ) {
+	public function __construct( $fallbackStylesheet, $version = '3.1.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance' ) {
 		$this->fallbackStylesheet = (string) $fallbackStylesheet;
 		$this->version = (string) $version;
 		$this->buttonAppearanceStyleHandle = (string) $buttonAppearanceStyleHandle;

@@ -5,14 +5,13 @@ actions and optional social profile/contact links. Its frontend is
 server-rendered HTML and CSS, icon assets are served locally, and tracking is
 off by default.
 
-The current `latest` branch contains the completed canonical implementation
-rewrite after the published 2.2.6 release. Candidate metadata is aligned at
-3.0.0 so the new archive cannot be confused with the published rollback
-release. Version alignment is not a release: no tag, WordPress.org upload, or
-production deployment is authorized until the reviewed snapshot is committed,
-rebuilt from that immutable revision, and explicitly approved. The release
-owner waived the earlier fourteen-day soak requirement on 2026-08-13 after a
-fresh exact-archive manual review.
+The current `master` branch contains the completed canonical implementation
+rewrite and the 3.1.0 frontend button-appearance update after the published
+3.0.0 release. Version 3.1.0 adds a global appearance selector with Legacy,
+Minimal, Framed, and Soft shadow modes while keeping Legacy as the compatibility
+default. Repository evidence does not authorize a new tag, WordPress.org
+upload, or production deployment. Future releases still require an immutable
+reviewed revision and explicit approval.
 
 ## Features
 
@@ -24,6 +23,9 @@ fresh exact-archive manual review.
   installations default all three audiences to visible.
 - Automatic placement, dynamic Social Share and Social Links blocks, classic
   widget, Elementor, WPBakery, shortcodes, and a direct PHP facade.
+- A global Button appearance selector with Legacy (current), Minimal, Framed,
+  and Soft shadow modes. Modern modes use one shared CSS layer across every
+  rendering integration; Legacy keeps the established pack-specific output.
 - Six local icon sets. Bootstrap Solid is the new-install default. The
   historical Default pack remains available only to existing selections;
   Flat, Long Shadow, Prajin, Bootstrap Solid, and Tabler Outline support
@@ -55,7 +57,9 @@ Historical and descriptive shortcode tags are both supported:
 ```
 
 Share actions use the current page by default. Profile links are separate
-destinations and are not treated as share events.
+destinations and are not treated as share events. By default, the public output
+uses server-rendered HTML and CSS without frontend plugin JavaScript; optional
+Google Social Analytics remains disabled until enabled in settings.
 
 Fresh installations do not offer the historical Default pack in normal icon
 style selectors. Existing settings, blocks, widgets, shortcodes, and builder
@@ -132,10 +136,9 @@ The test commands use the project's Sandbox WordPress runtime. See
   compatibility registration instead of loading unsupported v3 semantics.
 - The Default PNG pack is retained under an accepted compatibility exception.
   That is not an independent provenance or clearance claim.
-- A local exact-archive rollback rehearsal and a fresh WordPress 7.1 final manual
-  review have passed. The earlier fourteen-day staging requirement was waived
-  by the release owner; an immutable candidate revision and final approval are
-  still required.
+- The 3.0.0 release's exact-archive rollback rehearsal and WordPress 7.1 final
+  manual review remain historical evidence. The 3.1.0 appearance update still
+  requires a fresh immutable archive review before publication.
 
 ## Security and licensing
 

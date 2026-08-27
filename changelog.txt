@@ -1,0 +1,61 @@
+HTML Social Share Buttons historical changelog
+
+= 3.0.0 =
+* **REWRITE**: Moved runtime ownership to a canonical namespaced service graph while retaining the documented 2.2.6 public and storage compatibility surfaces.
+* **FEATURE**: Added optional global social profile and email links with per-placement inherit or suppress controls.
+* **FEATURE**: Added a dynamic Social Links block and complete Bootstrap Solid and Tabler Outline SVG sets.
+* **FEATURE**: Made Bootstrap Solid the new-install icon default while retaining the historical Default pack for existing saved settings and content.
+* **FEATURE**: Added independent true/false audience controls for the content author, other logged-in users, and logged-out visitors across every rendering integration.
+* **FIX**: Dynamic blocks and historical shortcodes resolve the current post permalink before share templates are encoded, preventing raw or encoded `%%permalink%%` output while preserving custom URLs.
+* **FIX**: Floating left/right rails now become centered, wrapping rows at viewport widths of 600px and below.
+* **FIX**: Saved widget network selections render correctly while preserving existing widget data.
+* **FIX**: Settings saves preserve collapsed custom share templates and extension-owned option fields.
+* **FIX**: Third-party icon sets registered on `plugins_loaded` are available when the canonical runtime is composed.
+* **FIX**: Share-button links now expose translated accessible names, and PHP 8.4+ no longer reports implicit-nullability deprecations.
+* **IMPROVEMENT**: Added reproducible icon and translation generation, production-autoloader checks, non-overwriting deterministic archives, and broader integration/browser contracts.
+* **COMPATIBILITY**: Migrated both maintained blocks to Block API v3 on WordPress 6.3+ with a tested API v1 registration fallback for WordPress 5.3-6.2, and verified the forced-iframe editor on WordPress 7.1 final.
+
+= 2.2.6 =
+* **SECURITY**: Hardened rendering, icon-set, widget, shortcode, and integration paths against malformed input and missing runtime objects.
+* **FIX**: Debounced and cancelled exclusion searches so stale requests do not overwrite newer results.
+* **FIX**: Prevented exclusion searches from loading excessive post results.
+* **IMPROVEMENT**: Social network icon previews now follow the selected button style.
+* **IMPROVEMENT**: Replaced the shell-based frontend drift check with a PHP compatibility helper.
+* **UPDATE**: Restored PHP 7.0 compatibility and verified syntax across supported PHP versions.
+
+= 2.2.5 =
+* **FEATURE**: Added native block editor and Elementor share-button controls, including icon-set inheritance.
+* **FEATURE**: Added Telegram and Bluesky sharing templates and matching icons for every bundled icon set.
+* **IMPROVEMENT**: Redesigned the settings page, including searchable exclusions and per-platform template controls.
+* **IMPROVEMENT**: Distribution archives build required editor assets before packaging.
+
+= 2.2.4 =
+* **UPDATE**: Declared testing through WordPress 7.0 and PHP 8.5.
+* **UPDATE**: Raised the minimum WordPress version to 5.3 for the native block editor integration.
+* **FIX**: Fixed a Google Social Analytics console typo.
+* **IMPROVEMENT**: Added `noopener noreferrer` to new-tab share links while preserving optional `nofollow`.
+* **IMPROVEMENT**: Scoped settings-page button styles to the plugin admin screen.
+
+= 2.2.3 =
+* **UPDATE**: Declared testing through WordPress 7.0.
+* **FEATURE**: Added a direct settings link on the plugins screen.
+
+= 2.2.2 =
+* **BREAKING**: Removed Google Plus and Google Bookmarks after their services were discontinued.
+* **UPDATE**: Renamed Twitter to X (Twitter) and updated its share URL.
+* **UPDATE**: Raised the minimum PHP version to 7.0.
+* **SECURITY**: Sanitized AJAX input in icon-set handlers.
+* **IMPROVEMENT**: Removed `extract()` usage for PHP 8.x compatibility.
+
+= 2.2.1 =
+* Declared testing through WordPress 6.8.
+* Fixed PHP 8.2 dynamic-property deprecations in icon-set and core classes.
+* Updated WordPress.org tags and code quality.
+
+= 2.2.0 =
+* **SECURITY FIX**: Fixed stored XSS (CVE-2025-9849) in the `zm_sh_btn` shortcode path.
+* **SECURITY**: Added input sanitization and output escaping across affected rendering and form paths.
+* **CREDIT**: Vulnerability responsibly disclosed by Peter Thaleikis.
+
+= 2.1.16 =
+* Previous version features and fixes.

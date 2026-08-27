@@ -54,8 +54,8 @@ final class FrontendAssetContractTest extends WP_UnitTestCase {
 			$plugin->assets()->stylesheetUrl( $plugin->iconSets()->get( 'flat' ) ),
 			$styles->registered['social-share-flat']->src
 		);
-		$this->assertSame( '3.0.0', $styles->registered['social-share-default']->ver );
-		$this->assertSame( '3.0.0', $styles->registered['social-share-flat']->ver );
+		$this->assertSame( '3.1.0', $styles->registered['social-share-default']->ver );
+		$this->assertSame( '3.1.0', $styles->registered['social-share-flat']->ver );
 		$this->assertSame(
 			1,
 			count( array_keys( $styles->queue, 'social-share-flat', true ) )

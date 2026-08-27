@@ -24,14 +24,14 @@ msgstr ""
 
 #. Plugin URI of the plugin
 #: html-social-share.php
-msgid "http://wordpress.org/plugins/html-social-share-buttons/"
+msgid "https://wordpress.org/plugins/html-social-share-buttons/"
 msgstr ""
 
 #. Description of the plugin
 #: html-social-share.php
 msgid ""
-"Lightweight HTML and CSS social share buttons. Settings and block editing "
-"use WordPress JavaScript."
+"HTML + CSS share buttons and profile links with blocks, builders, local "
+"icons, and no frontend JavaScript by default."
 msgstr ""
 
 #. Author of the plugin
@@ -253,7 +253,9 @@ msgstr "Ombre douce"
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:134
 msgid "Place each icon on a quiet raised surface with a subtle shadow."
-msgstr "Placer chaque icône sur une surface légèrement surélevée avec une ombre discrète."
+msgstr ""
+"Placer chaque icône sur une surface légèrement surélevée avec une ombre "
+"discrète."
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:142
 msgid "Saving..."

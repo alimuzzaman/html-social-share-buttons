@@ -9,7 +9,7 @@ $require = function ( $condition, $message ) use ( &$failures ) {
 };
 
 $pluginData = get_plugin_data( WP_PLUGIN_DIR . '/html-social-share-buttons/html-social-share.php' );
-$require( isset( $pluginData['Version'] ) && '3.0.0' === $pluginData['Version'], 'active version is not 3.0.0' );
+$require( isset( $pluginData['Version'] ) && '3.1.0' === $pluginData['Version'], 'active version is not 3.1.0' );
 $require( function_exists( 'zm_sh_btn' ), 'legacy PHP facade is missing' );
 $require( class_exists( 'zm_sh_iconset' ), 'legacy icon-set class is missing' );
 $require( shortcode_exists( 'zm_sh_btn' ), 'legacy shortcode is missing' );

@@ -89,7 +89,17 @@ final class OptionSettingsCodec implements SettingsCodec {
 
 		$original['title'] = $settings->title();
 		$original['iconset'] = $settings->iconSetId();
-		$original['button_appearance'] = $settings->buttonAppearance();
+		/*
+		 * Keep pre-appearance options byte-for-byte stable when their effective
+		 * value is Legacy. A non-Legacy selection still writes the new field so
+		 * the setting can be introduced on an existing installation.
+		 */
+		if (
+			array_key_exists( 'button_appearance', $original ) ||
+			ButtonAppearance::LEGACY !== $settings->buttonAppearance()
+		) {
+			$original['button_appearance'] = $settings->buttonAppearance();
+		}
 		$original['excludes'] = $settings->excludedContent();
 		if ( array_key_exists( 'iconset_type', $original ) ) {
 			$original['iconset_type'] = $settings->defaultIconShape();

@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: HTML Social Share Buttons 3.0.0\n"
+"Project-Id-Version: HTML Social Share Buttons 3.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/html-social-share-buttons\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,12 +21,12 @@ msgstr ""
 
 #. Plugin URI of the plugin
 #: html-social-share.php
-msgid "http://wordpress.org/plugins/html-social-share-buttons/"
+msgid "https://wordpress.org/plugins/html-social-share-buttons/"
 msgstr ""
 
 #. Description of the plugin
 #: html-social-share.php
-msgid "Lightweight HTML and CSS social share buttons. Settings and block editing use WordPress JavaScript."
+msgid "HTML + CSS share buttons and profile links with blocks, builders, local icons, and no frontend JavaScript by default."
 msgstr ""
 
 #. Author of the plugin
