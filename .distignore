@@ -12,6 +12,7 @@ specs/
 ../sandbox/
 .claude/
 .github/
+.wordpress-org/
 _legacy/
 .playwright-mcp/
 

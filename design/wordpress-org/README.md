@@ -2,6 +2,8 @@
 
 This folder contains upload-ready WordPress.org directory artwork and its editable vector source. It is intentionally separate from the plugin's runtime `assets/` directory and from the WordPress.org SVN checkout.
 
+The publish-only copies live in the repository root's `.wordpress-org/` directory. Keep those copies byte-identical to the approved files here; the manual `Update WordPress.org assets` workflow publishes that clean directory without sending design sources or research files to SVN.
+
 ## Art direction
 
 The identity joins angle brackets (HTML) with a three-node share path (sharing and profile links). The banner uses the exact, source-backed message:
