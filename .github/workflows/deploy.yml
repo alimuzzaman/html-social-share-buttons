@@ -45,3 +45,4 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           BUILD_DIR: ${{ runner.temp }}/wordpress-org/html-social-share-buttons
+          ASSETS_DIR: .wordpress-org

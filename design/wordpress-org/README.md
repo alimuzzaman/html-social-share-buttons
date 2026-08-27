@@ -4,6 +4,8 @@ This folder contains upload-ready WordPress.org directory artwork and its editab
 
 The publish-only copies live in the repository root's `.wordpress-org/` directory. Keep those copies byte-identical to the approved files here; the manual `Update WordPress.org assets` workflow publishes that clean directory without sending design sources or research files to SVN.
 
+Future `v*` tag deployments publish `.wordpress-org/` with the plugin release. For a separate listing-only update, first run `pnpm run assets:deploy` to validate the exact manifest and byte parity. Publishing is deliberately explicit: `pnpm run assets:deploy -- --publish --watch` dispatches and follows the credential-backed GitHub Actions workflow without exposing SVN credentials locally.
+
 ## Art direction
 
 The identity joins angle brackets (HTML) with a three-node share path (sharing and profile links). The banner uses the exact, source-backed message:
