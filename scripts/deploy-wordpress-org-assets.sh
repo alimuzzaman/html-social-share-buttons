@@ -36,6 +36,7 @@ cd "$repo_root"
 expected=(
 	banner-1544x500.png
 	banner-772x250.png
+	blueprints/blueprint.json
 	icon-128x128.png
 	icon-256x256.png
 	icon.svg
@@ -45,7 +46,7 @@ expected=(
 	screenshot-4.png
 )
 
-actual="$(find .wordpress-org -maxdepth 1 -type f -exec basename {} \; | LC_ALL=C sort)"
+actual="$(find .wordpress-org -type f -print | sed 's#^\.wordpress-org/##' | LC_ALL=C sort)"
 wanted="$(printf '%s\n' "${expected[@]}" | LC_ALL=C sort)"
 if [[ "$actual" != "$wanted" ]]; then
 	echo 'The .wordpress-org asset manifest does not match the expected release files.' >&2
@@ -61,6 +62,7 @@ for asset in screenshot-1.png screenshot-2.png screenshot-3.png screenshot-4.png
 done
 
 node design/wordpress-org/source/validate-assets.mjs
+jq empty .wordpress-org/blueprints/blueprint.json
 echo 'WordPress.org asset package validation passed.'
 
 if [[ "$publish" != true ]]; then

@@ -1,0 +1,31 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/",
+	"preferredVersions": {
+		"php": "8.3",
+		"wp": "latest"
+	},
+	"features": {
+		"networking": true
+	},
+	"siteOptions": {
+		"blogname": "HTML Social Share Buttons",
+		"blogdescription": "Fast social sharing with local icons and no frontend JavaScript by default"
+	},
+	"steps": [
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "html-social-share-buttons"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php\nrequire_once '/wordpress/wp-load.php';\n\nupdate_option( 'zm_shbt_fld', array(\n\t'title' => 'Share this page',\n\t'iconset' => 'bootstrap-solid',\n\t'iconset_type' => 'circle',\n\t'button_appearance' => 'minimal',\n\t'show_in' => array(\n\t\t'show_left' => 0,\n\t\t'show_right' => 0,\n\t\t'show_before_post' => 0,\n\t\t'show_after_post' => 0,\n\t),\n\t'icons' => array(\n\t\t'facebook' => 'on',\n\t\t'x' => 'on',\n\t\t'linkedin' => 'on',\n\t\t'pinterest' => 'on',\n\t\t'telegram' => 'on',\n\t\t'bluesky' => 'on',\n\t\t'mail' => 'on',\n\t),\n\t'g_analytics' => 0,\n\t'auto_hide_btn' => 0,\n\t'nofollow' => 1,\n\t'show_for_current_user' => 1,\n\t'show_for_logged_in_user' => 1,\n\t'show_for_logged_out_user' => 1,\n\t'profile_links' => array(),\n\t'profile_link_placements' => array(),\n) );\n\n$page_id = wp_insert_post( array(\n\t'post_title' => 'Share without the bloat',\n\t'post_name' => 'html-social-share-buttons-demo',\n\t'post_status' => 'publish',\n\t'post_type' => 'page',\n\t'post_content' => '<!-- wp:paragraph {\"fontSize\":\"large\"} --><p class=\"has-large-font-size\">Local SVG icons. No frontend JavaScript by default. Tracking stays off until you enable it.</p><!-- /wp:paragraph --><!-- wp:heading {\"level\":2} --><h2 class=\"wp-block-heading\">Try the modern icon styles</h2><!-- /wp:heading --><!-- wp:paragraph --><p>This preview uses the Bootstrap Solid icon set, circular buttons, and the Minimal appearance. The plugin also includes Framed, Soft shadow, and Legacy styles.</p><!-- /wp:paragraph --><!-- wp:shortcode -->[zm_sh_btn title=\"Share this demo\" iconset=\"bootstrap-solid\" iconset_type=\"circle\" icons=\"facebook,x,linkedin,pinterest,telegram,bluesky,mail\"]<!-- /wp:shortcode --><!-- wp:separator --><hr class=\"wp-block-separator has-alpha-channel-opacity\"/><!-- /wp:separator --><!-- wp:heading {\"level\":2} --><h2 class=\"wp-block-heading\">Built for private, fast sharing</h2><!-- /wp:heading --><!-- wp:list --><ul class=\"wp-block-list\"><li>Icons are served from your own WordPress site.</li><li>Share links work with plain HTML and CSS.</li><li>Analytics is disabled by default.</li><li>Blocks, shortcodes, widgets, Elementor, and WPBakery are supported.</li></ul><!-- /wp:list -->',\n) );\n\nif ( ! is_wp_error( $page_id ) ) {\n\tupdate_option( 'show_on_front', 'page' );\n\tupdate_option( 'page_on_front', $page_id );\n}\n"
+		}
+	]
+}
