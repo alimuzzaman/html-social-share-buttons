@@ -1,6 +1,7 @@
 <?php
 
 use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
 
 final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 	private $originalPost;
@@ -118,6 +119,35 @@ final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( rawurlencode( get_permalink( $postId ) ), $output );
 		$this->assertNoPlaceholderOrDoubleEncoding( $output, 'automatic placement' );
+	}
+
+	public function testBlueskyRenderedTextKeepsASeparatorAfterWordPressUrlEscaping(): void {
+		$permalink = 'https://example.test/frontend-contract/?preview=true';
+		$output = LegacyApi::plugin()->renderer()->render(
+			array(
+				'iconset' => 'default',
+				'iconset_type' => 'square',
+				'icons' => array( 'bluesky' ),
+				'url' => $permalink,
+			),
+			0,
+			new ShareContext( $permalink, 'Frontend Contract Title' )
+		)->html();
+
+		$this->assertSame(
+			1,
+			preg_match( "/class='bluesky'[^>]+href='([^']+)'/", $output, $matches ),
+			'Expected one rendered Bluesky share link.'
+		);
+		$href = html_entity_decode( $matches[1], ENT_QUOTES, 'UTF-8' );
+		$parts = wp_parse_url( $href );
+		$query = array();
+		parse_str( isset( $parts['query'] ) ? $parts['query'] : '', $query );
+
+		$this->assertSame(
+			'Frontend Contract Title ' . $permalink,
+			isset( $query['text'] ) ? $query['text'] : null
+		);
 	}
 
 	/**

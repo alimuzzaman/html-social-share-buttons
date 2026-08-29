@@ -7,6 +7,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderPlacement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderRequest;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderResult;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ResolvedButton;
 
 /**
  * Canonical frontend markup renderer.
@@ -62,7 +63,7 @@ final class HtmlRenderer {
 			$output .= "<a class='" .
 				esc_attr( $this->cssClass( $button->network() ) ) .
 				"' target='_blank' href='" .
-				esc_url( $button->url() ) .
+				$this->buttonUrl( $button ) .
 				"' rel='" .
 				esc_attr( implode( ' ', $result->relTokens() ) ) .
 				"' aria-label='" .
@@ -96,6 +97,23 @@ final class HtmlRenderer {
 		}
 
 		return $output . '</div>';
+	}
+
+	/**
+	 * Keep the Bluesky separator through WordPress URL escaping.
+	 *
+	 * The public template intentionally remains `%0A` for backwards
+	 * compatibility, but WordPress strips encoded line breaks in esc_url().
+	 * An encoded space is safe in the query and preserves a readable boundary
+	 * between the title and permalink in the rendered share intent.
+	 */
+	private function buttonUrl( ResolvedButton $button ) {
+		$url = $button->url();
+		if ( 'bluesky' === $button->network()->id() ) {
+			$url = str_ireplace( '%0A', '%20', $url );
+		}
+
+		return esc_url( $url );
 	}
 
 	public function cssClass( Network $network ) {
