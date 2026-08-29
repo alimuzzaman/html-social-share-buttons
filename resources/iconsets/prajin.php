@@ -14,5 +14,6 @@ return array(
 		'pinterest' => 'pinterest.png',
 		'telegram'  => 'telegram.svg',
 		'bluesky'   => 'bluesky.svg',
+		'mail'      => 'mail.png',
 	),
 );

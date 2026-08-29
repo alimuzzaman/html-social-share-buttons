@@ -83,7 +83,7 @@ final class BuildShareButtonsTest extends WP_UnitTestCase {
 			'square',
 			RenderPlacement::WIDGET,
 			'',
-			array( 'facebook', 'mail' )
+			array( 'facebook', 'unknown' )
 		);
 
 		$result = $this->builder->build(

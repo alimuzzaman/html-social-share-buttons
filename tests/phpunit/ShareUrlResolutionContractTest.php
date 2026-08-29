@@ -1,7 +1,9 @@
 <?php
 
 use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
+use Alimuzzaman\HtmlSocialShareButtons\Application\Rendering\ResolveShareUrl;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
 
 final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 	private $originalPost;
@@ -150,6 +152,68 @@ final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 		);
 	}
 
+	public function testEveryBuiltInNetworkRendersItsDecodedShareParameters(): void {
+		$permalink = 'https://example.test/share-contract/?source=all';
+		$title = 'Share contract title';
+		$image = 'https://example.test/share-contract.jpg';
+		$renderer = LegacyApi::plugin()->renderer();
+		$output = $renderer->render(
+			array(
+				'iconset'      => 'default',
+				'iconset_type' => 'square',
+				'icons'        => ( new BuiltInNetworkProvider() )->createRegistry()->ids(),
+				'url'          => $permalink,
+			),
+			0,
+			new ShareContext( $permalink, $title, 'Share contract description', $image )
+		)->html();
+
+		$this->assertSame(
+			7,
+			preg_match_all( "/<a class='([^']+)'[^>]+href='([^']+)'/", $output, $matches ),
+			'Every built-in network should produce one share anchor.'
+		);
+		$decoded = array();
+		foreach ( $matches[1] as $index => $class ) {
+			$href = html_entity_decode( $matches[2][ $index ], ENT_QUOTES, 'UTF-8' );
+			$parts = wp_parse_url( $href );
+			$query = array();
+			parse_str( isset( $parts['query'] ) ? $parts['query'] : '', $query );
+			$decoded[ $class ] = $query;
+		}
+
+		$this->assertSame( $permalink, $decoded['facebook']['u'] );
+		$this->assertSame( $permalink, $decoded['twitter']['url'] );
+		$this->assertSame( $title, $decoded['twitter']['text'] );
+		$this->assertSame( $permalink, $decoded['linkedin']['url'] );
+		$this->assertSame( $permalink, $decoded['pinterest']['url'] );
+		$this->assertSame( $image, $decoded['pinterest']['media'] );
+		$this->assertSame( $title, $decoded['pinterest']['description'] );
+		$this->assertSame( $permalink, $decoded['telegram']['url'] );
+		$this->assertSame( $title, $decoded['telegram']['text'] );
+		$this->assertSame( $title . ' ' . $permalink, $decoded['bluesky']['text'] );
+		$this->assertSame( $title, $decoded['mail']['subject'] );
+		$this->assertSame( $permalink, $decoded['mail']['body'] );
+	}
+
+	public function testBuiltInResolverTemplatesDecodeWithoutUnresolvedPlaceholders(): void {
+		$context = new ShareContext(
+			'https://example.test/share-contract/?source=resolver',
+			'Resolver title',
+			'Resolver description',
+			'https://example.test/resolver.jpg'
+		);
+		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
+		$resolver = new ResolveShareUrl();
+
+		foreach ( $networks->all() as $network ) {
+			$url = $resolver->resolve( $network, $context );
+			$this->assertStringNotContainsString( '%%', $url, $network->id() );
+			$this->assertStringNotContainsString( '%25', $url, $network->id() );
+			$this->assertSame( $network->placeholders(), $this->placeholdersIn( $network->defaultShareTemplate() ), $network->id() . ' declarations' );
+		}
+	}
+
 	/**
 	 * Older shortcode attributes could reach the renderer after the token had
 	 * already been URL-escaped. Treat that stored representation as the same
@@ -208,5 +272,11 @@ final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( '%%permalink%%', $output, $adapter );
 		$this->assertStringNotContainsString( '%25%25permalink%25%25', $output, $adapter );
 		$this->assertStringNotContainsString( 'http%3A%2F%2F%25%25permalink%25%25', $output, $adapter );
+	}
+
+	private function placeholdersIn( $template ): array {
+		preg_match_all( '/%%[a-z]+%%/', (string) $template, $matches );
+
+		return array_values( array_unique( $matches[0] ) );
 	}
 }

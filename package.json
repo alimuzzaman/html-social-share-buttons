@@ -10,6 +10,8 @@
     "i18n:build": "bash scripts/generate-translations.sh",
     "zip": "pnpm run icons:check && node scripts/verify-production-autoloader.js && pnpm run build && node scripts/build-archive.js && node tests/distribution-archive-contract.js",
     "release": "pnpm run zip",
+    "icons:legacy-x:build": "node scripts/generate-legacy-x-assets.js",
+    "icons:legacy-x:check": "node scripts/generate-legacy-x-assets.js --check",
     "lint:js": "wp-scripts lint-js \"src/js/**/*.js\"",
     "settings:check": "pnpm run build && node tests/admin-react-smoke.js && node tests/vc-scripts-smoke.js && php tests/js-build-boundary-contract.php && php tests/javascript-localization-contract.php && php tests/php-compatibility-contract.php && php tests/admin-settings-form-mapper-contract.php && php -l src/Presentation/Admin/SettingsPageController.php && php -l src/Presentation/Admin/SettingsAssetEnqueuer.php && php tests/share-template-contract.php && php tests/iconset-css-contract.php && php -l src/Application/Content/ExcludedContentPolicy.php && php tests/exclude-contract.php && php tests/elementor-integration-contract.php && php tests/block-integration-contract.php && php tests/missing-autoloader-contract.php && php tests/settings-menu-contract.php && php tests/release-metadata-contract.php && php tests/compatibility-api-thinness-contract.php && php tests/architecture-boundary-contract.php",
     "appearance:check": "php tests/button-appearance-contract.php",

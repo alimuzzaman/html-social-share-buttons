@@ -16,10 +16,13 @@ a full-page PNG. The fixture covers 11 declared cells:
 - Default square;
 - Flat square and circle;
 - Long Shadows square and circle;
-- Prajin square and circle (six networks; the manifest intentionally omits
-  Email);
+- Prajin square and circle (seven networks);
 - Bootstrap Solid square and circle; and
 - Tabler Outline square and circle.
+
+The archived screenshots below predate the regenerated X PNGs and the added
+Prajin square mail asset. Re-run this matrix for a release candidate that
+contains those bytes; the earlier screenshots are historical evidence only.
 
 Command:
 

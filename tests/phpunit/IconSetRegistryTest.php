@@ -27,7 +27,10 @@ final class IconSetRegistryTest extends WP_UnitTestCase {
 		$this->assertSame( array( 'square', 'circle' ), $registry->get( 'flat' )->shapes() );
 		$this->assertSame( 'Twitter.png', $registry->get( 'flat' )->iconFile( 'x' ) );
 		$this->assertSame( 'iconset/long_shadow', $registry->get( 'long-shadows' )->assetPath() );
-		$this->assertFalse( $registry->get( 'prajin' )->hasIcon( 'mail' ) );
+		$this->assertSame(
+			array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
+			array_keys( $registry->get( 'prajin' )->iconFiles() )
+		);
 		foreach ( array( 'bootstrap-solid', 'tabler-outline' ) as $iconSetId ) {
 			$this->assertSame( array( 'square', 'circle' ), $registry->get( $iconSetId )->shapes() );
 			$this->assertSame(

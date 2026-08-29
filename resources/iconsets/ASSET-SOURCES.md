@@ -1,10 +1,13 @@
 # Icon asset provenance
 
-The historical `iconset/` tree retains the released 2.2.6 assets and public
-URLs, including their casing, `long_shadow` directory name, and `twitter`
-filenames. `assets/iconsets/` contains only the reproducibly generated SVG
-sets and their license notices. Canonical manifests record each pack's actual
-asset path; no duplicate historical tree or legacy asset map is shipped.
+The historical `iconset/` tree retains the released 2.2.6 asset paths and
+public URLs, including their casing, `long_shadow` directory name, and
+`twitter` filenames. The X artwork in those historical files was regenerated
+from the pinned Bootstrap Icons X glyph so the frontend no longer shows the
+retired Twitter bird; the compatibility filenames and URLs remain unchanged.
+`assets/iconsets/` contains the reproducibly generated SVG sets and their
+license notices. Canonical manifests record each pack's actual asset path; no
+duplicate historical tree or legacy asset map is shipped.
 
 ## Recorded sources
 
@@ -14,16 +17,22 @@ asset path; no duplicate historical tree or legacy asset map is shipped.
 | All `telegram.svg` glyphs | Font Awesome Free 6 `paper-plane`, adapted into the four bundled backgrounds | [Font Awesome Free icons are CC BY 4.0](https://fontawesome.com/license/free). Each file retains an embedded attribution comment. | Recorded |
 | `bootstrap-solid` SVG set | [Bootstrap Icons v1.13.1](https://github.com/twbs/icons/tree/v1.13.1/icons), using the Facebook, Twitter X, LinkedIn, Pinterest, Telegram, Bluesky, and Envelope glyphs | MIT. Pinned upstream sources and SHA-256 checksums are retained under `scripts/iconsets/upstream`; the distributed license is `assets/iconsets/licenses/bootstrap-icons-MIT.txt`. | **Cleared and reproducibly generated** |
 | `tabler-outline` SVG set | [Tabler Icons v3.46.0](https://github.com/tabler/tabler-icons/tree/v3.46.0/icons/outline), using the matching six brand glyphs and Mail | MIT. Pinned upstream sources and SHA-256 checksums are retained under `scripts/iconsets/upstream`; the distributed license is `assets/iconsets/licenses/tabler-icons-MIT.txt`. | **Cleared and reproducibly generated** |
+| Historical X artwork in Default, Flat, Long Shadows, and Prajin PNG packs | Pinned [Bootstrap Icons v1.13.1 `twitter-x.svg`](https://github.com/twbs/icons/tree/v1.13.1/icons) glyph, adapted to each pack's existing background/shape and rendered by `scripts/generate-legacy-x-assets.js` | MIT. The source file and both accepted SHA-256 forms are already retained under `scripts/iconsets/upstream`; generated files keep the historical `twitter`/`Twitter` filenames and URLs. | **Reproducibly generated; trademark review still required** |
 | Flat brand PNGs | Historical credit: Hakan Ertan / Tonicons; visual comparison identifies a probable relationship to [Flat Social Media Icons](https://www.softicons.com/social-media-icons/flat-social-media-icons-by-hakan-ertan) | **Maintainer attestation, 2026-08-12:** the pack is used with authorization from its rights holder. Downloaded public candidates are visually related but not byte-identical; no written authorization or license instrument is archived in this repository. | **Authorization attested; archival evidence incomplete** |
 | Long Shadows brand PNGs | Historical credit: Hakan Ertan / Tonicons; visual comparison identifies a probable relationship to [Round Shadow](https://www.softicons.com/social-media-icons/round-shadow-social-icons-by-hakan-ertan) and [Square Shadow](https://www.softicons.com/social-media-icons/square-shadow-social-icons-by-hakan-ertan) | **Maintainer attestation, 2026-08-12:** the pack is used with authorization from its rights holder. Downloaded public candidates are visually related but not byte-identical; no written authorization or license instrument is archived in this repository. | **Authorization attested; archival evidence incomplete** |
 | Prajin brand PNGs | Historical credit: Prajin; visual comparison identifies a probable relationship to Prajin’s ShareIcon [Social Media pack](https://www.shareicon.net/author/prajin) | **Maintainer attestation, 2026-08-12:** the pack is used with authorization from its rights holder. Downloaded public candidates are visually related but not byte-identical; no written authorization or license instrument is archived in this repository. | **Authorization attested; archival evidence incomplete** |
 | Default pack PNGs, utility icons, previews, and style sheets | Inherited from release 2.2.6 | No verifiable upstream files, version identifiers, or license grant are recorded. The release owner explicitly accepted retaining this compatibility pack without further provenance work on 2026-08-12. | **Accepted compatibility exception; no independent clearance claim** |
 
-The compatibility test suite verifies byte parity for historical canonical
-files, validates every manifest asset, checks that PNG metadata is valid and
-bounded, and checks that SVG files are well-formed, locally referenced, and
-free of active-content constructs. `pnpm run icons:check` separately verifies
-that every generated SVG and stylesheet matches its pinned source input.
+The compatibility test suite validates every manifest asset, checks that PNG
+metadata is valid and bounded, and checks that SVG files are well-formed,
+locally referenced, and free of active-content constructs. Historical X PNGs
+and their preview patches can be regenerated and checked with
+`pnpm run icons:legacy-x:build` and `pnpm run icons:legacy-x:check`.
+The added Prajin square mail tile is a local geometric adaptation of the
+existing Prajin circle mail artwork; it does not fetch or embed a third-party
+asset and remains covered by the historical pack's authorization attestation.
+`pnpm run icons:check` separately verifies that every generated SVG and
+stylesheet matches its pinned source input.
 
 The maintainer attestation above records the maintainer's representation of
 authorization; it is not a copy of written permission and does not independently
