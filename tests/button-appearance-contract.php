@@ -196,6 +196,23 @@ foreach ( array( 'minimal', 'framed', 'soft-shadow' ) as $appearance ) {
 	}
 }
 
+foreach ( $supported as $appearance ) {
+	foreach ( array( 'left', 'right', 'in_shortcode' ) as $placement ) {
+		foreach ( array( false, true ) as $autoHide ) {
+			$railOptions = array_replace( $options, array( 'class' => $placement ) );
+			$outcome = hssb_appearance_facade( $root, hssb_appearance_settings( $appearance, $autoHide ) )->render( $railOptions, 0, $context );
+			$expectedRail = $autoHide && 'in_shortcode' !== $placement;
+			if ( ( false !== strpos( $outcome->html(), 'hssb-rail--auto-hide' ) ) !== $expectedRail ) {
+				hssb_appearance_fail( 'Auto-hide placement contract failed for ' . $appearance . '/' . $placement . '.' );
+			}
+			$expectedCore = 'legacy' !== $appearance || $expectedRail;
+			if ( isset( $outcome->stylesheets()['hssb-button-appearance'] ) !== $expectedCore ) {
+				hssb_appearance_fail( 'Core rail asset contract failed for ' . $appearance . '/' . $placement . '.' );
+			}
+		}
+	}
+}
+
 $networks = ( new BuiltInNetworkProvider() )->createRegistry();
 $sets = ( new ManifestIconSetProvider( $root . '/resources/iconsets' ) )->createRegistry( $networks );
 $builtInPairs = 0;
@@ -228,6 +245,13 @@ $collector->collect( hssb_appearance_facade( $root, hssb_appearance_settings( 'm
 $collector->enqueueStyles();
 if ( array( 'social-share-default', 'hssb-button-appearance' ) !== array_column( $GLOBALS['hssb_appearance_enqueued_styles'], 0 ) ) {
 	hssb_appearance_fail( 'Enqueued modern stylesheet did not follow the icon-pack stylesheet.' );
+}
+
+$GLOBALS['hssb_appearance_enqueued_styles'] = array();
+$collector->collect( hssb_appearance_facade( $root, hssb_appearance_settings( 'legacy', true ) )->render( array_replace( $options, array( 'iconset' => 'prajin' ) ), 0, $context ) );
+$collector->enqueueStyles();
+if ( array( 'social-share-default', 'social-share-prajin', 'hssb-button-appearance' ) !== array_column( $GLOBALS['hssb_appearance_enqueued_styles'], 0 ) ) {
+	hssb_appearance_fail( 'Core rail CSS must follow packs collected after a modern appearance.' );
 }
 
 $legacyHashes = array(
@@ -300,12 +324,12 @@ $specificityContracts = array(
 		'margin: 0',
 	),
 	'Keyboard focus must reveal automatic side rails.' => array(
-		'.zmshbt.hssb-appearance--minimal.hssb-rail--auto-hide.left,',
+		'.zmshbt[class].hssb-rail--auto-hide.left {',
 		'.zmshbt[class].hssb-rail--auto-hide:focus-within',
 		'transform: translateX(0)',
 	),
 	'Pointer hover must reveal automatic side rails.' => array(
-		'.zmshbt.hssb-appearance--minimal.hssb-rail--auto-hide.right,',
+		'.zmshbt[class].hssb-rail--auto-hide.right {',
 		'@media (hover: hover) and (pointer: fine)',
 		'.zmshbt[class].hssb-rail--auto-hide:hover',
 		'transform: translateX(0)',
@@ -333,7 +357,7 @@ $specificityContracts = array(
 	),
 	'Reduced motion must override the appearance-specific rail transform.' => array(
 		'@media (prefers-reduced-motion: reduce)',
-		'.zmshbt[class].hssb-appearance--minimal.hssb-rail--auto-hide,',
+		'.zmshbt[class].hssb-rail--auto-hide.left,',
 		'transform: none',
 	),
 	'Forced colors must override the modern surface border and shadow.' => array(

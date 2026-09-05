@@ -13,6 +13,7 @@ import {
 	toBoolean,
 } from './settings-model';
 import { attachTemplateEditorBehavior } from './template-editor-behavior';
+import { attachTemplatePreviewBehavior } from './template-preview-behavior';
 
 /* Bundled at build time through src/js/admin-react.js. */
 (function (wp, $) {
@@ -35,6 +36,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 	var sharePlaceholders = [
 		{ syntax: '%%title%%', label: text('postTitle', 'Post title'), description: text('postTitleDescription', 'The title of the shared post') },
 		{ syntax: '%%permalink%%', label: text('permalink', 'Permalink'), description: text('permalinkDescription', 'The canonical post URL') },
+		{ syntax: '%%description%%', label: text('postDescription', 'Post description'), description: text('postDescriptionHelp', 'The shared page description') },
 		{ syntax: '%%imageurl%%', label: text('featuredImageUrl', 'Featured image URL'), description: text('featuredImageDescription', 'The post\'s featured image') }
 	];
 	var defaults = {
@@ -112,6 +114,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 			isDirty: false,
 			notice: null,
 			templateAutocomplete: null,
+			templatePreviews: {},
 		};
 		this.noticeTimer = null;
 		this.submitLabel = '';
@@ -121,6 +124,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 		this.activeTemplateField = {};
 		this.templateSelections = {};
 		this.templateEditorVersions = {};
+		this.templatePreviewRequests = {};
 		this.changeRevision = 0;
 	}
 
@@ -136,6 +140,9 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 	attachExcludeSelectorBehavior(App, {
 		$: $,
 		data: data,
+	});
+	attachTemplatePreviewBehavior(App, {
+		$: $, data: data, createElement: e, Button: wp.components.Button, text: text,
 	});
 	attachModalBehavior(App, {
 		findIconset: findIconset,
@@ -175,6 +182,7 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 	};
 
 	App.prototype.componentWillUnmount = function () {
+		this.disposeTemplatePreviews();
 		this.setBodyLock(false);
 		if (this.$form && this.handleSubmitBound) {
 			this.$form.off('submit.zmShareSettings', this.handleSubmitBound);
@@ -253,6 +261,9 @@ import { attachTemplateEditorBehavior } from './template-editor-behavior';
 	};
 
 	App.prototype.update = function (path, value) {
+		if (path.indexOf('share_templates.') === 0) {
+			this.invalidateTemplatePreview(path.substring(16));
+		}
 		this.changeRevision += 1;
 		this.setState({ isDirty: true });
 		this.setState(function (prev) {

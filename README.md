@@ -2,20 +2,22 @@
 
 HTML Social Share Buttons is a privacy-friendly WordPress plugin for share
 actions and optional social profile/contact links. Its frontend is
-server-rendered HTML and CSS, icon assets are served locally, and tracking is
-off by default.
+server-rendered HTML and CSS, icon assets are served locally, and the plugin
+adds no frontend tracking scripts.
 
-The current `master` branch contains the completed canonical implementation
-rewrite and the 3.1.0 frontend button-appearance update after the published
-3.0.0 release. Version 3.1.0 adds a global appearance selector with Legacy,
-Minimal, Framed, and Soft shadow modes while keeping Legacy as the compatibility
-default. Repository evidence does not authorize a new tag, WordPress.org
-upload, or production deployment. Future releases still require an immutable
-reviewed revision and explicit approval.
+The current branch prepares the 3.2.0 release after published 3.1.0. It adds an
+admin share-template preview, aligns the first settings screen with runtime
+defaults, and makes floating auto-hide work with keyboard focus across packs.
+The obsolete analytics and URL-port controls are retired; stored values remain
+available for compatibility. See the
+[update plan](docs/reviews/2026-09-05-astra-update-plan.md) for scope and gates.
+Publication requires the final reviewed commit and exact tested archive.
 
 ## Features
 
 - Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, and email share actions.
+- Admin-only sample URL previews and template diagnostics, without saving or
+  contacting sharing services.
 - Separate global profile/contact links with placement-level inherit or
   suppress controls.
 - Audience controls independently show or hide every share-button surface for
@@ -57,9 +59,9 @@ Historical and descriptive shortcode tags are both supported:
 ```
 
 Share actions use the current page by default. Profile links are separate
-destinations and are not treated as share events. By default, the public output
-uses server-rendered HTML and CSS without frontend plugin JavaScript; optional
-Google Social Analytics remains disabled until enabled in settings.
+destinations. Public output uses server-rendered HTML and CSS without frontend
+plugin JavaScript. Legacy Google Social Analytics is retired. Sharing uses
+WordPress canonical URLs, including any configured port.
 
 Fresh installations do not offer the historical Default pack in normal icon
 style selectors. Existing settings, blocks, widgets, shortcodes, and builder
@@ -137,8 +139,8 @@ The test commands use the project's Sandbox WordPress runtime. See
 - The Default PNG pack is retained under an accepted compatibility exception.
   That is not an independent provenance or clearance claim.
 - The 3.0.0 release's exact-archive rollback rehearsal and WordPress 7.1 final
-  manual review remain historical evidence. The 3.1.0 appearance update still
-  requires a fresh immutable archive review before publication.
+  manual review remain historical evidence. The 3.2.0 update requires
+  fresh immutable archive review before publication.
 
 ## Security and licensing
 

@@ -7,6 +7,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Application\Rendering\ResolveShareUrl;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderRequest;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderPlacement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver;
@@ -96,7 +97,8 @@ final class RenderFacade {
 
 		$stylesheets = array( $iconSet->id() => $this->assets->stylesheetUrl( $iconSet ) );
 		if (
-			ButtonAppearance::LEGACY !== $request->buttonAppearance() &&
+			( ButtonAppearance::LEGACY !== $request->buttonAppearance() ||
+				( $request->autoHideEnabled() && in_array( $request->placement(), array( RenderPlacement::FLOATING_LEFT, RenderPlacement::FLOATING_RIGHT ), true ) ) ) &&
 			'' !== $this->buttonAppearanceStylesheet
 		) {
 			$stylesheets[ $this->buttonAppearanceStyleHandle ] = $this->buttonAppearanceStylesheet;

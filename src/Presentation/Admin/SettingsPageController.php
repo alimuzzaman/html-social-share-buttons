@@ -45,12 +45,26 @@ final class SettingsPageController {
 		register_setting(
 			$this->config->settingsGroup(),
 			$this->config->optionName(),
-			array( $this, 'sanitize' )
+			array( $this, 'sanitizeAdmin' )
 		);
 	}
 
 	public function enqueueAssets( $hook ) {
 		$this->assets->enqueue( $hook );
+	}
+
+	public function sanitizeAdmin( $input ) {
+		// register_setting also filters programmatic option writes in admin requests.
+		// Only the Settings API form owns the retired-control preservation policy.
+		if (
+			isset( $_POST['option_page'], $_POST['action'] ) &&
+			$this->config->settingsGroup() === $_POST['option_page'] &&
+			'update' === $_POST['action']
+		) {
+			return $this->ajax->sanitizeAdmin( is_array( $input ) ? $input : array() );
+		}
+
+		return $this->sanitize( $input );
 	}
 
 	public function sanitize( $input ) {

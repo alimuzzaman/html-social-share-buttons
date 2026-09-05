@@ -18,6 +18,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Extension\Extens
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\ShareContextFactory;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\ViewerVisibilityPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsRequestMapper;
+use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsCodec;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\SettingsRequestSanitizer;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Translation\TranslationLoader;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\ExcludedContentLookup;
@@ -25,6 +26,8 @@ use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\FormPresenter;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\IconSetPayloadBuilder;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\MetaboxController;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\SettingsAjaxController;
+use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\ShareTemplatePreview;
+use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\ShareTemplatePreviewController;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\SettingsAssetEnqueuer;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\SettingsPageController;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin\SettingsPayloadBuilder;
@@ -164,6 +167,7 @@ final class PluginFactory {
 				$iconSetPayloads,
 				$config
 			);
+			$services['shareTemplatePreview'] = new ShareTemplatePreviewController( new ShareTemplatePreview( $networks ), $config );
 			$services['admin'] = new SettingsPageController(
 				$settingsAjax,
 				new SettingsAssetEnqueuer(
@@ -175,7 +179,8 @@ final class PluginFactory {
 						$iconSetPayloads,
 						$networks,
 						$paths->file(),
-						$config
+						$config,
+						new OptionSettingsCodec()
 					),
 					$config
 				),

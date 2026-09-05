@@ -3,7 +3,7 @@
 use Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi;
 
 final class FrontendAssetContractTest extends WP_UnitTestCase {
-	private $styleHandles = array( 'social-share-default', 'social-share-flat' );
+	private $styleHandles = array( 'social-share-default', 'social-share-flat', 'hssb-button-appearance' );
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -54,12 +54,40 @@ final class FrontendAssetContractTest extends WP_UnitTestCase {
 			$plugin->assets()->stylesheetUrl( $plugin->iconSets()->get( 'flat' ) ),
 			$styles->registered['social-share-flat']->src
 		);
-		$this->assertSame( '3.1.0', $styles->registered['social-share-default']->ver );
-		$this->assertSame( '3.1.0', $styles->registered['social-share-flat']->ver );
+		$this->assertSame( '3.2.0', $styles->registered['social-share-default']->ver );
+		$this->assertSame( '3.2.0', $styles->registered['social-share-flat']->ver );
 		$this->assertSame(
 			1,
 			count( array_keys( $styles->queue, 'social-share-flat', true ) )
 		);
+	}
+
+	public function testCoreStylesheetFollowsPacksCollectedLater(): void {
+		$collector = new \Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\AssetCollector( 'fallback.css' );
+		foreach ( array(
+			array(
+				'default'                => 'default.css',
+				'hssb-button-appearance' => 'core.css',
+			),
+			array( 'flat' => 'flat.css' ),
+		) as $sheets ) {
+			$collector->collect(
+				new class( $sheets ) {
+					private $sheets;
+
+					public function __construct( $sheets ) {
+						$this->sheets = $sheets;
+					}
+
+					public function stylesheets() {
+						return $this->sheets;
+					}
+				}
+			);
+		}
+		$collector->enqueueStyles();
+		$queue = wp_styles()->queue;
+		$this->assertLessThan( array_search( 'hssb-button-appearance', $queue, true ), array_search( 'social-share-flat', $queue, true ) );
 	}
 
 	public function testInlineIconRulesAreDeduplicatedAndUseLegacyAssetUrls(): void {

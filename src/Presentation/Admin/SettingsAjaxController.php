@@ -117,6 +117,16 @@ final class SettingsAjaxController {
 		return $this->mapper->toStoredSubmission( $settings, $input );
 	}
 
+	public function sanitizeAdmin( array $input ) {
+		if ( $this->persistingReplacement ) {
+			return $input;
+		}
+		$settings = $this->sanitizer->sanitize( $this->mapper->toCanonical( $input ) );
+		$stored = $this->settings->readStored( array() );
+
+		return $this->mapper->toStoredReplacement( $settings, $input, is_array( $stored ) ? $stored : array() );
+	}
+
 	public function persist( array $input ) {
 		$settings = $this->sanitizer->sanitize( $this->mapper->toCanonical( $input ) );
 		$storageBase = $this->settings->readStored( array() );

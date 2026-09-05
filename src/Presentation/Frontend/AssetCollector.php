@@ -17,7 +17,7 @@ final class AssetCollector {
 	private $version;
 	private $buttonAppearanceStyleHandle;
 
-	public function __construct( $fallbackStylesheet, $version = '3.1.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance' ) {
+	public function __construct( $fallbackStylesheet, $version = '3.2.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance' ) {
 		$this->fallbackStylesheet = (string) $fallbackStylesheet;
 		$this->version = (string) $version;
 		$this->buttonAppearanceStyleHandle = (string) $buttonAppearanceStyleHandle;
@@ -62,6 +62,13 @@ final class AssetCollector {
 		$stylesheets = $this->stylesheets;
 		if ( empty( $stylesheets ) && '' !== $this->fallbackStylesheet ) {
 			$stylesheets = array( 'default' => $this->fallbackStylesheet );
+		}
+
+		// Keep the core overrides after every pack, including packs collected later.
+		if ( isset( $stylesheets[ $this->buttonAppearanceStyleHandle ] ) ) {
+			$coreStylesheet = $stylesheets[ $this->buttonAppearanceStyleHandle ];
+			unset( $stylesheets[ $this->buttonAppearanceStyleHandle ] );
+			$stylesheets[ $this->buttonAppearanceStyleHandle ] = $coreStylesheet;
 		}
 
 		foreach ( $stylesheets as $id => $stylesheet ) {

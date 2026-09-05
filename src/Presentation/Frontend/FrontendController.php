@@ -196,10 +196,6 @@ final class FrontendController {
 			return;
 		}
 
-		if ( $settings->analyticsEnabled() ) {
-			echo $this->analyticsScript( ! empty( $settings->profileLinks() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
-
 		foreach ( $this->floatingPlacement->enabled( $settings ) as $placement ) {
 			echo wp_kses_post( $this->renderPlacement( $placement, $placement ) );
 		}
@@ -261,9 +257,7 @@ final class FrontendController {
 			return '';
 		}
 
-		$html = $settings->analyticsEnabled()
-			? $this->analyticsScript( ! empty( $settings->profileLinks() ) )
-			: '';
+		$html = '';
 		foreach ( $this->floatingPlacement->enabled( $settings ) as $placement ) {
 			/* The public footer historically passed each group through wp_kses_post(). */
 			$html .= wp_kses_post(
@@ -376,13 +370,5 @@ final class FrontendController {
 		$post = $this->currentPost();
 
 		return $post ? (int) $post->ID : 0;
-	}
-
-	private function analyticsScript( $hasProfileLinks ) {
-		$selector = $hasProfileLinks
-			? '.zmshbt a:not(.zmshbt-profile-link)'
-			: '.zmshbt a';
-
-		return "\n\t\t\t\t<script>\n\t\t\t\tjQuery(document).ready(function($){\n\t\t\t\t\tvar _gaq = _gaq || [];\n\t\t\t\t\tjQuery('" . esc_js( $selector ) . "').on('click', function(event){\n\t\t\t\t\t\tvar _gaq = _gaq || [];\n\t\t\t\t\t\tswitch(this.className){\n\t\t\t\t\t\t\tcase 'googlepluse':\n\t\t\t\t\t\t\t\taction = '+1';\n\t\t\t\t\t\t\tcase 'twitter':\n\t\t\t\t\t\t\t\taction = 'Tweet';\n\t\t\t\t\t\t\tcase 'mail':\n\t\t\t\t\t\t\t\taction = 'Mail';\n\t\t\t\t\t\t\tdefault :\n\t\t\t\t\t\t\t\taction = 'Share';\n\t\t\t\t\t\t}\n\t\t\t\t\t\t_gaq.push(['_trackSocial', this.className, action]);\n\t\t\t\t\t\tconsole.log(action);\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t\t</script>\n\t\t\t";
 	}
 }

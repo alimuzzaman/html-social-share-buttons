@@ -10,7 +10,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Bootstrap;
  * legacy bootstrap for plugin state.
  */
 final class PluginConfig {
-	const VERSION = '3.1.0';
+	const VERSION = '3.2.0';
 	const OPTION_NAME = 'zm_shbt_fld';
 	const SHORTCODE = 'zm_sh_btn';
 	const SHORTCODE_ALIAS = 'html-social-share-buttons';
@@ -28,6 +28,7 @@ final class PluginConfig {
 	const SOCIAL_LINKS_BLOCK_EDITOR_HANDLE = 'zm-sh-social-links-block';
 	const ADMIN_NONCE_ACTION = 'zm_sh_admin';
 	const SETTINGS_AJAX_SAVE = 'zm_sh_save_settings';
+	const SHARE_TEMPLATE_PREVIEW_AJAX = 'hssb_preview_share_template';
 	const SETTINGS_AJAX_SEARCH = 'zm_sh_search_content';
 	const ICON_SET_AJAX_GET = 'get_iconset';
 	const ICON_SET_AJAX_PREVIEW = 'get_iconset_preview';
@@ -149,6 +150,10 @@ final class PluginConfig {
 
 	public function settingsAjaxSearchAction() {
 		return self::SETTINGS_AJAX_SEARCH;
+	}
+
+	public function shareTemplatePreviewAjaxAction() {
+		return self::SHARE_TEMPLATE_PREVIEW_AJAX;
 	}
 
 	public function iconSetAjaxGetAction() {

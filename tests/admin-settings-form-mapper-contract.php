@@ -83,4 +83,17 @@ if ( $expected !== $stored ) {
 	exit( 1 );
 }
 
+// Admin replacement must ignore even forged retired fields, preserving opaque values.
+foreach ( array( array(), array( 'g_analytics' => false, 'use_port' => null ), array( 'g_analytics' => array( 'legacy' ), 'use_port' => 'false' ) ) as $original ) {
+	$original['extension'] = array( 'opaque' => 'keep' );
+	$replacement = $mapper->toStoredReplacement( $settings, $input + array( 'g_analytics' => '1' ), $original );
+	foreach ( array( 'g_analytics', 'use_port', 'extension' ) as $key ) {
+		if ( array_key_exists( $key, $original ) !== array_key_exists( $key, $replacement ) ||
+			( array_key_exists( $key, $original ) && $original[ $key ] !== $replacement[ $key ] ) ) {
+			echo "Retired admin setting preservation failed.\n";
+			exit( 1 );
+		}
+	}
+}
+
 echo "Canonical admin settings form mapper contract passed.\n";

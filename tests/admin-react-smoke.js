@@ -76,6 +76,8 @@ const context = {
 };
 
 context.window.zm_sh_react_settings = {
+	ajax_url: '/wp-admin/admin-ajax.php',
+	nonce: 'test-preview-nonce',
 	defaultIconset: 'bootstrap-solid',
 	button_appearances: [
 		{ value: 'legacy', label: 'Legacy (current)', help: 'Keep current presentation.' },
@@ -296,7 +298,11 @@ if (!sourceCode.includes('this.modalTrigger = trigger || null') || !sourceCode.i
 	throw new Error('Code generator modal should restore focus to its trigger.');
 }
 
-const requiredNames = settingsSchema.field_names;
+const retiredNames = ['zm_shbt_fld[g_analytics]', 'zm_shbt_fld[use_port]'];
+const requiredNames = settingsSchema.field_names.filter((name) => !retiredNames.includes(name));
+if (retiredNames.some((name) => names.has(name))) {
+	throw new Error('Retired controls must not submit replacement values.');
+}
 
 const missing = requiredNames.filter((name) => !names.has(name));
 if (missing.length > 0) {
@@ -663,4 +669,5 @@ if (!phpTextarea || !phpTextarea.props.value.includes(expectedPhpFragment)) {
 	throw new Error('PHP code generator output did not include the expected legacy icon assignment.');
 }
 
-console.log(`Admin React smoke passed: ${requiredNames.length} legacy fields present, shortcode and PHP generators intact.`);
+require('./template-preview-smoke')(appInstance.constructor, jqueryMock, collectNodes, collectText);
+console.log(`Admin React smoke passed: ${requiredNames.length} active legacy fields present, shortcode and PHP generators intact.`);

@@ -7,7 +7,7 @@
 - **Owner:** Product + UI + Engineering
 - **Status:** Implemented — manual visual verification remains
 - **Created:** 2026-07-09
-- **Last Updated:** 2026-08-10
+- **Last Updated:** 2026-09-05
 - **Version:** 3.0
 - **Source of Truth:** Single file in `/specs/`
 
@@ -39,7 +39,8 @@ Users rely on current settings and may have significant persisted values under `
 - No intentional public front-end output change for unchanged settings values.
   Rendering internals may use the canonical server-side facade so long as the
   historical option, shortcode, hook, class, and HTML contracts are retained.
-- No rewrite to React/REST/block settings.
+- No replacement of the implemented React settings application or its
+  WordPress Settings API persistence contract.
 
 ## 3.0 Functional Requirements
 - FR-001: Settings page remains available at `admin.php?page=zm_shbt_opt`.
@@ -63,6 +64,12 @@ Users rely on current settings and may have significant persisted values under `
 - FR-019: Every built-in platform is represented by a local icon asset in each supported icon-set shape. New platform marks must match the established artwork scale and the host set's exact treatment: Default uses its inset dotted frame, Flat uses unshadowed square/circle color blocks, Long Shadows casts the mark down-left within the button shape, Prajin square uses a short softened down-right cast, and Prajin circle remains unshadowed.
 
 ## 4.0 Data and Contract Preservation
+- The sample-template preview is a read-only authenticated admin action. It
+  resolves fixed samples before extension filters, renders text diagnostics,
+  never fetches destinations, and never blocks Save. Preview state is not saved.
+- Retired `g_analytics` and `use_port` controls submit no replacement values;
+  ordinary admin saves preserve their stored values or absence. Existing
+  programmatic settings interfaces remain callable.
 - Preserve these existing keys and nested shape in `zm_shbt_fld`:
   - `title`, `excludes`, `g_analytics`, `auto_hide_btn`, `use_port`, `nofollow`, `iconset`, `show_in.*`, `show_left`, `show_right`, `show_before_post`, `show_after_post`, `icons`, `iconset_type`.
 - Additive key: `share_templates.<platform>` for built-in platforms only; missing values resolve to canonical defaults. New `telegram` and `bluesky` icon flags are additive and disabled by default.

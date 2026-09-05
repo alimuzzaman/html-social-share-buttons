@@ -970,3 +970,30 @@
 		margin-left: 60px;
 	}
 }
+/* The preview is advisory text; it never navigates to the resolved URL. */
+.zm_template_preview {
+	margin-top: 16px;
+	border-top: 1px solid #c3c4c7;
+	padding-top: 12px;
+}
+
+.zm_template_preview summary {
+	cursor: pointer;
+}
+
+.zm_template_preview dd {
+	margin: 4px 0 12px;
+	overflow-wrap: anywhere;
+}
+
+.zm_template_preview_url {
+	display: block;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	padding: 8px;
+}
+
+.zm_template_preview_result ul {
+	list-style: disc;
+	margin-left: 20px;
+}

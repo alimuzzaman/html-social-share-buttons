@@ -31,7 +31,6 @@ final class HtmlRenderer {
 		$appearanceClass = ButtonAppearance::modifier( $request->buttonAppearance() );
 		$autoHideClass = '';
 		if (
-			'' !== $appearanceClass &&
 			$request->autoHideEnabled() &&
 			in_array( $request->placement(), array( RenderPlacement::FLOATING_LEFT, RenderPlacement::FLOATING_RIGHT ), true )
 		) {
@@ -108,12 +107,7 @@ final class HtmlRenderer {
 	 * between the title and permalink in the rendered share intent.
 	 */
 	private function buttonUrl( ResolvedButton $button ) {
-		$url = $button->url();
-		if ( 'bluesky' === $button->network()->id() ) {
-			$url = str_ireplace( '%0A', '%20', $url );
-		}
-
-		return esc_url( $url );
+		return ShareUrlPresentation::escape( $button->network()->id(), $button->url() );
 	}
 
 	public function cssClass( Network $network ) {

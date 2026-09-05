@@ -316,7 +316,8 @@ export function attachSettingsRenderer(App, dependencies) {
 								name: 'zm_shbt_fld[share_templates][' + icon.id + ']',
 								value: serializedTemplate
 							}),
-								e('p', { key: 'help', className: 'components-base-control__help' }, isCustomTemplate ? text('customTemplateSaved', 'Custom template saved for this platform.') : text('canonicalTemplateUsed', 'Using the canonical template shown as the placeholder.'))
+								e('p', { key: 'help', className: 'components-base-control__help' }, isCustomTemplate ? text('customTemplateSaved', 'Custom template saved for this platform.') : text('canonicalTemplateUsed', 'Using the canonical template shown as the placeholder.')),
+								self.renderTemplatePreview(icon.id)
 						]);
 						}));
 					}))
@@ -355,19 +356,10 @@ export function attachSettingsRenderer(App, dependencies) {
 				e(SectionHeader, {
 					key: 'section-header',
 					title: text('advancedOptions', 'Advanced options'),
-					description: text('advancedOptionsDescription', 'Fine tune tracking, behavior, and link output.')
+					description: text('advancedOptionsDescription', 'Fine tune behavior and link output.')
 				}),
 					e('div', { key: 'advanced-grid', className: 'zm_network_grid' }, [
-						e(CheckboxInput, {
-							key: 'g-analytics',
-							id: 'g_analytics',
-						label: text('googleAnalytics', 'Google Social analytics'),
-						name: 'zm_shbt_fld[g_analytics]',
-						checked: options.g_analytics,
-						onChange: function (value) {
-							self.update('g_analytics', value);
-						}
-						}),
+						e('p', { key: 'g-analytics', className: 'components-base-control__help' }, text('analyticsRetired', 'Google Social analytics has been retired. The plugin no longer adds tracking scripts.')),
 						e(CheckboxInput, {
 							key: 'auto-hide',
 							id: 'auto_hide_btn',
@@ -378,16 +370,7 @@ export function attachSettingsRenderer(App, dependencies) {
 							self.update('auto_hide_btn', value);
 						}
 						}),
-						e(CheckboxInput, {
-							key: 'use-port',
-							id: 'use_port',
-						label: text('usePort', 'Use port on the url.'),
-						name: 'zm_shbt_fld[use_port]',
-						checked: options.use_port,
-						onChange: function (value) {
-							self.update('use_port', value);
-						}
-						}),
+						e('p', { key: 'use-port', className: 'components-base-control__help' }, text('canonicalUrls', 'Sharing uses WordPress canonical URLs, including any configured port.')),
 						e(CheckboxInput, {
 							key: 'nofollow',
 							id: 'nofollow',

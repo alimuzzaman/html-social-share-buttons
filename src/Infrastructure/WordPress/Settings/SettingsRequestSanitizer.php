@@ -76,7 +76,7 @@ final class SettingsRequestSanitizer {
 					: false
 			);
 			if ( isset( $submittedTemplates[ $networkId ] ) && is_string( $submittedTemplates[ $networkId ] ) ) {
-				$shareTemplates[ $networkId ] = sanitize_textarea_field(
+				$shareTemplates[ $networkId ] = ShareTemplateSanitizer::sanitize(
 					$submittedTemplates[ $networkId ]
 				);
 			}

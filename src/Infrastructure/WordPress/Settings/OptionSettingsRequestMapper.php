@@ -162,6 +162,8 @@ final class OptionSettingsRequestMapper {
 	 * Replace core-owned form fields while retaining opaque extension data.
 	 */
 	public function toStoredReplacement( Settings $settings, array $input, array $stored ) {
+		// Retired controls are owned by stored data, never by admin input.
+		unset( $input['g_analytics'], $input['use_port'] );
 		$replacement = $stored;
 		$scalarFields = array(
 			'title',
@@ -173,9 +175,7 @@ final class OptionSettingsRequestMapper {
 			'show_right',
 			'show_before_post',
 			'show_after_post',
-			'g_analytics',
 			'auto_hide_btn',
-			'use_port',
 			'nofollow',
 			'show_for_current_user',
 			'show_for_logged_in_user',

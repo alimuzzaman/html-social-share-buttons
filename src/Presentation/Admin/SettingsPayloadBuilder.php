@@ -3,6 +3,7 @@
 namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Admin;
 
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsStateStore;
+use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsCodec;
 use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
@@ -15,6 +16,7 @@ final class SettingsPayloadBuilder {
 	private $networks;
 	private $pluginFile;
 	private $config;
+	private $codec;
 
 	public function __construct(
 		SettingsStateStore $settings,
@@ -22,7 +24,8 @@ final class SettingsPayloadBuilder {
 		IconSetPayloadBuilder $iconSets,
 		NetworkRegistry $networks,
 		$pluginFile,
-		PluginConfig $config
+		PluginConfig $config,
+		SettingsCodec $codec
 	) {
 		$this->settings = $settings;
 		$this->content = $content;
@@ -30,76 +33,42 @@ final class SettingsPayloadBuilder {
 		$this->networks = $networks;
 		$this->pluginFile = (string) $pluginFile;
 		$this->config = $config;
+		$this->codec = $codec;
 	}
 
 	public function build() {
 		$stored = $this->settings->readStored( null );
-		$isNewInstallation = ! is_array( $stored );
-		$options = $this->defaultOptions( $isNewInstallation ? array() : $stored, $isNewInstallation );
+		$loaded = $this->settings->load();
+		$options = $this->codec->encode( $loaded, is_array( $stored ) ? $stored : array() );
+		// The codec keeps sparse storage; the form needs explicit effective values.
+		$options['iconset_type'] = $loaded->defaultIconShape();
+		$options['button_appearance'] = $loaded->buttonAppearance();
+		$options['icons'] = $loaded->networkStates();
+		$options['profile_links'] = $loaded->profileLinks();
+		$options['auto_hide_btn'] = $loaded->autoHideEnabled();
+		$options['nofollow'] = $loaded->noFollow();
+		$options['show_for_current_user'] = $loaded->showForCurrentUser();
+		$options['show_for_logged_in_user'] = $loaded->showForLoggedInUser();
+		$options['show_for_logged_out_user'] = $loaded->showForLoggedOutUser();
 		$excluded = $this->content->resolve( $options['excludes'] );
 
 		return array(
-			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
-			'nonce'                    => wp_create_nonce( $this->config->adminNonceAction() ),
-			'assets_img'               => plugins_url( 'assets/img', $this->pluginFile ),
-			'iconsets'                 => $this->iconSets->settingsPayload( $options['iconset'] ),
-			'options'                  => $options,
-			'share_template_defaults'  => $this->defaultTemplates(),
-			'share_template_overrides' => isset( $options['share_templates'] ) && is_array( $options['share_templates'] )
+			'ajax_url'                       => admin_url( 'admin-ajax.php' ),
+			'nonce'                          => wp_create_nonce( $this->config->adminNonceAction() ),
+			'assets_img'                     => plugins_url( 'assets/img', $this->pluginFile ),
+			'iconsets'                       => $this->iconSets->settingsPayload( $options['iconset'] ),
+			'options'                        => $options,
+			'share_template_defaults'        => $this->defaultTemplates(),
+			'share_template_preview_samples' => ShareTemplatePreview::samples(),
+			'share_template_overrides'       => isset( $options['share_templates'] ) && is_array( $options['share_templates'] )
 				? $options['share_templates']
 				: array(),
-			'exclude_items'            => $excluded['items'],
-			'exclude_custom'           => $excluded['custom'],
-			'defaultIconset'           => IconSetSelectionPolicy::NEW_DEFAULT_ID,
-			'button_appearances'       => $this->buttonAppearances(),
-			'strings'                  => $this->interfaceStrings(),
+			'exclude_items'                  => $excluded['items'],
+			'exclude_custom'                 => $excluded['custom'],
+			'defaultIconset'                 => IconSetSelectionPolicy::NEW_DEFAULT_ID,
+			'button_appearances'             => $this->buttonAppearances(),
+			'strings'                        => $this->interfaceStrings(),
 		);
-	}
-
-	private function defaultOptions( $options, $isNewInstallation ) {
-		$options = is_array( $options ) ? $options : array();
-		$options = wp_parse_args(
-			$options,
-			array(
-				'title'                    => __( 'Share this with your friends', 'html-social-share-buttons' ),
-				'iconset'                  => $isNewInstallation
-					? IconSetSelectionPolicy::NEW_DEFAULT_ID
-					: IconSetSelectionPolicy::LEGACY_DEFAULT_ID,
-				'show_in'                  => array(
-					'show_left'        => 0,
-					'show_right'       => 0,
-					'show_before_post' => 0,
-					'show_after_post'  => 0,
-				),
-				'excludes'                 => '',
-				'iconset_type'             => 'square',
-				'button_appearance'        => ButtonAppearance::LEGACY,
-				'icons'                    => array(),
-				'g_analytics'              => 0,
-				'auto_hide_btn'            => 0,
-				'use_port'                 => 0,
-				'nofollow'                 => 0,
-				'show_for_current_user'    => true,
-				'show_for_logged_in_user'  => true,
-				'show_for_logged_out_user' => true,
-				'profile_links'            => array(),
-				'profile_link_placements'  => array(),
-				'share_templates'          => $this->defaultTemplates(),
-			)
-		);
-		if ( isset( $options['icons']['twitter'] ) && ! isset( $options['icons']['x'] ) ) {
-			$options['icons']['x'] = $options['icons']['twitter'];
-		}
-		if ( isset( $options['profile_links']['twitter'] ) && ! isset( $options['profile_links']['x'] ) ) {
-			$options['profile_links']['x'] = $options['profile_links']['twitter'];
-			unset( $options['profile_links']['twitter'] );
-		}
-		if ( ! isset( $options['profile_link_placements'] ) || ! is_array( $options['profile_link_placements'] ) ) {
-			$options['profile_link_placements'] = array();
-		}
-		$options['button_appearance'] = ButtonAppearance::normalize( $options['button_appearance'] );
-
-		return $options;
 	}
 
 	private function defaultTemplates() {
@@ -167,6 +136,16 @@ final class SettingsPayloadBuilder {
 			'iconSet'                     => __( 'Icon set', 'html-social-share-buttons' ),
 			'buttonAppearance'            => __( 'Button appearance', 'html-social-share-buttons' ),
 			'preview'                     => __( 'Preview', 'html-social-share-buttons' ),
+			'previewSample'               => __( 'Preview sample', 'html-social-share-buttons' ),
+			'previewHelp'                 => __( 'Uses sample content without saving or opening a share service. Live URLs may differ if another plugin customizes sharing.', 'html-social-share-buttons' ),
+			'previewSampleContent'        => __( 'Sample content', 'html-social-share-buttons' ),
+			'previewLoading'              => __( 'Preparing preview…', 'html-social-share-buttons' ),
+			'previewError'                => __( 'Preview could not be loaded. Try again. Your settings have not changed.', 'html-social-share-buttons' ),
+			'previewDefault'              => __( 'Resolved URL using the default template:', 'html-social-share-buttons' ),
+			'previewResolved'             => __( 'Resolved URL:', 'html-social-share-buttons' ),
+			'previewEmpty'                => __( 'This template does not produce a usable link.', 'html-social-share-buttons' ),
+			'postDescription'             => __( 'Post description', 'html-social-share-buttons' ),
+			'postDescriptionHelp'         => __( 'The shared page description', 'html-social-share-buttons' ),
 			'displayPlacement'            => __( 'Display placement', 'html-social-share-buttons' ),
 			'displayPlacementDescription' => __( 'Turn each placement on or off and pick its shape.', 'html-social-share-buttons' ),
 			'leftSide'                    => __( 'Left side', 'html-social-share-buttons' ),
@@ -206,10 +185,10 @@ final class SettingsPayloadBuilder {
 			'loggedInUser'                => __( 'Other logged-in users', 'html-social-share-buttons' ),
 			'loggedOutUser'               => __( 'Logged-out users', 'html-social-share-buttons' ),
 			'advancedOptions'             => __( 'Advanced options', 'html-social-share-buttons' ),
-			'advancedOptionsDescription'  => __( 'Fine tune tracking, behavior, and link output.', 'html-social-share-buttons' ),
-			'googleAnalytics'             => __( 'Google Social analytics', 'html-social-share-buttons' ),
+			'advancedOptionsDescription'  => __( 'Fine tune behavior and link output.', 'html-social-share-buttons' ),
+			'analyticsRetired'            => __( 'Google Social analytics has been retired. The plugin no longer adds tracking scripts.', 'html-social-share-buttons' ),
 			'autoHide'                    => __( 'Auto hide button', 'html-social-share-buttons' ),
-			'usePort'                     => __( 'Use port on the url.', 'html-social-share-buttons' ),
+			'canonicalUrls'               => __( 'Sharing uses WordPress canonical URLs, including any configured port.', 'html-social-share-buttons' ),
 			'noFollow'                    => __( 'No follow social link', 'html-social-share-buttons' ),
 			'codeGenerator'               => __( 'Code generator', 'html-social-share-buttons' ),
 			'codeGeneratorDescription'    => __( 'Generate embed code from the same icon set and selected networks.', 'html-social-share-buttons' ),

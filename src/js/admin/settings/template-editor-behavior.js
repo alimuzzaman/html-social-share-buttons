@@ -301,9 +301,9 @@ export function attachTemplateEditorBehavior(App, dependencies) {
 	};
 
 	App.prototype.renderTemplateValue = function (value) {
-		var parts = String(value || '').split(/(%%(?:permalink|title|imageurl)%%)/g);
+		var parts = String(value || '').split(/(%%(?:permalink|title|description|imageurl)%%)/g);
 		return parts.map(function (part, index) {
-			if (/^%%(?:permalink|title|imageurl)%%$/.test(part)) {
+			if (/^%%(?:permalink|title|description|imageurl)%%$/.test(part)) {
 				return e('span', {
 					key: index,
 					className: 'zm_template_placeholder',

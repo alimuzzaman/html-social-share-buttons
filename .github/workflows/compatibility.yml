@@ -3,9 +3,18 @@ name: Compatibility checks
 on:
   push:
     branches: [ latest, master, release ]
-    tags: [ 'v*' ]
   pull_request:
   workflow_dispatch:
+    inputs:
+      failure_probe:
+        description: Intentionally fail a required job to verify the release gate (no publication)
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      failure_probe:
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,6 +23,7 @@ jobs:
   php:
     name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -51,6 +61,7 @@ jobs:
   js:
     name: JavaScript and contracts
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
@@ -58,7 +69,7 @@ jobs:
           version: 11.5.2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
       - name: Set up PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
@@ -71,11 +82,22 @@ jobs:
       - run: pnpm run lint:js
       - run: pnpm run icons:check
       - run: pnpm run settings:check
+      - run: pnpm run appearance:check
+      - run: pnpm run icons:legacy-x:check
+      - run: pnpm run test:staging-probe
+      - run: pnpm run test:staging-evidence
+      - run: pnpm run release:check
 
   quality:
     name: PHP static analysis and coding standards
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
+      - name: Intentional no-secret release-gate failure
+        if: inputs.failure_probe
+        run: |
+          echo 'Release gate probe intentionally fails the required quality job.'
+          exit 1
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Set up PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
@@ -87,8 +109,10 @@ jobs:
       - run: composer quality
 
   wordpress:
+    needs: distribution
     name: WordPress ${{ matrix.wordpress }} / PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -145,7 +169,13 @@ jobs:
           chmod +x "$RUNNER_TEMP/wp"
           sudo mv "$RUNNER_TEMP/wp" /usr/local/bin/wp
           wp --info
-      - name: Build the production autoloader
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-candidate
+          path: ${{ runner.temp }}/candidate
+      - name: Verify candidate identity
+        run: python3 scripts/release-candidate.py verify "$RUNNER_TEMP/candidate" "$GITHUB_SHA"
+      - name: Build the source test harness autoloader
         run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
       - name: Install and activate the plugin
         env:
@@ -153,14 +183,11 @@ jobs:
           WP_ROOT: ${{ runner.temp }}/wordpress
         run: |
           wp core download --path="$WP_ROOT" --version="$WP_VERSION" --force
-          mkdir -p "$WP_ROOT/wp-content/plugins/html-social-share-buttons"
-          rsync -a \
-            --exclude='.git' \
-            --exclude='node_modules' \
-            ./ "$WP_ROOT/wp-content/plugins/html-social-share-buttons/"
           wp config create --path="$WP_ROOT" --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=127.0.0.1 --skip-check
           wp core install --path="$WP_ROOT" --url=http://localhost --title='Compatibility test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
-          wp plugin activate html-social-share-buttons --path="$WP_ROOT"
+          wp plugin install "$RUNNER_TEMP/candidate/candidate.zip" --path="$WP_ROOT" --activate
+          wp core version --path="$WP_ROOT"
+          python3 scripts/release-candidate.py installed "$RUNNER_TEMP/candidate" "$GITHUB_SHA" "$WP_ROOT/wp-content/plugins/html-social-share-buttons"
       - name: Verify functional compatibility surface
         env:
           WP_ROOT: ${{ runner.temp }}/wordpress
@@ -188,6 +215,7 @@ jobs:
         if: matrix.test-library != ''
         env:
           WP_ROOT: ${{ runner.temp }}/wordpress
+          HSSB_TEST_PLUGIN_ROOT: ${{ runner.temp }}/wordpress/wp-content/plugins/html-social-share-buttons
           WP_TESTS_DIR: ${{ runner.temp }}/test-tools/vendor/wp-phpunit/wp-phpunit
           WP_PHPUNIT__TESTS_CONFIG: ${{ github.workspace }}/tests/wp-tests-config.php
         run: ${{ runner.temp }}/test-tools/vendor/bin/phpunit --configuration phpunit.xml.dist --exclude-group ajax,multisite
@@ -195,6 +223,7 @@ jobs:
         if: matrix.test-library != ''
         env:
           WP_ROOT: ${{ runner.temp }}/wordpress
+          HSSB_TEST_PLUGIN_ROOT: ${{ runner.temp }}/wordpress/wp-content/plugins/html-social-share-buttons
           WP_TESTS_DIR: ${{ runner.temp }}/test-tools/vendor/wp-phpunit/wp-phpunit
           WP_PHPUNIT__TESTS_CONFIG: ${{ github.workspace }}/tests/wp-tests-config.php
         run: ${{ runner.temp }}/test-tools/vendor/bin/phpunit --configuration phpunit.xml.dist --group ajax
@@ -202,6 +231,7 @@ jobs:
         if: matrix.test-library != ''
         env:
           WP_ROOT: ${{ runner.temp }}/wordpress
+          HSSB_TEST_PLUGIN_ROOT: ${{ runner.temp }}/wordpress/wp-content/plugins/html-social-share-buttons
           WP_TESTS_DIR: ${{ runner.temp }}/test-tools/vendor/wp-phpunit/wp-phpunit
           WP_PHPUNIT__TESTS_CONFIG: ${{ github.workspace }}/tests/wp-tests-config.php
         run: ${{ runner.temp }}/test-tools/vendor/bin/phpunit --configuration phpunit.multisite.xml.dist --group multisite
@@ -209,6 +239,44 @@ jobs:
   distribution:
     name: Release archive
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 11.5.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+      - run: pnpm install --frozen-lockfile
+      - name: Build the production autoloader
+        run: composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative
+      - name: Build and inspect the immutable release candidate
+        run: |
+          mkdir -p "$RUNNER_TEMP/candidate"
+          HSSB_ARCHIVE_PATH="$RUNNER_TEMP/candidate/candidate.zip" pnpm run zip
+          HSSB_ARCHIVE_PATH="$RUNNER_TEMP/reproducibility.zip" pnpm run zip
+          cmp "$RUNNER_TEMP/candidate/candidate.zip" "$RUNNER_TEMP/reproducibility.zip"
+          python3 scripts/release-candidate.py create "$RUNNER_TEMP/candidate" "$GITHUB_SHA"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-candidate
+          path: ${{ runner.temp }}/candidate/
+          if-no-files-found: error
+          retention-days: 30
+
+  archive-runtime:
+    name: Candidate Plugin Check and browsers
+    needs: distribution
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     services:
       mysql:
         image: mysql:5.7
@@ -231,37 +299,65 @@ jobs:
           version: 11.5.2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
-      - name: Set up PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: '8.3'
           coverage: none
-          tools: composer:v2
-      - name: Install WP-CLI
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-candidate
+          path: ${{ runner.temp }}/candidate
+      - run: python3 scripts/release-candidate.py verify "$RUNNER_TEMP/candidate" "$GITHUB_SHA"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - name: Install candidate on a fresh WordPress site
+        env:
+          WP_ROOT: ${{ runner.temp }}/wordpress
         run: |
           curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o "$RUNNER_TEMP/wp"
           chmod +x "$RUNNER_TEMP/wp"
           sudo mv "$RUNNER_TEMP/wp" /usr/local/bin/wp
-      - run: pnpm install --frozen-lockfile
-      - name: Build the production autoloader
-        run: composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative
-      - name: Build and inspect the release archive
-        run: |
-          HSSB_ARCHIVE_PATH="$RUNNER_TEMP/first-build.zip" pnpm run zip
-          HSSB_ARCHIVE_PATH="$RUNNER_TEMP/second-build.zip" pnpm run zip
-          cmp "$RUNNER_TEMP/first-build.zip" "$RUNNER_TEMP/second-build.zip"
-      - name: Install the archive in a fresh WordPress site
-        env:
-          WP_ROOT: ${{ runner.temp }}/wordpress
-        run: |
-          archive="$RUNNER_TEMP/second-build.zip"
-          test -f "$archive"
           wp core download --path="$WP_ROOT" --force
           wp config create --path="$WP_ROOT" --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=127.0.0.1 --skip-check
-          wp core install --path="$WP_ROOT" --url=http://localhost --title='Archive test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
-          wp plugin install "$archive" --path="$WP_ROOT" --activate
-          wp plugin is-active html-social-share-buttons --path="$WP_ROOT"
-          wp eval-file tests/support/support-floor-prepare.php --path="$WP_ROOT"
-          wp eval-file tests/support/support-floor-assert.php --path="$WP_ROOT"
+          wp core install --path="$WP_ROOT" --url=http://127.0.0.1:8221 --title='Candidate browser test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
+          wp core version --path="$WP_ROOT"
+          wp plugin install "$RUNNER_TEMP/candidate/candidate.zip" --path="$WP_ROOT" --activate
+          python3 scripts/release-candidate.py installed "$RUNNER_TEMP/candidate" "$GITHUB_SHA" "$WP_ROOT/wp-content/plugins/html-social-share-buttons"
+          wp rewrite structure '/%postname%/' --path="$WP_ROOT"
+          wp plugin install plugin-check --version=2.1.0 --activate --path="$WP_ROOT"
+      - name: Run candidate Plugin Check and browser contracts
+        env:
+          WP_ROOT: ${{ runner.temp }}/wordpress
+          WP_BASE_URL: http://127.0.0.1:8221
+        run: |
+          php -S 127.0.0.1:8221 -t "$WP_ROOT" scripts/ci-wordpress-router.php > "$RUNNER_TEMP/wordpress-server.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for _ in {1..30}; do
+            if curl -fsS "$WP_BASE_URL/wp-login.php" > /dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS "$WP_BASE_URL/wp-login.php" > /dev/null
+          wp plugin check html-social-share-buttons --path="$WP_ROOT" --require="$WP_ROOT/wp-content/plugins/plugin-check/cli.php" --format=strict-json --fields=file,line,column,type,code,message > "$RUNNER_TEMP/plugin-check.json"
+          node scripts/verify-plugin-check.js "$RUNNER_TEMP/plugin-check.json"
+          pnpm exec playwright test --config tests/release.playwright.config.js
+          python3 scripts/release-candidate.py installed "$RUNNER_TEMP/candidate" "$GITHUB_SHA" "$WP_ROOT/wp-content/plugins/html-social-share-buttons"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: success() || failure()
+        with:
+          name: candidate-runtime-evidence
+          path: |
+            ${{ runner.temp }}/plugin-check.json
+            ${{ runner.temp }}/wordpress-server.log
+            test-results/
+          if-no-files-found: error
+
+  required:
+    name: All required validation passed
+    needs: [php, js, quality, wordpress, distribution, archive-runtime]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - run: echo 'All required checks succeeded for this source and candidate artifact.'

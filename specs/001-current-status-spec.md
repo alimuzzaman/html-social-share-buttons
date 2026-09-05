@@ -7,7 +7,7 @@
 - **Owner:** Product + Engineering
 - **Status:** Current
 - **Created:** 2026-07-09
-- **Last Updated:** 2026-08-13
+- **Last Updated:** 2026-09-05
 - **Version:** 2.0
 - **Source of Truth:** Single file in `/specs/`
 
@@ -20,8 +20,9 @@ canonical rewrite so later changes do not regress existing installations.
 The plugin is in active use with saved options in `wp_options`; any schema or serialization mismatch can break user settings or front-end output.
 
 ## 2.0 Baseline Scope
-- Candidate metadata is `3.0.0`; publication remains gated by the exact-archive
-  staging soak and rollback in `docs/STAGING-SOAK.md`.
+- Candidate metadata is `3.2.0` for the next update. Publication
+  requires manual exact-archive review under `docs/STAGING-SOAK.md`; the old
+  fourteen-day soak was waived and remains superseded.
 - Production runtime ownership is canonical and namespaced. Thin legacy
   facades retain the published public symbols, hooks, identifiers, and storage
   contracts.
@@ -40,8 +41,10 @@ The plugin is in active use with saved options in `wp_options`; any schema or se
 
 ### 3.3 Existing `zm_shbt_fld` schema (current fields)
 - `title` (string): page/share heading text.
-- `iconset` (string): selected iconset id, default `default`.
-- `use_port` (bool-like/int): URL port behavior toggle.
+- `iconset` (string): new-install default `bootstrap-solid`; existing partial
+  options retain the legacy fallback.
+- `use_port` (legacy): retained stored value; the UI control is retired and
+  sharing uses WordPress canonical URLs, including any configured port.
 - `auto_hide_btn` (bool-like/int): floating button auto-hide behavior.
 - `show_in` (array):
   - `show_left` (bool-like/int)
@@ -57,7 +60,7 @@ The plugin is in active use with saved options in `wp_options`; any schema or se
 - `profile_link_placements` (assoc array): explicit per-placement suppression;
   omitted values inherit configured profiles.
 - Optional/legacy keys observed in runtime path:
-  - `g_analytics` (bool-like/int)
+  - `g_analytics` (legacy retained value; no tracking script is emitted)
   - `nofollow` (bool-like/int)
   - `excludes` (string list: IDs, titles, slugs)
 

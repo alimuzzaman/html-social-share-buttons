@@ -152,21 +152,30 @@
 	margin: 0;
 }
 
-.zmshbt.hssb-appearance--minimal.hssb-rail--auto-hide.left,
-.zmshbt.hssb-appearance--framed.hssb-rail--auto-hide.left,
-.zmshbt.hssb-appearance--soft-shadow.hssb-rail--auto-hide.left {
-	transform: translateX(calc(-1 * (var(--hssb-target-size) - 12px)));
+/* Core owns rail movement. Percentages use the actual pack width. */
+.zmshbt[class].hssb-rail--auto-hide.left {
+	left: 0;
+	transform: translateX(calc(-100% + 12px));
 }
 
-.zmshbt.hssb-appearance--minimal.hssb-rail--auto-hide.right,
-.zmshbt.hssb-appearance--framed.hssb-rail--auto-hide.right,
-.zmshbt.hssb-appearance--soft-shadow.hssb-rail--auto-hide.right {
-	transform: translateX(calc(var(--hssb-target-size) - 12px));
+.zmshbt[class].hssb-rail--auto-hide.right {
+	right: 0;
+	transform: translateX(calc(100% - 12px));
 }
 
 .zmshbt[class].hssb-rail--auto-hide {
 	transition: transform 160ms cubic-bezier(.2, .8, .2, 1);
-	transition: transform var(--hssb-motion-duration) var(--hssb-motion-easing);
+}
+
+/* Prajin moves its anchors as well as its wrapper; avoid compounded motion. */
+.zmshbt[class].hssb-rail--auto-hide.prajin.left a,
+.zmshbt[class].hssb-rail--auto-hide.Prajin.left a {
+	margin-left: 0;
+}
+
+.zmshbt[class].hssb-rail--auto-hide a:hover,
+.zmshbt[class].hssb-rail--auto-hide a:active {
+	transform: none;
 }
 
 .zmshbt[class].hssb-rail--auto-hide:focus-within {
@@ -212,9 +221,8 @@
 	.zmshbt[class].hssb-appearance--framed a:active,
 	.zmshbt[class].hssb-appearance--soft-shadow a:hover,
 	.zmshbt[class].hssb-appearance--soft-shadow a:active,
-	.zmshbt[class].hssb-appearance--minimal.hssb-rail--auto-hide,
-	.zmshbt[class].hssb-appearance--framed.hssb-rail--auto-hide,
-	.zmshbt[class].hssb-appearance--soft-shadow.hssb-rail--auto-hide {
+	.zmshbt[class].hssb-rail--auto-hide.left,
+	.zmshbt[class].hssb-rail--auto-hide.right {
 		transform: none;
 	}
 }
@@ -265,5 +273,12 @@
 	.zmshbt.hssb-appearance--soft-shadow.right .zmshbt-profile-separator {
 		width: 1px;
 		height: 32px;
+	}
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+	.zmshbt[class].hssb-rail--auto-hide.left,
+	.zmshbt[class].hssb-rail--auto-hide.right {
+		transform: none;
 	}
 }

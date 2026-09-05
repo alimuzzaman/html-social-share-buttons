@@ -5,7 +5,7 @@ Tags: social share buttons, social sharing, gutenberg block, social media, share
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 3.1.0
+Stable tag: 3.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ HTML + CSS share buttons and profile links with blocks, builders, local icons, a
 HTML Social Share Buttons adds server-rendered HTML and CSS share buttons and
 profile links to posts, pages, sidebars, and builder layouts. By default, the
 plugin adds no frontend JavaScript. Bundled icons load from your own site, and
-optional Google Social Analytics stays off unless you enable it.
+the plugin adds no tracking scripts.
 
 Use the Social Share or Social Links block, automatic placement, the classic
 widget, Elementor, WPBakery, a shortcode, or PHP. Choose from six bundled icon
@@ -24,8 +24,8 @@ sets and square or circle buttons.
 
 <strong>Why this plugin:</strong>
 
-* <strong>HTML + CSS by default:</strong> Server-rendered share and profile links with no frontend plugin JavaScript unless optional analytics is enabled.
-* <strong>Private by default:</strong> Bundled icons load from your site; optional analytics stays disabled until you enable it.
+* <strong>HTML + CSS:</strong> Server-rendered share and profile links with no frontend plugin JavaScript.
+* <strong>Private by default:</strong> Bundled icons load from your site; the plugin adds no tracking scripts.
 * <strong>Place anywhere:</strong> Automatic before/after and floating placement, two blocks, a widget, Elementor, WPBakery, shortcodes, and PHP.
 * <strong>Share and follow separately:</strong> Share actions open a composer for the current page; profile links open the configured profile or email destination.
 * <strong>Current destinations:</strong> Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, and email.
@@ -40,6 +40,7 @@ sets and square or circle buttons.
 * Square buttons in every set; circle buttons in Flat, Long Shadow, Prajin, Bootstrap Solid, and Tabler Outline.
 * Responsive floating rails that become centered, wrapping rows at 600px and below.
 * Per-network URL templates and exclusions by post/page ID, slug, or searchable content.
+* Sample share-template previews with helpful diagnostics, without saving or opening a share service.
 * Translation-ready admin and editor strings.
 
 <strong>Shortcode examples:</strong>
@@ -57,13 +58,13 @@ for a horizontal row.
 2. Activate **HTML Social Share Buttons**.
 3. Open **Settings > HTML Social Share**.
 4. Choose networks, icon set, button appearance, button shape, automatic placements, and viewer audiences.
-5. Optionally configure profile/contact links, share URL templates, exclusions, or analytics.
+5. Optionally configure profile/contact links, preview share URL templates, or set exclusions.
 6. Add a block, widget, builder element, shortcode, or generated PHP snippet where needed.
 
 == Screenshots ==
 
 1. Inline share buttons and a responsive floating rail on a post.
-2. Appearance, placement, audience, and analytics controls in Settings.
+2. Appearance, placement, and audience controls in Settings.
 3. Social Share and Social Links blocks in the block editor.
 4. Separate profile-link destinations and viewer-audience controls.
 
@@ -71,14 +72,20 @@ for a horizontal row.
 
 = Does the plugin track visitors? =
 
-No tracking is enabled by default. Optional Google Social Analytics support can
-be enabled in Advanced settings.
+The plugin adds no tracking scripts. Legacy Google Social Analytics has been
+retired. Previously stored analytics preferences are retained for compatibility.
 
 = What is the difference between a share button and a profile link? =
 
 A share button opens a network composer for the current page. A profile link
-opens your configured social profile or email destination. Profile clicks are
-not sent through the optional share-analytics handler.
+opens your configured social profile or email destination.
+
+= Does a template preview save settings or contact a share service? =
+
+No. Preview sample uses fixed sample content and displays the resolved URL as
+text. Diagnostics are advisory and do not block saving. Other plugins may
+customize the live URL, and the preview does not verify a sharing service's
+availability.
 
 = Does it work with the block editor? =
 
@@ -145,6 +152,14 @@ sources and their license notices are included with the plugin. See
 provenance record.
 
 == Changelog ==
+
+= 3.2.0 =
+* **FEATURE**: Preview share templates with fixed sample content and advisory diagnostics, without saving or contacting a share service.
+* **FIX**: The first settings screen now matches the effective sharing defaults.
+* **FIX**: Floating auto-hide works with every bundled icon set and appearance, reveals on keyboard focus, and stays visible on mobile and for reduced motion.
+* **FIX**: Supported description placeholders survive saving and preview sanitation.
+* **COMPATIBILITY**: Retired the obsolete Google Social Analytics script and port controls. Existing stored values are retained; sharing uses WordPress canonical URLs.
+* **MAINTENANCE**: Updated build tooling and added exact-archive validation before manual publication.
 
 = 3.1.0 =
 * **FEATURE**: Added a global Button appearance selector with Legacy, Minimal, Framed, and Soft shadow options.

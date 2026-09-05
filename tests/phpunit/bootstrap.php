@@ -6,8 +6,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	}
 }
 
-$plugin_file = dirname( __DIR__, 2 ) . '/html-social-share.php';
-$autoload    = dirname( __DIR__, 2 ) . '/vendor/autoload.php';
+$plugin_root = getenv( 'HSSB_TEST_PLUGIN_ROOT' );
+if ( false === $plugin_root || '' === $plugin_root ) {
+	$plugin_root = dirname( __DIR__, 2 );
+}
+if ( ! is_file( $plugin_root . '/html-social-share.php' ) || ! is_file( $plugin_root . '/vendor/autoload.php' ) ) {
+	throw new RuntimeException( 'HSSB_TEST_PLUGIN_ROOT must contain the installed candidate and production autoloader.' );
+}
+$plugin_file = $plugin_root . '/html-social-share.php';
+$autoload    = $plugin_root . '/vendor/autoload.php';
 $tests_dir   = getenv( 'WP_TESTS_DIR' );
 
 if ( is_file( $autoload ) ) {

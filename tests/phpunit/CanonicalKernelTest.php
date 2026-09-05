@@ -34,7 +34,7 @@ final class CanonicalKernelTest extends WP_UnitTestCase {
 		};
 
 		$plugin = ( new PluginFactory() )->create(
-			dirname( __DIR__, 2 ),
+			rtrim( HSSB_PLUGIN_DIR, '/\\' ),
 			$settings,
 			array( $subscriber )
 		);

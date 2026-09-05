@@ -114,13 +114,15 @@ final class ProfileLinkRenderingTest extends WP_UnitTestCase {
 		$this->assertSame( array( "default_square\0_facebook" ), array_keys( $outcome->printedIcons() ) );
 	}
 
-	public function testCanonicalFrontendAnalyticsExcludesProfilesOnlyWhenConfigured(): void {
+	public function testRetiredAnalyticsEmitsNoScriptWithOrWithoutProfiles(): void {
 		$withProfiles = $this->footerFor( array( 'facebook' => 'https://facebook.com/example' ) );
-		$this->assertStringContainsString( "jQuery('.zmshbt a:not(.zmshbt-profile-link)').on('click'", $withProfiles );
-
 		$withoutProfiles = $this->footerFor( array() );
-		$this->assertStringContainsString( "jQuery('.zmshbt a').on('click'", $withoutProfiles );
-		$this->assertStringNotContainsString( 'a:not(.zmshbt-profile-link)', $withoutProfiles );
+		// Analytics is enabled in controllerFor(), but no placements are enabled.
+		// The footer may retain positioning CSS, but never the retired script.
+		$this->assertSame( $withProfiles, $withoutProfiles );
+		$this->assertStringNotContainsString( '<script', $withProfiles );
+		$this->assertStringNotContainsString( '_gaq', $withProfiles );
+		$this->assertStringNotContainsString( 'jQuery', $withProfiles );
 	}
 
 	public function testGlobalProfilesAreInheritedByCanonicalShortcodeAndBlockControllers(): void {

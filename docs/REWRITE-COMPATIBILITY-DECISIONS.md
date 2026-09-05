@@ -50,14 +50,31 @@ release approval or completed operational evidence. See
   builder representations, shortcode aliases, and documented HTML classes
   remain callable through thin compatibility delegates.
 - Historical output details retained by the canonical renderer include CSS
-  classes, filter ordering, the Bluesky `%0A` template suffix, analytics
-  inline-script behavior, and profile-link inheritance. Candidate output
-  contracts still need execution before byte compatibility is claimed.
+  classes, filter ordering, the Bluesky `%0A` template suffix, and profile-link
+  inheritance. Candidate output contracts still need execution before byte
+  compatibility is claimed.
 - Historical icon IDs/URLs remain externally visible, including the
   `long_shadow` directory and `twitter` filename/CSS naming. Manifest metadata
   resolves those values to the retained released icon-pack trees.
 
 ## Approved compatibility-safe corrections
+
+### Working update, 2026-09-05
+
+The obsolete analytics inline script is deliberately removed in this update.
+`g_analytics` and `use_port` remain stored and accessible through legacy APIs,
+but their settings controls are retired. Ordinary admin saves preserve their
+exact prior values or absence. Canonical WordPress permalink resolution is
+unchanged. This analytics output exception requires release-owner review;
+implementation authorization does not authorize publication.
+
+Core floating auto-hide now also applies to Legacy appearance. It reveals on
+keyboard focus and remains visible on mobile, coarse pointers, and reduced
+motion. Non-floating output and auto-hide-off presentation are preserved.
+The new template preview uses sample data before extension filters and does
+not change persisted options, public rendering, or save validation rules.
+
+### Earlier corrections
 
 - Widget numeric-list instances normalize at render time to the associative
   selection shape used by canonical rendering; saves preserve the historical

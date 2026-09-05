@@ -92,7 +92,6 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 			'iconset' => 'flat',
 			'show_in' => array( 'show_left' => '1' ),
 			'icons' => array( 'facebook' => '1', 'x' => '1' ),
-			'use_port' => true,
 			'show_for_current_user' => false,
 			'show_for_logged_in_user' => true,
 			'show_for_logged_out_user' => false,
@@ -102,6 +101,26 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 		$this->assertSame( 'Settings saved.', $response['data']['message'] );
 		$this->assertSame( $expected, $response['data']['options'] );
 		$this->assertSame( $expected, get_option( 'zm_shbt_fld' ) );
+	}
+
+	public function testSettingsSavePreservesRetiredValuesAndIgnoresForgedControls(): void {
+		$this->_setRole( 'administrator' );
+		foreach ( array( array(), array( 'g_analytics' => false, 'use_port' => null ), array( 'g_analytics' => array( 'opaque' ), 'use_port' => 'false' ) ) as $original ) {
+			$this->seedStoredOption( $original );
+			$_POST = array(
+				'nonce' => wp_create_nonce( 'zm_sh_admin' ),
+				'settings' => http_build_query( array( 'zm_shbt_fld' => array( 'title' => 'Saved', 'g_analytics' => '1', 'use_port' => '1' ) ) ),
+			);
+			$response = $this->requestJson( 'zm_sh_save_settings' );
+			$this->assertTrue( $response['success'] );
+			$stored = get_option( 'zm_shbt_fld' );
+			foreach ( array( 'g_analytics', 'use_port' ) as $key ) {
+				$this->assertSame( array_key_exists( $key, $original ), array_key_exists( $key, $stored ) );
+				if ( array_key_exists( $key, $original ) ) {
+					$this->assertSame( $original[ $key ], $stored[ $key ] );
+				}
+			}
+		}
 	}
 
 	public function testSettingsSavePreservesExtensionKeysAndDisabledNetworkTemplates(): void {

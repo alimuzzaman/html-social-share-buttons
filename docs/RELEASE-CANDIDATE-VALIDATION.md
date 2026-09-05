@@ -1,3 +1,7 @@
+# Release validation ledger
+
+The current candidate is **3.2.0**. See the [implementation record](reviews/2026-09-05-implementation-status.md) and [dependency disposition](reviews/2026-09-05-dependency-disposition.md). Final immutable-source CI and exact-archive acceptance are in progress. The records below describe earlier candidates and do not certify 3.2.0. Publication requires separate explicit authorization.
+
 # 3.0 release-candidate validation record
 
 This is an evidence ledger, not release approval.  It must not be read as
