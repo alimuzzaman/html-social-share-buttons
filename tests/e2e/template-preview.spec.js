@@ -10,6 +10,9 @@ test('previews unsaved templates without saving or navigating', async ({ page })
 	await card.locator('input[type="checkbox"]').check();
 	const editor = card.locator('.zm_template_parameter_editor').first();
 	await editor.fill('%%permalink%%&label=%%description%%');
+	// Completing a token opens suggestions, which can cover the button on mobile.
+	await editor.press('Escape');
+	await expect(page.locator('.zm_template_autocomplete')).toHaveCount(0);
 	const formValues = () => page.locator('#zm-social-share-settings').evaluate((form) => Array.from(new FormData(form).entries()));
 	const before = await formValues();
 	const previews = [];
