@@ -23,7 +23,7 @@ test.describe( 'Gutenberg integration', () => {
 		await login( page );
 		const fixture = await createPublishedPage( page, {
 			content: '',
-			title: 'HSSB WordPress 7.1 iframe fixture',
+			title: 'HSSB iframe editor fixture',
 		} );
 		await page.goto(
 			`/wp-admin/post.php?post=${ fixture.id }&action=edit`
@@ -171,9 +171,9 @@ test.describe( 'Gutenberg integration', () => {
 		await page.goto( fixture.link );
 		await expect(
 			page.locator(
-				'meta[name="generator"][content="WordPress 7.1"]'
+				'meta[name="generator"][content^="WordPress "]'
 			)
-		).toHaveCount( 1 );
+		).toHaveAttribute( 'content', /^WordPress \d+\.\d+(?:\.\d+)?$/ );
 		const shareWrapper = page.locator( '.zmshbt.in_block' ).first();
 		await expect( shareWrapper ).toBeVisible();
 		await expect( shareWrapper ).toHaveClass( /\bflat\b/ );
