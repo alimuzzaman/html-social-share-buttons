@@ -13,6 +13,33 @@ test.describe( 'Gutenberg integration', () => {
 		test.setTimeout( 60_000 );
 		const consoleErrors = [];
 		const pageErrors = [];
+		const pendingRest = new Set();
+		let lastRestActivity = Date.now();
+		const isEditorRestRequest = ( request ) => {
+			const url = new URL( request.url() );
+			return url.origin === new URL( page.url() ).origin &&
+				url.pathname.startsWith( '/wp-json/' ) &&
+				[ 'fetch', 'xhr' ].includes( request.resourceType() );
+		};
+		page.on( 'request', ( request ) => {
+			if ( isEditorRestRequest( request ) ) {
+				pendingRest.add( request );
+				lastRestActivity = Date.now();
+			}
+		} );
+		for ( const event of [ 'requestfinished', 'requestfailed' ] ) {
+			page.on( event, ( request ) => {
+				if ( pendingRest.delete( request ) ) {
+					lastRestActivity = Date.now();
+				}
+			} );
+		}
+		// WebKit reports cancelled core REST requests as page errors on navigation.
+		// Let editor requests finish; retain the zero-error assertions below.
+		const settleEditorRequests = () => expect.poll(
+			() => pendingRest.size === 0 && Date.now() - lastRestActivity >= 500,
+			{ timeout: 10_000 }
+		).toBe( true );
 		page.on( 'console', ( message ) => {
 			if ( message.type() === 'error' ) {
 				consoleErrors.push( message.text() );
@@ -25,6 +52,7 @@ test.describe( 'Gutenberg integration', () => {
 			content: '',
 			title: 'HSSB iframe editor fixture',
 		} );
+		await settleEditorRequests();
 		await page.goto(
 			`/wp-admin/post.php?post=${ fixture.id }&action=edit`
 		);
@@ -127,6 +155,7 @@ test.describe( 'Gutenberg integration', () => {
 		await page.waitForFunction( () =>
 			! window.wp.data.select( 'core/editor' ).isSavingPost()
 		);
+		await settleEditorRequests();
 		await page.reload();
 		await expect( page.locator( 'iframe[name="editor-canvas"]' ) ).toBeVisible();
 		await page.waitForFunction( () =>
@@ -168,6 +197,7 @@ test.describe( 'Gutenberg integration', () => {
 			page.getByRole( 'button', { name: /Attempt Block Recovery/i } )
 		).toHaveCount( 0 );
 
+		await settleEditorRequests();
 		await page.goto( fixture.link );
 		await expect(
 			page.locator(
