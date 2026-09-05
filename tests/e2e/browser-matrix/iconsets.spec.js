@@ -161,22 +161,28 @@ test("core auto-hide uses each pack width and reveals keyboard focus", async ({
         await expect.poll(visibleWidth).toBeCloseTo(12, 0);
         const hiddenBox = await rail.boundingBox();
         await page.mouse.move(side === "left" ? 6 : 1194, hiddenBox.y + 10);
-        await expect
-          .poll(async () => Math.round(await visibleWidth()))
-          .toBe(Math.round((await rail.boundingBox()).width));
+        await expect.poll(() => rail.evaluate((el) => {
+          const rect = el.getBoundingClientRect();
+          const visible = Math.min(innerWidth, rect.right) - Math.max(0, rect.left);
+          return rect.width - visible;
+        })).toBeCloseTo(0, 0);
         await page.mouse.move(600, 700);
         await page.locator("#before").focus();
         await page.keyboard.press(browserName === "webkit" && process.platform === "darwin" ? "Alt+Tab" : "Tab");
         await expect(rail.locator("a").first()).toBeFocused();
-        await expect
-          .poll(async () => Math.round(await visibleWidth()))
-          .toBe(Math.round((await rail.boundingBox()).width));
+        await expect.poll(() => rail.evaluate((el) => {
+          const rect = el.getBoundingClientRect();
+          const visible = Math.min(innerWidth, rect.right) - Math.max(0, rect.left);
+          return rect.width - visible;
+        })).toBeCloseTo(0, 0);
         await page.locator("#after").focus();
         await page.keyboard.press(browserName === "webkit" && process.platform === "darwin" ? "Alt+Shift+Tab" : "Shift+Tab");
         await expect(rail.locator("a").last()).toBeFocused();
-        await expect
-          .poll(async () => Math.round(await visibleWidth()))
-          .toBe(Math.round((await rail.boundingBox()).width));
+        await expect.poll(() => rail.evaluate((el) => {
+          const rect = el.getBoundingClientRect();
+          const visible = Math.min(innerWidth, rect.right) - Math.max(0, rect.left);
+          return rect.width - visible;
+        })).toBeCloseTo(0, 0);
         await page.locator("#before").focus();
         await page.emulateMedia({ reducedMotion: "reduce" });
         await expect(rail).toHaveCSS("transform", "none");
@@ -200,9 +206,11 @@ test("core auto-hide uses each pack width and reveals keyboard focus", async ({
             ".zmshbt.left{left:0!important}.zmshbt.right{right:0!important}",
         });
         await expect(rail).toHaveCSS("transform", "none");
-        await expect
-          .poll(async () => Math.round(await visibleWidth()))
-          .toBe(Math.round((await rail.boundingBox()).width));
+        await expect.poll(() => rail.evaluate((el) => {
+          const rect = el.getBoundingClientRect();
+          const visible = Math.min(innerWidth, rect.right) - Math.max(0, rect.left);
+          return rect.width - visible;
+        })).toBeCloseTo(0, 0);
       }
     }
   }
