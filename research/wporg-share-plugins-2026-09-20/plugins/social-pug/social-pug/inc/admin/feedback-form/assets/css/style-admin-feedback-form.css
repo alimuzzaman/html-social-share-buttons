@@ -1,0 +1,77 @@
+/*******************************************************************************************/
+/* Feedback Form Button
+/*******************************************************************************************/
+#dpsp-feedback-button { display: none; position: fixed; bottom: 30px; right: 20px; width: 72px; height: 72px; line-height: 80px; text-align: center; background: #fff; border-radius: 50px; box-shadow: 0 3px 10px 4px rgba(0,0,0,0.065); cursor: pointer; transition: all 0.2s ease-in-out; }
+#dpsp-feedback-button:hover { box-shadow: 0 3px 10px 4px rgba(0,0,0,0.125); }
+
+#dpsp-feedback-button img { visibility: hidden; opacity: 0; width: 54px; height: 54px; margin-top: -8px; vertical-align: middle; }
+#dpsp-feedback-button.dpsp-inactive img { visibility: visible; opacity: 1; transition: all 0.2s ease-in-out; }
+
+#dpsp-feedback-button .dpsp-close { position: absolute; left: 0; top: 1px; width: 72px; height: 72px; line-height: 72px; text-align: center; font-size: 50px; color: #d1d1d1; visibility: visible; opacity: 1; border-radius: 50px; }
+#dpsp-feedback-button.dpsp-inactive .dpsp-close { visibility: hidden; opacity: 0; transition: all 0.2s ease-in-out; }
+
+/*******************************************************************************************/
+/* Feedback Form
+/*******************************************************************************************/
+#dpsp-feedback-form-wrapper { position: fixed; bottom: 120px; right: 20px; width: 300px; height: 385px; background: #fff; border-radius: 7px; box-shadow: 0 3px 10px 4px rgba(0,0,0,0.065); transition: all 0.2s ease-in-out; }
+#dpsp-feedback-form-wrapper.dpsp-inactive { visibility: hidden; opacity: 0; bottom: 90px; }
+
+/* Form header */
+#dpsp-feedback-form-header { position: relative; background: #00a8ff; height: 70px; border-top-left-radius: 7px; border-top-right-radius: 7px; }
+
+#dpsp-feedback-form-header-image { position: absolute; left: 50%; top: -35px; width: 70px; height: 70px; line-height: 70px; margin-left: -38px; text-align: center; background: #fff; border-radius: 50px; border: 3px solid #00a8ff; }
+#dpsp-feedback-form-header-image img { width: 55px; height: 55px; vertical-align: middle; }
+
+#dpsp-feedback-form-header strong { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; color: #fff; font-size: 13px; }
+
+/* Form panels */
+#dpsp-feedback-form-inner { position: relative; height: 255px; overflow: hidden; }
+
+.dpsp-feedback-form-panel { position: absolute; top: 0; left: 0; padding: 15px; height: 255px; width: 300px; box-sizing: border-box; transition: left 0.25s ease-in-out; }
+.dpsp-feedback-form-panel.dpsp-done { left: -320px; }
+.dpsp-feedback-form-panel.dpsp-todo { left: 320px; }
+
+.dpsp-feedback-form-panel-label { display: block; font-weight: bold; margin-bottom: 15px; }
+
+.dpsp-feedback-form-panel input[type=radio] { display: none; }
+.dpsp-feedback-form-panel label:not(.dpsp-feedback-form-panel-label) { display: block; background: #f1f1f1; color: #565656; padding: 6px 12px; border-radius: 12px; margin-bottom: 7px; transition: background 0.2s ease-in-out; }
+.dpsp-feedback-form-panel label:not(.dpsp-feedback-form-panel-label):hover { background: #d1d1d1; }
+
+.dpsp-feedback-form-panel input:checked + label { background: #00a8ff !important; color: #fff !important; }
+
+.dpsp-feedback-form-panel textarea,
+.dpsp-feedback-form-panel input[type=email] { width: 100%; padding: 10px; background: #f5f5f5; border: 2px solid transparent; border-radius: 4px; box-shadow: none; font-size: 13px; box-sizing: border-box; }
+.dpsp-feedback-form-panel textarea { height: 170px; }
+
+.dpsp-feedback-form-panel textarea:focus,
+.dpsp-feedback-form-panel input[type=email]:focus { border: 2px solid rgba( 0, 168, 255, 0.5 ); }
+
+.dpsp-feedback-form-panel .description { font-size: 11px; margin-top: 7px; }
+
+#dpsp-feedback-form-description-char-count-1,
+#dpsp-feedback-form-description-char-count-2 { text-align: right; }
+
+#dpsp-feedback-form-description-char-count-2 { display: none; }
+
+/* Panel 4 - Success Message */
+#dpsp-feedback-form-panel-4 { display: none; text-align: center; }
+#dpsp-feedback-form-panel-4 .dashicons { margin-top: 80px; width: 34px; height: 32px; line-height: 34px; vertical-align: middle; text-align: center; background: #1abc9c; color: #fff; border-radius: 50%; font-size: 28px; text-indent: -2px; padding-top: 2px; }
+
+/* Form navigation */
+#dpsp-feedback-form-navigation { display: none; position: absolute; bottom: 0; left: 0; height: 70px; width: 100%; padding: 15px; text-align: center; box-sizing: border-box; }
+
+#dpsp-feedback-form-back,
+#dpsp-feedback-form-next,
+#dpsp-feedback-form-send { display: inline-block; line-height: 40px; vertical-align: middle; padding: 0 20px; text-decoration: none; font-weight: bold; font-size: 12px; border-radius: 4px; transition: background 0.2s ease-in-out; box-shadow: none; }
+
+#dpsp-feedback-form-back { float: left; background: #f1f1f1; color: #565656; }
+#dpsp-feedback-form-back:hover { background: #e1e1e1; }
+#dpsp-feedback-form-next,
+#dpsp-feedback-form-send { float: right; background: #00a8ff; color: #fff; }
+#dpsp-feedback-form-next:hover,
+#dpsp-feedback-form-send:hover { background: #0097e6; }
+
+#dpsp-feedback-form-send { display: none; }
+
+#dpsp-feedback-form-navigation .spinner { display: none; float: none; position: absolute; left: 50%; margin-left: -10px; top: 22px; visibility: visible; }
+#dpsp-feedback-form-navigation a.dpsp-inactive { background: rgba( 0, 168, 255, 0.35 ); }

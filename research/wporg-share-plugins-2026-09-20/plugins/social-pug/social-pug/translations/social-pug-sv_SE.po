@@ -1,0 +1,1115 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Social Pug\n"
+"POT-Creation-Date: 2016-09-11 18:07+0200\n"
+"PO-Revision-Date: 2016-10-08 09:10+0200\n"
+"Last-Translator: Björn Granberg <write@maskinmedia.se>\n"
+"Language-Team: \n"
+"Language: sv_SE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.9\n"
+"X-Poedit-Basepath: ../../../development/web projects/socialpug/wp-content/"
+"plugins/social-pug\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: inc/admin/admin-metaboxes.php:21
+msgid "Share Options"
+msgstr "Delningsalternativ"
+
+#: inc/admin/admin-metaboxes.php:23
+msgid "Share Statistics"
+msgstr "Delningsstatistik"
+
+#: inc/admin/admin-metaboxes.php:44
+msgid "General Social Media Custom Content"
+msgstr ""
+
+#: inc/admin/admin-metaboxes.php:45
+msgid ""
+"These fields populate the Open Graph meta tags that are used by certain "
+"social networks to share your post's content. If these are missing, the "
+"title, the excerpt and the featured image of the post are used instead."
+msgstr ""
+"Dessa fält befolkar Open Graph metataggar som används av vissa sociala "
+"nätverk för att dela ett inläggs innehåll. Om dessa saknas, kommer titel, "
+"utdrag och utvald bild att användas istället."
+
+#: inc/admin/admin-metaboxes.php:48
+msgid "Custom Title"
+msgstr "Anpassad titel"
+
+#: inc/admin/admin-metaboxes.php:49
+msgid "Custom Description"
+msgstr "Anpassad beskrivning"
+
+#: inc/admin/admin-metaboxes.php:50
+msgid "Custom Image"
+msgstr "Anpassad bild"
+
+#: inc/admin/admin-metaboxes.php:53
+msgid "Twitter Specific Custom Content"
+msgstr "Twitterspecifikt eget innehåll"
+
+#: inc/admin/admin-metaboxes.php:54
+msgid ""
+"This will be the Tweet that will be shared when clicking the Twitter button. "
+"If this fields is not set, the post's title will be used instead."
+msgstr ""
+"Detta kommer bli det Tweet som delas när twitterknappen klickas. Om detta "
+"alternativ inte används, kommer inläggets titel att användas istället."
+
+#: inc/admin/admin-metaboxes.php:56
+msgid "Custom Tweet"
+msgstr "Anpassat Tweet"
+
+#: inc/admin/admin-metaboxes.php:59
+msgid "Pinterest Specific Custom Content"
+msgstr "Pinterestspecifikt eget innehåll"
+
+#: inc/admin/admin-metaboxes.php:60
+msgid ""
+"This will be the image and description that will be shared when clicking on "
+"the Pin button. If these are not set, the user will be presented with all "
+"images from the post."
+msgstr ""
+"Detta kommer bli den bild med beskrivning som kommer delas, när Pin-knappen "
+"klickas. Om dessa lämnas tomma, kommer användaren själv få välja från "
+"inläggets samtliga bilder och texter."
+
+#: inc/admin/admin-metaboxes.php:62
+msgid "Pinterest Custom Image"
+msgstr "Pinterest anpassad bild"
+
+#: inc/admin/admin-metaboxes.php:63
+msgid "Pinterest Custom Description"
+msgstr "Pinterest anpassad beskrvning"
+
+#: inc/admin/admin-metaboxes.php:66
+msgid "Display Options"
+msgstr "Visningsalternativ"
+
+#: inc/admin/admin-metaboxes.php:68
+msgid "Hide buttons for the"
+msgstr "Göm knappar för"
+
+#: inc/admin/admin-metaboxes.php:93
+msgid "Network"
+msgstr "Nätverk"
+
+#: inc/admin/admin-metaboxes.php:94 inc/functions-admin.php:449
+msgid "Shares"
+msgstr "Delningar"
+
+#: inc/admin/admin-metaboxes.php:123
+msgid "Total shares"
+msgstr "Delningar totalt"
+
+#: inc/admin/admin-widgets.php:9
+msgid "Social Pug: Top Shared Posts"
+msgstr "Social PUG: Mest delade inlägg"
+
+#: inc/admin/admin-widgets.php:10
+msgid "Display the most shared posts from any custom post type."
+msgstr "Visa mest delade inlägg från alla typer av inlägg."
+
+#: inc/admin/admin-widgets.php:118
+msgid "Shares: "
+msgstr "Delningar: "
+
+#: inc/admin/admin-widgets.php:157 inc/admin/admin-widgets.php:295
+msgid "Title:"
+msgstr "Titel:"
+
+#: inc/admin/admin-widgets.php:164
+msgid "Post types:"
+msgstr "Inläggstyper:"
+
+#: inc/admin/admin-widgets.php:175
+msgid "Post Options:"
+msgstr "Inläggsalternativ:"
+
+#: inc/admin/admin-widgets.php:177
+msgid "Number of posts to show: "
+msgstr "Antal inlägg att visa:"
+
+#: inc/admin/admin-widgets.php:183
+msgid "Display featured image:"
+msgstr "Visa Utvald bild:"
+
+#: inc/admin/admin-widgets.php:189
+msgid "Featured image size: "
+msgstr "Storlek på Utvald bild: "
+
+#: inc/admin/admin-widgets.php:202
+msgid "Display post excerpt:"
+msgstr "Visa textutdrag:"
+
+#: inc/admin/admin-widgets.php:208
+msgid "Display post total share count:"
+msgstr "Visa inläggets totala antal delningar :"
+
+#: inc/admin/admin-widgets.php:246
+msgid "Social Pug: Social Media Follow Buttons"
+msgstr "Social Pug: Följ social media knappar"
+
+#: inc/admin/admin-widgets.php:247
+msgid "Display social media follow buttons."
+msgstr "Visa knappar för att följa social media."
+
+#: inc/admin/admin-widgets.php:301
+msgid "Description:"
+msgstr "Beskrivning:"
+
+#: inc/admin/admin-widgets.php:307
+msgid "Buttons Settings:"
+msgstr "Knappinställningar:"
+
+#: inc/admin/admin-widgets.php:308
+msgid ""
+"You can edit the look and feel of the buttons by pressing the button below:"
+msgstr "Ändra utseendet på knapparna genom att klicka på knappen nedan:"
+
+#: inc/admin/admin-widgets.php:309
+msgid "Buttons Settings"
+msgstr "Knappinställningar"
+
+#: inc/admin/submenu-page-content.php:10 inc/functions.php:112
+msgid "Content"
+msgstr "Innehåll"
+
+#: inc/admin/submenu-page-follow-widget.php:10 inc/functions.php:50
+#: inc/functions.php:118
+msgid "Follow Widget"
+msgstr "Följawidget"
+
+#: inc/admin/submenu-page-import-export.php:10
+msgid "Import/Export"
+msgstr "Import/Export"
+
+#: inc/admin/submenu-page-mobile.php:10 inc/functions.php:32
+#: inc/functions.php:113
+msgid "Mobile Sticky"
+msgstr "Klistrad mobil"
+
+#: inc/admin/submenu-page-pop-up.php:9 inc/functions.php:41
+#: inc/functions.php:114
+msgid "Pop-Up"
+msgstr "Pop-Up"
+
+#: inc/admin/submenu-page-settings.php:10
+#: inc/admin/views/view-submenu-page-settings.php:5 index.php:187
+msgid "Settings"
+msgstr "Inställningar"
+
+#: inc/admin/submenu-page-settings.php:87
+msgid "Serial key is valid."
+msgstr "Licensen är giltig"
+
+#: inc/admin/submenu-page-settings.php:91
+msgid "Serial key is invalid or missing."
+msgstr "Licensen är ogiltig eller saknas."
+
+#: inc/admin/submenu-page-sidebar.php:10 inc/functions.php:14
+#: inc/functions.php:111
+msgid "Floating Sidebar"
+msgstr "Flytande sidofält"
+
+#: inc/admin/submenu-page-toolkit.php:10
+msgid "Toolkit"
+msgstr "Verktyg"
+
+#: inc/admin/views/view-submenu-page-content.php:14
+msgid "Configure Content Sharing Buttons"
+msgstr "Delningsknappar för innehåll"
+
+#: inc/admin/views/view-submenu-page-content.php:22
+#: inc/admin/views/view-submenu-page-follow-widget.php:22
+#: inc/admin/views/view-submenu-page-mobile.php:23
+#: inc/admin/views/view-submenu-page-pop-up.php:22
+#: inc/admin/views/view-submenu-page-sidebar.php:23
+msgid "Social Networks"
+msgstr "Sociala nätvärk"
+
+#: inc/admin/views/view-submenu-page-content.php:31
+#: inc/admin/views/view-submenu-page-follow-widget.php:30
+#: inc/admin/views/view-submenu-page-mobile.php:31
+#: inc/admin/views/view-submenu-page-pop-up.php:31
+#: inc/admin/views/view-submenu-page-sidebar.php:32
+msgid "Select which social networks to display"
+msgstr "Välj först vilka sociala nätverk som ska visas"
+
+#: inc/admin/views/view-submenu-page-content.php:41
+#: inc/admin/views/view-submenu-page-follow-widget.php:40
+#: inc/admin/views/view-submenu-page-pop-up.php:41
+#: inc/admin/views/view-submenu-page-sidebar.php:42
+msgid "Button Style"
+msgstr "Knappstil"
+
+#: inc/admin/views/view-submenu-page-content.php:105
+#: inc/admin/views/view-submenu-page-follow-widget.php:104
+#: inc/admin/views/view-submenu-page-mobile.php:41
+#: inc/admin/views/view-submenu-page-sidebar.php:72
+msgid "Display Settings"
+msgstr "Visningsinställningar"
+
+#: inc/admin/views/view-submenu-page-content.php:107
+#: inc/admin/views/view-submenu-page-follow-widget.php:106
+#: inc/admin/views/view-submenu-page-pop-up.php:107
+#: inc/admin/views/view-submenu-page-sidebar.php:74
+msgid "Button shape"
+msgstr "Knappform"
+
+#: inc/admin/views/view-submenu-page-content.php:107
+#: inc/admin/views/view-submenu-page-follow-widget.php:106
+#: inc/admin/views/view-submenu-page-pop-up.php:107
+#: inc/admin/views/view-submenu-page-sidebar.php:74
+msgid "Rectangular"
+msgstr "Rektangulär"
+
+#: inc/admin/views/view-submenu-page-content.php:107
+#: inc/admin/views/view-submenu-page-follow-widget.php:106
+#: inc/admin/views/view-submenu-page-pop-up.php:107
+#: inc/admin/views/view-submenu-page-sidebar.php:74
+msgid "Rounded"
+msgstr "Rundade hörn"
+
+#: inc/admin/views/view-submenu-page-content.php:107
+#: inc/admin/views/view-submenu-page-follow-widget.php:106
+#: inc/admin/views/view-submenu-page-pop-up.php:107
+#: inc/admin/views/view-submenu-page-sidebar.php:74
+msgid "Circle"
+msgstr "Rund"
+
+#: inc/admin/views/view-submenu-page-content.php:109
+#: inc/admin/views/view-submenu-page-follow-widget.php:108
+#: inc/admin/views/view-submenu-page-pop-up.php:109
+#: inc/admin/views/view-submenu-page-sidebar.php:76
+msgid "Button size"
+msgstr "Knappstorlek"
+
+#: inc/admin/views/view-submenu-page-content.php:109
+#: inc/admin/views/view-submenu-page-follow-widget.php:108
+#: inc/admin/views/view-submenu-page-pop-up.php:109
+#: inc/admin/views/view-submenu-page-sidebar.php:76
+msgid "Small"
+msgstr "Liten"
+
+#: inc/admin/views/view-submenu-page-content.php:109
+#: inc/admin/views/view-submenu-page-follow-widget.php:108
+#: inc/admin/views/view-submenu-page-pop-up.php:109
+#: inc/admin/views/view-submenu-page-sidebar.php:76
+msgid "Medium"
+msgstr "Mellan"
+
+#: inc/admin/views/view-submenu-page-content.php:109
+#: inc/admin/views/view-submenu-page-follow-widget.php:108
+#: inc/admin/views/view-submenu-page-pop-up.php:109
+#: inc/admin/views/view-submenu-page-sidebar.php:76
+msgid "Large"
+msgstr "Stor"
+
+#: inc/admin/views/view-submenu-page-content.php:111
+msgid "Position"
+msgstr "Position"
+
+#: inc/admin/views/view-submenu-page-content.php:111
+msgid "Above"
+msgstr "Över"
+
+#: inc/admin/views/view-submenu-page-content.php:111
+msgid "Below"
+msgstr "Under"
+
+#: inc/admin/views/view-submenu-page-content.php:111
+msgid "Both"
+msgstr "Bägge"
+
+#: inc/admin/views/view-submenu-page-content.php:113
+#: inc/admin/views/view-submenu-page-follow-widget.php:110
+#: inc/admin/views/view-submenu-page-mobile.php:45
+#: inc/admin/views/view-submenu-page-pop-up.php:111
+msgid "Number of columns"
+msgstr "Bredd / kolumner"
+
+#: inc/admin/views/view-submenu-page-content.php:113
+#: inc/admin/views/view-submenu-page-follow-widget.php:110
+#: inc/admin/views/view-submenu-page-pop-up.php:111
+msgid "Width Auto"
+msgstr "Autobredd"
+
+#: inc/admin/views/view-submenu-page-content.php:113
+#: inc/admin/views/view-submenu-page-follow-widget.php:110
+#: inc/admin/views/view-submenu-page-mobile.php:45
+#: inc/admin/views/view-submenu-page-pop-up.php:111
+msgid "1 column"
+msgstr "1 kolumn"
+
+#: inc/admin/views/view-submenu-page-content.php:113
+#: inc/admin/views/view-submenu-page-follow-widget.php:110
+#: inc/admin/views/view-submenu-page-mobile.php:45
+#: inc/admin/views/view-submenu-page-pop-up.php:111
+msgid "2 columns"
+msgstr "2 kolumner"
+
+#: inc/admin/views/view-submenu-page-content.php:113
+#: inc/admin/views/view-submenu-page-follow-widget.php:110
+#: inc/admin/views/view-submenu-page-mobile.php:45
+#: inc/admin/views/view-submenu-page-pop-up.php:111
+msgid "3 columns"
+msgstr "3 kolumner"
+
+#: inc/admin/views/view-submenu-page-content.php:113
+#: inc/admin/views/view-submenu-page-follow-widget.php:110
+#: inc/admin/views/view-submenu-page-mobile.php:45
+#: inc/admin/views/view-submenu-page-pop-up.php:111
+msgid "4 columns"
+msgstr "4 kolumner"
+
+#: inc/admin/views/view-submenu-page-content.php:113
+#: inc/admin/views/view-submenu-page-follow-widget.php:110
+#: inc/admin/views/view-submenu-page-mobile.php:45
+#: inc/admin/views/view-submenu-page-pop-up.php:111
+msgid "5 columns"
+msgstr "5 kolumner"
+
+#: inc/admin/views/view-submenu-page-content.php:113
+#: inc/admin/views/view-submenu-page-follow-widget.php:110
+#: inc/admin/views/view-submenu-page-mobile.php:45
+#: inc/admin/views/view-submenu-page-pop-up.php:111
+msgid "6 columns"
+msgstr "6 kolumner"
+
+#: inc/admin/views/view-submenu-page-content.php:115
+msgid "Share Text"
+msgstr "Rubrik (Dela)"
+
+#: inc/admin/views/view-submenu-page-content.php:117
+#: inc/admin/views/view-submenu-page-follow-widget.php:112
+#: inc/admin/views/view-submenu-page-pop-up.php:113
+msgid "Show labels"
+msgstr "Visa etiketter"
+
+#: inc/admin/views/view-submenu-page-content.php:119
+#: inc/admin/views/view-submenu-page-follow-widget.php:114
+#: inc/admin/views/view-submenu-page-pop-up.php:115
+#: inc/admin/views/view-submenu-page-sidebar.php:80
+msgid "Button spacing"
+msgstr "Mellanrum"
+
+#: inc/admin/views/view-submenu-page-content.php:121
+#: inc/admin/views/view-submenu-page-follow-widget.php:116
+#: inc/admin/views/view-submenu-page-pop-up.php:167
+#: inc/admin/views/view-submenu-page-sidebar.php:88
+msgid "Show on mobile"
+msgstr "Visa på mobil"
+
+#: inc/admin/views/view-submenu-page-content.php:128
+#: inc/admin/views/view-submenu-page-mobile.php:58
+#: inc/admin/views/view-submenu-page-pop-up.php:121
+#: inc/admin/views/view-submenu-page-sidebar.php:95
+msgid "Buttons Share Counts"
+msgstr "Visa antal delningar"
+
+#: inc/admin/views/view-submenu-page-content.php:130
+#: inc/admin/views/view-submenu-page-mobile.php:60
+#: inc/admin/views/view-submenu-page-pop-up.php:123
+#: inc/admin/views/view-submenu-page-sidebar.php:97
+msgid "Show share count"
+msgstr "Visa antal delningar"
+
+#: inc/admin/views/view-submenu-page-content.php:130
+#: inc/admin/views/view-submenu-page-mobile.php:60
+#: inc/admin/views/view-submenu-page-pop-up.php:123
+#: inc/admin/views/view-submenu-page-sidebar.php:97
+msgid "Display the share count for each social network."
+msgstr "Visar hur många delningar som gjorts för varje socialt nätverk"
+
+#: inc/admin/views/view-submenu-page-content.php:132
+#: inc/admin/views/view-submenu-page-pop-up.php:125
+#: inc/admin/views/view-submenu-page-sidebar.php:99
+msgid "Show total share count"
+msgstr "Visa totalt antal delningar"
+
+#: inc/admin/views/view-submenu-page-content.php:132
+#: inc/admin/views/view-submenu-page-pop-up.php:125
+#: inc/admin/views/view-submenu-page-sidebar.php:99
+msgid "Display the share count for all social networks."
+msgstr "Slår ihop alla delningar till en totalsumma."
+
+#: inc/admin/views/view-submenu-page-content.php:134
+#: inc/admin/views/view-submenu-page-pop-up.php:127
+#: inc/admin/views/view-submenu-page-sidebar.php:101
+msgid "Total count position"
+msgstr "Placering av totalen"
+
+#: inc/admin/views/view-submenu-page-content.php:134
+#: inc/admin/views/view-submenu-page-pop-up.php:127
+#: inc/admin/views/view-submenu-page-sidebar.php:101
+msgid "Before Buttons"
+msgstr "Före knapparna"
+
+#: inc/admin/views/view-submenu-page-content.php:134
+#: inc/admin/views/view-submenu-page-pop-up.php:127
+#: inc/admin/views/view-submenu-page-sidebar.php:101
+msgid "After Buttons"
+msgstr "Efter knapparna"
+
+#: inc/admin/views/view-submenu-page-content.php:136
+#: inc/admin/views/view-submenu-page-mobile.php:62
+#: inc/admin/views/view-submenu-page-pop-up.php:129
+#: inc/admin/views/view-submenu-page-sidebar.php:103
+msgid "Share count round"
+msgstr "Avrundning"
+
+#: inc/admin/views/view-submenu-page-content.php:136
+#: inc/admin/views/view-submenu-page-pop-up.php:129
+#: inc/admin/views/view-submenu-page-sidebar.php:103
+msgid ""
+"If the share count for each network is bigger than 1000 it will be rounded "
+"to one decimal ( eg. 1267 will show as 1.2k ). Applies to Total Share Counts "
+"as well."
+msgstr ""
+"Om antalet delningar för varje nätverk är större än 1000 avrundas summan "
+"till ett decimaltal (1267 visas t.ex. som 1.2k). Gäller även för totala "
+"antalet delningar."
+
+#: inc/admin/views/view-submenu-page-content.php:138
+#: inc/admin/views/view-submenu-page-mobile.php:64
+#: inc/admin/views/view-submenu-page-pop-up.php:131
+#: inc/admin/views/view-submenu-page-sidebar.php:105
+msgid "Minimum share count"
+msgstr "Minsta antal delningar"
+
+#: inc/admin/views/view-submenu-page-content.php:138
+#: inc/admin/views/view-submenu-page-mobile.php:64
+#: inc/admin/views/view-submenu-page-pop-up.php:131
+#: inc/admin/views/view-submenu-page-sidebar.php:105
+msgid ""
+"Display share counts only if the total share count is higher than this value."
+msgstr "Visar antalet delningar först när totalt antal överstiger detta värde."
+
+#: inc/admin/views/view-submenu-page-content.php:145
+#: inc/admin/views/view-submenu-page-follow-widget.php:123
+#: inc/admin/views/view-submenu-page-mobile.php:71
+#: inc/admin/views/view-submenu-page-pop-up.php:137
+#: inc/admin/views/view-submenu-page-sidebar.php:112
+msgid "Buttons Custom Colors"
+msgstr "Anpassade färger"
+
+#: inc/admin/views/view-submenu-page-content.php:147
+#: inc/admin/views/view-submenu-page-follow-widget.php:125
+#: inc/admin/views/view-submenu-page-mobile.php:73
+#: inc/admin/views/view-submenu-page-pop-up.php:139
+#: inc/admin/views/view-submenu-page-sidebar.php:114
+msgid "Buttons color"
+msgstr "Knappfärg"
+
+#: inc/admin/views/view-submenu-page-content.php:148
+#: inc/admin/views/view-submenu-page-follow-widget.php:126
+#: inc/admin/views/view-submenu-page-mobile.php:74
+#: inc/admin/views/view-submenu-page-pop-up.php:140
+#: inc/admin/views/view-submenu-page-sidebar.php:115
+msgid "Buttons hover color"
+msgstr "Knappfärg med pekare över"
+
+#: inc/admin/views/view-submenu-page-content.php:155
+#: inc/admin/views/view-submenu-page-mobile.php:81
+#: inc/admin/views/view-submenu-page-pop-up.php:173
+#: inc/admin/views/view-submenu-page-sidebar.php:122
+msgid "Post Type Display Settings"
+msgstr "Ange innehåll där knapparna ska visas"
+
+#: inc/admin/views/view-submenu-page-content.php:163
+#: inc/admin/views/view-submenu-page-follow-widget.php:133
+#: inc/admin/views/view-submenu-page-mobile.php:89
+#: inc/admin/views/view-submenu-page-pop-up.php:181
+#: inc/admin/views/view-submenu-page-settings.php:113
+#: inc/admin/views/view-submenu-page-sidebar.php:130
+msgid "Save Changes"
+msgstr "Spara ändringar"
+
+#: inc/admin/views/view-submenu-page-follow-widget.php:14
+msgid "Configure Follow Widget Buttons"
+msgstr "Inställningar för Följawidget"
+
+#: inc/admin/views/view-submenu-page-import-export.php:6
+msgid "Import and Export"
+msgstr "Import och export"
+
+#: inc/admin/views/view-submenu-page-import-export.php:11
+#: inc/admin/views/view-submenu-page-import-export.php:18
+msgid "Import"
+msgstr "Import"
+
+#: inc/admin/views/view-submenu-page-import-export.php:14
+msgid ""
+"Select a settings file exported by this plugin. Importing the file will "
+"result in overwriting all settings saved by the plugin."
+msgstr ""
+"Välj en fil med inställningar som exporterats av detta tillägg. Import av "
+"filen resulterar i att alla nuvarande inställningar som sparats av tillägget "
+"skrivs över."
+
+#: inc/admin/views/view-submenu-page-import-export.php:22
+#: inc/admin/views/view-submenu-page-import-export.php:27
+msgid "Export"
+msgstr "Export"
+
+#: inc/admin/views/view-submenu-page-import-export.php:25
+msgid ""
+"After clicking the button below a file with all settings from the plugin "
+"will be saved on your computer. The file will be having the \".json\" "
+"extension."
+msgstr ""
+"Klicka på knappen nedan för att spara en fil på din dator, med tilläggets "
+"samtliga inställningar. Filen kommer ha ändelsen \".json\"."
+
+#: inc/admin/views/view-submenu-page-mobile.php:14
+msgid "Configure Mobile Sharing Buttons"
+msgstr "Klistrade mobilknappar"
+
+#: inc/admin/views/view-submenu-page-mobile.php:43
+msgid "Screen width (pixels)"
+msgstr "Skärmbredd (pixlar)"
+
+#: inc/admin/views/view-submenu-page-mobile.php:43
+msgid ""
+"For screen widths smaller than this value ( in pixels ) the Mobile Sticky "
+"will be displayed on screen."
+msgstr ""
+"Skärmar med mindre skärmbredd än detta värde (i pixlar), kommer att visa "
+"klistrade mobilknappar."
+
+#: inc/admin/views/view-submenu-page-mobile.php:47
+#: inc/admin/views/view-submenu-page-pop-up.php:153
+#: inc/admin/views/view-submenu-page-sidebar.php:82
+msgid "Intro Animation"
+msgstr "Animerad intro"
+
+#: inc/admin/views/view-submenu-page-mobile.php:47
+#: inc/admin/views/view-submenu-page-pop-up.php:153
+#: inc/admin/views/view-submenu-page-sidebar.php:82
+msgid "No Animation"
+msgstr "Ingen animation"
+
+#: inc/admin/views/view-submenu-page-mobile.php:47
+#: inc/admin/views/view-submenu-page-pop-up.php:153
+#: inc/admin/views/view-submenu-page-sidebar.php:82
+msgid "Fade In"
+msgstr "Tona in"
+
+#: inc/admin/views/view-submenu-page-mobile.php:47
+#: inc/admin/views/view-submenu-page-sidebar.php:82
+msgid "Slide In"
+msgstr "Svep in"
+
+#: inc/admin/views/view-submenu-page-mobile.php:49
+#: inc/admin/views/view-submenu-page-pop-up.php:155
+#: inc/admin/views/view-submenu-page-sidebar.php:84
+msgid "Show after user scrolls"
+msgstr "Visa efter rullning"
+
+#: inc/admin/views/view-submenu-page-mobile.php:51
+#: inc/admin/views/view-submenu-page-pop-up.php:157
+#: inc/admin/views/view-submenu-page-sidebar.php:86
+msgid "Scroll distance (%)"
+msgstr "Rullningsavstånd (%)"
+
+#: inc/admin/views/view-submenu-page-mobile.php:51
+#: inc/admin/views/view-submenu-page-sidebar.php:86
+msgid ""
+"The distance in percentage (%) of the total page height the user has to "
+"scroll before the buttons will appear."
+msgstr ""
+"Avståndet i procent (%) av sidans totala höjd som användaren måste rulla "
+"innan knapparna visas."
+
+#: inc/admin/views/view-submenu-page-mobile.php:62
+msgid ""
+"If the share count for each network is bigger than 1000 it will be rounded "
+"to one decimal ( eg. 1267 will show as 1.2k )."
+msgstr ""
+"Om antalet delningar för varje nätverk är större än 1000 avrundas summan "
+"till ett decimaltal (1267 visas t.ex. som 1.2k)."
+
+#: inc/admin/views/view-submenu-page-pop-up.php:14
+msgid "Configure Pop-Up Sharing Buttons"
+msgstr "Popup-knappar"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:105
+msgid "Buttons Display Settings"
+msgstr "Utseende"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:147
+msgid "Pop-Up Display Settings"
+msgstr "Popup visningsinställningar"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:149
+msgid "Title"
+msgstr "Titel"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:151
+msgid "Message"
+msgstr "Meddelande"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:153
+msgid "Scale"
+msgstr "Skala"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:153
+msgid "Slide Up"
+msgstr "Glid upp"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:153
+msgid "Slide Down"
+msgstr "Glid ner"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:157
+msgid ""
+"The distance in percentage (%) of the total page height the user has to "
+"scroll before the pop-up will appear."
+msgstr ""
+"Avståndet i procent (%) av sidans totala höjd som användaren måste rulla "
+"innan popupen visas."
+
+#: inc/admin/views/view-submenu-page-pop-up.php:159
+msgid "Show when at the bottom of the post"
+msgstr "Visas längst ner på sidan"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:161
+msgid "Show on exit intent"
+msgstr "Visas när sidan lämnas"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:163
+msgid "Show after \"x\" seconds"
+msgstr "Visas efter \"x\" sekunder"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:163
+msgid "Add a time delay ( in seconds ) until the pop-up should appear."
+msgstr "Ange fördröjning (i sekunder) innan popupen visas."
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid "Show once every"
+msgstr "Visas igen efter"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid "Everytime"
+msgstr "Varje gång"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid "1 days"
+msgstr "1 dag"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid "2 days"
+msgstr "2 dagar"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid "3 days"
+msgstr "3 dagar"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid "4 days"
+msgstr "4 dagar"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid "5 days"
+msgstr "5 dagar"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid "6 days"
+msgstr "6 dagar"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid "7 days"
+msgstr "7 dagar"
+
+#: inc/admin/views/view-submenu-page-pop-up.php:165
+msgid ""
+"The pop-up will appear to users once every X number of days you select. If "
+"you select \"Everytime\" the pop-up will appear for each page the user "
+"visits."
+msgstr ""
+"Upprepad visning av popupen sker efter varje X antal dagar du väljer. Om du "
+"väljer \"Varje gång\" visas popupen på varje sida som användaren besöker."
+
+#: inc/admin/views/view-submenu-page-settings.php:27
+msgid "Click to Tweet"
+msgstr "Klicka för att tweeta"
+
+#: inc/admin/views/view-submenu-page-settings.php:29
+msgid "Twitter Username (handle)"
+msgstr "Twitter användarnamn (handtag)"
+
+#: inc/admin/views/view-submenu-page-settings.php:29
+msgid ""
+"Add the Twitter Username (handle) that you wish to appear with the tweets. "
+"Do not add the \"@\" before the username."
+msgstr ""
+"Lägg till det twitternamn (handtag) som du vill bifoga tweeten. \"@\"-"
+"tecknet ska INTE läggas till före användarnamnet."
+
+#: inc/admin/views/view-submenu-page-settings.php:30
+msgid "Tweet style"
+msgstr "Twitterstil"
+
+#: inc/admin/views/view-submenu-page-settings.php:30
+msgid "Simple"
+msgstr "Enkel"
+
+#: inc/admin/views/view-submenu-page-settings.php:30
+msgid "Boxed"
+msgstr "Box"
+
+#: inc/admin/views/view-submenu-page-settings.php:30
+msgid "With Background"
+msgstr "Med bakgrund"
+
+#: inc/admin/views/view-submenu-page-settings.php:30
+msgid "Simple with Author Avatar"
+msgstr "Enkel med författarbild"
+
+#: inc/admin/views/view-submenu-page-settings.php:30
+msgid "Boxed with Author Avatar"
+msgstr "Box med författarbild"
+
+#: inc/admin/views/view-submenu-page-settings.php:30
+msgid "With Background and Author Avatar"
+msgstr "Med bakgrund och författarbild"
+
+#: inc/admin/views/view-submenu-page-settings.php:31
+msgid "Link Text"
+msgstr "Länktext"
+
+#: inc/admin/views/view-submenu-page-settings.php:37
+msgid "Link shortening"
+msgstr "URL-förkortare"
+
+#: inc/admin/views/view-submenu-page-settings.php:45
+msgid "Bitly"
+msgstr "Bitly"
+
+#: inc/admin/views/view-submenu-page-settings.php:51
+msgid "Generic Access Token"
+msgstr "Access Token"
+
+#: inc/admin/views/view-submenu-page-settings.php:51
+#, php-format
+msgid ""
+"You will need to create an account on %1$sBitly.com%2$s and generate the "
+"Generic Access Token from %3$sthis link%4$s."
+msgstr ""
+"Du behöver skapa ett konto på %1$sBitly.com%2$s för att generera en Access "
+"Token från %3$sdenna länk %4$s."
+
+#: inc/admin/views/view-submenu-page-settings.php:59
+msgid "Google Analytics UTM Tracking"
+msgstr "Google Analytics UTM-spårning"
+
+#: inc/admin/views/view-submenu-page-settings.php:67
+msgid "Campaign Source"
+msgstr "Källa"
+
+#: inc/admin/views/view-submenu-page-settings.php:67
+msgid ""
+"Use utm_source to identify a search engine, newsletter name, or other "
+"source. Using \"{{network_name}}\" as value here will add the name of the "
+"social network button as the value of the utm_source parameter."
+msgstr ""
+"Använd utm_source för att identifiera en sökmotor, nyhetsbrev namn eller "
+"annan källa. Används \"{{network_name}}\" som värde kommer namnet på "
+"knappens sociala nätverk läggas som värde för parametern utm_source."
+
+#: inc/admin/views/view-submenu-page-settings.php:68
+msgid "Campaign Medium"
+msgstr "Medium"
+
+#: inc/admin/views/view-submenu-page-settings.php:68
+msgid "Use utm_medium to identify a medium such as email or social."
+msgstr ""
+"Använd utm_medium att identifiera ett medium såsom e-post eller socialt."
+
+#: inc/admin/views/view-submenu-page-settings.php:69
+msgid "Campaign Name"
+msgstr "Kampanjens namn"
+
+#: inc/admin/views/view-submenu-page-settings.php:69
+msgid ""
+"Use utm_campaign to identify a specific product promotion or strategic "
+"campaign."
+msgstr ""
+"Använd utm_campaign för att identifiera en specifik produktrabatt eller "
+"strategisk kampanj."
+
+#: inc/admin/views/view-submenu-page-settings.php:74
+msgid "Misc"
+msgstr "Övrigt"
+
+#: inc/admin/views/view-submenu-page-settings.php:76
+msgid "Disable Open Graph Meta Tags"
+msgstr "Inaktivera Open Graph Meta-Taggar"
+
+#: inc/admin/views/view-submenu-page-settings.php:77
+msgid "Enable Twitter Tweet Counts"
+msgstr "Aktivera räkning av Tweets"
+
+#: inc/admin/views/view-submenu-page-settings.php:77
+#, php-format
+msgid ""
+"We have partenered with %1$sNew Share Counts%3$s to bring back Twitter Share "
+"Counts. You will need to register your website on %1$stheir website%3$s in "
+"order for Social Pug to be able to return the share counts. For a step by "
+"step tutorial read %2$sthis article%3$s."
+msgstr ""
+"Vi samarbetar med %1$sNew Share Count %3$s för att åter kunna räkna "
+"Twitterteets. Du kommer att behöva registrera din webbplats på %1$sderas "
+"webbplats%3$s för att Social Pug ska kunna hämta statistiken. Läs steg för "
+"steg anvisning att läsa finns i denna %2$sdenna artikel%3$s."
+
+#: inc/admin/views/view-submenu-page-settings.php:82
+msgid "Register Version"
+msgstr "Social Pug Licensnyckel"
+
+#: inc/admin/views/view-submenu-page-settings.php:84
+msgid "Serial Key"
+msgstr "Licensnyckel"
+
+#: inc/admin/views/view-submenu-page-settings.php:92
+msgid "Facebook Username"
+msgstr "Facebook användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:93
+msgid "Twitter Username"
+msgstr "Twitter användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:94
+msgid "Add Twitter Username to all tweets"
+msgstr "Lägg till Twitternamn i alla tweets"
+
+#: inc/admin/views/view-submenu-page-settings.php:95
+msgid "Google+ Username / ID"
+msgstr "Google+  användarnamn / ID"
+
+#: inc/admin/views/view-submenu-page-settings.php:96
+msgid "Pinterest Username"
+msgstr "Pinterest användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:97
+msgid "LinkedIn Username"
+msgstr "LinkedIn användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:98
+msgid "Reddit Username"
+msgstr "Reddit användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:99
+msgid "VK Username"
+msgstr "VK användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:100
+msgid "Instagram Username"
+msgstr "Instagram användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:101
+msgid "YouTube Username"
+msgstr "YouTube användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:102
+msgid "Vimeo Username"
+msgstr "Vimeo användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:103
+msgid "SoundCloud Username"
+msgstr "SoundCloud användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:104
+msgid "Twitch Username"
+msgstr "Twitch användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:105
+msgid "Yummly Username"
+msgstr "Yummly användarnamn"
+
+#: inc/admin/views/view-submenu-page-settings.php:106
+msgid "Behance Username"
+msgstr "Behance användarnamn"
+
+#: inc/admin/views/view-submenu-page-sidebar.php:14
+msgid "Configure Sidebar Sharing Buttons"
+msgstr "Konfigurera Sidomenyns delningknappar"
+
+#: inc/admin/views/view-submenu-page-sidebar.php:78
+msgid "Buttons position"
+msgstr "Knapparnas position"
+
+#: inc/admin/views/view-submenu-page-sidebar.php:78
+msgid "Left"
+msgstr "Vänster"
+
+#: inc/admin/views/view-submenu-page-sidebar.php:78
+msgid "Right"
+msgstr "Höger"
+
+#: inc/admin/views/view-submenu-page-sidebar.php:80
+msgid "Adds bottom spacing for each button."
+msgstr "Lägger till ett avstånd under varje knapp"
+
+#: inc/admin/views/view-submenu-page-toolkit.php:5
+msgid "Welcome to Social Pug"
+msgstr "Välkommen till Social Pug"
+
+#: inc/admin/views/view-submenu-page-toolkit.php:6
+msgid "This is the new and improved Social Pug admin dashboard."
+msgstr "Det här är Social Pugs nya och förbättrade översiktspanel."
+
+#: inc/admin/views/view-submenu-page-toolkit.php:7
+msgid ""
+"We hope you will enjoy it as much as we do, but if you aren't so sure about "
+"it, leave us some feedback with your thoughts."
+msgstr ""
+"Vi hoppas att du gillar den lika mycket som vi gör, men är du helt säker på "
+"det, ge oss gärna lite feedback med dina tankar."
+
+#: inc/admin/views/view-submenu-page-toolkit.php:16
+msgid "Share Tools"
+msgstr "Delningsverktyg"
+
+#: inc/admin/views/view-submenu-page-toolkit.php:29
+msgid "Follow Tools"
+msgstr "Följaverktyg"
+
+#: inc/functions-admin.php:88
+msgid "Active"
+msgstr "Aktiva"
+
+#: inc/functions-admin.php:88
+msgid "Inactive"
+msgstr "Inaktiva"
+
+#: inc/functions-admin.php:217
+msgid "Select Image"
+msgstr "Välj bild"
+
+#: inc/functions-admin.php:218
+msgid "Remove Image"
+msgstr "Ta bort bild"
+
+#: inc/functions-admin.php:524
+msgid "Settings saved."
+msgstr "Inställningar sparade."
+
+#: inc/functions-admin.php:525
+msgid "Settings imported."
+msgstr "Inställningar importerade."
+
+#: inc/functions-admin.php:526
+msgid "Please select an import file."
+msgstr "Välj en importfil."
+
+#: inc/functions-admin.php:527
+msgid "Import file is not valid."
+msgstr "Filen är inte giltig."
+
+#: inc/functions-admin.php:551
+#, php-format
+msgid ""
+"Your <strong>Social Pug</strong> license serial key is empty. Please <a href="
+"\"%1$s\">register your copy</a> to receive automatic updates and support. "
+"<br /><br /> Need a license key? <a class=\"dpsp-get-license button button-"
+"primary\" target=\"_blank\" href=\"%2$s\">Get your license here</a>"
+msgstr ""
+"Licensnyckel för <strong>Sociala Pug</strong> är inte angiven. Vänligen <a "
+"href=\"%1$s\">Registrera din licens</a> för automatisk programuppdatering "
+"och tillgång till support.<br><br>Har du ingen licens? <a class=\"dpsp-get-"
+"license button button-primary\" target=\"_blank\" href=\"%2$s\">kan du "
+"skaffa en här</a>."
+
+#: inc/functions-admin.php:561
+#, php-format
+msgid ""
+"The serial you have provided for <strong>Social Pug</strong> is invalid. To "
+"receive automatic updates and support please enter a valid license key. <br /"
+"><br /> <a class=\"dpsp-get-license button button-primary\" target=\"_blank"
+"\" href=\"%1$s\">Get your license here</a>"
+msgstr ""
+"Licensnyckeln som du angett för <strong>Social Pug</strong> är ogiltig. För "
+"att få atutomatisk uppdatering och support, vänligen ange en giltig "
+"licensnyckel. <br /><br /> <a class=\"dpsp-get-license button button-primary"
+"\" target=\"_blank\" href=\"%1$s\">Skaffa en licens här</a>"
+
+#: inc/functions-admin.php:594
+msgid "Social Pug: Twitter Tweet Counts are Back!"
+msgstr "Social Pug: Räkning av tweets är tillbaka!"
+
+#: inc/functions-admin.php:596
+msgid "Learn How to Activate Them"
+msgstr "Så här aktiverar du dem"
+
+#: inc/functions-admin.php:649
+msgid "You can make Social Pug better"
+msgstr "Du kan göra Social Pug bättre"
+
+#: inc/functions-admin.php:655
+msgid "What do you like most about Social Pug? *"
+msgstr "Vad tycker du mest om med Social Pug *"
+
+#: inc/functions-admin.php:658
+msgid "What new features would you like to have? *"
+msgstr "Vilka nya features skulle du vila ha i Social Pug? *"
+
+#: inc/functions-admin.php:661
+msgid "Your e-mail: *"
+msgstr "Din e-post: *"
+
+#: inc/functions-admin.php:664
+msgid "Your name: *"
+msgstr "Ditt namn: *"
+
+#: inc/functions-admin.php:667
+msgid "Send Feeback"
+msgstr "Skicka feedback"
+
+#: inc/functions-admin.php:668
+msgid "Some fields are still empty."
+msgstr "Några fält är fortfarande tomma."
+
+#: inc/functions-admin.php:676
+msgid "Thank you for your feedback!"
+msgstr "Tack för din feedback!"
+
+#: inc/functions-admin.php:679
+msgid "Close"
+msgstr "Stäng"
+
+#: inc/functions-cron.php:12
+msgid "Once every two hours"
+msgstr "En gång varannan timme"
+
+#: inc/functions-cron.php:17
+msgid "Once every week"
+msgstr "En gång i veckan"
+
+#: inc/functions-frontend.php:350
+msgid "shares"
+msgstr "delningar"
+
+#: inc/functions.php:23
+msgid "Inline Content"
+msgstr "På rad"
+
+#: inc/functions.php:1079
+msgid "Sharing is Caring"
+msgstr "Att dela är att bry sig"
+
+#: inc/functions.php:1080
+msgid "Help spread the word. You're awesome for doing it!"
+msgstr "Hjälpa till att sprida. Du är awesome om du gör det!"
+
+#: index.php:64
+msgid "Social Pug"
+msgstr "Social Pug"

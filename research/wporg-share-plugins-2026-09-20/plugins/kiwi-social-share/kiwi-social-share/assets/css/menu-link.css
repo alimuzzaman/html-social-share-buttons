@@ -1,0 +1,10 @@
+.wp-has-submenu a[href*="admin.php?page=kiwi-upgrade"], a.kiwi-upgrade-pro {
+    color: red !important;
+}
+
+.wp-has-submenu a[href*="admin.php?page=kiwi-upgrade"]:after, a.kiwi-upgrade-pro:after {
+    font-family: dashicons;
+    content: '\f155';
+    margin-left: 7px;
+    vertical-align: middle;
+}

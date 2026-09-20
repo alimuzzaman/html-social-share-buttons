@@ -1,0 +1,11 @@
+#adminmenu .ssb-sidebar-upgrade-pro a {
+	background-color: #00a32a;
+	color: #fff;
+	font-weight: 600;
+}
+
+#adminmenu .ssb-sidebar-upgrade-pro a:hover,
+#adminmenu .ssb-sidebar-upgrade-pro a:focus {
+	background-color: #008a20;
+	color: #fff;
+}

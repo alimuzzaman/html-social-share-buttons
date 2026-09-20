@@ -1,0 +1,25 @@
+/*AMP design for social buttons*/
+
+.kiwi-article-bar a[data-class="popup"] span:not(.kicon-mix) {
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    left:0;
+    right:0;
+    margin:0 auto;
+}
+.kiwi-article-bar .kiwi-nw-whatsapp.kiwi-visible-desktop {
+    display:block;
+}
+ul.kiwi-article-bar li {
+    padding:0px;
+    margin:0px auto;
+}
+a.kiwi-nw-email {
+    display:flex !important;
+    flex-wrap:wrap;
+    align-content: center;
+}
+a.kiwi-nw-email span.kicon-envelope {
+    margin:0px auto;
+}
