@@ -18,6 +18,7 @@ final class RenderRequest {
 	private $showHeading;
 	private $buttonAppearance;
 	private $autoHideEnabled;
+	private $browserUrlEnabled;
 
 	public function __construct(
 		$iconSetId,
@@ -31,7 +32,8 @@ final class RenderRequest {
 		array $profileLinks = array(),
 		$showHeading = false,
 		$buttonAppearance = ButtonAppearance::LEGACY,
-		$autoHideEnabled = false
+		$autoHideEnabled = false,
+		$browserUrlEnabled = false
 	) {
 		RenderPlacement::assertValid( $placement );
 
@@ -77,6 +79,7 @@ final class RenderRequest {
 		$this->showHeading = (bool) $showHeading;
 		$this->buttonAppearance = ButtonAppearance::normalize( $buttonAppearance );
 		$this->autoHideEnabled = (bool) $autoHideEnabled;
+		$this->browserUrlEnabled = (bool) $browserUrlEnabled;
 	}
 
 	public function iconSetId() {
@@ -129,6 +132,10 @@ final class RenderRequest {
 
 	public function autoHideEnabled() {
 		return $this->autoHideEnabled;
+	}
+
+	public function browserUrlEnabled() {
+		return $this->browserUrlEnabled;
 	}
 
 	private function normalizeProfileUrl( $networkId, $url ) {

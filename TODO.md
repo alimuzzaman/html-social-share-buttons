@@ -5,8 +5,8 @@ own compatibility, privacy, and runtime evidence before implementation.
 
 ## URL and sharing behavior
 
-- [ ] Add a user-facing URL mode (`permalink`, `current request`, or `custom`)
-      only after the source-precedence contract is documented across shortcodes,
+- [ ] Add a broader user-facing URL mode (`permalink`, `current request`, or
+      `custom`) after the opt-in browser URL mode is proven across shortcodes,
       blocks, widgets, builders, AJAX, and legacy calls.
 - [ ] Add an explicit query-parameter policy for functional arguments versus
       tracking arguments. Do not strip `utm_*`, `fbclid`, `gclid`, or similar

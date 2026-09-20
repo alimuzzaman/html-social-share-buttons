@@ -79,7 +79,8 @@ final class OptionSettingsCodec implements SettingsCodec {
 			$this->audienceValue( $stored, 'show_for_logged_out_user' ),
 			ButtonAppearance::normalize(
 				isset( $stored['button_appearance'] ) ? $stored['button_appearance'] : null
-			)
+			),
+			OptionSettingsTruthiness::isStrictBoolean( isset( $stored['use_browser_url'] ) ? $stored['use_browser_url'] : false )
 		);
 	}
 
@@ -127,6 +128,7 @@ final class OptionSettingsCodec implements SettingsCodec {
 		$this->writeBoolean( $original, 'auto_hide_btn', $settings->autoHideEnabled() );
 		$this->writeBoolean( $original, 'use_port', $settings->preserveUrlPort() );
 		$this->writeBoolean( $original, 'nofollow', $settings->noFollow() );
+		$this->writeBoolean( $original, 'use_browser_url', $settings->useBrowserUrl() );
 		$this->writeAudience( $original, 'show_for_current_user', $settings->showForCurrentUser() );
 		$this->writeAudience( $original, 'show_for_logged_in_user', $settings->showForLoggedInUser() );
 		$this->writeAudience( $original, 'show_for_logged_out_user', $settings->showForLoggedOutUser() );

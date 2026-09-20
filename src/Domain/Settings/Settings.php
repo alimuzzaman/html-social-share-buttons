@@ -23,6 +23,7 @@ final class Settings {
 	private $showForLoggedInUser;
 	private $showForLoggedOutUser;
 	private $buttonAppearance;
+	private $useBrowserUrl;
 
 	public function __construct(
 		$title,
@@ -42,7 +43,8 @@ final class Settings {
 		$showForCurrentUser = true,
 		$showForLoggedInUser = true,
 		$showForLoggedOutUser = true,
-		$buttonAppearance = ButtonAppearance::LEGACY
+		$buttonAppearance = ButtonAppearance::LEGACY,
+		$useBrowserUrl = false
 	) {
 		$this->title             = (string) $title;
 		$this->iconSetId         = (string) $iconSetId;
@@ -62,6 +64,7 @@ final class Settings {
 		$this->showForLoggedInUser    = (bool) $showForLoggedInUser;
 		$this->showForLoggedOutUser   = (bool) $showForLoggedOutUser;
 		$this->buttonAppearance       = ButtonAppearance::normalize( $buttonAppearance );
+		$this->useBrowserUrl          = (bool) $useBrowserUrl;
 	}
 
 	public function title() {
@@ -145,5 +148,9 @@ final class Settings {
 
 	public function buttonAppearance() {
 		return $this->buttonAppearance;
+	}
+
+	public function useBrowserUrl() {
+		return $this->useBrowserUrl;
 	}
 }

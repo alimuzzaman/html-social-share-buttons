@@ -28,10 +28,23 @@ switch (command) {
 		runSandbox(['--instance', instanceName(), 'wp', ...rest]);
 		break;
 	case 'test':
-		runSandboxTests(['test', '--project-dir', REPO_ROOT, '--label', process.env.SANDBOX_LABEL || 'default', ...rest]);
+		runSandboxTests(['test', '--local', '--project-dir', REPO_ROOT, '--label', process.env.SANDBOX_LABEL || 'default', ...rest]);
 		break;
 	case 'e2e':
-		runSandbox(['e2e', '--project-dir', REPO_ROOT, '--workers', '1', ...rest]);
+		try {
+			const {spawnSync} = require('child_process');
+			const result = spawnSync(process.execPath, [require.resolve('./local-e2e'), ...rest], {
+				cwd: REPO_ROOT,
+				stdio: 'inherit',
+			});
+			if (result.error) {
+				throw result.error;
+			}
+			process.exit(result.status === null ? 1 : result.status);
+		} catch (error) {
+			console.error(`Local E2E runner failed: ${error.message}`);
+			process.exit(error.status || 1);
+		}
 		break;
 	default:
 		console.error('Usage: sandbox-env.js <start|status|destroy|run [wp-cli args]|test [phpunit args]|e2e [playwright args]>');

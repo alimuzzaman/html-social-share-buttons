@@ -2,6 +2,8 @@
 
 namespace Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend;
 
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Frontend\FrontendFeatureRegistry;
+
 /**
  * Collects the assets used by rendered button groups during one request.
  *
@@ -16,11 +18,17 @@ final class AssetCollector {
 	private $fallbackStylesheet;
 	private $version;
 	private $buttonAppearanceStyleHandle;
+	private $frontendScriptUrl;
+	private $frontendScriptHandle;
+	private $requiresFrontendJs = false;
+	private $frontendFeatures = array();
 
-	public function __construct( $fallbackStylesheet, $version = '3.2.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance' ) {
+	public function __construct( $fallbackStylesheet, $version = '3.2.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance', $frontendScriptUrl = '', $frontendScriptHandle = 'hssb-browser-url' ) {
 		$this->fallbackStylesheet = (string) $fallbackStylesheet;
 		$this->version = (string) $version;
 		$this->buttonAppearanceStyleHandle = (string) $buttonAppearanceStyleHandle;
+		$this->frontendScriptUrl = (string) $frontendScriptUrl;
+		$this->frontendScriptHandle = (string) $frontendScriptHandle;
 	}
 
 	/**
@@ -47,6 +55,18 @@ final class AssetCollector {
 				}
 			}
 		}
+
+		if ( method_exists( $outcome, 'requiresFrontendJs' ) && $outcome->requiresFrontendJs() ) {
+			$this->requiresFrontendJs = true;
+		}
+		if ( method_exists( $outcome, 'frontendFeatures' ) ) {
+			foreach ( (array) $outcome->frontendFeatures() as $featureId ) {
+				$featureId = (string) $featureId;
+				if ( FrontendFeatureRegistry::requiresFrontendJs( $featureId ) ) {
+					$this->frontendFeatures[ $featureId ] = $featureId;
+				}
+			}
+		}
 	}
 
 	/**
@@ -55,7 +75,7 @@ final class AssetCollector {
 	 * use this request-scoped instance.
 	 */
 	public function fresh() {
-		return new self( $this->fallbackStylesheet, $this->version, $this->buttonAppearanceStyleHandle );
+		return new self( $this->fallbackStylesheet, $this->version, $this->buttonAppearanceStyleHandle, $this->frontendScriptUrl, $this->frontendScriptHandle );
 	}
 
 	public function enqueueStyles() {
@@ -82,6 +102,20 @@ final class AssetCollector {
 				$this->version
 			);
 		}
+	}
+
+	public function enqueueScripts() {
+		if ( ! $this->requiresFrontendJs || '' === $this->frontendScriptUrl ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			$this->frontendScriptHandle,
+			$this->frontendScriptUrl,
+			array(),
+			$this->version,
+			true
+		);
 	}
 
 	public function inlineIconStyles( $autoHideEnabled ) {

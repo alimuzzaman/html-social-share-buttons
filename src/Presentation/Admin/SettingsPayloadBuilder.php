@@ -8,6 +8,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Bootstrap\PluginConfig;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\IconSet\IconSetSelectionPolicy;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\NetworkRegistry;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Frontend\FrontendFeatureRegistry;
 
 final class SettingsPayloadBuilder {
 	private $settings;
@@ -47,6 +48,7 @@ final class SettingsPayloadBuilder {
 		$options['profile_links'] = $loaded->profileLinks();
 		$options['auto_hide_btn'] = $loaded->autoHideEnabled();
 		$options['nofollow'] = $loaded->noFollow();
+		$options['use_browser_url'] = $loaded->useBrowserUrl();
 		$options['show_for_current_user'] = $loaded->showForCurrentUser();
 		$options['show_for_logged_in_user'] = $loaded->showForLoggedInUser();
 		$options['show_for_logged_out_user'] = $loaded->showForLoggedOutUser();
@@ -67,6 +69,7 @@ final class SettingsPayloadBuilder {
 			'exclude_custom'                 => $excluded['custom'],
 			'defaultIconset'                 => IconSetSelectionPolicy::NEW_DEFAULT_ID,
 			'button_appearances'             => $this->buttonAppearances(),
+			'frontend_features'              => FrontendFeatureRegistry::all(),
 			'strings'                        => $this->interfaceStrings(),
 		);
 	}
@@ -190,6 +193,11 @@ final class SettingsPayloadBuilder {
 			'autoHide'                    => __( 'Auto hide button', 'html-social-share-buttons' ),
 			'canonicalUrls'               => __( 'Sharing uses WordPress canonical URLs, including any configured port.', 'html-social-share-buttons' ),
 			'noFollow'                    => __( 'No follow social link', 'html-social-share-buttons' ),
+			'useBrowserUrl'               => __( 'Use browser URL for sharing', 'html-social-share-buttons' ),
+			'useBrowserUrlHelp'           => __( 'Adds JavaScript to public pages so eligible automatic share links use the exact browser address at click time, including query strings and fragments. Custom, post-specific, and archive links keep their server-generated URL.', 'html-social-share-buttons' ),
+			'frontendJsBadge'             => __( 'Adds frontend JavaScript', 'html-social-share-buttons' ),
+			'frontendJsBadgeHelp'         => __( 'Enabling this feature adds JavaScript to public pages on your site.', 'html-social-share-buttons' ),
+			'useBrowserUrlBadgeHelp'      => __( 'Uses the browser address for page-level sharing. Includes query parameters and fragments. Custom URLs and post-specific links keep their existing targets.', 'html-social-share-buttons' ),
 			'codeGenerator'               => __( 'Code generator', 'html-social-share-buttons' ),
 			'codeGeneratorDescription'    => __( 'Generate embed code from the same icon set and selected networks.', 'html-social-share-buttons' ),
 			'getPhpCode'                  => __( 'Get PHP Code', 'html-social-share-buttons' ),

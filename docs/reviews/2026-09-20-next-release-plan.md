@@ -3,12 +3,14 @@
 Status: proposed planning note. It does not authorize implementation, tagging,
 WordPress.org upload, or deployment.
 
+Detailed implementation plan: [`2026-09-20-next-release-detailed-plan.md`](2026-09-20-next-release-detailed-plan.md).
+
 ## Outcome
 
 Ship a small release that makes HSSB’s existing local share links predictable:
-one documented URL-source contract, correct query-component encoding, preserved
-legacy behavior, and no required third-party frontend SDK or share-count
-request.
+one documented URL-source contract, correct query-component encoding, an
+opt-in browser URL enhancement in Advanced options, preserved legacy behavior,
+and no required third-party frontend SDK or share-count request.
 
 ## Scope
 
@@ -22,25 +24,35 @@ request.
    ampersands, fragments, quotes, existing queries, and already-encoded input.
 3. **Preserve compatibility.** Exercise shortcode, block, widget, builder,
    automatic placement, legacy API, and existing icon/network URL contracts.
-   Do not add a global URL-mode setting in this release unless its effect on
-   every adapter is explicitly specified.
-4. **Keep the default path local.** Verify that ordinary frontend output adds
+4. **Add the Advanced browser URL option.** Add a persisted
+   `use_browser_url` setting, defaulting to off. When enabled, page-level share
+   links may use `window.location.href` at click time. Explicit custom URLs and
+   post-specific/loop-post contexts always remain authoritative. The server
+   generated `href` remains the no-JS fallback. Use one shared template/data
+   contract so JavaScript does not create a second network map.
+5. **Keep the default path local.** Verify that ordinary frontend output adds
    no remote SDK, count request, tracking beacon, cookie, or remote asset.
-5. **Prepare one follow-up feature.** After the resolver matrix passes, choose
-   either Copy Link or one modern network adapter. Keep it behind the same
-   context/encoding pipeline and provide a real no-JS fallback.
+6. **Defer other public features.** Copy Link, native Web Share, and new
+   networks remain separate follow-up work until this option and the resolver
+   matrix are proven.
 
 ## Explicitly out of scope
 
 Share counts, link shortening, hosted provider SDKs, click analytics, telemetry,
-and broad network expansion. Mastodon requires a separate endpoint decision.
+Copy Link, native Web Share, and broad network expansion. Mastodon requires a
+separate endpoint decision.
 
 ## Acceptance gates
 
 - Focused URL and rendering tests pass for all documented contexts.
 - Existing final-anchor and once-only-encoding contracts remain green.
-- Browser checks cover keyboard/focus, accessible names, no-JS fallback, and
-  mobile layout where the feature changes markup.
+- The setting is false for fresh, sparse, legacy, and malformed settings unless
+  explicitly enabled.
+- Explicit custom URLs and archive-loop post URLs are unchanged when the option
+  is enabled.
+- Browser checks cover click-time URL resolution, history API changes, query
+  strings, fragments, keyboard/focus, accessible names, no-JS fallback, and
+  mobile layout.
 - Default frontend request capture shows no unexpected third-party runtime.
 - The exact candidate archive is rebuilt and its SHA-256 recorded before any
   release authorization.

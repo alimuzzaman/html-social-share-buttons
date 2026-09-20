@@ -78,6 +78,9 @@ final class OptionSettingsRequestMapper {
 			'no_follow'                => isset( $input['nofollow'] )
 			? OptionSettingsTruthiness::isTruthy( $input['nofollow'] )
 			: false,
+			'use_browser_url'          => isset( $input['use_browser_url'] )
+			? OptionSettingsTruthiness::isStrictBoolean( $input['use_browser_url'] )
+			: false,
 			'show_for_current_user'    => $this->audienceInput( $input, 'show_for_current_user' ),
 			'show_for_logged_in_user'  => $this->audienceInput( $input, 'show_for_logged_in_user' ),
 			'show_for_logged_out_user' => $this->audienceInput( $input, 'show_for_logged_out_user' ),
@@ -94,10 +97,11 @@ final class OptionSettingsRequestMapper {
 			'show_after_post',
 		);
 		$booleanFields = array(
-			'g_analytics'   => $settings->analyticsEnabled(),
-			'auto_hide_btn' => $settings->autoHideEnabled(),
-			'use_port'      => $settings->preserveUrlPort(),
-			'nofollow'      => $settings->noFollow(),
+			'g_analytics'     => $settings->analyticsEnabled(),
+			'auto_hide_btn'   => $settings->autoHideEnabled(),
+			'use_port'        => $settings->preserveUrlPort(),
+			'nofollow'        => $settings->noFollow(),
+			'use_browser_url' => $settings->useBrowserUrl(),
 		);
 		$audienceFields = array(
 			'show_for_current_user',
@@ -177,6 +181,7 @@ final class OptionSettingsRequestMapper {
 			'show_after_post',
 			'auto_hide_btn',
 			'nofollow',
+			'use_browser_url',
 			'show_for_current_user',
 			'show_for_logged_in_user',
 			'show_for_logged_out_user',

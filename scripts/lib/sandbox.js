@@ -120,4 +120,4 @@ function runSandboxTests(args) {
 	}
 }
 
-module.exports = {ENV_FILE, REPO_ROOT, ensureInstance, instanceName, runSandbox, runSandboxTests};
+module.exports = {ENV_FILE, REPO_ROOT, ensureInstance, instanceName, resolveSb, runSandbox, runSandboxTests};

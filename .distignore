@@ -7,6 +7,7 @@ test-results/
 playwright-report/
 security/
 docs/
+research/
 design/
 specs/
 ../sandbox/

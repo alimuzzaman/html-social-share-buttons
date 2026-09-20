@@ -42,7 +42,8 @@ final class RenderRequestMapper {
 			$this->profileLinks( $options ),
 			! empty( $options['profiles_only'] ) && ! empty( $options['title'] ),
 			is_string( $options['button_appearance'] ) ? $options['button_appearance'] : 'legacy',
-			! empty( $options['auto_hide_enabled'] )
+			! empty( $options['auto_hide_enabled'] ),
+			! empty( $options['browser_url_enabled'] )
 		);
 	}
 

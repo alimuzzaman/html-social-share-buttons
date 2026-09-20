@@ -1,6 +1,7 @@
 <?php
 
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\Placement;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsDefaults;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsSchema;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\SettingsRequestSanitizer;
@@ -45,6 +46,7 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 				),
 				'excluded_content' => "42\nexample",
 				'no_follow' => '1',
+				'use_browser_url' => '1',
 			)
 		);
 
@@ -57,6 +59,7 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 		$this->assertTrue( $settings->networkStates()['facebook'] );
 		$this->assertArrayNotHasKey( 'unknown', $settings->networkStates() );
 		$this->assertTrue( $settings->noFollow() );
+		$this->assertTrue( $settings->useBrowserUrl() );
 		$this->assertTrue( $settings->showForCurrentUser() );
 		$this->assertTrue( $settings->showForLoggedInUser() );
 		$this->assertTrue( $settings->showForLoggedOutUser() );
@@ -94,5 +97,15 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 		$this->assertTrue( $settings->showForLoggedInUser() );
 		$this->assertFalse( $settings->showForLoggedOutUser() );
 		$this->assertSame( 'legacy', $settings->buttonAppearance() );
+		$this->assertFalse( SettingsDefaults::create()->useBrowserUrl() );
+	}
+
+	public function testNewBrowserUrlSettingRejectsMalformedValues(): void {
+		$sanitizer = new SettingsRequestSanitizer( $this->schema() );
+
+		foreach ( array( array( 'enabled' ), new stdClass(), 'arbitrary' ) as $value ) {
+			$settings = $sanitizer->sanitize( array( 'use_browser_url' => $value ) );
+			$this->assertFalse( $settings->useBrowserUrl() );
+		}
 	}
 }

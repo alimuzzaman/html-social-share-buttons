@@ -47,6 +47,8 @@ export function attachSettingsRenderer(App, dependencies) {
 		var socialNetworkColumns = [[], []];
 		var networkPreviewType = ensureType(currentIconset, options.show_before_post || options.show_after_post || options.show_left || options.show_right);
 		var profileNetworks = iconsets.length ? (iconsets[0].icons || []) : [];
+		var frontendFeatures = data.frontend_features || {};
+		var browserFeature = frontendFeatures.browser_url || {};
 		var buttonAppearances = data.button_appearances || [];
 		var currentAppearance = buttonAppearances.filter(function (appearance) {
 			return appearance.value === options.button_appearance;
@@ -363,14 +365,31 @@ export function attachSettingsRenderer(App, dependencies) {
 						e(CheckboxInput, {
 							key: 'auto-hide',
 							id: 'auto_hide_btn',
-						label: text('autoHide', 'Auto hide button'),
-						name: 'zm_shbt_fld[auto_hide_btn]',
-						checked: options.auto_hide_btn,
-						onChange: function (value) {
-							self.update('auto_hide_btn', value);
-						}
+							label: text('autoHide', 'Auto hide button'),
+							name: 'zm_shbt_fld[auto_hide_btn]',
+							checked: options.auto_hide_btn,
+							onChange: function (value) {
+								self.update('auto_hide_btn', value);
+							}
 						}),
 						e('p', { key: 'use-port', className: 'components-base-control__help' }, text('canonicalUrls', 'Sharing uses WordPress canonical URLs, including any configured port.')),
+						e(CheckboxInput, {
+							key: 'use-browser-url',
+							id: 'use_browser_url',
+							label: text('useBrowserUrl', 'Use browser URL for sharing'),
+							name: 'zm_shbt_fld[use_browser_url]',
+							checked: options.use_browser_url,
+							help: text('useBrowserUrlHelp', 'Adds JavaScript to public pages so eligible automatic share links use the exact browser address at click time, including query strings and fragments. Custom, post-specific, and archive links keep their server-generated URL.'),
+							frontendJsFeature: browserFeature.requires_frontend_js ? {
+								label: text('frontendJsBadge', 'Adds frontend JavaScript'),
+								description: text('useBrowserUrlBadgeHelp', 'Uses the browser address for page-level sharing. Includes query parameters and fragments. Custom URLs and post-specific links keep their existing targets.'),
+								id: browserFeature.id || 'browser_url',
+								setting: browserFeature.setting || 'use_browser_url'
+							} : null,
+							onChange: function (value) {
+								self.update('use_browser_url', value);
+							}
+						}),
 						e(CheckboxInput, {
 							key: 'nofollow',
 							id: 'nofollow',

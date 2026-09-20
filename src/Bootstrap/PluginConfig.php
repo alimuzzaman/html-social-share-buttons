@@ -132,6 +132,14 @@ final class PluginConfig {
 		return $this->paths->assetsUrl() . 'frontend/button-appearance.css';
 	}
 
+	public function browserUrlScriptHandle() {
+		return 'hssb-browser-url';
+	}
+
+	public function browserUrlScriptUrl() {
+		return $this->paths->url() . 'build/browser-url.js';
+	}
+
 	public function shareBlockEditorHandle() {
 		return self::SHARE_BLOCK_EDITOR_HANDLE;
 	}

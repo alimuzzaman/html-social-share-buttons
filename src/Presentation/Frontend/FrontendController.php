@@ -175,18 +175,20 @@ final class FrontendController {
 			return $content;
 		}
 
+		$browserEligible = is_singular();
+
 		return $this->contentPlacement->compose(
 			$content,
 			$settings,
-			function ( $placement ) use ( $settings, $assets, $fallbackOptions ) {
+			function ( $placement ) use ( $settings, $assets, $fallbackOptions, $browserEligible ) {
 				return $this->renderWithOptions(
-					$this->placementOptionsFor( $settings, $placement, 'in_widget' ),
+					$this->placementOptionsFor( $settings, $placement, 'in_widget', $browserEligible ),
 					$this->currentPostId(),
 					$assets,
 					$fallbackOptions
 				);
 			},
-			is_singular()
+			$browserEligible
 		);
 	}
 
@@ -201,6 +203,7 @@ final class FrontendController {
 		}
 
 		$this->assets->enqueueStyles();
+		$this->assets->enqueueScripts();
 		echo $this->assets->inlineIconStyles( $settings->autoHideEnabled() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
@@ -262,7 +265,7 @@ final class FrontendController {
 			/* The public footer historically passed each group through wp_kses_post(). */
 			$html .= wp_kses_post(
 				$this->renderWithOptions(
-					$this->placementOptionsFor( $settings, $placement, $placement ),
+					$this->placementOptionsFor( $settings, $placement, $placement, is_singular() ),
 					$this->currentPostId(),
 					$assets,
 					$options
@@ -271,12 +274,14 @@ final class FrontendController {
 		}
 
 		$assets->enqueueStyles();
+		$assets->enqueueScripts();
 
 		return $html . $assets->historicalInlineIconStyles( $settings->autoHideEnabled() );
 	}
 
 	public function enqueueCollectedAssets( AssetCollector $assets ) {
 		$assets->enqueueStyles();
+		$assets->enqueueScripts();
 	}
 
 	public function historicalCollectedIconStyles( $autoHideEnabled, AssetCollector $assets ) {
@@ -292,10 +297,10 @@ final class FrontendController {
 	}
 
 	private function placementOptions( $placement, $className ) {
-		return $this->placementOptionsFor( $this->settings(), $placement, $className );
+		return $this->placementOptionsFor( $this->settings(), $placement, $className, is_singular() );
 	}
 
-	private function placementOptionsFor( Settings $settings, $placement, $className ) {
+	private function placementOptionsFor( Settings $settings, $placement, $className, $browserUrlEligible = false ) {
 		$renderPlacement = array(
 			Placement::LEFT           => RenderPlacement::FLOATING_LEFT,
 			Placement::RIGHT          => RenderPlacement::FLOATING_RIGHT,
@@ -311,19 +316,21 @@ final class FrontendController {
 		$shapes = $settings->placementShapes();
 
 		return array(
-			'title'              => $settings->title(),
-			'iconset'            => $settings->iconSetId(),
-			'iconset_type'       => isset( $shapes[ $placement ] )
+			'title'                => $settings->title(),
+			'iconset'              => $settings->iconSetId(),
+			'iconset_type'         => isset( $shapes[ $placement ] )
 				? $shapes[ $placement ] : $settings->defaultIconShape(),
-			'icons'              => $this->enabledNetworks( $settings ),
-			'share_templates'    => $settings->shareTemplates(),
-			'nofollow'           => $settings->noFollow(),
-			'profile_links'      => $settings->profileLinks(),
-			'profile_links_mode' => $settings->profileLinkMode( $placement ),
-			'class'              => (string) $className,
-			'show_on'            => isset( $showOn[ $placement ] ) ? $showOn[ $placement ] : 'show_left',
-			'placement'          => isset( $renderPlacement[ $placement ] )
+			'icons'                => $this->enabledNetworks( $settings ),
+			'share_templates'      => $settings->shareTemplates(),
+			'nofollow'             => $settings->noFollow(),
+			'profile_links'        => $settings->profileLinks(),
+			'profile_links_mode'   => $settings->profileLinkMode( $placement ),
+			'class'                => (string) $className,
+			'show_on'              => isset( $showOn[ $placement ] ) ? $showOn[ $placement ] : 'show_left',
+			'placement'            => isset( $renderPlacement[ $placement ] )
 				? $renderPlacement[ $placement ] : RenderPlacement::PHP_API,
+			'browser_url_eligible' => (bool) $browserUrlEligible,
+			'browser_url_source'   => $browserUrlEligible ? 'automatic_singular' : '',
 		);
 	}
 

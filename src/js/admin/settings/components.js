@@ -4,6 +4,7 @@ export function createSettingsComponents(runtime) {
 	var ToggleControl = runtime.ToggleControl;
 	var text = runtime.text;
 	var toBoolean = runtime.toBoolean;
+	var useState = runtime.useState;
 
 	function ToggleInput(props) {
 		return e('div', { className: 'zm_native_toggle' + (props.className ? ' ' + props.className : '') }, [
@@ -17,6 +18,7 @@ export function createSettingsComponents(runtime) {
 				onChange: function (checked) {
 					props.onChange(checked ? 1 : 0);
 				},
+				'aria-describedby': props['aria-describedby'],
 				disabled: !!props.disabled,
 				__nextHasNoMarginBottom: true
 			})
@@ -67,6 +69,39 @@ export function createSettingsComponents(runtime) {
 		return e('div', { className: 'zm_section_header' }, [
 			e('h2', { key: 'title' }, props.title),
 			props.description ? e('p', { key: 'description' }, props.description) : null
+		]);
+	}
+
+	function FrontendJsBadge(props) {
+		var badgeId = (props.id || 'feature') + '-frontend-js-help';
+		var label = props.label || text('frontendJsBadge', 'Adds frontend JavaScript');
+		var description = props.description || text('frontendJsBadgeHelp', 'Enabling this feature adds JavaScript to public pages on your site.');
+		var state = useState(false);
+		var isOpen = state[0];
+		var setOpen = state[1];
+		return e('span', {
+			className: 'zm_frontend_js_badge' + (isOpen ? ' is-tooltip-open' : ''),
+			tabIndex: 0,
+			role: 'button',
+			'aria-label': label,
+			'aria-describedby': badgeId,
+			'aria-expanded': isOpen,
+			title: description,
+			'data-tooltip': description,
+			onMouseEnter: function () { setOpen(true); },
+			onMouseLeave: function () { setOpen(false); },
+			onFocus: function () { setOpen(true); },
+			onBlur: function () { setOpen(false); },
+			onClick: function (event) { event.preventDefault(); event.stopPropagation(); setOpen(!isOpen); },
+			onKeyDown: function (event) {
+				if (event.key === 'Escape') {
+					event.preventDefault();
+					setOpen(false);
+				}
+			}
+		}, [
+			e('span', { key: 'text', 'aria-hidden': 'true' }, 'JS'),
+			e('span', { key: 'help', id: badgeId, className: 'screen-reader-text' }, description)
 		]);
 	}
 
@@ -131,14 +166,30 @@ export function createSettingsComponents(runtime) {
 	}
 
 	function CheckboxInput(props) {
-		return e(ToggleInput, {
+		var label = props.label;
+		var feature = props.frontendJsFeature;
+		var helpId = feature && props.id ? (feature.id || props.id) + '-frontend-js-warning' : null;
+		if (feature) {
+			label = e('span', { className: 'zm_checkbox_label_with_badge' }, [
+				e('span', { key: 'label' }, props.label),
+				e(FrontendJsBadge, {
+					key: 'badge',
+					id: props.id,
+					label: feature.label,
+					description: feature.description
+				})
+			]);
+		}
+		return e('div', { className: 'zm_checkbox_input' }, [e(ToggleInput, {
+			key: 'toggle',
 			id: props.id,
-			label: props.label,
+			label: label,
 			name: props.name,
 			checked: props.checked,
 			onChange: props.onChange,
-			dataId: props.dataId
-		});
+			dataId: props.dataId,
+			'aria-describedby': helpId
+		}), props.help ? e('p', { key: 'help', id: helpId, className: 'components-base-control__help' }, props.help) : null]);
 	}
 
 	return {
@@ -148,5 +199,6 @@ export function createSettingsComponents(runtime) {
 		SectionHeader: SectionHeader,
 		PlacementInput: PlacementInput,
 		CheckboxInput: CheckboxInput,
+		FrontendJsBadge: FrontendJsBadge,
 	};
 }

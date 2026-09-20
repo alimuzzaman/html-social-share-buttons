@@ -173,6 +173,59 @@ final class CanonicalFrontendAssetCollectorTest extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( "class='twitter'", $output );
 		$this->assertStringNotContainsString( "class='mail'", $output );
 	}
+
+	public function testBrowserUrlEnhancementIsOptInAndLimitedToEligibleAutomaticLinks(): void {
+		$postId = self::factory()->post->create( array( 'post_title' => 'Browser URL' ) );
+		$this->go_to( get_permalink( $postId ) );
+		$root = dirname( __DIR__, 2 );
+		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
+		$iconSets = ( new ManifestIconSetProvider( $root . '/resources/iconsets' ) )->createRegistry( $networks );
+		$settings = new Settings(
+			'Browser URL',
+			'default',
+			'square',
+			array(),
+			array(),
+			array( 'facebook' => true ),
+			array(),
+			'',
+			false,
+			false,
+			false,
+			false,
+			array(),
+			array(),
+			true,
+			true,
+			true,
+			\Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance::LEGACY,
+			true
+		);
+		$facade = new RenderFacade(
+			$networks,
+			$iconSets,
+			new IconSetAssetResolver( $root . '/assets/iconsets', plugins_url( 'assets/iconsets', $root . '/html-social-share-buttons.php' ) ),
+			new ExtensionHooks(),
+			null,
+			null,
+			null,
+			new CanonicalFrontendSettingsRepository( $settings )
+		);
+
+		$automatic = $facade->render(
+			array( 'icons' => array( 'facebook' => true ), 'browser_url_eligible' => true, 'browser_url_source' => 'automatic_singular' ),
+			$postId
+		)->html();
+		$custom = $facade->render(
+			array( 'icons' => array( 'facebook' => true ), 'url' => 'https://example.test/custom', 'browser_url_eligible' => true, 'browser_url_source' => 'automatic_singular' ),
+			$postId
+		)->html();
+
+		$this->assertStringContainsString( "data-hssb-browser-url='1'", $automatic );
+		$this->assertStringContainsString( 'data-hssb-browser-descriptor=', $automatic );
+		$this->assertStringNotContainsString( 'data-hssb-browser-url', $custom );
+		$this->assertStringNotContainsString( 'data-hssb-browser-template', $custom );
+	}
 }
 
 final class CanonicalFrontendAssetCollectorOutcome {

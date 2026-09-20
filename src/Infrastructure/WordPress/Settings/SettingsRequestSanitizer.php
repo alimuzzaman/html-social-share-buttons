@@ -113,7 +113,8 @@ final class SettingsRequestSanitizer {
 			$this->audienceValue( $input, 'show_for_logged_out_user', $defaults->showForLoggedOutUser() ),
 			ButtonAppearance::normalize(
 				isset( $input['button_appearance'] ) ? $input['button_appearance'] : null
-			)
+			),
+			OptionSettingsTruthiness::isStrictBoolean( isset( $input['use_browser_url'] ) ? $input['use_browser_url'] : false )
 		);
 	}
 

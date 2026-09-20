@@ -42,7 +42,13 @@ final class SettingsDefaults {
 			false,
 			false,
 			false,
-			array()
+			array(),
+			array(),
+			true,
+			true,
+			true,
+			ButtonAppearance::LEGACY,
+			false
 		);
 	}
 }

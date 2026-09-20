@@ -155,6 +155,16 @@ The Playwright suite skips the paid WPBakery editor picker by default. Set
 the stored-shortcode frontend test and repository `vc_map()`/bundle contracts
 remain active without it.
 
+The E2E wrapper uses the managed Sandbox instance's local HTTP port. This keeps
+browser checks independent from the optional `.tst` proxy route, which can be
+unavailable even when the WordPress container is healthy. The wrapper aligns
+the local test site's URLs and admin password for the run:
+
+```bash
+pnpm run test:e2e
+pnpm run test:e2e:elementor
+```
+
 ## WordPress Plugin Check
 
 The project Sandbox config installs and activates the WordPress Plugin Check

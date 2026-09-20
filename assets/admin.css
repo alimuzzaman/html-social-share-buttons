@@ -136,6 +136,71 @@
 	margin-top: 18px;
 }
 
+.zm_checkbox_input {
+	position: relative;
+}
+
+.zm_checkbox_label_with_badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+}
+
+.zm_frontend_js_badge {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 24px;
+	height: 18px;
+	padding: 0 5px;
+	border: 1px solid var(--zmsh-accent-light);
+	border-radius: 4px;
+	background: var(--zmsh-soft);
+	color: var(--zmsh-accent-strong);
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: .04em;
+	cursor: help;
+}
+
+.zm_frontend_js_badge:focus {
+	outline: 2px solid var(--zmsh-accent);
+	outline-offset: 2px;
+}
+
+.zm_frontend_js_badge::after {
+	position: absolute;
+	z-index: 2;
+	left: 0;
+	bottom: calc(100% + 8px);
+	display: none;
+	width: min(300px, 70vw);
+	padding: 8px 10px;
+	border-radius: 4px;
+	background: var(--zmsh-ink);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.4;
+	text-align: left;
+	content: attr(data-tooltip);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
+}
+
+.zm_frontend_js_badge:hover::after,
+.zm_frontend_js_badge:focus::after,
+.zm_frontend_js_badge.is-tooltip-open::after {
+	display: block;
+}
+
+[dir="rtl"] .zm_frontend_js_badge::after {
+	right: 0;
+	left: auto;
+	text-align: right;
+}
+
 .zm_exclude_control {
 	margin-top: 18px;
 }

@@ -87,7 +87,9 @@ final class PluginFactory {
 		$assetCollector = new AssetCollector(
 			$assets->stylesheetUrl( $iconSets->get( 'default' ) ),
 			$config->version(),
-			$config->buttonAppearanceStyleHandle()
+			$config->buttonAppearanceStyleHandle(),
+			$config->browserUrlScriptUrl(),
+			$config->browserUrlScriptHandle()
 		);
 		$excludedContent = new ExcludedContentPolicy();
 		$contentPlacement = new ContentPlacementComposer();

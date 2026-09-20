@@ -32,6 +32,7 @@ export function normalizeSettingsOptions($, defaults, raw) {
 	options.auto_hide_btn = toBoolean(options.auto_hide_btn);
 	options.use_port = toBoolean(options.use_port);
 	options.nofollow = toBoolean(options.nofollow);
+	options.use_browser_url = toBoolean(options.use_browser_url);
 	options.show_for_current_user = toBoolean(options.show_for_current_user);
 	options.show_for_logged_in_user = toBoolean(options.show_for_logged_in_user);
 	options.show_for_logged_out_user = toBoolean(options.show_for_logged_out_user);

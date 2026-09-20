@@ -10,11 +10,15 @@ final class RenderOutcome {
 	private $html;
 	private $stylesheets;
 	private $printedIcons;
+	private $requiresFrontendJs;
+	private $frontendFeatures;
 
-	public function __construct( $html, array $stylesheets, array $printedIcons ) {
+	public function __construct( $html, array $stylesheets, array $printedIcons, $requiresFrontendJs = false, array $frontendFeatures = array() ) {
 		$this->html = (string) $html;
 		$this->stylesheets = $stylesheets;
 		$this->printedIcons = $printedIcons;
+		$this->requiresFrontendJs = (bool) $requiresFrontendJs;
+		$this->frontendFeatures = array_values( $frontendFeatures );
 	}
 
 	public function html() {
@@ -27,5 +31,13 @@ final class RenderOutcome {
 
 	public function printedIcons() {
 		return $this->printedIcons;
+	}
+
+	public function requiresFrontendJs() {
+		return $this->requiresFrontendJs;
+	}
+
+	public function frontendFeatures() {
+		return $this->frontendFeatures;
 	}
 }

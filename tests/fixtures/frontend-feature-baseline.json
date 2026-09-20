@@ -1,0 +1,7 @@
+{
+  "browser_url": {
+    "id": "browser_url",
+    "setting": "use_browser_url",
+    "requires_frontend_js": true
+  }
+}

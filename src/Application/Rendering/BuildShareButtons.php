@@ -51,7 +51,14 @@ final class BuildShareButtons {
 					isset( $overrides[ $networkId ] ) ? $overrides[ $networkId ] : '',
 					$request->permalinkOverride()
 				),
-				$iconSet->iconFile( $networkId )
+				$iconSet->iconFile( $networkId ),
+				$request->browserUrlEnabled()
+					? $this->browserUrlDescriptor(
+						$network,
+						$context,
+						isset( $overrides[ $networkId ] ) ? $overrides[ $networkId ] : ''
+					)
+					: array()
 			);
 		}
 
@@ -81,6 +88,29 @@ final class BuildShareButtons {
 			$relTokens,
 			$buttons,
 			$profileLinks
+		);
+	}
+
+	private function browserUrlDescriptor( $network, ShareContext $context, $templateOverride ) {
+		if ( method_exists( $this->urlResolver, 'browserUrlDescriptor' ) ) {
+			return $this->urlResolver->browserUrlDescriptor( $network, $context, $templateOverride );
+		}
+
+		$template = is_string( $templateOverride ) && '' !== trim( $templateOverride )
+			? $templateOverride
+			: $network->defaultShareTemplate();
+
+		return array(
+			'permalink_slot' => '%%permalink%%',
+			'template'       => str_replace(
+				array( '%%title%%', '%%description%%', '%%imageurl%%' ),
+				array(
+					rawurlencode( $context->title() ),
+					rawurlencode( $context->description() ),
+					rawurlencode( $context->imageUrl() ),
+				),
+				$template
+			),
 		);
 	}
 }

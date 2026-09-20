@@ -10,6 +10,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderRequest;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderPlacement;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\ButtonAppearance;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Frontend\FrontendFeatureRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Extension\ExtensionHooks;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering\HookedShareUrlResolver;
@@ -89,6 +90,14 @@ final class RenderFacade {
 		$options['auto_hide_enabled'] = $settings
 			? $settings->autoHideEnabled()
 			: false;
+		$explicitUrl = isset( $options['url'] ) && is_scalar( $options['url'] )
+			? trim( (string) $options['url'] )
+			: '';
+		$options['browser_url_enabled'] = $settings && $settings->useBrowserUrl()
+			&& ! empty( $options['browser_url_eligible'] )
+			&& 'automatic_singular' === ( isset( $options['browser_url_source'] ) ? $options['browser_url_source'] : '' )
+			&& null === $context
+			&& $this->usesCurrentPostPermalink( $explicitUrl );
 		$options = $this->normalizeOptions( $options, $contextPostId );
 		$request = $this->mapper->map( $options );
 		$context = $context ? $context : $this->contexts->create( $contextPostId );
@@ -104,6 +113,8 @@ final class RenderFacade {
 			$stylesheets[ $this->buttonAppearanceStyleHandle ] = $this->buttonAppearanceStylesheet;
 		}
 
+		$requiresFrontendJs = $request->browserUrlEnabled() && $this->hasBrowserDescriptors( $result );
+
 		return new RenderOutcome(
 			$this->renderer->render(
 				$request,
@@ -113,8 +124,20 @@ final class RenderFacade {
 				$result->shape()
 			),
 			$stylesheets,
-			$this->printedIcons( $result )
+			$this->printedIcons( $result ),
+			$requiresFrontendJs,
+			$requiresFrontendJs ? array( FrontendFeatureRegistry::BROWSER_URL ) : array()
 		);
+	}
+
+	private function hasBrowserDescriptors( $result ) {
+		foreach ( $result->buttons() as $button ) {
+			if ( ! empty( $button->browserUrlDescriptor() ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function normalizeOptions( array $options, $contextPostId ) {

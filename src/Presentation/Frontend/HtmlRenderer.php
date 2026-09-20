@@ -51,6 +51,9 @@ final class HtmlRenderer {
 		if ( '' !== $autoHideClass ) {
 			$output .= ' ' . esc_attr( $autoHideClass );
 		}
+		if ( $request->browserUrlEnabled() && $this->hasBrowserDescriptors( $result ) ) {
+			$output .= "' data-hssb-browser-url='1";
+		}
 		$output .= "'>";
 
 		foreach ( $result->buttons() as $button ) {
@@ -61,8 +64,9 @@ final class HtmlRenderer {
 			);
 			$output .= "<a class='" .
 				esc_attr( $this->cssClass( $button->network() ) ) .
-				"' target='_blank' href='" .
+			"' target='_blank' href='" .
 				$this->buttonUrl( $button ) .
+				$this->browserDescriptorAttributes( $button ) .
 				"' rel='" .
 				esc_attr( implode( ' ', $result->relTokens() ) ) .
 				"' aria-label='" .
@@ -108,6 +112,33 @@ final class HtmlRenderer {
 	 */
 	private function buttonUrl( ResolvedButton $button ) {
 		return ShareUrlPresentation::escape( $button->network()->id(), $button->url() );
+	}
+
+	private function browserDescriptorAttributes( ResolvedButton $button ) {
+		$descriptor = $button->browserUrlDescriptor();
+		if ( empty( $descriptor['template'] ) || '%%permalink%%' !== ( isset( $descriptor['permalink_slot'] ) ? $descriptor['permalink_slot'] : '' ) ) {
+			return '';
+		}
+
+		$json = function_exists( 'wp_json_encode' )
+			? wp_json_encode( $descriptor )
+			: json_encode( $descriptor );
+		if ( ! is_string( $json ) || '' === $json ) {
+			return '';
+		}
+
+		return "' data-hssb-browser-descriptor='" . esc_attr( $json ) .
+			"' data-hssb-server-href='" . esc_attr( $this->buttonUrl( $button ) );
+	}
+
+	private function hasBrowserDescriptors( RenderResult $result ) {
+		foreach ( $result->buttons() as $button ) {
+			if ( ! empty( $button->browserUrlDescriptor() ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public function cssClass( Network $network ) {

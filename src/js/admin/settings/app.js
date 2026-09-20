@@ -62,6 +62,7 @@ import { attachTemplatePreviewBehavior } from './template-preview-behavior';
 		auto_hide_btn: 0,
 		use_port: 0,
 		nofollow: 0,
+		use_browser_url: 0,
 		show_for_current_user: true,
 		show_for_logged_in_user: true,
 		show_for_logged_out_user: true,
@@ -93,6 +94,7 @@ import { attachTemplatePreviewBehavior } from './template-preview-behavior';
 		ToggleControl: ToggleControl,
 		text: text,
 		toBoolean: toBoolean,
+		useState: wp.element.useState,
 	});
 	var SettingsLoader = settingsComponents.SettingsLoader;
 
@@ -323,6 +325,7 @@ import { attachTemplatePreviewBehavior } from './template-preview-behavior';
 				case 'g_analytics':
 				case 'auto_hide_btn':
 				case 'use_port':
+				case 'use_browser_url':
 				case 'nofollow':
 				case 'show_for_current_user':
 				case 'show_for_logged_in_user':
