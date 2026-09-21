@@ -56,6 +56,7 @@ jobs:
           set -euo pipefail
           while IFS= read -r file; do php -l "$file"; done < <(find . -type f -name '*.php' \
             -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' \
+            -not -path './research/*' \
             -not -path './tests/phpunit/*' | sort)
 
   js:
@@ -83,6 +84,8 @@ jobs:
       - run: pnpm run icons:check
       - run: pnpm run settings:check
       - run: pnpm run appearance:check
+      - name: Install SVG rasterizer
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y librsvg2-bin
       - run: pnpm run icons:legacy-x:check
       - run: pnpm run test:staging-probe
       - run: pnpm run test:staging-evidence
