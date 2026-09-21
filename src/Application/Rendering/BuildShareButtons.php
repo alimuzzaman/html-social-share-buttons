@@ -43,22 +43,19 @@ final class BuildShareButtons {
 			}
 
 			$network = $this->networks->get( $networkId );
+			$templateOverride = isset( $overrides[ $networkId ] ) ? $overrides[ $networkId ] : '';
+			$resolved = $this->resolveButton(
+				$network,
+				$context,
+				$templateOverride,
+				$request->permalinkOverride(),
+				$request->browserUrlEnabled()
+			);
 			$buttons[] = new ResolvedButton(
 				$network,
-				$this->urlResolver->resolve(
-					$network,
-					$context,
-					isset( $overrides[ $networkId ] ) ? $overrides[ $networkId ] : '',
-					$request->permalinkOverride()
-				),
+				$resolved['url'],
 				$iconSet->iconFile( $networkId ),
-				$request->browserUrlEnabled()
-					? $this->browserUrlDescriptor(
-						$network,
-						$context,
-						isset( $overrides[ $networkId ] ) ? $overrides[ $networkId ] : ''
-					)
-					: array()
+				$resolved['descriptor']
 			);
 		}
 
@@ -111,6 +108,35 @@ final class BuildShareButtons {
 				),
 				$template
 			),
+		);
+	}
+
+	private function resolveButton( $network, ShareContext $context, $templateOverride, $permalinkOverride, $browserUrlEnabled ) {
+		if ( $browserUrlEnabled && method_exists( $this->urlResolver, 'resolveWithBrowserDescriptor' ) ) {
+			$resolved = $this->urlResolver->resolveWithBrowserDescriptor(
+				$network,
+				$context,
+				$templateOverride,
+				$permalinkOverride
+			);
+			if ( is_array( $resolved ) && isset( $resolved['url'] ) ) {
+				return array(
+					'url'        => $resolved['url'],
+					'descriptor' => isset( $resolved['descriptor'] ) ? $resolved['descriptor'] : array(),
+				);
+			}
+		}
+
+		$url = $this->urlResolver->resolve(
+			$network,
+			$context,
+			$templateOverride,
+			$permalinkOverride
+		);
+
+		return array(
+			'url'        => $url,
+			'descriptor' => $browserUrlEnabled ? $this->browserUrlDescriptor( $network, $context, $templateOverride ) : array(),
 		);
 	}
 }

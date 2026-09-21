@@ -93,14 +93,29 @@ final class RenderFacade {
 		$explicitUrl = isset( $options['url'] ) && is_scalar( $options['url'] )
 			? trim( (string) $options['url'] )
 			: '';
+		$browserUrlSource = isset( $options['browser_url_source'] ) && is_scalar( $options['browser_url_source'] )
+			? (string) $options['browser_url_source']
+			: '';
+		$pageLevelBrowserUrl = 'automatic_page' === $browserUrlSource &&
+			$this->isPageLevelFloatingOptions( $options ) &&
+			( '' === $explicitUrl || $this->usesCurrentPostPermalink( $explicitUrl ) );
+		$singularBrowserUrl = 'automatic_singular' === $browserUrlSource &&
+			$this->isSingularRequest() &&
+			$this->isCurrentSingularPost( $contextPostId ) &&
+			$this->usesCurrentPostPermalink( $explicitUrl );
 		$options['browser_url_enabled'] = $settings && $settings->useBrowserUrl()
 			&& ! empty( $options['browser_url_eligible'] )
-			&& 'automatic_singular' === ( isset( $options['browser_url_source'] ) ? $options['browser_url_source'] : '' )
+			&& in_array( $browserUrlSource, array( 'automatic_singular', 'automatic_page' ), true )
 			&& null === $context
-			&& $this->usesCurrentPostPermalink( $explicitUrl );
+			&& ( $singularBrowserUrl || $pageLevelBrowserUrl );
+		if ( $pageLevelBrowserUrl ) {
+			$options['url'] = $this->contexts->pagePermalink();
+		}
 		$options = $this->normalizeOptions( $options, $contextPostId );
 		$request = $this->mapper->map( $options );
-		$context = $context ? $context : $this->contexts->create( $contextPostId );
+		$context = $context
+			? $context
+			: ( $pageLevelBrowserUrl ? $this->contexts->createPage() : $this->contexts->create( $contextPostId ) );
 		$result = $this->builder->build( $request, $context );
 		$iconSet = $result->iconSet();
 
@@ -233,5 +248,27 @@ final class RenderFacade {
 		}
 
 		return $url;
+	}
+
+	private function isSingularRequest() {
+		return function_exists( 'is_singular' ) && is_singular();
+	}
+
+	private function isPageLevelFloatingOptions( array $options ) {
+		$placement = isset( $options['placement'] ) && is_scalar( $options['placement'] )
+			? (string) $options['placement']
+			: '';
+
+		return in_array( $placement, array( RenderPlacement::FLOATING_LEFT, RenderPlacement::FLOATING_RIGHT ), true );
+	}
+
+	private function isCurrentSingularPost( $contextPostId ) {
+		if ( ! function_exists( 'get_queried_object_id' ) ) {
+			return false;
+		}
+
+		$queriedPostId = absint( get_queried_object_id() );
+
+		return 0 < $queriedPostId && absint( $contextPostId ) === $queriedPostId;
 	}
 }

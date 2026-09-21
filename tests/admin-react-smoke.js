@@ -297,6 +297,13 @@ if (!phpGenerator || phpGenerator.type !== 'button' || phpGenerator.props.type !
 if (!sourceCode.includes('this.modalTrigger = trigger || null') || !sourceCode.includes('this.modalTrigger.focus()') || !sourceCode.includes('this.modalCloseButton.focus()') || !sourceCode.includes('handleModalKeyDown') || !sourceCode.includes("event.key === 'Escape'")) {
 	throw new Error('Code generator modal should restore focus to its trigger.');
 }
+if (adminCss.includes('.zm_frontend_js_badge:hover::after') || adminCss.includes('.zm_frontend_js_badge:focus::after') || !adminCss.includes('.zm_frontend_js_badge.is-tooltip-open::after')) {
+	throw new Error('Frontend JavaScript badges must close on Escape while focus remains.');
+}
+const frontendBadgeUses = sourceCode.match(/e\(FrontendJsBadge/g) || [];
+if (frontendBadgeUses.length !== 1 || !sourceCode.includes('frontendJsFeature: feature') || !sourceCode.includes('frontendJsFeature: props.frontendJsFeature')) {
+	throw new Error('Frontend JavaScript badges must be owned by the shared toggle components without duplicate checkbox rendering.');
+}
 
 const retiredNames = ['zm_shbt_fld[g_analytics]', 'zm_shbt_fld[use_port]'];
 const requiredNames = settingsSchema.field_names.filter((name) => !retiredNames.includes(name));

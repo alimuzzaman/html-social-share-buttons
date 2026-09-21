@@ -14,9 +14,10 @@ final class ResolvedButton {
 		$this->network = $network;
 		$this->url = (string) $url;
 		$this->iconFile = (string) $iconFile;
-		$this->browserUrlDescriptor = is_array( $browserUrlDescriptor )
+		$this->browserUrlDescriptor = is_array( $browserUrlDescriptor ) && $this->isValidBrowserDescriptor( $browserUrlDescriptor )
 			? $browserUrlDescriptor
 			: ( is_string( $browserUrlDescriptor ) && '' !== $browserUrlDescriptor
+				&& false !== strpos( $browserUrlDescriptor, '%%permalink%%' )
 				? array(
 					'permalink_slot' => '%%permalink%%',
 					'template'       => $browserUrlDescriptor,
@@ -38,5 +39,13 @@ final class ResolvedButton {
 
 	public function browserUrlDescriptor() {
 		return $this->browserUrlDescriptor;
+	}
+
+	private function isValidBrowserDescriptor( array $descriptor ) {
+		return isset( $descriptor['template'], $descriptor['permalink_slot'] )
+			&& is_string( $descriptor['template'] )
+			&& '' !== $descriptor['template']
+			&& '%%permalink%%' === $descriptor['permalink_slot']
+			&& false !== strpos( $descriptor['template'], $descriptor['permalink_slot'] );
 	}
 }

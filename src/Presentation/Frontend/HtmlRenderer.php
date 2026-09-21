@@ -116,7 +116,11 @@ final class HtmlRenderer {
 
 	private function browserDescriptorAttributes( ResolvedButton $button ) {
 		$descriptor = $button->browserUrlDescriptor();
-		if ( empty( $descriptor['template'] ) || '%%permalink%%' !== ( isset( $descriptor['permalink_slot'] ) ? $descriptor['permalink_slot'] : '' ) ) {
+		if (
+			empty( $descriptor['template'] ) ||
+			'%%permalink%%' !== ( isset( $descriptor['permalink_slot'] ) ? $descriptor['permalink_slot'] : '' ) ||
+			false === strpos( (string) $descriptor['template'], '%%permalink%%' )
+		) {
 			return '';
 		}
 

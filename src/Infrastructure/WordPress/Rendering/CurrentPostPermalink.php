@@ -48,6 +48,19 @@ final class CurrentPostPermalink {
 		return esc_url_raw( home_url( $requestUri ) );
 	}
 
+	/**
+	 * Resolve the current request itself, without treating the global loop post
+	 * as the page source. This is used only by page-level floating controls on
+	 * archive, search, and other non-singular requests.
+	 */
+	public function resolvePage() {
+		$requestUri = isset( $_SERVER['REQUEST_URI'] )
+			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+			: '/';
+
+		return esc_url_raw( home_url( $requestUri ) );
+	}
+
 	private function isAjaxRequest() {
 		return wp_doing_ajax();
 	}

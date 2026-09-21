@@ -19,7 +19,13 @@ if ( 'browser_url' !== (string) ( $expected['id'] ?? '' ) || 'use_browser_url' !
 	echo "Frontend feature contract failed: fixture does not describe browser_url.\n";
 	exit( 1 );
 }
-if ( false === strpos( $payload, 'FrontendFeatureRegistry::all()' ) || false === strpos( $components, 'function FrontendJsBadge' ) || false === strpos( $renderer, 'frontendJsFeature' ) ) {
+if (
+	false === strpos( $payload, 'FrontendFeatureRegistry::all()' ) ||
+	false === strpos( $components, 'function FrontendJsBadge' ) ||
+	false === strpos( $components, 'frontendJsFeature: feature' ) ||
+	false === strpos( $components, 'frontendJsFeature: props.frontendJsFeature' ) ||
+	false === strpos( $renderer, 'frontendJsFeature' )
+) {
 	echo "Frontend feature contract failed: shared admin warning wiring is missing.\n";
 	exit( 1 );
 }

@@ -7,11 +7,25 @@ export function createSettingsComponents(runtime) {
 	var useState = runtime.useState;
 
 	function ToggleInput(props) {
+		var label = props.label;
+		var feature = props.frontendJsFeature;
+		if (feature) {
+			label = e('span', { className: 'zm_checkbox_label_with_badge' }, [
+				e('span', { key: 'label' }, props.label),
+				e(FrontendJsBadge, {
+					key: 'badge',
+					id: props.id || feature.id,
+					label: feature.label,
+					description: feature.description
+				})
+			]);
+		}
+
 		return e('div', { className: 'zm_native_toggle' + (props.className ? ' ' + props.className : '') }, [
 			props.headerContent || null,
 			e(ToggleControl, {
 				key: 'control',
-				label: props.label,
+				label: label,
 				name: props.name,
 				value: '1',
 				checked: toBoolean(props.checked),
@@ -44,10 +58,13 @@ export function createSettingsComponents(runtime) {
 				key: 'toggle',
 				className: 'zm_panel_toggle' + (props.headerClassName ? ' ' + props.headerClassName : ''),
 				headerContent: headerContent,
+				id: props.id,
 				label: props.label,
 				name: props.name,
 				checked: enabled,
 				onChange: props.onChange,
+				frontendJsFeature: props.frontendJsFeature,
+				'aria-describedby': props['aria-describedby'],
 				disabled: props.disabled
 			}),
 			enabled ? e('div', { key: 'details', className: 'zm_expandable_toggle_panel_details' + (props.detailsClassName ? ' ' + props.detailsClassName : '') }, props.children) : (props.preservedControl || null)
@@ -166,28 +183,17 @@ export function createSettingsComponents(runtime) {
 	}
 
 	function CheckboxInput(props) {
-		var label = props.label;
 		var feature = props.frontendJsFeature;
 		var helpId = feature && props.id ? (feature.id || props.id) + '-frontend-js-warning' : null;
-		if (feature) {
-			label = e('span', { className: 'zm_checkbox_label_with_badge' }, [
-				e('span', { key: 'label' }, props.label),
-				e(FrontendJsBadge, {
-					key: 'badge',
-					id: props.id,
-					label: feature.label,
-					description: feature.description
-				})
-			]);
-		}
 		return e('div', { className: 'zm_checkbox_input' }, [e(ToggleInput, {
 			key: 'toggle',
 			id: props.id,
-			label: label,
+			label: props.label,
 			name: props.name,
 			checked: props.checked,
 			onChange: props.onChange,
 			dataId: props.dataId,
+			frontendJsFeature: feature,
 			'aria-describedby': helpId
 		}), props.help ? e('p', { key: 'help', id: helpId, className: 'components-base-control__help' }, props.help) : null]);
 	}

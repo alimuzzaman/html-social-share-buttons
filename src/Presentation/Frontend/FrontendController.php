@@ -240,9 +240,16 @@ final class FrontendController {
 	}
 
 	public function renderPlacement( $placement, $className ) {
+		$isSingular = is_singular();
+		$isPageLevelFloating = $this->isPageLevelFloatingPlacement( $placement );
+		$browserUrlEligible = $isPageLevelFloating || $isSingular;
+		$browserUrlSource = $isPageLevelFloating
+			? ( $isSingular ? 'automatic_singular' : 'automatic_page' )
+			: ( $isSingular ? 'automatic_singular' : '' );
+
 		return $this->render(
-			$this->placementOptions( $placement, $className ),
-			$this->currentPostId()
+			$this->placementOptions( $placement, $className, $browserUrlEligible, $browserUrlSource ),
+			$isSingular ? $this->currentPostId() : 0
 		);
 	}
 
@@ -262,11 +269,20 @@ final class FrontendController {
 
 		$html = '';
 		foreach ( $this->floatingPlacement->enabled( $settings ) as $placement ) {
+			$isSingular = is_singular();
+			$isPageLevelFloating = $this->isPageLevelFloatingPlacement( $placement );
+			$placementOptions = $this->placementOptionsFor(
+				$settings,
+				$placement,
+				$placement,
+				$isPageLevelFloating || $isSingular,
+				$isPageLevelFloating ? ( $isSingular ? 'automatic_singular' : 'automatic_page' ) : ( $isSingular ? 'automatic_singular' : '' )
+			);
 			/* The public footer historically passed each group through wp_kses_post(). */
 			$html .= wp_kses_post(
 				$this->renderWithOptions(
-					$this->placementOptionsFor( $settings, $placement, $placement, is_singular() ),
-					$this->currentPostId(),
+					$placementOptions,
+					$isSingular ? $this->currentPostId() : 0,
 					$assets,
 					$options
 				)
@@ -296,11 +312,11 @@ final class FrontendController {
 		return $this->assets;
 	}
 
-	private function placementOptions( $placement, $className ) {
-		return $this->placementOptionsFor( $this->settings(), $placement, $className, is_singular() );
+	private function placementOptions( $placement, $className, $browserUrlEligible = false, $browserUrlSource = '' ) {
+		return $this->placementOptionsFor( $this->settings(), $placement, $className, $browserUrlEligible, $browserUrlSource );
 	}
 
-	private function placementOptionsFor( Settings $settings, $placement, $className, $browserUrlEligible = false ) {
+	private function placementOptionsFor( Settings $settings, $placement, $className, $browserUrlEligible = false, $browserUrlSource = '' ) {
 		$renderPlacement = array(
 			Placement::LEFT           => RenderPlacement::FLOATING_LEFT,
 			Placement::RIGHT          => RenderPlacement::FLOATING_RIGHT,
@@ -330,8 +346,12 @@ final class FrontendController {
 			'placement'            => isset( $renderPlacement[ $placement ] )
 				? $renderPlacement[ $placement ] : RenderPlacement::PHP_API,
 			'browser_url_eligible' => (bool) $browserUrlEligible,
-			'browser_url_source'   => $browserUrlEligible ? 'automatic_singular' : '',
+			'browser_url_source'   => $browserUrlEligible ? (string) ( $browserUrlSource ? $browserUrlSource : 'automatic_singular' ) : '',
 		);
+	}
+
+	private function isPageLevelFloatingPlacement( $placement ) {
+		return in_array( $placement, array( Placement::LEFT, Placement::RIGHT ), true );
 	}
 
 	private function settings() {

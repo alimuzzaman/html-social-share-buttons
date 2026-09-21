@@ -189,8 +189,6 @@
 	box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
 }
 
-.zm_frontend_js_badge:hover::after,
-.zm_frontend_js_badge:focus::after,
 .zm_frontend_js_badge.is-tooltip-open::after {
 	display: block;
 }

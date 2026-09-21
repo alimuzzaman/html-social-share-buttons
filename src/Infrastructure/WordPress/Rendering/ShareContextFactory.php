@@ -41,6 +41,23 @@ final class ShareContextFactory {
 		return $this->permalinks->resolve( $contextPostId );
 	}
 
+	public function pagePermalink() {
+		if ( method_exists( $this->permalinks, 'resolvePage' ) ) {
+			return $this->permalinks->resolvePage();
+		}
+
+		return $this->permalinks->resolve( 0 );
+	}
+
+	public function createPage() {
+		return new ShareContext(
+			$this->pagePermalink(),
+			$this->extensions->shareTitle( get_the_title() ),
+			get_bloginfo( 'description' ),
+			$this->imageUrl( $this->postId( 0 ) )
+		);
+	}
+
 	private function postId( $contextPostId ) {
 		$postId = absint( $contextPostId );
 		if ( ! $postId ) {

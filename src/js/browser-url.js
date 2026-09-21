@@ -34,7 +34,7 @@
 			link.setAttribute('href', serverHref);
 			return;
 		}
-		link.setAttribute('href', descriptor.template.replace(descriptor.permalink_slot, encodeComponent(currentUrl)));
+		link.setAttribute('href', descriptor.template.split(descriptor.permalink_slot).join(encodeComponent(currentUrl)));
 	}
 
 	function updateAll() {
