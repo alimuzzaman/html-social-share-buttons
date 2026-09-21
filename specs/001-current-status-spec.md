@@ -20,7 +20,7 @@ canonical rewrite so later changes do not regress existing installations.
 The plugin is in active use with saved options in `wp_options`; any schema or serialization mismatch can break user settings or front-end output.
 
 ## 2.0 Baseline Scope
-- Candidate metadata is `3.2.0` for the next update. Publication
+- Candidate metadata is `3.3.0` for the next update. Publication
   requires manual exact-archive review under `docs/STAGING-SOAK.md`; the old
   fourteen-day soak was waived and remains superseded.
 - Production runtime ownership is canonical and namespaced. Thin legacy

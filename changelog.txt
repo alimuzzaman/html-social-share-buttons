@@ -1,5 +1,12 @@
 HTML Social Share Buttons historical changelog
 
+= 3.3.0 - 2026-09-21 =
+* **FEATURE**: Added optional browser-URL sharing for eligible automatic links, preserving query strings and fragments at click time.
+* **IMPROVEMENT**: Added a shared admin badge that clearly marks settings which add frontend JavaScript.
+* **FIX**: Preserved server-generated destinations when custom templates, legacy URL filters, secondary queries, or archive contexts require them.
+* **FIX**: Hardened browser-URL descriptors, repeated permalink replacement, keyboard dismissal, and no-JavaScript fallbacks.
+* **TEST**: Added browser-URL smoke coverage and expanded descriptor, eligibility, and shared-control regression contracts.
+
 = 3.0.0 =
 * **REWRITE**: Moved runtime ownership to a canonical namespaced service graph while retaining the documented 2.2.6 public and storage compatibility surfaces.
 * **FEATURE**: Added optional global social profile and email links with per-placement inherit or suppress controls.

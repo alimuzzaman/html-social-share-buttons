@@ -23,7 +23,7 @@ final class AssetCollector {
 	private $requiresFrontendJs = false;
 	private $frontendFeatures = array();
 
-	public function __construct( $fallbackStylesheet, $version = '3.2.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance', $frontendScriptUrl = '', $frontendScriptHandle = 'hssb-browser-url' ) {
+	public function __construct( $fallbackStylesheet, $version = '3.3.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance', $frontendScriptUrl = '', $frontendScriptHandle = 'hssb-browser-url' ) {
 		$this->fallbackStylesheet = (string) $fallbackStylesheet;
 		$this->version = (string) $version;
 		$this->buttonAppearanceStyleHandle = (string) $buttonAppearanceStyleHandle;

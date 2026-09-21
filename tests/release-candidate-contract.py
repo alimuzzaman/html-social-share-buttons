@@ -24,9 +24,9 @@ class CandidateContract(unittest.TestCase):
         self.write_zip()
         self.record()
 
-    def write_zip(self, stable='3.2.0', extra=None):
+    def write_zip(self, stable='3.3.0', extra=None):
         with zipfile.ZipFile(self.root / 'candidate.zip', 'w') as archive:
-            archive.writestr(candidate.SLUG + '/html-social-share.php', 'Version: 3.2.0\n')
+            archive.writestr(candidate.SLUG + '/html-social-share.php', 'Version: 3.3.0\n')
             archive.writestr(candidate.SLUG + '/readme.txt', 'Stable tag: ' + stable + '\n')
             if extra:
                 archive.writestr(extra, 'untrusted')
@@ -36,7 +36,7 @@ class CandidateContract(unittest.TestCase):
 
     def test_exact_identity(self):
         original = (self.root / 'candidate.zip').read_bytes()
-        candidate.verify(self.root, self.source, 'v3.2.0', candidate.digest(original))
+        candidate.verify(self.root, self.source, 'v3.3.0', candidate.digest(original))
         self.assertEqual(original, (self.root / 'candidate.zip').read_bytes())
 
     def test_changed_bytes(self):
@@ -51,11 +51,11 @@ class CandidateContract(unittest.TestCase):
 
     def test_wrong_tag(self):
         with self.assertRaisesRegex(ValueError, 'Tag'):
-            candidate.verify(self.root, self.source, 'v3.2.1')
+            candidate.verify(self.root, self.source, 'v3.3.1')
 
     def test_wrong_reviewed_hash(self):
         with self.assertRaisesRegex(ValueError, 'reviewed'):
-            candidate.verify(self.root, self.source, 'v3.2.0', '0' * 64)
+            candidate.verify(self.root, self.source, 'v3.3.0', '0' * 64)
 
     def test_wrong_stable_tag(self):
         self.write_zip(stable='3.1.0')
@@ -72,7 +72,7 @@ class CandidateContract(unittest.TestCase):
         script = Path(__file__).parents[1] / 'scripts/release-candidate.py'
         command = [sys.executable, str(script)]
         archive_hash = candidate.digest((self.root / 'candidate.zip').read_bytes())
-        result = subprocess.run(command + ['extract', str(self.root), self.source, 'v3.2.0', archive_hash, str(destination)], capture_output=True)
+        result = subprocess.run(command + ['extract', str(self.root), self.source, 'v3.3.0', archive_hash, str(destination)], capture_output=True)
         self.assertEqual(0, result.returncode, result.stderr)
         installed = destination / candidate.SLUG
         check = command + ['installed', str(self.root), self.source, str(installed)]
@@ -80,7 +80,7 @@ class CandidateContract(unittest.TestCase):
         (installed / 'readme.txt').write_text('changed')
         self.assertNotEqual(0, subprocess.run(check, capture_output=True).returncode)
         # Never overwrite a previous extraction, even when its content changed.
-        result = subprocess.run(command + ['extract', str(self.root), self.source, 'v3.2.0', archive_hash, str(destination)], capture_output=True)
+        result = subprocess.run(command + ['extract', str(self.root), self.source, 'v3.3.0', archive_hash, str(destination)], capture_output=True)
         self.assertNotEqual(0, result.returncode)
 
     def test_path_traversal(self):

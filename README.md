@@ -5,9 +5,9 @@ actions and optional social profile/contact links. Its frontend is
 server-rendered HTML and CSS, icon assets are served locally, and the plugin
 adds no frontend tracking scripts.
 
-The current branch prepares the 3.2.0 release after published 3.1.0. It adds an
-admin share-template preview, aligns the first settings screen with runtime
-defaults, and makes floating auto-hide work with keyboard focus across packs.
+The current branch prepares the 3.3.0 release after published 3.2.0. It adds
+optional browser-URL sharing for eligible automatic links, a clear admin badge
+for frontend JavaScript, and stronger URL/rendering regression coverage.
 The obsolete analytics and URL-port controls are retired; stored values remain
 available for compatibility. See the
 [update plan](docs/reviews/2026-09-05-astra-update-plan.md) for scope and gates.
@@ -139,7 +139,7 @@ The test commands use the project's Sandbox WordPress runtime. See
 - The Default PNG pack is retained under an accepted compatibility exception.
   That is not an independent provenance or clearance claim.
 - The 3.0.0 release's exact-archive rollback rehearsal and WordPress 7.1 final
-  manual review remain historical evidence. The 3.2.0 update requires
+  manual review remain historical evidence. The 3.3.0 update requires
   fresh immutable archive review before publication.
 
 ## Security and licensing

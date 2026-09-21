@@ -5,7 +5,7 @@ Tags: social share buttons, social sharing, gutenberg block, social media, share
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 3.2.0
+Stable tag: 3.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -152,6 +152,13 @@ sources and their license notices are included with the plugin. See
 provenance record.
 
 == Changelog ==
+
+= 3.3.0 - 2026-09-21 =
+* **FEATURE**: Added optional browser-URL sharing for eligible automatic links, preserving query strings and fragments at click time.
+* **IMPROVEMENT**: Added a shared admin badge that clearly marks settings which add frontend JavaScript.
+* **FIX**: Preserved server-generated destinations when custom templates, legacy URL filters, secondary queries, or archive contexts require them.
+* **FIX**: Hardened browser-URL descriptors, repeated permalink replacement, keyboard dismissal, and no-JavaScript fallbacks.
+* **TEST**: Added browser-URL smoke coverage and expanded descriptor, eligibility, and shared-control regression contracts.
 
 = 3.2.0 =
 * **FEATURE**: Preview share templates with fixed sample content and advisory diagnostics, without saving or contacting a share service.
