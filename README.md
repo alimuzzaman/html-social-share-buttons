@@ -11,7 +11,9 @@ for frontend JavaScript, and stronger URL/rendering regression coverage.
 The obsolete analytics and URL-port controls are retired; stored values remain
 available for compatibility. See the
 [update plan](docs/reviews/2026-09-05-astra-update-plan.md) for scope and gates.
-Publication requires the final reviewed commit and exact tested archive.
+Publication requires the final reviewed commit and exact tested archive. Follow
+[the release process](docs/RELEASE-PROCESS.md) for the master-only tag and
+publication workflow.
 
 ## Features
 
@@ -123,6 +125,13 @@ candidate build.
 The test commands use the project's Sandbox WordPress runtime. See
 [tests/README.md](tests/README.md) for the contract and fixture inventory.
 
+## Release process
+
+Release tags must point to a reviewed commit on `master`; do not release from a
+feature branch. Follow [the release process](docs/RELEASE-PROCESS.md) to build
+and review the exact archive, push the tag, wait for tag validation, and
+dispatch publication with the reviewed archive SHA-256 and exact confirmation.
+
 ## Evidence boundaries
 
 - The current isolated browser matrix covers Chrome, Firefox, Edge, and
@@ -150,5 +159,6 @@ and third-party notices are recorded in
 [resources/iconsets/ASSET-SOURCES.md](resources/iconsets/ASSET-SOURCES.md) and
 `THIRD-PARTY-NOTICES.txt`.
 
-No tag, WordPress.org upload, production deployment, or article publication is
-authorized by the repository's candidate evidence alone.
+The repository does not publish automatically from tag pushes. A tag push runs
+validation only; publication requires the manual workflow dispatch described in
+the release process.
