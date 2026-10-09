@@ -153,7 +153,7 @@ provenance record.
 
 == Changelog ==
 
-= 3.4.0 =
+= 3.4.0 - 2026-10-09 =
 * **FEATURE**: Added WhatsApp and Reddit share buttons. Both are off by default.
 * **FEATURE**: Added an optional Copy link button. It copies the shared URL to the clipboard and announces the result to screen readers. Without JavaScript it stays a plain link to the page.
 * **IMPROVEMENT**: Frontend scripts now load per feature. Copy link and browser-URL sharing each load only on pages that render them.
