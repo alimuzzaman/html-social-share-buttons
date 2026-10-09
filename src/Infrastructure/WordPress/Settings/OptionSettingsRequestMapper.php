@@ -191,7 +191,7 @@ final class OptionSettingsRequestMapper {
 		}
 
 		$placementKeys = array_keys( $this->placements );
-		$networkKeys = array( 'facebook', 'x', 'twitter', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' );
+		$networkKeys = array( 'facebook', 'x', 'twitter', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' );
 		$this->removeOwnedNestedKeys( $replacement, 'show_in', $placementKeys );
 		$this->removeOwnedNestedKeys( $replacement, 'profile_link_placements', $placementKeys );
 		$this->removeOwnedNestedKeys( $replacement, 'icons', $networkKeys );

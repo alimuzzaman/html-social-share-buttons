@@ -10,7 +10,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Bootstrap;
  * legacy bootstrap for plugin state.
  */
 final class PluginConfig {
-	const VERSION = '3.3.0';
+	const VERSION = '3.4.0';
 	const OPTION_NAME = 'zm_shbt_fld';
 	const SHORTCODE = 'zm_sh_btn';
 	const SHORTCODE_ALIAS = 'html-social-share-buttons';
@@ -138,6 +138,14 @@ final class PluginConfig {
 
 	public function browserUrlScriptUrl() {
 		return $this->paths->url() . 'build/browser-url.js';
+	}
+
+	public function copyLinkScriptHandle() {
+		return 'hssb-copy-link';
+	}
+
+	public function copyLinkScriptUrl() {
+		return $this->paths->url() . 'build/copy-link.js';
 	}
 
 	public function shareBlockEditorHandle() {

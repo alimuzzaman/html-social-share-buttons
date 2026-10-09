@@ -47,6 +47,9 @@
     "zm_shbt_fld[icons][pinterest]",
     "zm_shbt_fld[icons][telegram]",
     "zm_shbt_fld[icons][bluesky]",
+    "zm_shbt_fld[icons][whatsapp]",
+    "zm_shbt_fld[icons][reddit]",
+    "zm_shbt_fld[icons][copy]",
     "zm_shbt_fld[icons][mail]",
     "zm_shbt_fld[profile_links][facebook]",
     "zm_shbt_fld[profile_links][x]",
@@ -54,6 +57,8 @@
     "zm_shbt_fld[profile_links][pinterest]",
     "zm_shbt_fld[profile_links][telegram]",
     "zm_shbt_fld[profile_links][bluesky]",
+    "zm_shbt_fld[profile_links][whatsapp]",
+    "zm_shbt_fld[profile_links][reddit]",
     "zm_shbt_fld[profile_links][mail]",
     "zm_shbt_fld[profile_link_placements][show_left]",
     "zm_shbt_fld[profile_link_placements][show_right]",
@@ -72,6 +77,8 @@
     "zm_shbt_fld[share_templates][pinterest]",
     "zm_shbt_fld[share_templates][telegram]",
     "zm_shbt_fld[share_templates][bluesky]",
+    "zm_shbt_fld[share_templates][whatsapp]",
+    "zm_shbt_fld[share_templates][reddit]",
     "zm_shbt_fld[share_templates][mail]"
   ],
   "share_template_defaults": {
@@ -81,6 +88,9 @@
     "pinterest": "https://www.pinterest.com/pin/create/button/?url=%%permalink%%&media=%%imageurl%%&description=%%title%%",
     "telegram": "https://t.me/share/url?url=%%permalink%%&text=%%title%%",
     "bluesky": "https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%",
+    "whatsapp": "https://wa.me/?text=%%title%%%20%%permalink%%",
+    "reddit": "https://www.reddit.com/submit?url=%%permalink%%&title=%%title%%",
+    "copy": "%%permalink%%",
     "mail": "mailto:?subject=%%title%%&body=%%permalink%%"
   },
   "sanitization_case": {

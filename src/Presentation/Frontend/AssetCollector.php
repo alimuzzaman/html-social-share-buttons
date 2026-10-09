@@ -20,15 +20,21 @@ final class AssetCollector {
 	private $buttonAppearanceStyleHandle;
 	private $frontendScriptUrl;
 	private $frontendScriptHandle;
+	private $featureScripts;
 	private $requiresFrontendJs = false;
 	private $frontendFeatures = array();
 
-	public function __construct( $fallbackStylesheet, $version = '3.3.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance', $frontendScriptUrl = '', $frontendScriptHandle = 'hssb-browser-url' ) {
+	/**
+	 * @param array $featureScripts Frontend feature ID => array( handle, url )
+	 *                              for features other than browser URL.
+	 */
+	public function __construct( $fallbackStylesheet, $version = '3.4.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance', $frontendScriptUrl = '', $frontendScriptHandle = 'hssb-browser-url', array $featureScripts = array() ) {
 		$this->fallbackStylesheet = (string) $fallbackStylesheet;
 		$this->version = (string) $version;
 		$this->buttonAppearanceStyleHandle = (string) $buttonAppearanceStyleHandle;
 		$this->frontendScriptUrl = (string) $frontendScriptUrl;
 		$this->frontendScriptHandle = (string) $frontendScriptHandle;
+		$this->featureScripts = $featureScripts;
 	}
 
 	/**
@@ -75,7 +81,7 @@ final class AssetCollector {
 	 * use this request-scoped instance.
 	 */
 	public function fresh() {
-		return new self( $this->fallbackStylesheet, $this->version, $this->buttonAppearanceStyleHandle, $this->frontendScriptUrl, $this->frontendScriptHandle );
+		return new self( $this->fallbackStylesheet, $this->version, $this->buttonAppearanceStyleHandle, $this->frontendScriptUrl, $this->frontendScriptHandle, $this->featureScripts );
 	}
 
 	public function enqueueStyles() {
@@ -105,17 +111,38 @@ final class AssetCollector {
 	}
 
 	public function enqueueScripts() {
-		if ( ! $this->requiresFrontendJs || '' === $this->frontendScriptUrl ) {
+		if ( ! $this->requiresFrontendJs ) {
 			return;
 		}
 
-		wp_enqueue_script(
-			$this->frontendScriptHandle,
-			$this->frontendScriptUrl,
-			array(),
-			$this->version,
-			true
-		);
+		foreach ( $this->scriptsToEnqueue() as $script ) {
+			wp_enqueue_script( $script[0], $script[1], array(), $this->version, true );
+		}
+	}
+
+	/**
+	 * One script per collected feature. An outcome that reports frontend JS
+	 * without naming a feature keeps the historical browser-URL script.
+	 */
+	private function scriptsToEnqueue() {
+		$scripts = array();
+		$features = empty( $this->frontendFeatures )
+			? array( FrontendFeatureRegistry::BROWSER_URL )
+			: array_values( $this->frontendFeatures );
+		foreach ( $features as $featureId ) {
+			if ( FrontendFeatureRegistry::BROWSER_URL === $featureId ) {
+				$script = array( $this->frontendScriptHandle, $this->frontendScriptUrl );
+			} elseif ( isset( $this->featureScripts[ $featureId ] ) && is_array( $this->featureScripts[ $featureId ] ) ) {
+				$script = array_values( $this->featureScripts[ $featureId ] );
+			} else {
+				continue;
+			}
+			if ( isset( $script[0], $script[1] ) && '' !== (string) $script[0] && '' !== (string) $script[1] ) {
+				$scripts[] = array( (string) $script[0], (string) $script[1] );
+			}
+		}
+
+		return $scripts;
 	}
 
 	public function inlineIconStyles( $autoHideEnabled ) {

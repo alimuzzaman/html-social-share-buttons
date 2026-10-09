@@ -5,12 +5,17 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Domain\Network;
 use InvalidArgumentException;
 
 final class Network {
+	const KIND_SHARE = 'share';
+	/** Copies the resolved page URL instead of opening a share service. */
+	const KIND_COPY = 'copy';
+
 	private $id;
 	private $label;
 	private $cssClass;
 	private $defaultShareTemplate;
 	private $placeholders;
 	private $enabledByDefault;
+	private $kind;
 
 	public function __construct(
 		$id,
@@ -18,7 +23,8 @@ final class Network {
 		$cssClass,
 		$defaultShareTemplate,
 		array $placeholders,
-		$enabledByDefault
+		$enabledByDefault,
+		$kind = self::KIND_SHARE
 	) {
 		$id = (string) $id;
 		$label = (string) $label;
@@ -33,6 +39,9 @@ final class Network {
 		}
 		if ( ! preg_match( '/^[a-z][a-z0-9_-]*$/', $cssClass ) ) {
 			throw new InvalidArgumentException( 'Network CSS classes must be safe identifiers.' );
+		}
+		if ( ! in_array( $kind, array( self::KIND_SHARE, self::KIND_COPY ), true ) ) {
+			throw new InvalidArgumentException( 'Unknown network kind.' );
 		}
 		$normalizedPlaceholders = array();
 		foreach ( $placeholders as $placeholder ) {
@@ -56,6 +65,7 @@ final class Network {
 		$this->defaultShareTemplate = $defaultShareTemplate;
 		$this->placeholders = array_values( $normalizedPlaceholders );
 		$this->enabledByDefault = (bool) $enabledByDefault;
+		$this->kind = $kind;
 	}
 
 	public function id() {
@@ -80,5 +90,13 @@ final class Network {
 
 	public function enabledByDefault() {
 		return $this->enabledByDefault;
+	}
+
+	public function kind() {
+		return $this->kind;
+	}
+
+	public function isCopyAction() {
+		return self::KIND_COPY === $this->kind;
 	}
 }

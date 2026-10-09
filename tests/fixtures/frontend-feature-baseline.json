@@ -3,5 +3,10 @@
     "id": "browser_url",
     "setting": "use_browser_url",
     "requires_frontend_js": true
+  },
+  "copy_link": {
+    "id": "copy_link",
+    "setting": "icons.copy",
+    "requires_frontend_js": true
   }
 }

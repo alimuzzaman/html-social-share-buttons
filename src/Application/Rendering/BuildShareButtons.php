@@ -61,7 +61,11 @@ final class BuildShareButtons {
 
 		$requestedProfileLinks = $request->profileLinks();
 		foreach ( $this->networks->ids() as $networkId ) {
-			if ( ! isset( $requestedProfileLinks[ $networkId ] ) || ! $iconSet->hasIcon( $networkId ) ) {
+			if (
+				! isset( $requestedProfileLinks[ $networkId ] ) ||
+				! $iconSet->hasIcon( $networkId ) ||
+				$this->networks->get( $networkId )->isCopyAction()
+			) {
 				continue;
 			}
 
@@ -89,6 +93,9 @@ final class BuildShareButtons {
 	}
 
 	private function browserUrlDescriptor( $network, ShareContext $context, $templateOverride ) {
+		if ( $network->isCopyAction() ) {
+			return ResolveShareUrl::copyDescriptor();
+		}
 		if ( method_exists( $this->urlResolver, 'browserUrlDescriptor' ) ) {
 			return $this->urlResolver->browserUrlDescriptor( $network, $context, $templateOverride );
 		}

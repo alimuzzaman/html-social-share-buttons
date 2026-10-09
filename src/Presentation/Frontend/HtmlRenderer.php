@@ -57,6 +57,10 @@ final class HtmlRenderer {
 		$output .= "'>";
 
 		foreach ( $result->buttons() as $button ) {
+			if ( $button->network()->isCopyAction() ) {
+				$output .= $this->copyLink( $button, $result );
+				continue;
+			}
 			$label = sprintf(
 				/* translators: %s is the social network name. */
 				__( 'Share on %s', 'html-social-share-buttons' ),
@@ -100,6 +104,28 @@ final class HtmlRenderer {
 		}
 
 		return $output . '</div>';
+	}
+
+	/**
+	 * Copy link is a real same-tab link to the shared URL, so it still works
+	 * (and can be copied from the context menu) when the clipboard script is
+	 * unavailable. The script intercepts plain clicks and copies the href.
+	 */
+	private function copyLink( ResolvedButton $button, RenderResult $result ) {
+		return "<a class='" .
+			esc_attr( $this->cssClass( $button->network() ) ) .
+			"' href='" .
+			$this->buttonUrl( $button ) .
+			$this->browserDescriptorAttributes( $button ) .
+			"' data-hssb-copy-link='1' data-hssb-copied-label='" .
+			esc_attr__( 'Link copied', 'html-social-share-buttons' ) .
+			"' data-hssb-copy-failed-label='" .
+			esc_attr__( 'Could not copy the link', 'html-social-share-buttons' ) .
+			"' rel='" .
+			esc_attr( implode( ' ', $result->relTokens() ) ) .
+			"' aria-label='" .
+			esc_attr__( 'Copy link', 'html-social-share-buttons' ) .
+			"'></a>\n";
 	}
 
 	/**

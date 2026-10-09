@@ -8,6 +8,7 @@ use Alimuzzaman\HtmlSocialShareButtons\Application\Frontend\FloatingPlacementPla
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderFacade;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsRepository;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Settings\SettingsStateStore;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Frontend\FrontendFeatureRegistry;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsSchema;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Asset\IconSetAssetResolver;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\BuiltInNetworkProvider;
@@ -89,7 +90,10 @@ final class PluginFactory {
 			$config->version(),
 			$config->buttonAppearanceStyleHandle(),
 			$config->browserUrlScriptUrl(),
-			$config->browserUrlScriptHandle()
+			$config->browserUrlScriptHandle(),
+			array(
+				FrontendFeatureRegistry::COPY_LINK => array( $config->copyLinkScriptHandle(), $config->copyLinkScriptUrl() ),
+			)
 		);
 		$excludedContent = new ExcludedContentPolicy();
 		$contentPlacement = new ContentPlacementComposer();

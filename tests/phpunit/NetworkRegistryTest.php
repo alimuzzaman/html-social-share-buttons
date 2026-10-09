@@ -9,7 +9,7 @@ final class NetworkRegistryTest extends WP_UnitTestCase {
 		$registry = ( new BuiltInNetworkProvider() )->createRegistry();
 
 		$this->assertSame(
-			array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
+			array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
 			$registry->ids()
 		);
 		$this->assertSame( 'x', $registry->get( 'x' )->cssClass() );
@@ -21,7 +21,16 @@ final class NetworkRegistryTest extends WP_UnitTestCase {
 		);
 		foreach ( $registry->all() as $network ) {
 			$this->assertNotSame( '', trim( $network->defaultShareTemplate() ) );
+			$this->assertSame( 'copy' === $network->id(), $network->isCopyAction(), $network->id() );
 		}
+		foreach ( array( 'whatsapp', 'reddit', 'copy' ) as $id ) {
+			$this->assertFalse( $registry->get( $id )->enabledByDefault(), $id );
+		}
+	}
+
+	public function testUnknownNetworkKindsAreRejected(): void {
+		$this->expectException( InvalidArgumentException::class );
+		new Network( 'custom', 'Custom', 'custom', '%%permalink%%', array( '%%permalink%%' ), false, 'popup' );
 	}
 
 	public function testDuplicateNetworkIdsAreRejected(): void {

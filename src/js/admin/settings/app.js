@@ -288,6 +288,8 @@ import { attachTemplatePreviewBehavior } from './template-preview-behavior';
 				case 'share_templates.pinterest':
 				case 'share_templates.telegram':
 				case 'share_templates.bluesky':
+				case 'share_templates.whatsapp':
+				case 'share_templates.reddit':
 				case 'share_templates.mail':
 					nextOptions.share_templates[path.substring(16)] = value;
 					break;

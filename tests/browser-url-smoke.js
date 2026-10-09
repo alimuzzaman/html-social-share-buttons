@@ -91,4 +91,14 @@ const history = run({
 history.listeners.popstate();
 assert.strictEqual(history.link.value('href'), 'https://example.test/?url=https%3A%2F%2Fsite.example%2Fone');
 
+const raw = run({
+	'data-hssb-browser-descriptor': JSON.stringify({
+		permalink_slot: '%%permalink%%',
+		template: '%%permalink%%',
+		encoding: 'raw',
+	}),
+	'data-hssb-server-href': 'https://fallback.example/raw',
+}, 'https://site.example/article/?q=a%2Bb&x=1#part');
+assert.strictEqual(raw.link.value('href'), 'https://site.example/article/?q=a%2Bb&x=1#part');
+
 console.log('Browser URL smoke passed.');

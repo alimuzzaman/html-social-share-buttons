@@ -19,7 +19,7 @@ final class SettingsSchemaTest extends WP_UnitTestCase {
 		$schema = $this->schema();
 
 		$this->assertSame(
-			array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
+			array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
 			$schema->networkIds()
 		);
 		$this->assertSame(

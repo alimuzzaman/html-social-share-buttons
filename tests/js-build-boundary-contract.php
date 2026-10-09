@@ -19,6 +19,8 @@ $requiredBuildFiles = array(
 	'build/vc-scripts.asset.php',
 	'build/browser-url.js',
 	'build/browser-url.asset.php',
+	'build/copy-link.js',
+	'build/copy-link.asset.php',
 );
 $failures = array();
 
@@ -96,6 +98,7 @@ foreach (
 	'src/js/social-links.js',
 	'src/js/vc-scripts.js',
 	'src/js/browser-url.js',
+	'src/js/copy-link.js',
 	) as $entry
 ) {
 	if ( false === strpos( $package, $entry ) ) {
@@ -156,4 +159,4 @@ if ( $failures ) {
 	exit( 1 );
 }
 
-printf( "JavaScript build boundary passed: %d source modules, 5 runtime bundles.\n", $moduleCount );
+printf( "JavaScript build boundary passed: %d source modules, 6 runtime bundles.\n", $moduleCount );

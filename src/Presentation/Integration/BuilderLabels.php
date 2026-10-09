@@ -20,6 +20,9 @@ final class BuilderLabels {
 			'pinterest' => __( 'Pinterest', 'html-social-share-buttons' ),
 			'telegram'  => __( 'Telegram', 'html-social-share-buttons' ),
 			'bluesky'   => __( 'Bluesky', 'html-social-share-buttons' ),
+			'whatsapp'  => __( 'WhatsApp', 'html-social-share-buttons' ),
+			'reddit'    => __( 'Reddit', 'html-social-share-buttons' ),
+			'copy'      => __( 'Copy link', 'html-social-share-buttons' ),
 			'mail'      => __( 'Email', 'html-social-share-buttons' ),
 		);
 
