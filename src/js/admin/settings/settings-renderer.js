@@ -46,9 +46,12 @@ export function attachSettingsRenderer(App, dependencies) {
 		var modalTitle = this.state.modalMode === 'php' ? '<\\?> ' + text('getPhpCode', 'Get PHP Code') : '[] ' + text('getShortcode', 'Get Shortcode');
 		var socialNetworkColumns = [[], []];
 		var networkPreviewType = ensureType(currentIconset, options.show_before_post || options.show_after_post || options.show_left || options.show_right);
-		var profileNetworks = iconsets.length ? (iconsets[0].icons || []) : [];
+		var profileNetworks = iconsets.length ? (iconsets[0].icons || []).filter(function (icon) {
+			return icon.id !== 'copy';
+		}) : [];
 		var frontendFeatures = data.frontend_features || {};
 		var browserFeature = frontendFeatures.browser_url || {};
+		var copyFeature = frontendFeatures.copy_link || {};
 		var buttonAppearances = data.button_appearances || [];
 		var currentAppearance = buttonAppearances.filter(function (appearance) {
 			return appearance.value === options.button_appearance;
@@ -227,6 +230,9 @@ export function attachSettingsRenderer(App, dependencies) {
 					e('div', { key: 'network-columns', className: 'zm_network_columns' }, socialNetworkColumns.map(function (column, columnIndex) {
 						return e('div', { key: 'network-column-' + columnIndex, className: 'zm_network_column' }, column.map(function (icon) {
 					var enabled = toBoolean(options.icons[icon.id]);
+					if (icon.id === 'copy') {
+						return self.renderCopyLinkPanel(icon, enabled, networkPreviewType, copyFeature);
+					}
 					var template = hasOwn(self.state.shareTemplateOverrides, icon.id) ? self.state.shareTemplateOverrides[icon.id] : '';
 					var defaultTemplate = data.share_template_defaults && data.share_template_defaults[icon.id] ? data.share_template_defaults[icon.id] : (options.share_templates[icon.id] || '');
 					var isCustomTemplate = String(template).trim().length > 0;
@@ -503,4 +509,35 @@ export function attachSettingsRenderer(App, dependencies) {
 		}
 	};
 
+	App.prototype.renderCopyLinkPanel = function (icon, enabled, networkPreviewType, feature) {
+		var self = this;
+		var preview = getIconPreview(icon, networkPreviewType);
+		return e(ExpandableTogglePanel, {
+			key: icon.id,
+			id: 'icon_copy',
+			className: 'zm_network_item',
+			detailsClassName: 'zm_network_template',
+			marker: e('span', { key: 'icon', className: 'zm_panel_marker zm_network_marker', 'aria-hidden': 'true' }, preview ? e('img', {
+				key: 'image',
+				src: preview,
+				alt: ''
+			}) : icon.name.substring(0, 1)),
+			title: icon.name,
+			description: text('copyLinkDescription', 'Copy the shared page link to the clipboard.'),
+			label: enabled ? text('enabled', 'Enabled') : text('disabled', 'Disabled'),
+			name: 'zm_shbt_fld[icons][' + icon.id + ']',
+			checked: enabled,
+			frontendJsFeature: feature.requires_frontend_js ? {
+				label: text('frontendJsBadge', 'Adds frontend JavaScript'),
+				description: text('copyLinkBadgeHelp', 'Loads a small script on pages that show the Copy link button. Without JavaScript the button is a plain link to the page.'),
+				id: feature.id || 'copy_link',
+				setting: feature.setting || 'icons.copy'
+			} : null,
+			onChange: function (value) {
+				self.update('icon_' + icon.id, value);
+			}
+		}, [
+			e('p', { key: 'help', className: 'components-base-control__help' }, text('copyLinkHelp', 'Copies the same URL the other buttons share. It has no share template.'))
+		]);
+	};
 }

@@ -128,7 +128,13 @@ final class RenderFacade {
 			$stylesheets[ $this->buttonAppearanceStyleHandle ] = $this->buttonAppearanceStylesheet;
 		}
 
-		$requiresFrontendJs = $request->browserUrlEnabled() && $this->hasBrowserDescriptors( $result );
+		$frontendFeatures = array();
+		if ( $request->browserUrlEnabled() && $this->hasBrowserDescriptors( $result ) ) {
+			$frontendFeatures[] = FrontendFeatureRegistry::BROWSER_URL;
+		}
+		if ( $this->hasCopyAction( $result ) ) {
+			$frontendFeatures[] = FrontendFeatureRegistry::COPY_LINK;
+		}
 
 		return new RenderOutcome(
 			$this->renderer->render(
@@ -140,9 +146,19 @@ final class RenderFacade {
 			),
 			$stylesheets,
 			$this->printedIcons( $result ),
-			$requiresFrontendJs,
-			$requiresFrontendJs ? array( FrontendFeatureRegistry::BROWSER_URL ) : array()
+			! empty( $frontendFeatures ),
+			$frontendFeatures
 		);
+	}
+
+	private function hasCopyAction( $result ) {
+		foreach ( $result->buttons() as $button ) {
+			if ( $button->network()->isCopyAction() ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function hasBrowserDescriptors( $result ) {

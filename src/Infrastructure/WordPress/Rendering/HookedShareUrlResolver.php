@@ -2,6 +2,7 @@
 
 namespace Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Rendering;
 
+use Alimuzzaman\HtmlSocialShareButtons\Application\Rendering\ResolveShareUrl;
 use Alimuzzaman\HtmlSocialShareButtons\Application\Rendering\ShareUrlResolver;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Network\Network;
 use Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\ShareContext;
@@ -54,7 +55,7 @@ final class HookedShareUrlResolver implements ShareUrlResolver {
 			'url'        => $url,
 			'descriptor' => $hasExternalShareUrlFilters
 				? array()
-				: $this->descriptorFromTemplate( $template, $context ),
+				: $this->descriptorFor( $network, $template, $context ),
 		);
 	}
 
@@ -70,10 +71,13 @@ final class HookedShareUrlResolver implements ShareUrlResolver {
 
 		$template = $this->selectedTemplate( $network, $templateOverride );
 
-		return $this->descriptorFromTemplate( $template, $context );
+		return $this->descriptorFor( $network, $template, $context );
 	}
 
 	private function selectedTemplate( Network $network, $templateOverride ) {
+		if ( $network->isCopyAction() ) {
+			return $network->defaultShareTemplate();
+		}
 		$fallback = $network->defaultShareTemplate();
 		$template = is_string( $templateOverride ) && '' !== trim( $templateOverride )
 			? $templateOverride
@@ -84,6 +88,12 @@ final class HookedShareUrlResolver implements ShareUrlResolver {
 		}
 
 		return $template;
+	}
+
+	private function descriptorFor( Network $network, $template, ShareContext $context ) {
+		return $network->isCopyAction()
+			? ResolveShareUrl::copyDescriptor()
+			: $this->descriptorFromTemplate( $template, $context );
 	}
 
 	private function descriptorFromTemplate( $template, ShareContext $context ) {

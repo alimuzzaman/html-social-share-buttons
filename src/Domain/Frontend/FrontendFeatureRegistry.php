@@ -11,6 +11,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Domain\Frontend;
  */
 final class FrontendFeatureRegistry {
 	const BROWSER_URL = 'browser_url';
+	const COPY_LINK = 'copy_link';
 
 	private function __construct() {
 	}
@@ -20,6 +21,11 @@ final class FrontendFeatureRegistry {
 			self::BROWSER_URL => array(
 				'id'                   => self::BROWSER_URL,
 				'setting'              => 'use_browser_url',
+				'requires_frontend_js' => true,
+			),
+			self::COPY_LINK   => array(
+				'id'                   => self::COPY_LINK,
+				'setting'              => 'icons.copy',
 				'requires_frontend_js' => true,
 			),
 		);

@@ -12,6 +12,9 @@ $expected = array(
 	'pinterest' => 'https://www.pinterest.com/pin/create/button/?url=%%permalink%%&media=%%imageurl%%&description=%%title%%',
 	'telegram'  => 'https://t.me/share/url?url=%%permalink%%&text=%%title%%',
 	'bluesky'   => 'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',
+	'whatsapp'  => 'https://wa.me/?text=%%title%%%20%%permalink%%',
+	'reddit'    => 'https://www.reddit.com/submit?url=%%permalink%%&title=%%title%%',
+	'copy'      => '%%permalink%%',
 	'mail'      => 'mailto:?subject=%%title%%&body=%%permalink%%',
 );
 
@@ -38,9 +41,16 @@ foreach ( glob( __DIR__ . '/../resources/iconsets/*.php' ) as $manifest ) {
 	if (
 		! isset( $definition['icons'] ) ||
 		! isset( $definition['icons']['telegram'] ) ||
-		! isset( $definition['icons']['bluesky'] )
+		! isset( $definition['icons']['bluesky'] ) ||
+		! isset( $definition['icons']['whatsapp'] ) ||
+		! isset( $definition['icons']['reddit'] ) ||
+		! isset( $definition['icons']['copy'] )
 	) {
 		fwrite( STDERR, sprintf( "New platform IDs are missing from %s.\n", $manifest ) );
+		exit( 1 );
+	}
+	if ( array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ) !== array_keys( $definition['icons'] ) ) {
+		fwrite( STDERR, sprintf( "Icon manifest network order changed in %s.\n", $manifest ) );
 		exit( 1 );
 	}
 }
@@ -55,8 +65,10 @@ $icon_asset_directories = array(
 	'iconset/prajin/circle',
 );
 
+$icon_asset_platforms = array( 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy' );
+
 foreach ( $icon_asset_directories as $directory ) {
-	foreach ( array( 'telegram', 'bluesky' ) as $platform ) {
+	foreach ( $icon_asset_platforms as $platform ) {
 		if ( ! file_exists( __DIR__ . '/../' . $directory . '/' . $platform . '.svg' ) ) {
 			exit( esc_html( sprintf( 'Missing %s asset in %s.\n', $platform, $directory ) ) );
 			exit( 1 );
@@ -64,7 +76,7 @@ foreach ( $icon_asset_directories as $directory ) {
 	}
 }
 
-foreach ( array( 'telegram', 'bluesky' ) as $platform ) {
+foreach ( $icon_asset_platforms as $platform ) {
 	$icon_style_contracts = array(
 		"iconset/default/square/{$platform}.svg"     => 'stroke-dasharray="6 4"',
 		"iconset/flat/square/{$platform}.svg"       => '<rect width="128" height="128"',

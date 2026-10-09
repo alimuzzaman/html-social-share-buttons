@@ -205,7 +205,10 @@ jobs:
         run: |
           mkdir -p "$TEST_TOOLS"
           if [[ "$WP_TEST_LIBRARY" == 'auto' ]]; then
-            WP_TEST_LIBRARY="$(wp core version --path="$RUNNER_TEMP/wordpress")"
+            WP_RUNTIME_VERSION="$(wp core version --path="$RUNNER_TEMP/wordpress")"
+            # Harness patch releases can lag core. Stay within the same minor line.
+            WP_TEST_LIBRARY="~${WP_RUNTIME_VERSION%.*}.0"
+            echo "WordPress $WP_RUNTIME_VERSION uses published harness $WP_TEST_LIBRARY"
           fi
           composer require \
             --working-dir="$TEST_TOOLS" \

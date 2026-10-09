@@ -17,7 +17,8 @@ final class BuiltInNetworkProvider {
 					$definition['css_class'],
 					$definition['template'],
 					$definition['placeholders'],
-					$definition['enabled_by_default']
+					$definition['enabled_by_default'],
+					isset( $definition['kind'] ) ? $definition['kind'] : Network::KIND_SHARE
 				)
 			);
 		}
@@ -74,6 +75,31 @@ final class BuiltInNetworkProvider {
 				'template'           => 'https://bsky.app/intent/compose?text=%%title%%%0A%%permalink%%',
 				'placeholders'       => array( '%%title%%', '%%permalink%%' ),
 				'enabled_by_default' => false,
+			),
+			array(
+				'id'                 => 'whatsapp',
+				'label'              => 'WhatsApp',
+				'css_class'          => 'whatsapp',
+				'template'           => 'https://wa.me/?text=%%title%%%20%%permalink%%',
+				'placeholders'       => array( '%%title%%', '%%permalink%%' ),
+				'enabled_by_default' => false,
+			),
+			array(
+				'id'                 => 'reddit',
+				'label'              => 'Reddit',
+				'css_class'          => 'reddit',
+				'template'           => 'https://www.reddit.com/submit?url=%%permalink%%&title=%%title%%',
+				'placeholders'       => array( '%%permalink%%', '%%title%%' ),
+				'enabled_by_default' => false,
+			),
+			array(
+				'id'                 => 'copy',
+				'label'              => 'Copy link',
+				'css_class'          => 'copy',
+				'template'           => '%%permalink%%',
+				'placeholders'       => array( '%%permalink%%' ),
+				'enabled_by_default' => false,
+				'kind'               => Network::KIND_COPY,
 			),
 			array(
 				'id'                 => 'mail',

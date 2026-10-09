@@ -75,6 +75,10 @@ final class SettingsRequestSanitizer {
 					? $submittedNetworks[ $networkId ]
 					: false
 			);
+			// Copy link has no share service: no template and no profile link.
+			if ( 'copy' === $networkId ) {
+				continue;
+			}
 			if ( isset( $submittedTemplates[ $networkId ] ) && is_string( $submittedTemplates[ $networkId ] ) ) {
 				$shareTemplates[ $networkId ] = ShareTemplateSanitizer::sanitize(
 					$submittedTemplates[ $networkId ]

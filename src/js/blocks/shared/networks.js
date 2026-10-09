@@ -6,6 +6,9 @@ export function networks( __ ) {
 		{ id: 'pinterest', label: __( 'Pinterest', 'html-social-share-buttons' ) },
 		{ id: 'telegram', label: __( 'Telegram', 'html-social-share-buttons' ) },
 		{ id: 'bluesky', label: __( 'Bluesky', 'html-social-share-buttons' ) },
+		{ id: 'whatsapp', label: __( 'WhatsApp', 'html-social-share-buttons' ) },
+		{ id: 'reddit', label: __( 'Reddit', 'html-social-share-buttons' ) },
+		{ id: 'copy', label: __( 'Copy link', 'html-social-share-buttons' ) },
 		{ id: 'mail', label: __( 'Email', 'html-social-share-buttons' ) },
 	];
 }

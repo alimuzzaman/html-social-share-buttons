@@ -183,6 +183,13 @@ import { networks } from '../shared/networks';
 								return el( CheckboxControl, {
 									key: network.id,
 									label: network.label,
+									help:
+										network.id === 'copy'
+											? __(
+													'Adds frontend JavaScript on pages that show this button.',
+													'html-social-share-buttons'
+											  )
+											: undefined,
 									checked:
 										selected.indexOf( network.id ) !== -1,
 									disabled:

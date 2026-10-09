@@ -34,7 +34,8 @@
 			link.setAttribute('href', serverHref);
 			return;
 		}
-		link.setAttribute('href', descriptor.template.split(descriptor.permalink_slot).join(encodeComponent(currentUrl)));
+		// Copy link carries the address itself, so its slot takes the raw URL.
+		link.setAttribute('href', descriptor.template.split(descriptor.permalink_slot).join(descriptor.encoding === 'raw' ? currentUrl : encodeComponent(currentUrl)));
 	}
 
 	function updateAll() {

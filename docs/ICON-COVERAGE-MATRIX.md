@@ -11,17 +11,17 @@ manifest declares that network and the repository contains the corresponding
 asset for every declared shape. It does **not** mean that the cell has passed
 visual, browser, trademark, or license review.
 
-| Icon set | Shapes | Facebook | X | LinkedIn | Pinterest | Telegram | Bluesky | Email |
-|---|---|---:|---:|---:|---:|---:|---:|---:|
-| Default | square | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Flat | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Long Shadows | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Prajin | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Bootstrap Solid | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Tabler Outline | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Icon set | Shapes | Facebook | X | LinkedIn | Pinterest | Telegram | Bluesky | WhatsApp | Reddit | Copy link | Email |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Default | square | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Flat | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Long Shadows | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Prajin | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Bootstrap Solid | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Tabler Outline | square, circle | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
 
 The Default set does not declare a circle shape. Every declared shape now
-ships all seven built-in network assets. For a built-in set, an unsupported requested shape falls back to
+ships all ten built-in network assets. For a built-in set, an unsupported requested shape falls back to
 that set’s first declared shape; a selected network without an icon is omitted.
 That is runtime behavior, not a promise of visual equivalence.
 
@@ -35,6 +35,7 @@ That is runtime behavior, not a promise of visual equivalence.
 | Prajin PNG brand assets | Retained in `iconset/prajin`; Prajin historical credit and a 2026-08-12 maintainer attestation of rights-holder authorization are recorded; no written authorization is archived | **Authorization attested; archival evidence incomplete** |
 | Historical X artwork in the four PNG packs | X files are regenerated with the pinned MIT-licensed Bootstrap Icons `twitter-x.svg` source by `scripts/generate-legacy-x-assets.js`; historical `twitter`/`Twitter` paths remain unchanged | **Reproducible; trademark review still required** |
 | Prajin square mail tile | Local geometric adaptation of the existing Prajin circle mail artwork; no external asset fetch | Covered by the historical Prajin authorization attestation; archival evidence remains incomplete |
+| WhatsApp, Reddit, and Copy link SVG tiles in historical sets | Generated from pinned MIT Bootstrap Icons v1.13.1 `whatsapp.svg`, `reddit.svg`, and `link-45deg.svg` with checksums by `scripts/generate-legacy-network-assets.js` (`--check` mode); wrappers match each pack's Telegram/Bluesky tiles | **Reproducible; trademark review still required** |
 | Bundled Telegram and Bluesky SVG glyphs in historical sets | Source notes are recorded, but brand-guideline review remains required | Not cleared for publication by this record |
 | Bootstrap Solid SVG set | Pinned Bootstrap Icons v1.13.1 inputs, checksums, deterministic generator, MIT license text, and manifest coverage are present | Source/license record present; browser and trademark review pending |
 | Tabler Outline SVG set | Pinned Tabler Icons v3.46.0 inputs, checksums, deterministic generator, MIT license text, and manifest coverage are present | Source/license record present; browser and trademark review pending |
@@ -58,7 +59,9 @@ retaining its historical uppercase selectors.
 
 That evidence predates the historical X-artwork regeneration. Re-run the
 browser matrix for a release candidate containing the new PNG bytes; the
-earlier screenshots remain historical evidence only.
+earlier screenshots remain historical evidence only. It also predates the
+WhatsApp, Reddit, and Copy link tiles added for 3.4.0; the matrix spec now
+renders all ten networks per cell and needs a fresh run.
 
 Playwright WebKit passed after its documented host dependencies were installed.
 The same eight-project matrix then passed in a newly provisioned strict Sandbox

@@ -169,7 +169,7 @@ final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 		)->html();
 
 		$this->assertSame(
-			7,
+			10,
 			preg_match_all( "/<a class='([^']+)'[^>]+href='([^']+)'/", $output, $matches ),
 			'Every built-in network should produce one share anchor.'
 		);
@@ -192,8 +192,31 @@ final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 		$this->assertSame( $permalink, $decoded['telegram']['url'] );
 		$this->assertSame( $title, $decoded['telegram']['text'] );
 		$this->assertSame( $title . ' ' . $permalink, $decoded['bluesky']['text'] );
+		$this->assertSame( $title . ' ' . $permalink, $decoded['whatsapp']['text'] );
+		$this->assertSame( $permalink, $decoded['reddit']['url'] );
+		$this->assertSame( $title, $decoded['reddit']['title'] );
+		$this->assertSame( array( 'source' => 'all' ), $decoded['copy'] );
+		$this->assertStringContainsString( "<a class='copy' href='" . $permalink . "' data-hssb-copy-link='1'", $output );
 		$this->assertSame( $title, $decoded['mail']['subject'] );
 		$this->assertSame( $permalink, $decoded['mail']['body'] );
+	}
+
+	public function testNewNetworksKeepUnicodeAmpersandsAndQueryStringsIntact(): void {
+		$permalink = 'https://example.test/café/?a=1&b=two%20words';
+		$title = 'Café & "quotes" + more';
+		$context = new ShareContext( $permalink, $title, '', '' );
+		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
+		$resolver = new ResolveShareUrl();
+
+		$query = array();
+		parse_str( (string) wp_parse_url( $resolver->resolve( $networks->get( 'whatsapp' ), $context ), PHP_URL_QUERY ), $query );
+		$this->assertSame( array( 'text' => $title . ' ' . $permalink ), $query );
+
+		$query = array();
+		parse_str( (string) wp_parse_url( $resolver->resolve( $networks->get( 'reddit' ), $context ), PHP_URL_QUERY ), $query );
+		$this->assertSame( array( 'url' => $permalink, 'title' => $title ), $query );
+
+		$this->assertSame( $permalink, $resolver->resolve( $networks->get( 'copy' ), $context, 'https://ignored.example/?u=%%permalink%%' ) );
 	}
 
 	public function testBuiltInResolverTemplatesDecodeWithoutUnresolvedPlaceholders(): void {

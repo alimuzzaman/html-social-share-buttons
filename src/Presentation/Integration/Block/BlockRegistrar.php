@@ -254,7 +254,7 @@ final class BlockRegistrar {
 			)
 		);
 		$scriptPath = $this->pluginRoot . '/build/' . $entry . '.js';
-		$version = isset( $asset['version'] ) ? $asset['version'] : ( file_exists( $scriptPath ) ? filemtime( $scriptPath ) : '3.3.0' );
+		$version = isset( $asset['version'] ) ? $asset['version'] : ( file_exists( $scriptPath ) ? filemtime( $scriptPath ) : '3.4.0' );
 
 		wp_register_script(
 			$handle,
@@ -401,6 +401,12 @@ final class BlockRegistrar {
 				return __( 'Telegram', 'html-social-share-buttons' );
 			case 'bluesky':
 				return __( 'Bluesky', 'html-social-share-buttons' );
+			case 'whatsapp':
+				return __( 'WhatsApp', 'html-social-share-buttons' );
+			case 'reddit':
+				return __( 'Reddit', 'html-social-share-buttons' );
+			case 'copy':
+				return __( 'Copy link', 'html-social-share-buttons' );
 			case 'mail':
 				return __( 'Email', 'html-social-share-buttons' );
 			default:

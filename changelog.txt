@@ -1,5 +1,12 @@
 HTML Social Share Buttons historical changelog
 
+= 3.4.0 - 2026-10-09 =
+* **FEATURE**: Added WhatsApp and Reddit share buttons. Both are off by default.
+* **FEATURE**: Added an optional Copy link button. It copies the shared URL to the clipboard and announces the result to screen readers. Without JavaScript it stays a plain link to the page.
+* **IMPROVEMENT**: Frontend scripts now load per feature. Copy link and browser-URL sharing each load only on pages that render them.
+* **IMPROVEMENT**: Added WhatsApp, Reddit, and Copy link icons to all six bundled icon sets.
+* **TEST**: Added Copy link smoke coverage and contracts for the new share templates and icons.
+
 = 3.3.0 - 2026-09-21 =
 * **FEATURE**: Added optional browser-URL sharing for eligible automatic links, preserving query strings and fragments at click time.
 * **IMPROVEMENT**: Added a shared admin badge that clearly marks settings which add frontend JavaScript.

@@ -25,6 +25,15 @@
             "Bluesky": [
                 "Bluesky"
             ],
+            "WhatsApp": [
+                "WhatsApp"
+            ],
+            "Reddit": [
+                "Reddit"
+            ],
+            "Copy link": [
+                "Copier le lien"
+            ],
             "Email": [
                 "E-mail"
             ],
@@ -63,6 +72,9 @@
             ],
             "Hide profile links in this block": [
                 "Masquer les liens de profil dans ce bloc"
+            ],
+            "Adds frontend JavaScript on pages that show this button.": [
+                "Ajoute du JavaScript public sur les pages qui affichent ce bouton."
             ],
             "Contact email": [
                 "Adresse e-mail de contact"

@@ -14,6 +14,8 @@ use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\Definition\ManifestIconSet
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Extension\ExtensionHooks;
 use Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Translation\TranslationLoader;
 use Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\FrontendController;
+use Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderOutcome;
+use Alimuzzaman\HtmlSocialShareButtons\Domain\Frontend\FrontendFeatureRegistry;
 
 final class CanonicalFrontendAssetCollectorTest extends WP_UnitTestCase {
 	public function testItCollectsRenderedAssetsOnceAndPreservesHistoricalHandles(): void {
@@ -46,7 +48,7 @@ final class CanonicalFrontendAssetCollectorTest extends WP_UnitTestCase {
 			count( array_keys( wp_styles()->queue, 'social-share-flat', true ) )
 		);
 		$this->assertSame(
-			'3.3.0',
+			'3.4.0',
 			wp_styles()->registered['social-share-default']->ver
 		);
 
@@ -58,6 +60,70 @@ final class CanonicalFrontendAssetCollectorTest extends WP_UnitTestCase {
 		);
 		$this->assertStringContainsString( '.zmshbt.left', $css );
 		$this->assertStringContainsString( '.zmshbt.right', $css );
+	}
+
+	public function testItEnqueuesOneScriptPerRenderedFrontendFeature(): void {
+		wp_dequeue_script( 'hssb-browser-url' );
+		wp_dequeue_script( 'hssb-copy-link' );
+		$collector = new AssetCollector(
+			'fallback.css',
+			'3.4.0',
+			'hssb-button-appearance',
+			'https://example.test/build/browser-url.js',
+			'hssb-browser-url',
+			array( FrontendFeatureRegistry::COPY_LINK => array( 'hssb-copy-link', 'https://example.test/build/copy-link.js' ) )
+		);
+
+		$collector->enqueueScripts();
+		$this->assertNotContains( 'hssb-copy-link', wp_scripts()->queue );
+		$this->assertNotContains( 'hssb-browser-url', wp_scripts()->queue );
+
+		$collector->collect( new RenderOutcome( '', array(), array(), true, array( FrontendFeatureRegistry::COPY_LINK ) ) );
+		$collector->enqueueScripts();
+		$this->assertContains( 'hssb-copy-link', wp_scripts()->queue );
+		$this->assertNotContains( 'hssb-browser-url', wp_scripts()->queue );
+		$this->assertSame( 'https://example.test/build/copy-link.js', wp_scripts()->registered['hssb-copy-link']->src );
+
+		$collector->collect( new RenderOutcome( '', array(), array(), true, array( FrontendFeatureRegistry::BROWSER_URL ) ) );
+		$collector->enqueueScripts();
+		$this->assertContains( 'hssb-browser-url', wp_scripts()->queue );
+		$this->assertSame( 1, count( array_keys( wp_scripts()->queue, 'hssb-copy-link', true ) ) );
+
+		$fresh = $collector->fresh();
+		$fresh->collect( new RenderOutcome( '', array(), array(), true, array( FrontendFeatureRegistry::COPY_LINK ) ) );
+		wp_dequeue_script( 'hssb-copy-link' );
+		$fresh->enqueueScripts();
+		$this->assertContains( 'hssb-copy-link', wp_scripts()->queue );
+	}
+
+	public function testCopyLinkRendersARealLinkAndReportsItsFeature(): void {
+		$root = dirname( __DIR__, 2 );
+		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
+		$renderer = new RenderFacade(
+			$networks,
+			( new ManifestIconSetProvider( $root . '/resources/iconsets' ) )->createRegistry( $networks ),
+			new IconSetAssetResolver(
+				$root . '/assets/iconsets',
+				plugins_url( 'assets/iconsets', $root . '/html-social-share.php' )
+			),
+			new ExtensionHooks()
+		);
+
+		$withCopy = $renderer->render(
+			array( 'iconset' => 'bootstrap-solid', 'icons' => array( 'facebook', 'copy' ), 'url' => 'https://example.test/post/?a=1&b=2' )
+		);
+		$this->assertSame( array( FrontendFeatureRegistry::COPY_LINK ), $withCopy->frontendFeatures() );
+		$this->assertStringContainsString(
+			"<a class='copy' href='https://example.test/post/?a=1&#038;b=2' data-hssb-copy-link='1'",
+			$withCopy->html()
+		);
+		$this->assertDoesNotMatchRegularExpression( "/<a class='copy'[^>]*target=/", $withCopy->html() );
+
+		$withoutCopy = $renderer->render(
+			array( 'iconset' => 'bootstrap-solid', 'icons' => array( 'facebook', 'whatsapp', 'reddit' ), 'url' => 'https://example.test/post/' )
+		);
+		$this->assertSame( array(), $withoutCopy->frontendFeatures() );
+		$this->assertFalse( $withoutCopy->requiresFrontendJs() );
 	}
 
 	public function testItUsesTheDefaultStylesheetWhenNothingRendered(): void {
@@ -138,6 +204,44 @@ final class CanonicalFrontendAssetCollectorTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( "class='twitter'", $html );
 		$this->assertStringContainsString( "class='mail'", $html );
 		$this->assertStringContainsString( "class='zmshbt in_widget default square'", $html );
+	}
+
+	public function testNeverSavedDefaultsDoNotRenderNetworksAddedAfter330(): void {
+		$root = dirname( __DIR__, 2 );
+		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
+		$iconSets = ( new ManifestIconSetProvider( $root . '/resources/iconsets' ) )
+			->createRegistry( $networks );
+		$controller = new FrontendController(
+			new CanonicalFrontendSettingsRepository(
+				\Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsDefaults::create()
+			),
+			new RenderFacade(
+				$networks,
+				$iconSets,
+				new IconSetAssetResolver(
+					$root . '/assets/iconsets',
+					plugins_url( 'assets/iconsets', $root . '/html-social-share.php' )
+				),
+				new ExtensionHooks()
+			),
+			new ContentPlacementComposer(),
+			new FloatingPlacementPlanner(),
+			new ExcludedContentPolicy(),
+			new TranslationLoader( $root . '/html-social-share.php', 'html-social-share-buttons' ),
+			new AssetCollector( plugins_url( 'iconset/default/style.css', $root . '/html-social-share.php' ) ),
+			'_zm_sh_disable_share'
+		);
+
+		$html = $controller->renderPlacement( Placement::AFTER_CONTENT, 'in_widget' );
+
+		// 3.3.0 drew its listed-but-false defaults; keep that unchanged.
+		foreach ( array( 'facebook', 'twitter', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ) as $class ) {
+			$this->assertStringContainsString( "class='" . $class . "'", $html );
+		}
+		foreach ( array( 'whatsapp', 'reddit', 'copy' ) as $class ) {
+			$this->assertStringNotContainsString( "class='" . $class . "'", $html );
+		}
+		$this->assertStringNotContainsString( 'data-hssb-copy-link', $html );
 	}
 
 	public function testAutomaticPlacementFromStoredOptionShapePreservesOrderAndNetworks(): void {

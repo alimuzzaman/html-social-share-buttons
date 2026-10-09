@@ -34,6 +34,9 @@ final class SettingsDefaults {
 				'pinterest' => true,
 				'telegram'  => false,
 				'bluesky'   => false,
+				// Networks added after 3.3.0 stay absent: a listed key renders
+				// automatically even when false, so listing them would turn
+				// them on for installs that never saved settings.
 				'mail'      => true,
 			),
 			array(),

@@ -115,6 +115,12 @@ final class IconSetPayloadBuilder {
 				return __( 'Telegram', 'html-social-share-buttons' );
 			case 'bluesky':
 				return __( 'Bluesky', 'html-social-share-buttons' );
+			case 'whatsapp':
+				return __( 'WhatsApp', 'html-social-share-buttons' );
+			case 'reddit':
+				return __( 'Reddit', 'html-social-share-buttons' );
+			case 'copy':
+				return __( 'Copy link', 'html-social-share-buttons' );
 			case 'mail':
 				return __( 'Email', 'html-social-share-buttons' );
 			default:

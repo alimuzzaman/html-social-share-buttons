@@ -1,0 +1,112 @@
+[
+  {
+    "name": "admin lists whatsapp toggle",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin whatsapp starts disabled",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin lists reddit toggle",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin reddit starts disabled",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin lists copy toggle",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin copy starts disabled",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin shows frontend-JS badge",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin whatsapp persisted enabled",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin reddit persisted enabled",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin copy persisted enabled",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "frontend renders whatsapp, reddit, copy",
+    "ok": true,
+    "detail": "facebook,linkedin,whatsapp,copy,twitter,pinterest,reddit,mail"
+  },
+  {
+    "name": "whatsapp host",
+    "ok": true,
+    "detail": "wa.me"
+  },
+  {
+    "name": "whatsapp text is the X title + permalink",
+    "ok": true,
+    "detail": "Café &#038; Co: share test http://localhost:8195/cafe-co-share-test/"
+  },
+  {
+    "name": "reddit submit url",
+    "ok": true,
+    "detail": "https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A8195%2Fcafe-co-share-test%2F&title=Caf%C3%A9%20%26%23038%3B%20Co%3A%20share%20test"
+  },
+  {
+    "name": "reddit url param is permalink",
+    "ok": true,
+    "detail": "http://localhost:8195/cafe-co-share-test/"
+  },
+  {
+    "name": "reddit title matches the X title",
+    "ok": true,
+    "detail": "Café &#038; Co: share test"
+  },
+  {
+    "name": "copy has no target",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "copy-link script enqueued",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "live region announces Link copied",
+    "ok": true,
+    "detail": "Link copied"
+  },
+  {
+    "name": "clipboard holds permalink",
+    "ok": true,
+    "detail": "http://localhost:8195/cafe-co-share-test/"
+  },
+  {
+    "name": "click did not navigate",
+    "ok": true,
+    "detail": "http://localhost:8195/cafe-co-share-test/?utm_source=e2e#frag"
+  },
+  {
+    "name": "no-JS copy is a plain link to the page",
+    "ok": true,
+    "detail": ""
+  }
+]

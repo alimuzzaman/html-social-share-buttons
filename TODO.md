@@ -11,15 +11,15 @@ own compatibility, privacy, and runtime evidence before implementation.
 - [ ] Add an explicit query-parameter policy for functional arguments versus
       tracking arguments. Do not strip `utm_*`, `fbclid`, `gclid`, or similar
       values by default until preview/editor and repeated-key cases are tested.
-- [ ] Add Copy Link with a real link fallback, Clipboard API enhancement,
-      keyboard support, and screen-reader status feedback.
+- [x] Add Copy Link with a real link fallback, Clipboard API enhancement,
+      keyboard support, and screen-reader status feedback (3.4.0).
 - [ ] Add native Web Share as an optional progressive enhancement with a
       deterministic direct-link fallback.
 
 ## Network coverage
 
-- [ ] Add one or two modern networks after the URL contract is stable (candidate
-      set: Reddit, Threads, WhatsApp, or Mastodon).
+- [x] Add one or two modern networks after the URL contract is stable
+      (3.4.0 added WhatsApp and Reddit; Threads and Mastodon remain open).
 - [ ] Define Mastodon behavior before implementation: direct instance URL,
       user-provided instance, or an intermediary. Do not hide this decision in
       a static template.

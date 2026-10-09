@@ -45,6 +45,10 @@ Use this process for every public plugin release.
 7. Confirm the publication job succeeds and record the workflow URL, source
    commit, tag, archive SHA-256, and WordPress.org availability.
 
+The latest-core CI row installs current WordPress and the newest published
+`wp-phpunit` harness in that same major/minor line. Harness patch releases can
+lag core patches; Composer still fails if no matching minor-line release exists.
+
 ## Recovery
 
 If a tag was pushed from the wrong branch or with the wrong bytes and no

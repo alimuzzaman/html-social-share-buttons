@@ -5,7 +5,7 @@ Tags: social share buttons, social sharing, gutenberg block, social media, share
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 3.3.0
+Stable tag: 3.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,7 +28,7 @@ sets and square or circle buttons.
 * <strong>Private by default:</strong> Bundled icons load from your site; the plugin adds no tracking scripts.
 * <strong>Place anywhere:</strong> Automatic before/after and floating placement, two blocks, a widget, Elementor, WPBakery, shortcodes, and PHP.
 * <strong>Share and follow separately:</strong> Share actions open a composer for the current page; profile links open the configured profile or email destination.
-* <strong>Current destinations:</strong> Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, and email.
+* <strong>Current destinations:</strong> Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, WhatsApp, Reddit, email, and an optional Copy link button.
 * <strong>Choose the presentation:</strong> Legacy preserves the existing pack behavior; Minimal, Framed, and Soft shadow add modern frontend styles.
 
 <strong>Other features:</strong>
@@ -152,6 +152,13 @@ sources and their license notices are included with the plugin. See
 provenance record.
 
 == Changelog ==
+
+= 3.4.0 - 2026-10-09 =
+* **FEATURE**: Added WhatsApp and Reddit share buttons. Both are off by default.
+* **FEATURE**: Added an optional Copy link button. It copies the shared URL to the clipboard and announces the result to screen readers. Without JavaScript it stays a plain link to the page.
+* **IMPROVEMENT**: Frontend scripts now load per feature. Copy link and browser-URL sharing each load only on pages that render them.
+* **IMPROVEMENT**: Added WhatsApp, Reddit, and Copy link icons to all six bundled icon sets.
+* **TEST**: Added Copy link smoke coverage and contracts for the new share templates and icons.
 
 = 3.3.0 - 2026-09-21 =
 * **FEATURE**: Added optional browser-URL sharing for eligible automatic links, preserving query strings and fragments at click time.
