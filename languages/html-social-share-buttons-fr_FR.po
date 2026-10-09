@@ -66,10 +66,10 @@ msgid "No"
 msgstr ""
 
 #: src/Presentation/Admin/FormPresenter.php:136
-#: src/Presentation/Admin/IconSetPayloadBuilder.php:128
+#: src/Presentation/Admin/IconSetPayloadBuilder.php:134
 #: src/Presentation/Admin/SettingsAssetEnqueuer.php:111
-#: src/Presentation/Integration/Block/BlockRegistrar.php:414
-#: src/Presentation/Integration/BuilderLabels.php:41
+#: src/Presentation/Integration/Block/BlockRegistrar.php:420
+#: src/Presentation/Integration/BuilderLabels.php:44
 #: src/Presentation/Integration/Elementor/ElementorRegistrar.php:63
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:194
 msgid "Default (legacy)"
@@ -83,7 +83,7 @@ msgid "Facebook"
 msgstr "Facebook"
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:109
-#: src/Presentation/Integration/BuilderLabels.php:33
+#: src/Presentation/Integration/BuilderLabels.php:36
 msgid "X (formerly Twitter)"
 msgstr ""
 
@@ -119,42 +119,64 @@ msgstr "Bluesky"
 #: src/Presentation/Integration/Block/BlockRegistrar.php:405
 #: src/Presentation/Integration/BuilderLabels.php:23
 #: src/js/blocks/shared/networks.js:9
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+#: src/Presentation/Admin/IconSetPayloadBuilder.php:121
+#: src/Presentation/Integration/Block/BlockRegistrar.php:407
+#: src/Presentation/Integration/BuilderLabels.php:24
+#: src/js/blocks/shared/networks.js:10
+msgid "Reddit"
+msgstr "Reddit"
+
+#: src/Presentation/Admin/IconSetPayloadBuilder.php:123
+#: src/Presentation/Frontend/HtmlRenderer.php:127
+#: src/Presentation/Integration/Block/BlockRegistrar.php:409
+#: src/Presentation/Integration/BuilderLabels.php:25
+#: src/js/blocks/shared/networks.js:11
+msgid "Copy link"
+msgstr "Copier le lien"
+
+#: src/Presentation/Admin/IconSetPayloadBuilder.php:125
+#: src/Presentation/Integration/Block/BlockRegistrar.php:411
+#: src/Presentation/Integration/BuilderLabels.php:26
+#: src/js/blocks/shared/networks.js:12
 msgid "Email"
 msgstr "E-mail"
-
-#: src/Presentation/Admin/IconSetPayloadBuilder.php:130
-#: src/Presentation/Integration/Block/BlockRegistrar.php:416
-#: src/Presentation/Integration/BuilderLabels.php:42
-#: src/Presentation/Integration/Shortcode/ShortcodeController.php:196
-msgid "Flat"
-msgstr ""
-
-#: src/Presentation/Admin/IconSetPayloadBuilder.php:132
-#: src/Presentation/Integration/Block/BlockRegistrar.php:418
-#: src/Presentation/Integration/BuilderLabels.php:43
-#: src/Presentation/Integration/Shortcode/ShortcodeController.php:198
-msgid "Long Shadows"
-msgstr ""
-
-#: src/Presentation/Admin/IconSetPayloadBuilder.php:134
-#: src/Presentation/Integration/Block/BlockRegistrar.php:420
-#: src/Presentation/Integration/BuilderLabels.php:44
-#: src/Presentation/Integration/Shortcode/ShortcodeController.php:200
-msgid "Prajin"
-msgstr ""
 
 #: src/Presentation/Admin/IconSetPayloadBuilder.php:136
 #: src/Presentation/Integration/Block/BlockRegistrar.php:422
 #: src/Presentation/Integration/BuilderLabels.php:45
+#: src/Presentation/Integration/Shortcode/ShortcodeController.php:196
+msgid "Flat"
+msgstr ""
+
+#: src/Presentation/Admin/IconSetPayloadBuilder.php:138
+#: src/Presentation/Integration/Block/BlockRegistrar.php:424
+#: src/Presentation/Integration/BuilderLabels.php:46
+#: src/Presentation/Integration/Shortcode/ShortcodeController.php:198
+msgid "Long Shadows"
+msgstr ""
+
+#: src/Presentation/Admin/IconSetPayloadBuilder.php:140
+#: src/Presentation/Integration/Block/BlockRegistrar.php:426
+#: src/Presentation/Integration/BuilderLabels.php:47
+#: src/Presentation/Integration/Shortcode/ShortcodeController.php:200
+msgid "Prajin"
+msgstr ""
+
+#: src/Presentation/Admin/IconSetPayloadBuilder.php:142
+#: src/Presentation/Integration/Block/BlockRegistrar.php:428
+#: src/Presentation/Integration/BuilderLabels.php:48
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:202
 #: src/js/blocks/social-links/register.js:25
 #: src/js/blocks/social-share/register.js:26
 msgid "Bootstrap Solid"
 msgstr "Bootstrap plein"
 
-#: src/Presentation/Admin/IconSetPayloadBuilder.php:138
-#: src/Presentation/Integration/Block/BlockRegistrar.php:424
-#: src/Presentation/Integration/BuilderLabels.php:46
+#: src/Presentation/Admin/IconSetPayloadBuilder.php:144
+#: src/Presentation/Integration/Block/BlockRegistrar.php:430
+#: src/Presentation/Integration/BuilderLabels.php:49
 #: src/Presentation/Integration/Shortcode/ShortcodeController.php:204
 msgid "Tabler Outline"
 msgstr ""
@@ -625,26 +647,40 @@ msgid ""
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:201
-msgid "Code generator"
-msgstr ""
+msgid "Copy the shared page link to the clipboard."
+msgstr "Copier le lien de la page partagée dans le presse-papiers."
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:202
-msgid "Generate embed code from the same icon set and selected networks."
+msgid ""
+"Loads a small script on pages that show the Copy link button. Without "
+"JavaScript the button is a plain link to the page."
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:203
-msgid "Get PHP Code"
-msgstr "Obtenir le code PHP"
+msgid "Copies the same URL the other buttons share. It has no share template."
+msgstr "Copie la même URL que celle partagée par les autres boutons. Il n’a pas de modèle de partage."
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:204
-msgid "Get Shortcode"
-msgstr "Obtenir le code court"
+msgid "Code generator"
+msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:205
-msgid "Close"
+msgid "Generate embed code from the same icon set and selected networks."
 msgstr ""
 
 #: src/Presentation/Admin/SettingsPayloadBuilder.php:206
+msgid "Get PHP Code"
+msgstr "Obtenir le code PHP"
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:207
+msgid "Get Shortcode"
+msgstr "Obtenir le code court"
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:208
+msgid "Close"
+msgstr ""
+
+#: src/Presentation/Admin/SettingsPayloadBuilder.php:209
 msgid "Insert share parameter placeholder"
 msgstr ""
 
@@ -704,20 +740,28 @@ msgid ""
 msgstr ""
 
 #. translators: %s is the social network name.
-#: src/Presentation/Frontend/HtmlRenderer.php:62
+#: src/Presentation/Frontend/HtmlRenderer.php:66
 #, php-format
 msgid "Share on %s"
 msgstr "Partager sur %s"
 
-#: src/Presentation/Frontend/HtmlRenderer.php:85
+#: src/Presentation/Frontend/HtmlRenderer.php:89
 msgid "Contact us by email"
 msgstr ""
 
 #. translators: %s is the social network name.
-#: src/Presentation/Frontend/HtmlRenderer.php:88
+#: src/Presentation/Frontend/HtmlRenderer.php:92
 #, php-format
 msgid "Visit our %s profile"
 msgstr ""
+
+#: src/Presentation/Frontend/HtmlRenderer.php:121
+msgid "Link copied"
+msgstr "Lien copié"
+
+#: src/Presentation/Frontend/HtmlRenderer.php:123
+msgid "Could not copy the link"
+msgstr "Impossible de copier le lien"
 
 #: src/Presentation/Integration/Block/BlockRegistrar.php:283
 #: src/Presentation/Integration/Elementor/ElementorShareWidget.php:274
@@ -734,13 +778,13 @@ msgstr "Hériter des réglages de l’extension"
 msgid "X"
 msgstr "X"
 
-#: src/Presentation/Integration/BuilderLabels.php:56
+#: src/Presentation/Integration/BuilderLabels.php:59
 #: src/js/blocks/social-links/register.js:144
 #: src/js/blocks/social-share/register.js:138
 msgid "Square"
 msgstr "Carré"
 
-#: src/Presentation/Integration/BuilderLabels.php:57
+#: src/Presentation/Integration/BuilderLabels.php:60
 #: src/js/blocks/social-links/register.js:140
 #: src/js/blocks/social-share/register.js:134
 msgid "Circle"
@@ -870,16 +914,20 @@ msgstr "Liens de profil après les boutons de partage"
 msgid "Hide profile links in this block"
 msgstr "Masquer les liens de profil dans ce bloc"
 
-#: src/js/blocks/social-share/register.js:321
+#: src/js/blocks/social-share/register.js:188
+msgid "Adds frontend JavaScript on pages that show this button."
+msgstr "Ajoute du JavaScript public sur les pages qui affichent ce bouton."
+
+#: src/js/blocks/social-share/register.js:328
 msgid "Contact email"
 msgstr "Adresse e-mail de contact"
 
 #. translators: %s is the social network name.
-#: src/js/blocks/social-share/register.js:327
+#: src/js/blocks/social-share/register.js:334
 msgid "%s profile"
 msgstr "Profil %s"
 
-#: src/js/blocks/social-share/register.js:354
+#: src/js/blocks/social-share/register.js:361
 msgid "Select share networks"
 msgstr "Sélectionner les réseaux de partage"
 

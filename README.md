@@ -5,19 +5,19 @@ actions and optional social profile/contact links. Its frontend is
 server-rendered HTML and CSS, icon assets are served locally, and the plugin
 adds no frontend tracking scripts.
 
-The current branch prepares the 3.3.0 release after published 3.2.0. It adds
-optional browser-URL sharing for eligible automatic links, a clear admin badge
-for frontend JavaScript, and stronger URL/rendering regression coverage.
-The obsolete analytics and URL-port controls are retired; stored values remain
-available for compatibility. See the
-[update plan](docs/reviews/2026-09-05-astra-update-plan.md) for scope and gates.
+The current branch prepares the 3.4.0 release after published 3.3.0. It adds
+WhatsApp and Reddit share actions and an optional Copy link button, all off by
+default. Copy link loads a small clipboard script only on pages that render it.
+See the [3.4.0 plan](docs/reviews/2026-10-08-release-3.4.0-plan.md) for scope
+and gates.
 Publication requires the final reviewed commit and exact tested archive. Follow
 [the release process](docs/RELEASE-PROCESS.md) for the master-only tag and
 publication workflow.
 
 ## Features
 
-- Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, and email share actions.
+- Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, WhatsApp, Reddit, and
+  email share actions, plus an optional Copy link button.
 - Admin-only sample URL previews and template diagnostics, without saving or
   contacting sharing services.
 - Separate global profile/contact links with placement-level inherit or
@@ -148,7 +148,7 @@ dispatch publication with the reviewed archive SHA-256 and exact confirmation.
 - The Default PNG pack is retained under an accepted compatibility exception.
   That is not an independent provenance or clearance claim.
 - The 3.0.0 release's exact-archive rollback rehearsal and WordPress 7.1 final
-  manual review remain historical evidence. The 3.3.0 update requires
+  manual review remain historical evidence. The 3.4.0 update requires
   fresh immutable archive review before publication.
 
 ## Security and licensing

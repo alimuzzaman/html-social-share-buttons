@@ -39,7 +39,7 @@ examples:
 - **Private by default:** Bundled icons load from your site, with no remote icon CDN, and optional analytics is disabled until enabled.
 - **Place anywhere:** Automatic before/after and floating placement, two blocks, a classic widget, Elementor, WPBakery, shortcodes, and PHP.
 - **Share and follow separately:** Share actions open a composer for the current page; profile links open the configured profile or email destination.
-- **Current destinations:** Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, and email.
+- **Current destinations:** Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, WhatsApp, Reddit, email, and an optional Copy link button.
 - **Choose the presentation:** Legacy preserves the existing pack behavior; Minimal, Framed, and Soft shadow add modern frontend styles.
 
 Keep the current detailed FAQ and shortcode examples after this summary.
