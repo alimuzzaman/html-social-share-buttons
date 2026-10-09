@@ -206,6 +206,44 @@ final class CanonicalFrontendAssetCollectorTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( "class='zmshbt in_widget default square'", $html );
 	}
 
+	public function testNeverSavedDefaultsDoNotRenderNetworksAddedAfter330(): void {
+		$root = dirname( __DIR__, 2 );
+		$networks = ( new BuiltInNetworkProvider() )->createRegistry();
+		$iconSets = ( new ManifestIconSetProvider( $root . '/resources/iconsets' ) )
+			->createRegistry( $networks );
+		$controller = new FrontendController(
+			new CanonicalFrontendSettingsRepository(
+				\Alimuzzaman\HtmlSocialShareButtons\Domain\Settings\SettingsDefaults::create()
+			),
+			new RenderFacade(
+				$networks,
+				$iconSets,
+				new IconSetAssetResolver(
+					$root . '/assets/iconsets',
+					plugins_url( 'assets/iconsets', $root . '/html-social-share.php' )
+				),
+				new ExtensionHooks()
+			),
+			new ContentPlacementComposer(),
+			new FloatingPlacementPlanner(),
+			new ExcludedContentPolicy(),
+			new TranslationLoader( $root . '/html-social-share.php', 'html-social-share-buttons' ),
+			new AssetCollector( plugins_url( 'iconset/default/style.css', $root . '/html-social-share.php' ) ),
+			'_zm_sh_disable_share'
+		);
+
+		$html = $controller->renderPlacement( Placement::AFTER_CONTENT, 'in_widget' );
+
+		// 3.3.0 drew its listed-but-false defaults; keep that unchanged.
+		foreach ( array( 'facebook', 'twitter', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ) as $class ) {
+			$this->assertStringContainsString( "class='" . $class . "'", $html );
+		}
+		foreach ( array( 'whatsapp', 'reddit', 'copy' ) as $class ) {
+			$this->assertStringNotContainsString( "class='" . $class . "'", $html );
+		}
+		$this->assertStringNotContainsString( 'data-hssb-copy-link', $html );
+	}
+
 	public function testAutomaticPlacementFromStoredOptionShapePreservesOrderAndNetworks(): void {
 		$postId = self::factory()->post->create( array( 'post_title' => 'Automatic placement' ) );
 		$this->go_to( get_permalink( $postId ) );
