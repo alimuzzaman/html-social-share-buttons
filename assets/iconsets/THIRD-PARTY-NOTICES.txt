@@ -22,6 +22,9 @@ Bootstrap Icons
 ---------------
 The Bootstrap Solid icon set is generated from Bootstrap Icons v1.13.1 SVG
 glyphs. The glyph paths are preserved and placed on plugin-authored tiles.
+The WhatsApp, Reddit, and Copy link SVG tiles in the Default, Flat, Long
+Shadows, and Prajin sets use the Bootstrap Icons whatsapp, reddit, and
+link-45deg glyphs on the same terms.
 
 Copyright: 2019-2024 The Bootstrap Authors
 Source: https://github.com/twbs/icons/tree/v1.13.1/icons

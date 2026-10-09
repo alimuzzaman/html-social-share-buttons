@@ -17,6 +17,9 @@ const networkColors = {
 	pinterest: '#bd081c',
 	telegram: '#229ed9',
 	bluesky: '#1185fe',
+	whatsapp: '#25d366',
+	reddit: '#ff4500',
+	copy: '#4b5563',
 	mail: '#5f6368',
 };
 
@@ -34,6 +37,9 @@ const iconSets = {
 			pinterest: ['pinterest.svg', '083f12722ed3e07f560e156fd6b836985ee6ded90446998d7754ac2e091eed3c'],
 			telegram: ['telegram.svg', 'c56e6919d63e25681ead8615fb50e80d5de5be0466cac9d2790611030af97cce'],
 			bluesky: ['bluesky.svg', '3bccd3889db609418f95baab25107a0beb8b7642d49d90c0fb1f872b2a313d37'],
+			whatsapp: ['whatsapp.svg', 'dc1de80c69f87f91ff4570e40baf8ff824a6fb81e617a9e054c26907cd608647'],
+			reddit: ['reddit.svg', 'fa867c4e8587e8e274a42871f168625250aa7abb1e6efbb9cec5178b7bae3a3e'],
+			copy: ['link-45deg.svg', '3a58b899539e6e96a8a279c4dcc603a562627e733484aa72f721cda06b60c1f8'],
 			mail: ['envelope.svg', '46354ede34e6acffd9828377884007ae3090db3b892e4b4a8fb8eec3e1017d63'],
 		},
 	},
@@ -50,6 +56,9 @@ const iconSets = {
 			pinterest: ['brand-pinterest.svg', '810bca7fa4780d5fb5305b683b1999f23c7fcb1b30d6f916797b5c4d8098bfb8'],
 			telegram: ['brand-telegram.svg', '4a1023bb65efb2a268a3e4740225c369fbdaae87fba3d48c87ea2dd526c4cfbe'],
 			bluesky: ['brand-bluesky.svg', '9387998373350399524767e7369b1805bf21573cede4ebdfb4fb15d91b4dc9f6'],
+			whatsapp: ['brand-whatsapp.svg', '9bbaad3b257a124accd91dda575ea1a3e32318faa925a280879cb1a2dcd417dc'],
+			reddit: ['brand-reddit.svg', 'c4e35cb92bc535e45e19b35ecaaef4a01eb4d6da4db59dc8877e8aca8f85d4b5'],
+			copy: ['link.svg', '0c1448dddf85857b80da2c51ddb5a27399013d3830eb756654cce2eef93fff33'],
 			mail: ['mail.svg', '5f27eaf548faab23f994093fa56cc9011b8457a1f2b26dc50e7ed5afe95727df'],
 		},
 	},
@@ -81,10 +90,14 @@ function tile(set, networkId, shape) {
 		: shape === 'circle'
 			? `<circle cx="64" cy="64" r="58" fill="#fff" stroke="${color}" stroke-width="6"/>`
 			: `<rect x="7" y="7" width="114" height="114" rx="22" fill="#fff" stroke="${color}" stroke-width="6"/>`;
+	const glyphColor = set.mode === 'solid' ? '#fff' : color;
 	const glyphAttributes = set.mode === 'solid'
 		? 'fill="#fff"'
 		: `fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
-	return `${background}<g transform="${set.transform}" ${glyphAttributes}>${sourceGlyph(set, networkId)}</g>`;
+	// Some upstream glyphs paint details with currentColor, which resolves to
+	// black inside an <img>/background SVG; bind it to the tile's glyph color.
+	const glyph = sourceGlyph(set, networkId).replace(/currentColor/g, glyphColor);
+	return `${background}<g transform="${set.transform}" ${glyphAttributes}>${glyph}</g>`;
 }
 
 function svg(set, networkId, shape) {
@@ -95,7 +108,8 @@ function preview(set) {
 	const tiles = Object.keys(networkColors).map((networkId, index) =>
 		`<g transform="translate(${index * 72 + 4} 4) scale(.5)">${tile(set, networkId, 'square')}</g>`
 	).join('\n');
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 504 72">\n<!-- ${set.sourceName}; ${set.sourceUrl}; MIT licensed. -->\n${tiles}\n</svg>\n`;
+	const width = Object.keys(networkColors).length * 72;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} 72">\n<!-- ${set.sourceName}; ${set.sourceUrl}; MIT licensed. -->\n${tiles}\n</svg>\n`;
 }
 
 function stylesheet(id) {

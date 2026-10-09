@@ -4,20 +4,21 @@ const { test, expect } = require( '@playwright/test' );
 const { createPublishedPage, login } = require( '../helpers/wordpress' );
 
 const cells = [
-	{ id: 'default-square', iconset: 'default', shape: 'square', links: 7 },
-	{ id: 'flat-square', iconset: 'flat', shape: 'square', links: 7 },
-	{ id: 'flat-circle', iconset: 'flat', shape: 'circle', links: 7 },
-	{ id: 'long-shadows-square', iconset: 'long-shadows', shape: 'square', links: 7 },
-	{ id: 'long-shadows-circle', iconset: 'long-shadows', shape: 'circle', links: 7 },
-	{ id: 'prajin-square', iconset: 'prajin', shape: 'square', links: 7 },
-	{ id: 'prajin-circle', iconset: 'prajin', shape: 'circle', links: 7 },
-	{ id: 'bootstrap-solid-square', iconset: 'bootstrap-solid', shape: 'square', links: 7 },
-	{ id: 'bootstrap-solid-circle', iconset: 'bootstrap-solid', shape: 'circle', links: 7 },
-	{ id: 'tabler-outline-square', iconset: 'tabler-outline', shape: 'square', links: 7 },
-	{ id: 'tabler-outline-circle', iconset: 'tabler-outline', shape: 'circle', links: 7 },
+	{ id: 'default-square', iconset: 'default', shape: 'square', links: 10 },
+	{ id: 'flat-square', iconset: 'flat', shape: 'square', links: 10 },
+	{ id: 'flat-circle', iconset: 'flat', shape: 'circle', links: 10 },
+	{ id: 'long-shadows-square', iconset: 'long-shadows', shape: 'square', links: 10 },
+	{ id: 'long-shadows-circle', iconset: 'long-shadows', shape: 'circle', links: 10 },
+	{ id: 'prajin-square', iconset: 'prajin', shape: 'square', links: 10 },
+	{ id: 'prajin-circle', iconset: 'prajin', shape: 'circle', links: 10 },
+	{ id: 'bootstrap-solid-square', iconset: 'bootstrap-solid', shape: 'square', links: 10 },
+	{ id: 'bootstrap-solid-circle', iconset: 'bootstrap-solid', shape: 'circle', links: 10 },
+	{ id: 'tabler-outline-square', iconset: 'tabler-outline', shape: 'square', links: 10 },
+	{ id: 'tabler-outline-circle', iconset: 'tabler-outline', shape: 'circle', links: 10 },
 ];
 
-const networks = 'facebook,x,linkedin,pinterest,telegram,bluesky,mail';
+const networks =
+	'facebook,x,linkedin,pinterest,telegram,bluesky,whatsapp,reddit,copy,mail';
 
 function fixtureContent() {
 	return cells

@@ -67,12 +67,12 @@ final class CanonicalIconAssetTest extends WP_UnitTestCase {
 		$assets = new IconSetAssetResolver( $root, 'https://example.test/plugin' );
 		$facade = new RenderFacade( $networks, $registry, $assets, new ExtensionHooks() );
 		$expected = array(
-			'default'         => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
-			'flat'            => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
-			'long-shadows'    => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
-			'prajin'          => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
-			'bootstrap-solid' => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
-			'tabler-outline'  => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'mail' ),
+			'default'         => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
+			'flat'            => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
+			'long-shadows'    => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
+			'prajin'          => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
+			'bootstrap-solid' => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
+			'tabler-outline'  => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
 		);
 		$context = new ShareContext(
 			'https://example.test/icon-contract/?source=asset',
@@ -157,6 +157,38 @@ final class CanonicalIconAssetTest extends WP_UnitTestCase {
 		foreach ( $releasedBirdHashes as $relativePath => $releasedHash ) {
 			$this->assertFileExists( $root . '/' . $relativePath );
 			$this->assertNotSame( $releasedHash, hash_file( 'sha256', $root . '/' . $relativePath ), $relativePath );
+		}
+	}
+
+	public function testHistoricalPackNetworkTilesUseThePinnedBootstrapSources(): void {
+		$root = dirname( __DIR__, 2 );
+		$generator = (string) file_get_contents( $root . '/scripts/generate-legacy-network-assets.js' );
+		$sources = array(
+			'whatsapp' => array( 'whatsapp.svg', 'dc1de80c69f87f91ff4570e40baf8ff824a6fb81e617a9e054c26907cd608647' ),
+			'reddit'   => array( 'reddit.svg', 'fa867c4e8587e8e274a42871f168625250aa7abb1e6efbb9cec5178b7bae3a3e' ),
+			'copy'     => array( 'link-45deg.svg', '3a58b899539e6e96a8a279c4dcc603a562627e733484aa72f721cda06b60c1f8' ),
+		);
+		$directories = array(
+			'iconset/default/square',
+			'iconset/flat/square',
+			'iconset/flat/circle',
+			'iconset/long_shadow/square',
+			'iconset/long_shadow/circle',
+			'iconset/prajin/square',
+			'iconset/prajin/circle',
+		);
+
+		foreach ( $sources as $networkId => $source ) {
+			$this->assertStringContainsString( $source[1], $generator, $networkId . ' source checksum' );
+			foreach ( $directories as $directory ) {
+				$path = $root . '/' . $directory . '/' . $networkId . '.svg';
+				$this->assertFileExists( $path );
+				$this->assertStringContainsString(
+					'Bootstrap Icons v1.13.1 ' . $source[0] . '; https://github.com/twbs/icons; MIT licensed.',
+					(string) file_get_contents( $path ),
+					$path . ' attribution'
+				);
+			}
 		}
 	}
 
