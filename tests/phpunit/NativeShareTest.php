@@ -17,6 +17,26 @@ final class NativeShareTest extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'data-hssb-copy-link', $outcome->html() );
 	}
 
+	public function testNativeAssetsAreConditionalAndEnqueuedOnce(): void {
+		wp_dequeue_script( 'hssb-native-share' );
+		wp_dequeue_script( 'hssb-copy-link' );
+		$collector = new \Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\AssetCollector(
+			'fallback.css', '3.5.0', 'hssb-button-appearance', '', 'hssb-browser-url',
+			array( FrontendFeatureRegistry::NATIVE_SHARE => array( 'hssb-native-share', 'https://example.test/native-share.js' ) )
+		);
+		$renderer = LegacyApi::plugin()->renderer();
+		$collector->collect( $renderer->render( array( 'icons' => array( 'facebook' ), 'url' => 'https://example.test/' ) ) );
+		$collector->enqueueScripts();
+		$this->assertNotContains( 'hssb-native-share', wp_scripts()->queue );
+		$outcome = $renderer->render( array( 'icons' => array( 'native' ), 'url' => 'https://example.test/' ) );
+		$this->assertArrayHasKey( 'hssb-native-share', $outcome->stylesheets() );
+		$collector->collect( $outcome );
+		$collector->collect( $outcome );
+		$collector->enqueueScripts();
+		$this->assertSame( 1, count( array_keys( wp_scripts()->queue, 'hssb-native-share', true ) ) );
+		$this->assertNotContains( 'hssb-copy-link', wp_scripts()->queue );
+	}
+
 	public function testNativeAndCopyKeepOnlyOneVisibleFallback(): void {
 		$outcome = LegacyApi::plugin()->renderer()->render(
 			array( 'icons' => array( 'native', 'copy' ), 'iconset' => 'bootstrap-solid', 'url' => 'https://example.test/' )

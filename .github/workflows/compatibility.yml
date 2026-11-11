@@ -87,6 +87,7 @@ jobs:
       - run: pnpm run lint:js
       - run: pnpm run icons:check
       - run: pnpm run settings:check
+      - run: pnpm audit --audit-level=high --json
       - run: pnpm run appearance:check
       - name: Install SVG rasterizer
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y librsvg2-bin

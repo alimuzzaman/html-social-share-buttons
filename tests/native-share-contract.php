@@ -24,6 +24,15 @@ function native_check( $condition, $message ) {
 	}
 }
 
+$codec = new \Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsCodec();
+$mapper = new \Alimuzzaman\HtmlSocialShareButtons\Presentation\Rendering\RenderRequestMapper();
+foreach ( array( null, false, 0, 'false', 'unexpected', array( 'enabled' ), new stdClass() ) as $value ) {
+	$states = $codec->decode( array( 'icons' => array( 'native' => $value, 'facebook' => '1' ) ) )->networkStates();
+	native_check( ! isset( $states['native'] ), 'Malformed stored native values must remain off.' );
+	$request = $mapper->map( array( 'icons' => array( 'native' => $value, 'facebook' => '1' ) ) );
+	native_check( array( 'facebook' ) === $request->networkIds(), 'Malformed native render options must remain off.' );
+}
+
 $networks = ( new BuiltInNetworkProvider() )->createRegistry();
 $sets = ( new ManifestIconSetProvider( dirname( __DIR__ ) . '/resources/iconsets' ) )->createRegistry( $networks );
 $builder = new BuildShareButtons( $networks, $sets, new ResolveShareUrl() );

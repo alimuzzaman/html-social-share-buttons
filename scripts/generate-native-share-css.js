@@ -7,7 +7,7 @@ const anchor = /(^|[\s>+~])a(?=[\s.:#[,>+~]|$)/g;
 
 // Copy only anchor rules, preserving conditional blocks and the old stylesheets.
 function buttonRules(css) {
-	css = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@charset[^;]+;/g, '');
+	css = css.replace(/\r\n?/g, '\n').replace(/\/\*[\s\S]*?\*\//g, '').replace(/@charset[^;]+;/g, '');
 	let output = '', position = 0;
 	while (position < css.length) {
 		const open = css.indexOf('{', position);
