@@ -38,7 +38,8 @@ export function createClipboardController() {
 	function legacyCopy(text) {
 		var field = document.createElement('textarea');
 		var copied = false;
-		var focused = document.activeElement;
+		var ownerDocument = field.ownerDocument || document;
+		var focused = ownerDocument.activeElement;
 		field.value = text;
 		field.setAttribute('readonly', '');
 		field.style.position = 'fixed';

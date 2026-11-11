@@ -34,7 +34,8 @@ async function login( page ) {
  * @param {string}                          root0.title   Stored post title.
  */
 async function createPublishedPage( page, { content, title } ) {
-	await page.goto( '/wp-admin/post-new.php?post_type=page' );
+	await page.goto( '/wp-admin/post-new.php?post_type=page', { waitUntil: 'domcontentloaded' } );
+	await page.waitForFunction( () => window.wpApiSettings?.root && window.wpApiSettings?.nonce );
 
 	const result = await page.evaluate(
 		async ( payload ) => {

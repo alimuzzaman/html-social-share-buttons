@@ -39,7 +39,7 @@ for (const name of ['wordpress', 'archive-runtime']) {
 assert.equal(deploy.jobs['post-release'].needs, 'publish');
 const released = JSON.stringify(deploy.jobs['post-release'].steps);
 assert.match(released, /downloads\.wordpress\.org\/plugin\/html-social-share-buttons/);
-assert.match(released, /wp plugin install \\"\$RUNNER_TEMP\/released\.zip/);
+assert.ok(deploy.jobs['post-release'].steps.some((step) => step.run?.includes('wp plugin install "$RUNNER_TEMP/released.zip"')));
 assert.match(released, /release-candidate\.py installed/);
 assert.match(released, /tests\/release\.playwright\.config\.js/);
 // Evaluate the default success-only needs graph for each injected terminal result.

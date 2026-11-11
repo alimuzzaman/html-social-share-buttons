@@ -275,9 +275,6 @@ jobs:
           php-version: '8.3'
           coverage: none
           tools: composer:v2
-      # Temporary resolver: its generated lockfile is reviewed and committed before release.
-      - name: Refresh development toolchain lockfile
-        run: pnpm update --latest --save-exact --ignore-scripts @wordpress/scripts adm-zip
       - run: pnpm install --frozen-lockfile
       - name: Build the production autoloader
         run: composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative
@@ -288,6 +285,8 @@ jobs:
           HSSB_ARCHIVE_PATH="$RUNNER_TEMP/reproducibility.zip" pnpm run zip
           cmp "$RUNNER_TEMP/candidate/candidate.zip" "$RUNNER_TEMP/reproducibility.zip"
           python3 scripts/release-candidate.py create "$RUNNER_TEMP/candidate" "$GITHUB_SHA"
+      - name: Refresh alternate npm lock for review
+        run: npm install --package-lock-only --ignore-scripts
       # Temporary review bridge: only generated public files, never environment data.
       - name: Record generated assets and candidate for review
         run: |
@@ -295,7 +294,7 @@ jobs:
           import base64
           from pathlib import Path
           files = {str(p): p for p in Path('build').rglob('*') if p.is_file()}
-          files.update({name: Path(name) for name in ['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml']})
+          files.update({name: Path(name) for name in ['package.json', 'package-lock.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml']})
           files['review/candidate.zip'] = Path('${{ runner.temp }}/candidate/candidate.zip')
           files['review/manifest.json'] = Path('${{ runner.temp }}/candidate/manifest.json')
           for name, p in files.items():
@@ -304,8 +303,6 @@ jobs:
               for index, chunk in enumerate(chunks):
                   print(f'HSSB_REVIEW_CHUNK:{name}:{index}:{len(chunks)}:{chunk}', flush=True)
           PY_BUILD
-      - name: Inspect refreshed development dependencies
-        run: pnpm audit --audit-level=high --json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: release-candidate
@@ -383,6 +380,7 @@ jobs:
           curl -fsS "$WP_BASE_URL/wp-login.php" > /dev/null
           wp plugin check html-social-share-buttons --path="$WP_ROOT" --require="$WP_ROOT/wp-content/plugins/plugin-check/cli.php" --format=strict-json --fields=file,line,column,type,code,message > "$RUNNER_TEMP/plugin-check.json"
           node scripts/verify-plugin-check.js "$RUNNER_TEMP/plugin-check.json"
+          cat "$RUNNER_TEMP/plugin-check.json"
           pnpm exec playwright test --config tests/release.playwright.config.js
           python3 scripts/release-candidate.py installed "$RUNNER_TEMP/candidate" "$GITHUB_SHA" "$WP_ROOT/wp-content/plugins/html-social-share-buttons"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

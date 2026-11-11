@@ -30,9 +30,11 @@ function element(tag, attributes = {}) {
 
 function setup(options = {}) {
 	const writes = [], shares = [], prompts = [], statuses = [], listeners = {}, timers = [];
+	let restoredFocus = 0;
 	const group = element('div', options.browserUrl ? { 'data-hssb-browser-url': '1' } : {});
-	function addControl(hasCopy = false, url = 'https://example.test/loop/?a=1&b=2') {
-		return group.appendChild(element(hasCopy ? 'span' : 'a', {
+	const groups = [group];
+	function addControl(hasCopy = false, url = 'https://example.test/loop/?a=1&b=2', parent = group) {
+		return parent.appendChild(element(hasCopy ? 'span' : 'a', {
 			...(hasCopy ? { hidden: '', style: 'display:none' } : { href: url }),
 			'data-hssb-native-share': '1', 'data-hssb-native-url': url,
 			'data-hssb-native-title': 'Loop title & café', 'data-hssb-native-has-copy': hasCopy ? '1' : '0',
@@ -48,8 +50,9 @@ function setup(options = {}) {
 	}
 	addControl(options.hasCopy, options.url);
 	const document = {
+		activeElement: { focus() { restoredFocus++; } },
 		readyState: 'complete', documentElement: {}, body: element('body'), head: element('head'),
-		querySelectorAll() { return group.children.filter((n) => n.getAttribute('data-hssb-native-share') === '1'); },
+		querySelectorAll() { return groups.flatMap((g) => g.children).filter((n) => n.getAttribute('data-hssb-native-share') === '1'); },
 		createElement(tag) { const node = element(tag); statuses.push(node); return node; },
 		addEventListener(name, callback) { listeners[name] = callback; },
 		execCommand() { return options.legacyCopy === true; },
@@ -79,7 +82,10 @@ function setup(options = {}) {
 		return event;
 	}
 	async function settle() { await new Promise((resolve) => setImmediate(resolve)); timers.splice(0).forEach((callback) => callback()); }
-	return { group, window, shares, writes, prompts, statuses, click, settle, addControl, initialize: () => observer() };
+	return { group, window, shares, writes, prompts, statuses, click, settle, addControl,
+		get restoredFocus() { return restoredFocus; },
+		addGroup() { const next = element('div'); groups.push(next); return next; },
+		initialize: () => observer() };
 }
 
 (async () => {
@@ -132,10 +138,11 @@ function setup(options = {}) {
 
 	let finish;
 	const pending = setup({ share: () => new Promise((resolve) => { finish = resolve; }) });
-	pending.addControl(); pending.initialize();
-	pending.click(); pending.click(1); pending.click();
+	const secondGroup = pending.addGroup();
+	pending.addControl(false, undefined, secondGroup); pending.initialize();
+	pending.click(); pending.click(0, { target: secondGroup.children[0] }); pending.click();
 	assert.equal(pending.shares.length, 1, 'guard pending operations across groups');
-	finish(); await pending.settle(); pending.click(1);
+	finish(); await pending.settle(); pending.click(0, { target: secondGroup.children[0] });
 	assert.equal(pending.shares.length, 2); finish(); await pending.settle();
 
 	const browser = setup({ browserUrl: true });
@@ -150,6 +157,7 @@ function setup(options = {}) {
 	}
 	const copyFailure = setup({ unsupported: true, copyError: true });
 	copyFailure.click(); await copyFailure.settle(); assert.equal(copyFailure.prompts.length, 1);
+	assert.equal(copyFailure.restoredFocus, 1, 'legacy clipboard fallback must restore focus');
 	const modified = setup({ unsupported: true });
 	assert.equal(modified.click(0, { metaKey: true }).defaultPrevented, false);
 	console.log('Native share smoke passed: supported, fallback, cancellation, errors, pending, dynamic groups and URL provenance.');
