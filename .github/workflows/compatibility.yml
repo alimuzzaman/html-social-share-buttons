@@ -286,7 +286,11 @@ jobs:
           cmp "$RUNNER_TEMP/candidate/candidate.zip" "$RUNNER_TEMP/reproducibility.zip"
           python3 scripts/release-candidate.py create "$RUNNER_TEMP/candidate" "$GITHUB_SHA"
       - name: Refresh alternate npm lock for review
-        run: npm install --package-lock-only --ignore-scripts
+        run: |
+          mkdir -p "$RUNNER_TEMP/npm-lock"
+          cp package.json "$RUNNER_TEMP/npm-lock/package.json"
+          npm install --prefix "$RUNNER_TEMP/npm-lock" --package-lock-only --ignore-scripts
+          cp "$RUNNER_TEMP/npm-lock/package-lock.json" package-lock.json
       # Temporary review bridge: only generated public files, never environment data.
       - name: Record generated assets and candidate for review
         run: |
