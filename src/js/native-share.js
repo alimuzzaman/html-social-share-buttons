@@ -76,7 +76,7 @@ import { resolvedBrowserUrl } from './share-browser-url';
 			if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
 				throw new Error('Unsupported page URL');
 			}
-		} catch (error) {
+		} catch {
 			clipboard.announce(control.getAttribute('data-hssb-copy-failed-label'));
 			return;
 		}

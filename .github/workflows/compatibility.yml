@@ -284,6 +284,14 @@ jobs:
           HSSB_ARCHIVE_PATH="$RUNNER_TEMP/reproducibility.zip" pnpm run zip
           cmp "$RUNNER_TEMP/candidate/candidate.zip" "$RUNNER_TEMP/reproducibility.zip"
           python3 scripts/release-candidate.py create "$RUNNER_TEMP/candidate" "$GITHUB_SHA"
+      # Temporary review bridge: generated public assets only, no environment or credentials.
+      - name: Record generated build assets for review
+        run: |
+          python3 - <<'PY_BUILD'
+          import base64, json
+          from pathlib import Path
+          print('HSSB_BUILD_SNAPSHOT:' + json.dumps({str(p): base64.b64encode(p.read_bytes()).decode() for p in Path('build').rglob('*') if p.is_file()}))
+          PY_BUILD
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: release-candidate
