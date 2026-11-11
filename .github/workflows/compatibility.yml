@@ -275,6 +275,9 @@ jobs:
           php-version: '8.3'
           coverage: none
           tools: composer:v2
+      # Temporary resolver: its generated lockfile is reviewed and committed before release.
+      - name: Refresh development toolchain lockfile
+        run: pnpm update --latest --save-exact --ignore-scripts @wordpress/scripts adm-zip
       - run: pnpm install --frozen-lockfile
       - name: Build the production autoloader
         run: composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative
@@ -291,7 +294,7 @@ jobs:
           python3 - <<'PY_BUILD'
           import base64, json
           from pathlib import Path
-          print('HSSB_BUILD_SNAPSHOT:' + json.dumps({str(p): base64.b64encode(p.read_bytes()).decode() for p in Path('build').rglob('*') if p.is_file()}))
+          print('HSSB_BUILD_SNAPSHOT:' + json.dumps({str(p): base64.b64encode(p.read_bytes()).decode() for p in [*Path('build').rglob('*'), Path('package.json'), Path('pnpm-lock.yaml'), Path('pnpm-workspace.yaml')] if p.is_file()}))
           PY_BUILD
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
