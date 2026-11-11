@@ -38,6 +38,7 @@ export function createClipboardController() {
 	function legacyCopy(text) {
 		var field = document.createElement('textarea');
 		var copied = false;
+		var focused = document.activeElement;
 		field.value = text;
 		field.setAttribute('readonly', '');
 		field.style.position = 'fixed';
@@ -51,6 +52,9 @@ export function createClipboardController() {
 			copied = false;
 		}
 		document.body.removeChild(field);
+		if (focused && typeof focused.focus === 'function') {
+			focused.focus();
+		}
 		return copied;
 	}
 

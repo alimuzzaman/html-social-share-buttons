@@ -162,4 +162,4 @@ if ( $failures ) {
 	exit( 1 );
 }
 
-printf( "JavaScript build boundary passed: %d source modules, 6 runtime bundles.\n", $moduleCount );
+printf( "JavaScript build boundary passed: %d source modules, 7 runtime bundles.\n", $moduleCount );
