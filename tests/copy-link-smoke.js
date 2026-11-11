@@ -3,9 +3,10 @@ const assert = require('assert');
 const fs = require('fs');
 const vm = require('vm');
 
-const source = fs
+const shared = fs.readFileSync('src/js/share-clipboard.js', 'utf8').replace(/export function/g, 'function');
+const source = shared + '\n' + fs
 	.readFileSync('src/js/copy-link.js', 'utf8')
-	.replace(/export\s+\{\};?\s*$/, '');
+	.replace(/^import[^\n]+\n/gm, '').replace(/export\s+\{\};?\s*$/, '');
 
 function createElement(attributes, parentNode) {
 	const values = Object.assign({}, attributes);

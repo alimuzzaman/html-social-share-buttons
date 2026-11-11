@@ -17,6 +17,7 @@ return array(
 		'whatsapp'  => 'whatsapp.svg',
 		'reddit'    => 'reddit.svg',
 		'copy'      => 'copy.svg',
+		'native'    => 'native.svg',
 		'mail'      => 'mail.svg',
 	),
 );

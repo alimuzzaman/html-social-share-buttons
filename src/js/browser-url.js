@@ -1,41 +1,10 @@
+import { resolvedBrowserUrl } from './share-browser-url';
+
 (function () {
 	'use strict';
 
-	function encodeComponent(value) {
-		return encodeURIComponent(value).replace(/[!'()*]/g, function (character) {
-			return '%' + character.charCodeAt(0).toString(16).toUpperCase();
-		});
-	}
-
-	function browserUrl() {
-		return window.location.href;
-	}
-
 	function updateLink(link) {
-		var descriptorText = link.getAttribute('data-hssb-browser-descriptor');
-		var serverHref = link.getAttribute('data-hssb-server-href') || link.getAttribute('href') || '';
-		var descriptor;
-		var currentUrl;
-		if (!descriptorText) {
-			return;
-		}
-		try {
-			descriptor = JSON.parse(descriptorText);
-		} catch {
-			link.setAttribute('href', serverHref);
-			return;
-		}
-		if (!descriptor || typeof descriptor.template !== 'string' || descriptor.permalink_slot !== '%%permalink%%' || descriptor.template.indexOf(descriptor.permalink_slot) === -1) {
-			link.setAttribute('href', serverHref);
-			return;
-		}
-		currentUrl = browserUrl();
-		if (typeof currentUrl !== 'string' || !currentUrl) {
-			link.setAttribute('href', serverHref);
-			return;
-		}
-		// Copy link carries the address itself, so its slot takes the raw URL.
-		link.setAttribute('href', descriptor.template.split(descriptor.permalink_slot).join(descriptor.encoding === 'raw' ? currentUrl : encodeComponent(currentUrl)));
+		link.setAttribute('href', resolvedBrowserUrl(link));
 	}
 
 	function updateAll() {

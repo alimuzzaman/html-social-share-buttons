@@ -47,7 +47,7 @@ export function attachSettingsRenderer(App, dependencies) {
 		var socialNetworkColumns = [[], []];
 		var networkPreviewType = ensureType(currentIconset, options.show_before_post || options.show_after_post || options.show_left || options.show_right);
 		var profileNetworks = iconsets.length ? (iconsets[0].icons || []).filter(function (icon) {
-			return icon.id !== 'copy';
+			return icon.id !== 'copy' && icon.id !== 'native';
 		}) : [];
 		var frontendFeatures = data.frontend_features || {};
 		var browserFeature = frontendFeatures.browser_url || {};
@@ -230,8 +230,8 @@ export function attachSettingsRenderer(App, dependencies) {
 					e('div', { key: 'network-columns', className: 'zm_network_columns' }, socialNetworkColumns.map(function (column, columnIndex) {
 						return e('div', { key: 'network-column-' + columnIndex, className: 'zm_network_column' }, column.map(function (icon) {
 					var enabled = toBoolean(options.icons[icon.id]);
-					if (icon.id === 'copy') {
-						return self.renderCopyLinkPanel(icon, enabled, networkPreviewType, copyFeature);
+					if (icon.id === 'copy' || icon.id === 'native') {
+						return self.renderCopyLinkPanel(icon, enabled, networkPreviewType, icon.id === 'native' ? (frontendFeatures.native_share || {}) : copyFeature);
 					}
 					var template = hasOwn(self.state.shareTemplateOverrides, icon.id) ? self.state.shareTemplateOverrides[icon.id] : '';
 					var defaultTemplate = data.share_template_defaults && data.share_template_defaults[icon.id] ? data.share_template_defaults[icon.id] : (options.share_templates[icon.id] || '');
@@ -514,7 +514,7 @@ export function attachSettingsRenderer(App, dependencies) {
 		var preview = getIconPreview(icon, networkPreviewType);
 		return e(ExpandableTogglePanel, {
 			key: icon.id,
-			id: 'icon_copy',
+			id: 'icon_' + icon.id,
 			className: 'zm_network_item',
 			detailsClassName: 'zm_network_template',
 			marker: e('span', { key: 'icon', className: 'zm_panel_marker zm_network_marker', 'aria-hidden': 'true' }, preview ? e('img', {
@@ -523,21 +523,21 @@ export function attachSettingsRenderer(App, dependencies) {
 				alt: ''
 			}) : icon.name.substring(0, 1)),
 			title: icon.name,
-			description: text('copyLinkDescription', 'Copy the shared page link to the clipboard.'),
+			description: icon.id === 'native' ? text('nativeShareDescription', 'Open the device sharing menu, with a Copy link fallback.') : text('copyLinkDescription', 'Copy the shared page link to the clipboard.'),
 			label: enabled ? text('enabled', 'Enabled') : text('disabled', 'Disabled'),
 			name: 'zm_shbt_fld[icons][' + icon.id + ']',
 			checked: enabled,
 			frontendJsFeature: feature.requires_frontend_js ? {
 				label: text('frontendJsBadge', 'Adds frontend JavaScript'),
-				description: text('copyLinkBadgeHelp', 'Loads a small script on pages that show the Copy link button. Without JavaScript the button is a plain link to the page.'),
-				id: feature.id || 'copy_link',
-				setting: feature.setting || 'icons.copy'
+				description: icon.id === 'native' ? text('nativeShareBadgeHelp', 'Loads a local script only where Native share is shown. Unsupported browsers use Copy link.') : text('copyLinkBadgeHelp', 'Loads a small script on pages that show the Copy link button. Without JavaScript the button is a plain link to the page.'),
+				id: feature.id || (icon.id === 'native' ? 'native_share' : 'copy_link'),
+				setting: feature.setting || ('icons.' + icon.id)
 			} : null,
 			onChange: function (value) {
 				self.update('icon_' + icon.id, value);
 			}
 		}, [
-			e('p', { key: 'help', className: 'components-base-control__help' }, text('copyLinkHelp', 'Copies the same URL the other buttons share. It has no share template.'))
+			e('p', { key: 'help', className: 'components-base-control__help' }, icon.id === 'native' ? text('nativeShareHelp', 'Shares the resolved page URL. Without JavaScript a page link is available. It has no share template.') : text('copyLinkHelp', 'Copies the same URL the other buttons share. It has no share template.'))
 		]);
 	};
 }

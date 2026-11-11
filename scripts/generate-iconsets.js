@@ -20,6 +20,7 @@ const networkColors = {
 	whatsapp: '#25d366',
 	reddit: '#ff4500',
 	copy: '#4b5563',
+	native: '#2563eb',
 	mail: '#5f6368',
 };
 
@@ -40,6 +41,7 @@ const iconSets = {
 			whatsapp: ['whatsapp.svg', 'dc1de80c69f87f91ff4570e40baf8ff824a6fb81e617a9e054c26907cd608647'],
 			reddit: ['reddit.svg', 'fa867c4e8587e8e274a42871f168625250aa7abb1e6efbb9cec5178b7bae3a3e'],
 			copy: ['link-45deg.svg', '3a58b899539e6e96a8a279c4dcc603a562627e733484aa72f721cda06b60c1f8'],
+			native: ['share-fill.svg', 'bd7f81833491298ac8ff047f5c10396bd0dee6477d9f2f42804c10d2481f505e'],
 			mail: ['envelope.svg', '46354ede34e6acffd9828377884007ae3090db3b892e4b4a8fb8eec3e1017d63'],
 		},
 	},
@@ -59,6 +61,7 @@ const iconSets = {
 			whatsapp: ['brand-whatsapp.svg', '9bbaad3b257a124accd91dda575ea1a3e32318faa925a280879cb1a2dcd417dc'],
 			reddit: ['brand-reddit.svg', 'c4e35cb92bc535e45e19b35ecaaef4a01eb4d6da4db59dc8877e8aca8f85d4b5'],
 			copy: ['link.svg', '0c1448dddf85857b80da2c51ddb5a27399013d3830eb756654cce2eef93fff33'],
+			native: ['share.svg', 'e156e3233dedc6b4e94e7b4ed6b516e21220f94c6ca2f904cec20a0c3005c738'],
 			mail: ['mail.svg', '5f27eaf548faab23f994093fa56cc9011b8457a1f2b26dc50e7ed5afe95727df'],
 		},
 	},
@@ -113,7 +116,7 @@ function preview(set) {
 }
 
 function stylesheet(id) {
-	return `.zmshbt.${id}.left,.zmshbt.${id}.right{position:fixed;top:30%;z-index:9999}\n` +
+	const css = `.zmshbt.${id}.left,.zmshbt.${id}.right{position:fixed;top:30%;z-index:9999}\n` +
 		`.zmshbt.${id}.left{left:0}.zmshbt.${id}.right{right:0}\n` +
 		`.zmshbt.${id}.in_widget a,.zmshbt.${id}.in_shortcode a,.zmshbt.${id}.in_block a,.zmshbt.${id}.in_elementor a,.zmshbt.${id}.in_php_function a{display:inline-block}\n` +
 		`.zmshbt.${id} a{display:block;width:36px;height:36px;margin:7px;background-position:center;background-repeat:no-repeat;background-size:cover;transition:transform .16s ease,filter .16s ease}\n` +
@@ -124,6 +127,7 @@ function stylesheet(id) {
 		`@media (max-width:600px){.zmshbt.left,.zmshbt.right{position:static!important;display:flex;flex-wrap:wrap;justify-content:center}.zmshbt.left a,.zmshbt.right a{margin:5px!important}}\n` +
 		`@media (max-width:600px){.zmshbt.${id}.left .zmshbt-profile-separator,.zmshbt.${id}.right .zmshbt-profile-separator{display:inline-block;width:1px;height:28px;margin:9px 12px}}\n` +
 		`@media (prefers-reduced-motion:reduce){.zmshbt.${id} a{transition:none}.zmshbt.${id} a:hover{transform:none}}\n`;
+	return css;
 }
 
 const expected = new Map();

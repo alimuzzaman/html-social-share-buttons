@@ -30,7 +30,7 @@ import { networks } from '../shared/networks';
 	const iconsetAssets = localized.iconsetAssets;
 	const inheritedIconset = localized.inheritedIconset;
 	const buttonAppearance = localized.buttonAppearance;
-	const availableNetworks = networks( __ );
+	const availableNetworks = networks( __ ).filter( ( network ) => ! [ 'copy', 'native' ].includes( network.id ) );
 	const supportsBlockApiV3 =
 		localized.apiVersion === 3 &&
 		typeof blockEditor.useBlockProps === 'function';

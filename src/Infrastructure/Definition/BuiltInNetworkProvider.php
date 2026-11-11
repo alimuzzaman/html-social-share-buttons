@@ -102,6 +102,15 @@ final class BuiltInNetworkProvider {
 				'kind'               => Network::KIND_COPY,
 			),
 			array(
+				'id'                 => 'native',
+				'label'              => 'Native share',
+				'css_class'          => 'native',
+				'template'           => '%%permalink%%',
+				'placeholders'       => array( '%%permalink%%' ),
+				'enabled_by_default' => false,
+				'kind'               => Network::KIND_NATIVE,
+			),
+			array(
 				'id'                 => 'mail',
 				'label'              => 'Email',
 				'css_class'          => 'mail',

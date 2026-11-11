@@ -12,18 +12,24 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Domain\Frontend;
 final class FrontendFeatureRegistry {
 	const BROWSER_URL = 'browser_url';
 	const COPY_LINK = 'copy_link';
+	const NATIVE_SHARE = 'native_share';
 
 	private function __construct() {
 	}
 
 	public static function all() {
 		return array(
-			self::BROWSER_URL => array(
+			self::NATIVE_SHARE => array(
+				'id'                   => self::NATIVE_SHARE,
+				'setting'              => 'icons.native',
+				'requires_frontend_js' => true,
+			),
+			self::BROWSER_URL  => array(
 				'id'                   => self::BROWSER_URL,
 				'setting'              => 'use_browser_url',
 				'requires_frontend_js' => true,
 			),
-			self::COPY_LINK   => array(
+			self::COPY_LINK    => array(
 				'id'                   => self::COPY_LINK,
 				'setting'              => 'icons.copy',
 				'requires_frontend_js' => true,

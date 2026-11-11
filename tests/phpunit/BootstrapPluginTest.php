@@ -13,7 +13,7 @@ final class BootstrapPluginTest extends WP_UnitTestCase {
 
 		$this->assertTrue( $runtime->isBooted() );
 		$this->assertSame(
-			array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
+			array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' ),
 			$runtime->networks()->ids()
 		);
 		$this->assertSame(

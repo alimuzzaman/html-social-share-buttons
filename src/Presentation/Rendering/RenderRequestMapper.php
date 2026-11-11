@@ -56,6 +56,10 @@ final class RenderRequestMapper {
 			return $this->normalizeNetworkIds( $icons );
 		}
 
+		if ( array_key_exists( 'native', $icons ) && ! \Alimuzzaman\HtmlSocialShareButtons\Infrastructure\WordPress\Settings\OptionSettingsTruthiness::isStrictBoolean( $icons['native'] ) ) {
+			unset( $icons['native'] );
+		}
+
 		return $this->normalizeNetworkIds( array_keys( $icons ) );
 	}
 

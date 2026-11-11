@@ -9,6 +9,7 @@ export function networks( __ ) {
 		{ id: 'whatsapp', label: __( 'WhatsApp', 'html-social-share-buttons' ) },
 		{ id: 'reddit', label: __( 'Reddit', 'html-social-share-buttons' ) },
 		{ id: 'copy', label: __( 'Copy link', 'html-social-share-buttons' ) },
+		{ id: 'native', label: __( 'Native share', 'html-social-share-buttons' ) },
 		{ id: 'mail', label: __( 'Email', 'html-social-share-buttons' ) },
 	];
 }

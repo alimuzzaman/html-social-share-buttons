@@ -10,7 +10,7 @@ namespace Alimuzzaman\HtmlSocialShareButtons\Bootstrap;
  * legacy bootstrap for plugin state.
  */
 final class PluginConfig {
-	const VERSION = '3.4.0';
+	const VERSION = '3.5.0';
 	const OPTION_NAME = 'zm_shbt_fld';
 	const SHORTCODE = 'zm_sh_btn';
 	const SHORTCODE_ALIAS = 'html-social-share-buttons';
@@ -146,6 +146,18 @@ final class PluginConfig {
 
 	public function copyLinkScriptUrl() {
 		return $this->paths->url() . 'build/copy-link.js';
+	}
+
+	public function nativeShareScriptHandle() {
+		return 'hssb-native-share';
+	}
+
+	public function nativeShareScriptUrl() {
+		return $this->paths->url() . 'build/native-share.js';
+	}
+
+	public function nativeShareStylesheet() {
+		return $this->paths->assetsUrl() . 'frontend/native-share.css';
 	}
 
 	public function shareBlockEditorHandle() {

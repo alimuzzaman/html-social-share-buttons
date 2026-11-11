@@ -41,7 +41,7 @@ Use this process for every public plugin release.
    bypass the gate.
 6. Dispatch the same workflow on the tag with:
    - `reviewed_sha256`: the SHA-256 from the manually reviewed archive;
-   - `confirmation`: exactly `publish-X.Y.Z`.
+   - `confirmation`: exactly `publish-vX.Y.Z`.
 7. Confirm the publication job succeeds and record the workflow URL, source
    commit, tag, archive SHA-256, and WordPress.org availability.
 

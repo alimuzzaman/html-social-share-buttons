@@ -5,14 +5,8 @@ actions and optional social profile/contact links. Its frontend is
 server-rendered HTML and CSS, icon assets are served locally, and the plugin
 adds no frontend tracking scripts.
 
-The current branch prepares the 3.4.0 release after published 3.3.0. It adds
-WhatsApp and Reddit share actions and an optional Copy link button, all off by
-default. Copy link loads a small clipboard script only on pages that render it.
-See the [3.4.0 plan](docs/reviews/2026-10-08-release-3.4.0-plan.md) for scope
-and gates.
-Publication requires the final reviewed commit and exact tested archive. Follow
-[the release process](docs/RELEASE-PROCESS.md) for the master-only tag and
-publication workflow.
+The current branch prepares 3.5.0 with optional native device sharing, a Copy link fallback, and expanded PHP runtime coverage. Existing sites retain their current output unless they enable the new action.
+See the [3.5.0 implementation plan](docs/reviews/2026-11-11-release-3.5.0-plan.md) and its implementation record for validation status.
 
 ## Features
 

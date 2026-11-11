@@ -25,6 +25,12 @@ const sourceDirectory = path.join(__dirname, 'iconsets', 'upstream', 'bootstrap-
 const checkOnly = process.argv.includes('--check');
 
 const networks = {
+	native: {
+		label: 'Native share',
+		color: '#2563EB',
+		shadow: '#1e40af',
+		source: ['share-fill.svg', 'bd7f81833491298ac8ff047f5c10396bd0dee6477d9f2f42804c10d2481f505e'],
+	},
 	whatsapp: {
 		label: 'WhatsApp',
 		color: '#25D366',

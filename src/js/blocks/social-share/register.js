@@ -184,7 +184,7 @@ import { networks } from '../shared/networks';
 									key: network.id,
 									label: network.label,
 									help:
-										network.id === 'copy'
+										[ 'copy', 'native' ].includes( network.id )
 											? __(
 													'Adds frontend JavaScript on pages that show this button.',
 													'html-social-share-buttons'

@@ -9,11 +9,13 @@ final class ResolvedButton {
 	private $url;
 	private $iconFile;
 	private $browserUrlDescriptor;
+	private $title;
 
-	public function __construct( Network $network, $url, $iconFile, $browserUrlDescriptor = array() ) {
+	public function __construct( Network $network, $url, $iconFile, $browserUrlDescriptor = array(), $title = '' ) {
 		$this->network = $network;
 		$this->url = (string) $url;
 		$this->iconFile = (string) $iconFile;
+		$this->title = (string) $title;
 		$this->browserUrlDescriptor = is_array( $browserUrlDescriptor ) && $this->isValidBrowserDescriptor( $browserUrlDescriptor )
 			? $browserUrlDescriptor
 			: ( is_string( $browserUrlDescriptor ) && '' !== $browserUrlDescriptor
@@ -39,6 +41,10 @@ final class ResolvedButton {
 
 	public function browserUrlDescriptor() {
 		return $this->browserUrlDescriptor;
+	}
+
+	public function title() {
+		return $this->title;
 	}
 
 	private function isValidBrowserDescriptor( array $descriptor ) {

@@ -34,6 +34,10 @@ jobs:
             composer: 'v2'
           - php: '8.0'
             composer: 'v2'
+          - php: '8.2'
+            composer: 'v2'
+          - php: '8.4'
+            composer: 'v2'
           - php: '8.3'
             composer: 'v2'
           - php: '8.5'
@@ -136,6 +140,14 @@ jobs:
             php: '8.3'
             wp-cli: 'latest'
             test-library: 'auto'
+          - wordpress: 'latest'
+            php: '8.4'
+            wp-cli: 'latest'
+            test-library: 'auto'
+          - wordpress: 'latest'
+            php: '8.5'
+            wp-cli: 'latest'
+            test-library: 'auto'
     services:
       mysql:
         image: mysql:5.7
@@ -197,6 +209,7 @@ jobs:
         run: |
           wp eval-file tests/support/support-floor-prepare.php --path="$WP_ROOT"
           wp eval-file tests/support/support-floor-assert.php --path="$WP_ROOT"
+          wp eval-file tests/support/runtime-diagnostics.php --path="$WP_ROOT"
       - name: Install the WordPress PHPUnit harness
         if: matrix.test-library != ''
         env:

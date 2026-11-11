@@ -1,7 +1,7 @@
 # PHP compatibility
 
 - **Minimum PHP:** 7.0
-- **Current candidate metadata:** internally aligned at 3.0.0; this does not
+- **Current candidate metadata:** internally aligned at 3.5.0; this does not
   authorize a tag or release
 
 The plugin header and Composer manifest both require PHP 7.0 or newer. The
@@ -11,7 +11,7 @@ attributes, enums, readonly classes, and other syntax introduced after PHP 7.0.
 ## Evidence
 
 The compatibility workflow defines syntax/bootstrap checks for PHP 7.0, 7.4,
-8.0, 8.3, and 8.5. A fresh WordPress 5.3/PHP 7.0.33 instance activated the
+8.0, 8.2, 8.3, 8.4, and 8.5. A fresh WordPress 5.3/PHP 7.0.33 instance activated the
 exact candidate archive and rendered a saved legacy shortcode with a canonical
 permalink. Modern PHPUnit and browser suites run on newer PHP because the
 current test runner itself requires PHP 7.4 or newer.
@@ -33,3 +33,7 @@ modern test suite ran on PHP 7.0 or every intermediate PHP version.
   PHP, Composer metadata, or the approved candidate archive changes.
 
 See `RELEASE-CANDIDATE-VALIDATION.md` for dated command and archive evidence.
+
+## 3.5.0 validation status
+
+The workflow now defines current-WordPress functional and PHPUnit lanes on PHP 8.4 and 8.5, plus a plugin-owned E_ALL render probe. These are configured checks, not a claim of a completed hosted run. See the dated implementation record for actual results.

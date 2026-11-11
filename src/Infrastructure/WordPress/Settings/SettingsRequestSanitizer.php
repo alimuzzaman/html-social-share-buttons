@@ -76,7 +76,10 @@ final class SettingsRequestSanitizer {
 					: false
 			);
 			// Copy link has no share service: no template and no profile link.
-			if ( 'copy' === $networkId ) {
+			if ( 'native' === $networkId ) {
+				$networkStates[ $networkId ] = isset( $submittedNetworks[ $networkId ] ) && OptionSettingsTruthiness::isStrictBoolean( $submittedNetworks[ $networkId ] );
+			}
+			if ( in_array( $networkId, array( 'copy', 'native' ), true ) ) {
 				continue;
 			}
 			if ( isset( $submittedTemplates[ $networkId ] ) && is_string( $submittedTemplates[ $networkId ] ) ) {

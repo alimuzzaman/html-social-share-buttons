@@ -11,7 +11,7 @@ command -v msgfmt >/dev/null
 
 wp i18n make-pot . languages/html-social-share-buttons.pot \
 	--domain=html-social-share-buttons \
-	--exclude=node_modules,vendor,tests,docs,specs,scripts,security,.github,build \
+	--exclude=node_modules,.pnpm-store,tmp,temp,vendor,tests,docs,specs,scripts,security,.github,build \
 	--package-name='HTML Social Share Buttons' \
 	--headers='{"Report-Msgid-Bugs-To":"https://wordpress.org/support/plugin/html-social-share-buttons"}'
 

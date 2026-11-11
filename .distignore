@@ -61,6 +61,7 @@ Thumbs.db
 
 # Build and temporary files
 node_modules/
+.pnpm-store/
 src/js/
 dist/
 tmp/

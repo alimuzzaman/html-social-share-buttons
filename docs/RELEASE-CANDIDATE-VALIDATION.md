@@ -1,6 +1,10 @@
 # Release validation ledger
 
-The current candidate is **3.2.0**. See the [implementation record](reviews/2026-09-05-implementation-status.md) and [dependency disposition](reviews/2026-09-05-dependency-disposition.md). See the [3.2.0 acceptance record](reviews/2026-09-06-release-acceptance.md): local exact-archive, public-browser and rollback gates passed; hosted CI and authenticated admin-browser acceptance remain blocked. The records below describe earlier candidates and do not certify 3.2.0. Publication requires separate explicit authorization.
+Current planned candidate: **3.5.0**. See [the implementation plan](reviews/2026-11-11-release-3.5.0-plan.md) and its dated implementation record. The entries below are historical evidence; they do not certify 3.5.0.
+
+## Historical 3.2.0 status
+
+The candidate at the time of this historical record was **3.2.0**. See the [implementation record](reviews/2026-09-05-implementation-status.md) and [dependency disposition](reviews/2026-09-05-dependency-disposition.md). See the [3.2.0 acceptance record](reviews/2026-09-06-release-acceptance.md): local exact-archive, public-browser and rollback gates passed; hosted CI and authenticated admin-browser acceptance remain blocked. The records below describe earlier candidates and do not certify 3.2.0. Publication requires separate explicit authorization.
 
 # 3.0 release-candidate validation record
 
