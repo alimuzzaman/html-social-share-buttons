@@ -285,28 +285,6 @@ jobs:
           HSSB_ARCHIVE_PATH="$RUNNER_TEMP/reproducibility.zip" pnpm run zip
           cmp "$RUNNER_TEMP/candidate/candidate.zip" "$RUNNER_TEMP/reproducibility.zip"
           python3 scripts/release-candidate.py create "$RUNNER_TEMP/candidate" "$GITHUB_SHA"
-      - name: Refresh alternate npm lock for review
-        run: |
-          mkdir -p "$RUNNER_TEMP/npm-lock"
-          cp package.json "$RUNNER_TEMP/npm-lock/package.json"
-          npm install --prefix "$RUNNER_TEMP/npm-lock" --package-lock-only --ignore-scripts
-          cp "$RUNNER_TEMP/npm-lock/package-lock.json" package-lock.json
-      # Temporary review bridge: only generated public files, never environment data.
-      - name: Record generated assets and candidate for review
-        run: |
-          python3 - <<'PY_BUILD'
-          import base64
-          from pathlib import Path
-          files = {str(p): p for p in Path('build').rglob('*') if p.is_file()}
-          files.update({name: Path(name) for name in ['package.json', 'package-lock.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml']})
-          files['review/candidate.zip'] = Path('${{ runner.temp }}/candidate/candidate.zip')
-          files['review/manifest.json'] = Path('${{ runner.temp }}/candidate/manifest.json')
-          for name, p in files.items():
-              value = base64.b64encode(p.read_bytes()).decode()
-              chunks = [value[i:i+12000] for i in range(0, len(value), 12000)]
-              for index, chunk in enumerate(chunks):
-                  print(f'HSSB_REVIEW_CHUNK:{name}:{index}:{len(chunks)}:{chunk}', flush=True)
-          PY_BUILD
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: release-candidate
