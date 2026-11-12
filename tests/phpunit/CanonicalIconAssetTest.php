@@ -67,12 +67,12 @@ final class CanonicalIconAssetTest extends WP_UnitTestCase {
 		$assets = new IconSetAssetResolver( $root, 'https://example.test/plugin' );
 		$facade = new RenderFacade( $networks, $registry, $assets, new ExtensionHooks() );
 		$expected = array(
-			'default'         => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
-			'flat'            => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
-			'long-shadows'    => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
-			'prajin'          => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
-			'bootstrap-solid' => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
-			'tabler-outline'  => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
+			'default'         => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' ),
+			'flat'            => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' ),
+			'long-shadows'    => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' ),
+			'prajin'          => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' ),
+			'bootstrap-solid' => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' ),
+			'tabler-outline'  => array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' ),
 		);
 		$context = new ShareContext(
 			'https://example.test/icon-contract/?source=asset',

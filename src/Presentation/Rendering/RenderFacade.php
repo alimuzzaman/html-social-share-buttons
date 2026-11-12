@@ -36,6 +36,7 @@ final class RenderFacade {
 	private $visibility;
 	private $buttonAppearanceStylesheet;
 	private $buttonAppearanceStyleHandle;
+	private $nativeShareStylesheet;
 
 	/**
 	 * @param ExtensionHooks|null       $extensions Optional extension hooks.
@@ -54,7 +55,8 @@ final class RenderFacade {
 		$settings = null,
 		$visibility = null,
 		$buttonAppearanceStylesheet = '',
-		$buttonAppearanceStyleHandle = 'hssb-button-appearance'
+		$buttonAppearanceStyleHandle = 'hssb-button-appearance',
+		$nativeShareStylesheet = ''
 	) {
 		$this->networks = $networks;
 		$this->assets = $assets;
@@ -66,6 +68,7 @@ final class RenderFacade {
 		$this->visibility = $visibility ? $visibility : new ViewerVisibilityPolicy();
 		$this->buttonAppearanceStylesheet = (string) $buttonAppearanceStylesheet;
 		$this->buttonAppearanceStyleHandle = (string) $buttonAppearanceStyleHandle;
+		$this->nativeShareStylesheet = (string) $nativeShareStylesheet;
 		$this->builder = new BuildShareButtons(
 			$networks,
 			$iconSets,
@@ -134,6 +137,15 @@ final class RenderFacade {
 		}
 		if ( $this->hasCopyAction( $result ) ) {
 			$frontendFeatures[] = FrontendFeatureRegistry::COPY_LINK;
+		}
+		foreach ( $result->buttons() as $button ) {
+			if ( $button->network()->isNativeAction() ) {
+				$frontendFeatures[] = FrontendFeatureRegistry::NATIVE_SHARE;
+				if ( '' !== $this->nativeShareStylesheet ) {
+					$stylesheets['hssb-native-share'] = $this->nativeShareStylesheet;
+				}
+				break;
+			}
 		}
 
 		return new RenderOutcome(

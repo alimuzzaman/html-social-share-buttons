@@ -30,7 +30,7 @@ final class ResolveShareUrl implements ShareUrlResolver {
 		$permalink = is_string( $permalinkOverride ) && '' !== $permalinkOverride
 			? $permalinkOverride
 			: $context->permalink();
-		if ( $network->isCopyAction() ) {
+		if ( $network->isCopyAction() || $network->isNativeAction() ) {
 			return $permalink;
 		}
 

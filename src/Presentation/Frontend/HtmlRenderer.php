@@ -56,7 +56,15 @@ final class HtmlRenderer {
 		}
 		$output .= "'>";
 
+		$hasCopy = false;
 		foreach ( $result->buttons() as $button ) {
+			$hasCopy = $hasCopy || $button->network()->isCopyAction();
+		}
+		foreach ( $result->buttons() as $button ) {
+			if ( $button->network()->isNativeAction() ) {
+				$output .= $this->nativeShare( $button, $hasCopy );
+				continue;
+			}
 			if ( $button->network()->isCopyAction() ) {
 				$output .= $this->copyLink( $button, $result );
 				continue;
@@ -104,6 +112,24 @@ final class HtmlRenderer {
 		}
 
 		return $output . '</div>';
+	}
+
+	private function nativeShare( ResolvedButton $button, $hasCopy ) {
+		$tag = $hasCopy ? 'span' : 'a';
+		$attributes = $hasCopy ? " hidden style='display:none'" : " href='" . $this->buttonUrl( $button ) . "'";
+
+		return '<' . $tag . " class='native'" . $attributes .
+			" data-hssb-native-share='1' data-hssb-native-url='" . $this->buttonUrl( $button ) .
+			$this->browserDescriptorAttributes( $button ) .
+			"' data-hssb-native-title='" . esc_attr( $button->title() ) .
+			"' data-hssb-native-has-copy='" . ( $hasCopy ? '1' : '0' ) .
+			"' data-hssb-share-label='" . esc_attr__( 'Share…', 'html-social-share-buttons' ) .
+			"' data-hssb-native-failed-label='" . esc_attr__( 'Could not open sharing. Use Copy link.', 'html-social-share-buttons' ) .
+			"' data-hssb-copy-label='" . esc_attr__( 'Copy link', 'html-social-share-buttons' ) .
+			"' data-hssb-copied-label='" . esc_attr__( 'Link copied', 'html-social-share-buttons' ) .
+			"' data-hssb-copy-failed-label='" . esc_attr__( 'Could not copy the link', 'html-social-share-buttons' ) .
+			"' aria-label='" . esc_attr__( 'Copy link', 'html-social-share-buttons' ) .
+			"'></" . $tag . ">\n";
 	}
 
 	/**

@@ -15,6 +15,7 @@ $expected = array(
 	'whatsapp'  => 'https://wa.me/?text=%%title%%%20%%permalink%%',
 	'reddit'    => 'https://www.reddit.com/submit?url=%%permalink%%&title=%%title%%',
 	'copy'      => '%%permalink%%',
+	'native'    => '%%permalink%%',
 	'mail'      => 'mailto:?subject=%%title%%&body=%%permalink%%',
 );
 
@@ -49,7 +50,7 @@ foreach ( glob( __DIR__ . '/../resources/iconsets/*.php' ) as $manifest ) {
 		fwrite( STDERR, sprintf( "New platform IDs are missing from %s.\n", $manifest ) );
 		exit( 1 );
 	}
-	if ( array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ) !== array_keys( $definition['icons'] ) ) {
+	if ( array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' ) !== array_keys( $definition['icons'] ) ) {
 		fwrite( STDERR, sprintf( "Icon manifest network order changed in %s.\n", $manifest ) );
 		exit( 1 );
 	}

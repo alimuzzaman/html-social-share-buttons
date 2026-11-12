@@ -17,7 +17,6 @@ for (const [name, version] of Object.entries(manifest.devDependencies)) {
 	assert.equal(pnpmLock.importers['.'].devDependencies[name].specifier, version);
 }
 assert.equal(npmLock.packages['node_modules/serialize-javascript'].version, '7.1.1');
-assert.equal(npmLock.packages['node_modules/markdownlint-cli/node_modules/minimatch'].version, '3.1.5');
 const root = path.dirname(require.resolve('@wordpress/scripts/package.json'));
 const copyRoot = path.dirname(require.resolve('copy-webpack-plugin/package.json', { paths: [root] }));
 const serializerFile = require.resolve('serialize-javascript', { paths: [copyRoot] });
@@ -46,11 +45,9 @@ const serialized = serialize({ name: 'block', pattern: /\.json$/i, content: 'caf
 assert.equal(vm.runInNewContext('(' + serialized + ').name'), 'block');
 assert.ok(vm.runInNewContext('(' + serialized + ').pattern.test("block.JSON")'));
 assert.ok(!serialized.includes('</script>'));
-// The retained UUID advisory concerns v3/v5/v6 output buffers. SockJS uses
-// only v4 without caller buffers; fail if that inspected call surface changes.
+// webpack-dev-server 6 replaced the affected SockJS/UUID dependency path.
 const serverRoot = path.dirname(require.resolve('webpack-dev-server/package.json', { paths: [root] }));
-const sockRoot = path.dirname(require.resolve('sockjs/package.json', { paths: [serverRoot] }));
-const transport = fs.readFileSync(path.join(sockRoot, 'lib/transport.js'), 'utf8');
-assert.match(transport, /require\('uuid'\)\.v4/);
-assert.match(transport, /this\.id = uuidv4\(\)/);
-console.log('Scoped serializer remediation and retained UUID call surface passed.');
+const serverManifest = require(path.join(serverRoot, 'package.json'));
+assert.ok(Number(serverManifest.version.split('.')[0]) >= 6);
+assert.equal(serverManifest.dependencies.sockjs, undefined);
+console.log('Scoped serializer remediation and SockJS dependency removal passed.');

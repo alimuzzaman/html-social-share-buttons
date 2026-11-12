@@ -50,3 +50,5 @@ therefore not listed as a cleared asset in `THIRD-PARTY-NOTICES.txt`.
 Copyright clearance for the generated sets does not grant trademark rights in
 the represented platform names or logos; downstream use must still follow the
 relevant platform brand guidelines.
+
+Native share icons use pinned Bootstrap Icons v1.13.1 `share-fill.svg` and Tabler Icons v3.46.0 `share.svg` (MIT), retained under `scripts/iconsets/upstream/` with checksums verified by the generators. Historical-pack native tiles use the existing wrappers and the pinned Bootstrap glyph.

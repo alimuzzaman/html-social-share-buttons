@@ -207,7 +207,7 @@ class ElementorShareWidget extends \Elementor\Widget_Base {
 				'type'        => \Elementor\Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'description' => esc_html__(
-					'Keep at least one network selected. Clearing all networks hides this widget on the frontend.',
+					'Keep at least one network selected. Clearing all networks hides this widget on the frontend. Copy link and Native share add frontend JavaScript.',
 					'html-social-share-buttons'
 				),
 				'options'     => $this->networkOptions(),

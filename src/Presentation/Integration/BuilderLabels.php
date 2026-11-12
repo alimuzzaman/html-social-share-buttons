@@ -23,6 +23,7 @@ final class BuilderLabels {
 			'whatsapp'  => __( 'WhatsApp', 'html-social-share-buttons' ),
 			'reddit'    => __( 'Reddit', 'html-social-share-buttons' ),
 			'copy'      => __( 'Copy link', 'html-social-share-buttons' ),
+			'native'    => __( 'Native share', 'html-social-share-buttons' ),
 			'mail'      => __( 'Email', 'html-social-share-buttons' ),
 		);
 

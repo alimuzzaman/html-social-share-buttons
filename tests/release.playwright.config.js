@@ -2,7 +2,7 @@ const { defineConfig } = require( '@playwright/test' );
 
 module.exports = defineConfig( {
 	testDir: './e2e',
-	testMatch: [ 'settings.spec.js', '*preview*.spec.js', 'browser-matrix/iconsets.spec.js', 'gutenberg.spec.js' ],
+	testMatch: [ 'settings.spec.js', 'native-share.spec.js', '*preview*.spec.js', 'browser-matrix/iconsets.spec.js', 'gutenberg.spec.js' ],
 	timeout: 120_000,
 	workers: 1,
 	fullyParallel: false,

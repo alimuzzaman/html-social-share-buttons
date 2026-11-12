@@ -83,7 +83,8 @@ final class PluginFactory {
 				$settings,
 				$visibility,
 				$config->buttonAppearanceStyleUrl(),
-				$config->buttonAppearanceStyleHandle()
+				$config->buttonAppearanceStyleHandle(),
+				$config->nativeShareStylesheet()
 			);
 		$assetCollector = new AssetCollector(
 			$assets->stylesheetUrl( $iconSets->get( 'default' ) ),
@@ -92,7 +93,8 @@ final class PluginFactory {
 			$config->browserUrlScriptUrl(),
 			$config->browserUrlScriptHandle(),
 			array(
-				FrontendFeatureRegistry::COPY_LINK => array( $config->copyLinkScriptHandle(), $config->copyLinkScriptUrl() ),
+				FrontendFeatureRegistry::COPY_LINK    => array( $config->copyLinkScriptHandle(), $config->copyLinkScriptUrl() ),
+				FrontendFeatureRegistry::NATIVE_SHARE => array( $config->nativeShareScriptHandle(), $config->nativeShareScriptUrl() ),
 			)
 		);
 		$excludedContent = new ExcludedContentPolicy();

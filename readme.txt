@@ -5,7 +5,7 @@ Tags: social share buttons, social sharing, gutenberg block, social media, share
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 3.4.0
+Stable tag: 3.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,7 +28,7 @@ sets and square or circle buttons.
 * <strong>Private by default:</strong> Bundled icons load from your site; the plugin adds no tracking scripts.
 * <strong>Place anywhere:</strong> Automatic before/after and floating placement, two blocks, a widget, Elementor, WPBakery, shortcodes, and PHP.
 * <strong>Share and follow separately:</strong> Share actions open a composer for the current page; profile links open the configured profile or email destination.
-* <strong>Current destinations:</strong> Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, WhatsApp, Reddit, email, and an optional Copy link button.
+* <strong>Current destinations:</strong> Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, WhatsApp, Reddit, email, and optional Copy link and Native share actions.
 * <strong>Choose the presentation:</strong> Legacy preserves the existing pack behavior; Minimal, Framed, and Soft shadow add modern frontend styles.
 
 <strong>Other features:</strong>
@@ -151,7 +151,19 @@ sources and their license notices are included with the plugin. See
 `resources/iconsets/ASSET-SOURCES.md` in the source repository for the current
 provenance record.
 
+
+= What does Native share do? =
+
+Native share is off by default. When enabled, a local script opens the device sharing menu in supported secure browsers. Other browsers offer Copy link; without JavaScript a page link remains available. Cancelling the share menu does not copy anything. Enabling both Native share and Copy link keeps only one Copy link fallback.
+
 == Changelog ==
+
+= 3.5.0 =
+* FEATURE: Added optional Native share, opening the device sharing menu with a Copy link fallback. It is off by default.
+* IMPROVEMENT: Native share loads local JavaScript and styles only on pages that render it, preserves custom and post-specific URLs, and handles cancellation without copying.
+* COMPATIBILITY: Expanded WordPress runtime checks to PHP 8.4 and 8.5 while retaining PHP 7.0 and WordPress 5.3 minimums.
+* TEST: Added native sharing, fallback, URL provenance, Pinterest image-query and runtime diagnostic coverage.
+
 
 = 3.4.0 - 2026-10-09 =
 * **FEATURE**: Added WhatsApp and Reddit share buttons. Both are off by default.

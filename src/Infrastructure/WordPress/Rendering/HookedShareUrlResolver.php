@@ -75,7 +75,7 @@ final class HookedShareUrlResolver implements ShareUrlResolver {
 	}
 
 	private function selectedTemplate( Network $network, $templateOverride ) {
-		if ( $network->isCopyAction() ) {
+		if ( ( $network->isCopyAction() || $network->isNativeAction() ) ) {
 			return $network->defaultShareTemplate();
 		}
 		$fallback = $network->defaultShareTemplate();
@@ -91,7 +91,7 @@ final class HookedShareUrlResolver implements ShareUrlResolver {
 	}
 
 	private function descriptorFor( Network $network, $template, ShareContext $context ) {
-		return $network->isCopyAction()
+		return ( $network->isCopyAction() || $network->isNativeAction() )
 			? ResolveShareUrl::copyDescriptor()
 			: $this->descriptorFromTemplate( $template, $context );
 	}

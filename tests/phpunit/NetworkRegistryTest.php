@@ -9,7 +9,7 @@ final class NetworkRegistryTest extends WP_UnitTestCase {
 		$registry = ( new BuiltInNetworkProvider() )->createRegistry();
 
 		$this->assertSame(
-			array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'mail' ),
+			array( 'facebook', 'x', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' ),
 			$registry->ids()
 		);
 		$this->assertSame( 'x', $registry->get( 'x' )->cssClass() );
@@ -22,8 +22,9 @@ final class NetworkRegistryTest extends WP_UnitTestCase {
 		foreach ( $registry->all() as $network ) {
 			$this->assertNotSame( '', trim( $network->defaultShareTemplate() ) );
 			$this->assertSame( 'copy' === $network->id(), $network->isCopyAction(), $network->id() );
+			$this->assertSame( 'native' === $network->id(), $network->isNativeAction(), $network->id() );
 		}
-		foreach ( array( 'whatsapp', 'reddit', 'copy' ) as $id ) {
+		foreach ( array( 'whatsapp', 'reddit', 'copy', 'native' ) as $id ) {
 			$this->assertFalse( $registry->get( $id )->enabledByDefault(), $id );
 		}
 	}

@@ -28,7 +28,7 @@ final class AssetCollector {
 	 * @param array $featureScripts Frontend feature ID => array( handle, url )
 	 *                              for features other than browser URL.
 	 */
-	public function __construct( $fallbackStylesheet, $version = '3.4.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance', $frontendScriptUrl = '', $frontendScriptHandle = 'hssb-browser-url', array $featureScripts = array() ) {
+	public function __construct( $fallbackStylesheet, $version = '3.5.0', $buttonAppearanceStyleHandle = 'hssb-button-appearance', $frontendScriptUrl = '', $frontendScriptHandle = 'hssb-browser-url', array $featureScripts = array() ) {
 		$this->fallbackStylesheet = (string) $fallbackStylesheet;
 		$this->version = (string) $version;
 		$this->buttonAppearanceStyleHandle = (string) $buttonAppearanceStyleHandle;

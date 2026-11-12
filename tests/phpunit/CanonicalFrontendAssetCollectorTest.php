@@ -48,7 +48,7 @@ final class CanonicalFrontendAssetCollectorTest extends WP_UnitTestCase {
 			count( array_keys( wp_styles()->queue, 'social-share-flat', true ) )
 		);
 		$this->assertSame(
-			'3.4.0',
+			'3.5.0',
 			wp_styles()->registered['social-share-default']->ver
 		);
 
@@ -67,7 +67,7 @@ final class CanonicalFrontendAssetCollectorTest extends WP_UnitTestCase {
 		wp_dequeue_script( 'hssb-copy-link' );
 		$collector = new AssetCollector(
 			'fallback.css',
-			'3.4.0',
+			'3.5.0',
 			'hssb-button-appearance',
 			'https://example.test/build/browser-url.js',
 			'hssb-browser-url',

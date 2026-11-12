@@ -138,6 +138,7 @@ class ShareWidget extends \WP_Widget {
 					<?php echo esc_html( BuilderLabels::network( $network->id(), $network->label() ) ); ?>
 				</label><br />
 			<?php endforeach; ?>
+			<p class="description"><?php esc_html_e( 'Copy link and Native share add frontend JavaScript.', 'html-social-share-buttons' ); ?></p>
 		</fieldset>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'profile_links_mode' ) ); ?>"><?php esc_html_e( 'Profile links', 'html-social-share-buttons' ); ?></label>

@@ -407,6 +407,8 @@ final class BlockRegistrar {
 				return __( 'Reddit', 'html-social-share-buttons' );
 			case 'copy':
 				return __( 'Copy link', 'html-social-share-buttons' );
+			case 'native':
+				return __( 'Native share', 'html-social-share-buttons' );
 			case 'mail':
 				return __( 'Email', 'html-social-share-buttons' );
 			default:

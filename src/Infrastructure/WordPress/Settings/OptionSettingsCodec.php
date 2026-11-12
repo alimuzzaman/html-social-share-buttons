@@ -139,6 +139,9 @@ final class OptionSettingsCodec implements SettingsCodec {
 	private function networkStates( array $stored ) {
 		$states = array();
 		foreach ( $stored as $networkId => $value ) {
+			if ( 'native' === $networkId && ! OptionSettingsTruthiness::isStrictBoolean( $value ) ) {
+				continue;
+			}
 			$states[ (string) $networkId ] = $this->toBoolean( $value );
 		}
 

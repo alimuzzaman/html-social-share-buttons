@@ -8,6 +8,7 @@ final class Network {
 	const KIND_SHARE = 'share';
 	/** Copies the resolved page URL instead of opening a share service. */
 	const KIND_COPY = 'copy';
+	const KIND_NATIVE = 'native';
 
 	private $id;
 	private $label;
@@ -40,7 +41,7 @@ final class Network {
 		if ( ! preg_match( '/^[a-z][a-z0-9_-]*$/', $cssClass ) ) {
 			throw new InvalidArgumentException( 'Network CSS classes must be safe identifiers.' );
 		}
-		if ( ! in_array( $kind, array( self::KIND_SHARE, self::KIND_COPY ), true ) ) {
+		if ( ! in_array( $kind, array( self::KIND_SHARE, self::KIND_COPY, self::KIND_NATIVE ), true ) ) {
 			throw new InvalidArgumentException( 'Unknown network kind.' );
 		}
 		$normalizedPlaceholders = array();
@@ -98,5 +99,9 @@ final class Network {
 
 	public function isCopyAction() {
 		return self::KIND_COPY === $this->kind;
+	}
+
+	public function isNativeAction() {
+		return self::KIND_NATIVE === $this->kind;
 	}
 }

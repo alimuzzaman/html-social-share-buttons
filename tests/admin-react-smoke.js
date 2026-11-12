@@ -365,7 +365,7 @@ const profileFields = nodes.filter((node) => node.props && String(node.props.nam
 const facebookProfile = profileFields.find((node) => node.props.name === 'zm_shbt_fld[profile_links][facebook]');
 const xProfile = profileFields.find((node) => node.props.name === 'zm_shbt_fld[profile_links][x]');
 const mailProfile = profileFields.find((node) => node.props.name === 'zm_shbt_fld[profile_links][mail]');
-if (profileFields.length !== schemaIconIds.filter((id) => id !== 'copy').length || !facebookProfile || facebookProfile.props.value !== 'https://www.facebook.com/example' || !xProfile || xProfile.props.value !== 'https://x.com/example' || !mailProfile || mailProfile.props.placeholder !== 'mailto:hello@example.com') {
+if (profileFields.length !== schemaIconIds.filter((id) => id !== 'copy' && id !== 'native').length || !facebookProfile || facebookProfile.props.value !== 'https://www.facebook.com/example' || !xProfile || xProfile.props.value !== 'https://x.com/example' || !mailProfile || mailProfile.props.placeholder !== 'mailto:hello@example.com') {
 	throw new Error('Profile-link settings should render one independent destination for every canonical network.');
 }
 facebookProfile.props.onChange('https://www.facebook.com/updated');

@@ -92,7 +92,7 @@ final class WpBakeryRegistrar {
 						'heading'     => __( 'Icons', 'html-social-share-buttons' ),
 						'param_name'  => 'icons',
 						'value'       => $this->networkChoices( $currentIconSet->id() ),
-						'description' => __( 'Select icons', 'html-social-share-buttons' ),
+						'description' => __( 'Select icons. Copy link and Native share add frontend JavaScript.', 'html-social-share-buttons' ),
 					),
 					array(
 						'type'        => 'dropdown',

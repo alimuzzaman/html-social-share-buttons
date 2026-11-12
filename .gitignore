@@ -5,6 +5,7 @@ Thumbs.db
 ehthumbs.db
 
 node_modules/
+.pnpm-store/
 vendor/
 dist/
 tmp/
