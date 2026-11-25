@@ -108,10 +108,48 @@ final class BrowserUrlEligibilityTest extends WP_UnitTestCase {
 		);
 
 		$html = $outcome->html();
-		$this->assertStringContainsString( rawurlencode( wp_get_document_title() ), $html );
+		$this->assertStringContainsString(
+			rawurlencode( html_entity_decode( wp_get_document_title(), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) ),
+			$html
+		);
+		$this->assertStringNotContainsString( rawurlencode( '&#' ), $html );
 		$this->assertStringNotContainsString( 'Stray', $html );
 		$this->assertStringNotContainsString( 'stray.jpg', $html );
 		$this->assertStringContainsString( 'media=&#038;', $html );
+	}
+
+	public function testPageTitleDecodesHtmlEntitiesForShareLinksAndNativeShare(): void {
+		$this->go_to( home_url( '/?s=share' ) );
+		$filter = static function () {
+			return 'Tom &amp; Jerry&#039;s &quot;Blog&quot;';
+		};
+		add_filter( 'pre_get_document_title', $filter );
+
+		try {
+			$outcome = $this->facade()->render(
+				array(
+					'class'                => 'left',
+					'placement'            => RenderPlacement::FLOATING_LEFT,
+					'icons'                => array( 'twitter', 'native' ),
+					'browser_url_eligible' => true,
+					'browser_url_source'   => 'automatic_page',
+				),
+				0
+			);
+		} finally {
+			remove_filter( 'pre_get_document_title', $filter );
+		}
+
+		$html         = $outcome->html();
+		$decodedTitle = "Tom & Jerry's \"Blog\"";
+		$this->assertStringContainsString( rawurlencode( $decodedTitle ), $html );
+		$this->assertStringNotContainsString( rawurlencode( '&amp;' ), $html );
+		$this->assertStringNotContainsString( rawurlencode( '&#039;' ), $html );
+		$this->assertStringNotContainsString( rawurlencode( '&quot;' ), $html );
+		$this->assertStringContainsString( "data-hssb-native-title='" . esc_attr( $decodedTitle ) . "'", $html );
+		$this->assertStringNotContainsString( '&amp;amp;', $html );
+		$this->assertStringNotContainsString( '&amp;#039;', $html );
+		$this->assertStringNotContainsString( '&amp;quot;', $html );
 	}
 
 	private function facade(): RenderFacade {

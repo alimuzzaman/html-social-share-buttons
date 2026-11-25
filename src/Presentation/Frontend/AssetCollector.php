@@ -84,6 +84,13 @@ final class AssetCollector {
 		return new self( $this->fallbackStylesheet, $this->version, $this->buttonAppearanceStyleHandle, $this->frontendScriptUrl, $this->frontendScriptHandle, $this->featureScripts );
 	}
 
+	public function hasCollectedAssets() {
+		return ! empty( $this->stylesheets )
+			|| ! empty( $this->printedIcons )
+			|| $this->requiresFrontendJs
+			|| ! empty( $this->frontendFeatures );
+	}
+
 	public function enqueueStyles() {
 		$stylesheets = $this->stylesheets;
 		if ( empty( $stylesheets ) && '' !== $this->fallbackStylesheet ) {

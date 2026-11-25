@@ -50,6 +50,57 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 		);
 	}
 
+	public function testSettingsSearchHandlesNonStringQuerySafely(): void {
+		$this->_setRole( 'administrator' );
+		$_POST = array(
+			'nonce' => wp_create_nonce( 'zm_sh_admin' ),
+			'query' => array( 'Contract' ),
+		);
+
+		$response = $this->requestJson( 'zm_sh_search_content' );
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( array(), $response['data'] );
+	}
+
+	public function testSettingsSaveRejectsMaliciousFieldsAndCorruptedIconsetType(): void {
+		$this->_setRole( 'administrator' );
+		$_POST = array(
+			'nonce'    => wp_create_nonce( 'zm_sh_admin' ),
+			'settings' => http_build_query(
+				array(
+					'zm_shbt_fld' => array(
+						'title'            => 'Hardened',
+						'iconset'          => 'unregistered-pack',
+						'iconset_type'     => 'circle',
+						'show_left'        => '<script>alert(1)</script>',
+						'show_in'          => array(
+							'show_left'   => '1',
+							'forged_slot' => '1',
+						),
+						'icons'            => array(
+							'facebook' => '1',
+							'evil'     => '<svg>',
+						),
+						'forged_top_level' => '1',
+					),
+				)
+			),
+		);
+
+		$response = $this->requestJson( 'zm_sh_save_settings' );
+		$stored   = get_option( 'zm_shbt_fld' );
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( 'Hardened', $stored['title'] );
+		$this->assertSame( 'bootstrap-solid', $stored['iconset'] );
+		$this->assertSame( 'circle', $stored['iconset_type'] );
+		$this->assertSame( 'circle', $stored['show_left'] );
+		$this->assertSame( array( 'show_left' => '1' ), $stored['show_in'] );
+		$this->assertSame( array( 'facebook' => '1' ), $stored['icons'] );
+		$this->assertArrayNotHasKey( 'forged_top_level', $stored );
+	}
+
 	public function testSettingsSearchRejectsUsersWithoutManageOptions(): void {
 		$this->_setRole( 'subscriber' );
 		$_POST = array(

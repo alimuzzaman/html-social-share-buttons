@@ -45,7 +45,11 @@ final class SettingsAjaxController {
 		$this->verifySettingsRequest(
 			__( 'You are not allowed to search content.', 'html-social-share-buttons' )
 		);
-		$query = isset( $_POST['query'] ) ? sanitize_text_field( wp_unslash( $_POST['query'] ) ) : '';
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified by verifySettingsRequest().
+		$query = ( isset( $_POST['query'] ) && is_string( $_POST['query'] ) )
+			? sanitize_text_field( wp_unslash( $_POST['query'] ) )
+			: '';
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 		$query = trim( $query );
 		if ( strlen( $query ) < 2 ) {
 			wp_send_json_success( array() );

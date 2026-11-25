@@ -193,6 +193,31 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		$this->assertSame( 'on', get_post_meta( $postId, '_zm_sh_disable_share', true ) );
 	}
 
+	public function testMetaboxDeletesMetaForNonOnValuesAndIgnoresNonStringNonce(): void {
+		$postId = self::factory()->post->create( array( 'post_type' => 'post' ) );
+		$metabox = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->metabox();
+
+		foreach ( array( 'arbitrary', array( 'on' ) ) as $invalidValue ) {
+			update_post_meta( $postId, '_zm_sh_disable_share', 'on' );
+			$_POST = array(
+				'zm_sh_mtbox'          => wp_create_nonce( 'zm_sh_metabox' ),
+				'post_type'            => 'post',
+				'_zm_sh_disable_share' => $invalidValue,
+			);
+			$metabox->save( $postId );
+			$this->assertSame( '', get_post_meta( $postId, '_zm_sh_disable_share', true ) );
+			$this->assertSame( array(), get_post_meta( $postId, '_zm_sh_disable_share', false ) );
+		}
+
+		update_post_meta( $postId, '_zm_sh_disable_share', 'on' );
+		$_POST = array(
+			'zm_sh_mtbox' => array( 'bad' ),
+			'post_type'   => 'post',
+		);
+		$metabox->save( $postId );
+		$this->assertSame( 'on', get_post_meta( $postId, '_zm_sh_disable_share', true ) );
+	}
+
 	private function widget() {
 		$plugin = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin();
 

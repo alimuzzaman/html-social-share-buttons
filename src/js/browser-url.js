@@ -72,7 +72,7 @@ import { resolvedBrowserUrl } from './share-browser-url';
 				}
 				if (
 					(node.getAttribute && (node.getAttribute('data-hssb-browser-url') === '1' || node.getAttribute('data-hssb-browser-descriptor'))) ||
-					(node.querySelector && (node.querySelector('[data-hssb-browser-url="1"] [data-hssb-browser-descriptor]') || node.querySelector('[data-hssb-browser-descriptor]')))
+					(node.querySelector && node.querySelector('[data-hssb-browser-descriptor]'))
 				) {
 					return true;
 				}

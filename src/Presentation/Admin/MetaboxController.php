@@ -44,10 +44,11 @@ final class MetaboxController {
 	}
 
 	public function save( $postId ) {
-		if ( ! isset( $_POST[ $this->config->metaboxNonceField() ] ) ) {
+		$nonceField = $this->config->metaboxNonceField();
+		if ( ! isset( $_POST[ $nonceField ] ) || ! is_string( $_POST[ $nonceField ] ) ) {
 			return $postId;
 		}
-		$nonce = sanitize_text_field( wp_unslash( $_POST[ $this->config->metaboxNonceField() ] ) );
+		$nonce = sanitize_text_field( wp_unslash( $_POST[ $nonceField ] ) );
 		if ( ! wp_verify_nonce( $nonce, $this->config->metaboxNonceAction() ) ) {
 			return $postId;
 		}
@@ -66,14 +67,14 @@ final class MetaboxController {
 			return $postId;
 		}
 
-		if ( isset( $_POST[ $this->config->disabledMetaKey() ] ) && is_string( $_POST[ $this->config->disabledMetaKey() ] ) ) {
-			update_post_meta(
-				$postId,
-				$this->config->disabledMetaKey(),
-				sanitize_text_field( wp_unslash( $_POST[ $this->config->disabledMetaKey() ] ) )
-			);
+		$metaKey  = $this->config->disabledMetaKey();
+		$disabled = ( isset( $_POST[ $metaKey ] ) && is_string( $_POST[ $metaKey ] ) )
+			? sanitize_text_field( wp_unslash( $_POST[ $metaKey ] ) )
+			: '';
+		if ( 'on' === $disabled ) {
+			update_post_meta( $postId, $metaKey, 'on' );
 		} else {
-			delete_post_meta( $postId, $this->config->disabledMetaKey() );
+			delete_post_meta( $postId, $metaKey );
 		}
 
 		return $postId;

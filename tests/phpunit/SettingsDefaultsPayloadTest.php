@@ -52,7 +52,9 @@ final class SettingsDefaultsPayloadTest extends WP_UnitTestCase {
 				update_option( 'hssb_payload_test', $raw );
 			}
 			$before = $store->load();
-			$visible = $payload->build()['options'];
+			$built = $payload->build();
+			$this->assertArrayNotHasKey( 'assets_img', $built );
+			$visible = $built['options'];
 			$this->assertSame( $before->title(), $visible['title'], $name );
 			$this->assertSame( $before->iconSetId(), $visible['iconset'], $name );
 			$this->assertSame( $before->networkStates(), $visible['icons'], $name );

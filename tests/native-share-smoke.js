@@ -189,10 +189,16 @@ function setup(options = {}) {
 	const dynamicGroup = scoped.addGroup();
 	scoped.addControl(false, undefined, dynamicGroup);
 	dynamicGroup.nodeType = 1;
-	dynamicGroup.querySelector = (selector) => (selector === '[data-hssb-native-share="1"]' ? dynamicGroup.children[0] : null);
+	dynamicGroup.querySelector = (selector) => (
+		selector === '[data-hssb-native-share="1"]:not([data-hssb-native-ready="1"])'
+			? dynamicGroup.children[0]
+			: null
+	);
 	scoped.initialize([{ addedNodes: [dynamicGroup] }]);
 	assert.equal(scoped.queryCalls, initialQueries + 1, 'relevant container mutation must initialize native share controls');
 	assert.equal(dynamicGroup.children[0].tagName, 'BUTTON');
+	scoped.initialize([{ addedNodes: [Object.assign(dynamicGroup.children[0], { nodeType: 1 })] }]);
+	assert.equal(scoped.queryCalls, initialQueries + 1, 'already-ready native share button must not trigger self-rescan');
 
 	console.log('Native share smoke passed: supported, fallback, cancellation, errors, pending, dynamic groups and URL provenance.');
 })().catch((error) => { console.error(error); process.exit(1); });

@@ -124,8 +124,8 @@ import { resolvedBrowserUrl } from './share-browser-url';
 					continue;
 				}
 				if (
-					(node.getAttribute && node.getAttribute('data-hssb-native-share') === '1') ||
-					(node.querySelector && node.querySelector('[data-hssb-native-share="1"]'))
+					(node.getAttribute && node.getAttribute('data-hssb-native-share') === '1' && node.getAttribute('data-hssb-native-ready') !== '1') ||
+					(node.querySelector && node.querySelector('[data-hssb-native-share="1"]:not([data-hssb-native-ready="1"])'))
 				) {
 					return true;
 				}

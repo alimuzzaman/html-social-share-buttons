@@ -161,6 +161,20 @@ assert.strictEqual(raw.link.value('href'), 'https://site.example/article/?q=a%2B
 		}],
 	}]);
 	assert.strictEqual(queryCalls, 2, 'relevant DOM mutations must update browser URL links');
+
+	let selectorCalls = 0;
+	observerCallback([{
+		addedNodes: [{
+			nodeType: 1,
+			getAttribute() { return null; },
+			querySelector(selector) {
+				selectorCalls++;
+				return selector === '[data-hssb-browser-descriptor]' ? anchor : null;
+			},
+		}],
+	}]);
+	assert.strictEqual(selectorCalls, 1, 'container mutation check should query descriptor selector once');
+	assert.strictEqual(queryCalls, 3, 'nested descriptor mutation must update browser URL links');
 }());
 
 console.log('Browser URL smoke passed.');
