@@ -868,9 +868,7 @@ msgid "Html share button widget"
 msgstr ""
 
 #: src/Presentation/Integration/Widget/ShareWidget.php:48
-msgid ""
-"Html share button. It show lite share button only with html. It's not using "
-"any javascript whats anothers do."
+msgid "Display lightweight HTML and CSS social share buttons with local icons and no frontend JavaScript by default."
 msgstr ""
 
 #: src/Presentation/Integration/Widget/ShareWidget.php:114

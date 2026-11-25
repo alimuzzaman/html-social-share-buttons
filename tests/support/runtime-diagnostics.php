@@ -18,7 +18,7 @@ set_error_handler(
 );
 try {
 	$renderer = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->renderer();
-	foreach ( array( array( 'native' ), array( 'native', 'copy' ), array( 'facebook', 'pinterest' ) ) as $ids ) {
+	foreach ( array( array( 'native' ), array( 'native', 'copy' ), array( 'facebook', 'pinterest', 'mail' ) ) as $ids ) {
 		$outcome = $renderer->render(
 			array( 'icons' => $ids, 'iconset' => 'bootstrap-solid', 'url' => 'https://example.test/runtime/?a=1&b=2' ),
 			0,
@@ -27,6 +27,20 @@ try {
 		if ( '' === $outcome->html() ) {
 			throw new RuntimeException( 'Runtime diagnostic probe rendered no output.' );
 		}
+	}
+	$pageOutcome = $renderer->render(
+		array(
+			'class'                => 'left',
+			'placement'            => \Alimuzzaman\HtmlSocialShareButtons\Domain\Rendering\RenderPlacement::FLOATING_LEFT,
+			'icons'                => array( 'facebook', 'pinterest', 'mail' ),
+			'iconset'              => 'bootstrap-solid',
+			'browser_url_eligible' => true,
+			'browser_url_source'   => 'automatic_page',
+		),
+		0
+	);
+	if ( '' === $pageOutcome->html() ) {
+		throw new RuntimeException( 'Runtime diagnostic page-level probe rendered no output.' );
 	}
 } finally {
 	restore_error_handler();

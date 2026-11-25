@@ -51,11 +51,13 @@ final class MetaboxController {
 		if ( ! wp_verify_nonce( $nonce, $this->config->metaboxNonceAction() ) ) {
 			return $postId;
 		}
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $postId ) ) {
 			return $postId;
 		}
 
-		$postType = isset( $_POST['post_type'] ) ? sanitize_key( wp_unslash( $_POST['post_type'] ) ) : '';
+		$postType = ( isset( $_POST['post_type'] ) && is_string( $_POST['post_type'] ) )
+			? sanitize_key( wp_unslash( $_POST['post_type'] ) )
+			: '';
 		if ( 'page' === $postType ) {
 			if ( ! current_user_can( 'edit_page', $postId ) ) {
 				return $postId;
@@ -64,10 +66,15 @@ final class MetaboxController {
 			return $postId;
 		}
 
-		$value = isset( $_POST[ $this->config->disabledMetaKey() ] )
-			? sanitize_text_field( wp_unslash( $_POST[ $this->config->disabledMetaKey() ] ) )
-			: false;
-		update_post_meta( $postId, $this->config->disabledMetaKey(), $value );
+		if ( isset( $_POST[ $this->config->disabledMetaKey() ] ) && is_string( $_POST[ $this->config->disabledMetaKey() ] ) ) {
+			update_post_meta(
+				$postId,
+				$this->config->disabledMetaKey(),
+				sanitize_text_field( wp_unslash( $_POST[ $this->config->disabledMetaKey() ] ) )
+			);
+		} else {
+			delete_post_meta( $postId, $this->config->disabledMetaKey() );
+		}
 
 		return $postId;
 	}

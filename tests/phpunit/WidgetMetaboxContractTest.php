@@ -143,7 +143,40 @@ final class WidgetMetaboxContractTest extends WP_UnitTestCase {
 		unset( $_POST['_zm_sh_disable_share'] );
 		$metabox->save( $postId );
 		$this->assertSame( '', get_post_meta( $postId, '_zm_sh_disable_share', true ) );
-		$this->assertSame( array( '' ), get_post_meta( $postId, '_zm_sh_disable_share', false ) );
+		$this->assertSame( array(), get_post_meta( $postId, '_zm_sh_disable_share', false ) );
+	}
+
+	public function testMetaboxIgnoresPostRevisionsWithoutModifyingParentOrRevisionMeta(): void {
+		$postId = self::factory()->post->create(
+			array(
+				'post_type'    => 'post',
+				'post_title'   => 'Revision test post',
+				'post_content' => 'Initial body',
+			)
+		);
+		$revisionId = wp_save_post_revision( $postId );
+		$this->assertIsInt( $revisionId );
+		$this->assertGreaterThan( 0, $revisionId );
+
+		update_post_meta( $postId, '_zm_sh_disable_share', 'on' );
+		update_metadata( 'post', $revisionId, '_zm_sh_disable_share', 'on' );
+
+		$previousUser = get_current_user_id();
+		$previousPost = $_POST;
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		try {
+			$_POST = array(
+				'zm_sh_mtbox' => wp_create_nonce( 'zm_sh_metabox' ),
+				'post_type'   => 'post',
+			);
+			\Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->metabox()->save( $revisionId );
+
+			$this->assertSame( 'on', get_post_meta( $postId, '_zm_sh_disable_share', true ) );
+			$this->assertSame( array( 'on' ), get_metadata( 'post', $revisionId, '_zm_sh_disable_share', false ) );
+		} finally {
+			$_POST = $previousPost;
+			wp_set_current_user( $previousUser );
+		}
 	}
 
 	public function testMetaboxRejectsAnInvalidNonce(): void {

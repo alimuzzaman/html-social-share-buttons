@@ -57,7 +57,7 @@ final class SettingsPayloadBuilder {
 		return array(
 			'ajax_url'                       => admin_url( 'admin-ajax.php' ),
 			'nonce'                          => wp_create_nonce( $this->config->adminNonceAction() ),
-			'assets_img'                     => plugins_url( 'assets/img', $this->pluginFile ),
+			'assets_img'                     => plugins_url( 'assets/image', $this->pluginFile ),
 			'iconsets'                       => $this->iconSets->settingsPayload( $options['iconset'] ),
 			'options'                        => $options,
 			'share_template_defaults'        => $this->defaultTemplates(),

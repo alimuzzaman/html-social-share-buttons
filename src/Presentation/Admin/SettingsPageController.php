@@ -56,10 +56,18 @@ final class SettingsPageController {
 	public function sanitizeAdmin( $input ) {
 		// register_setting also filters programmatic option writes in admin requests.
 		// Only the Settings API form owns the retired-control preservation policy.
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- WordPress options.php verifies the settings nonce before calling sanitize_callback.
+		$optionPage = ( isset( $_POST['option_page'] ) && is_string( $_POST['option_page'] ) )
+			? sanitize_key( wp_unslash( $_POST['option_page'] ) )
+			: '';
+		$action     = ( isset( $_POST['action'] ) && is_string( $_POST['action'] ) )
+			? sanitize_key( wp_unslash( $_POST['action'] ) )
+			: '';
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
 		if (
-			isset( $_POST['option_page'], $_POST['action'] ) &&
-			$this->config->settingsGroup() === $_POST['option_page'] &&
-			'update' === $_POST['action']
+			$this->config->settingsGroup() === $optionPage &&
+			'update' === $action
 		) {
 			return $this->ajax->sanitizeAdmin( is_array( $input ) ? $input : array() );
 		}
@@ -119,10 +127,6 @@ final class SettingsPageController {
 					</div>
 				</div>
 				<?php submit_button(); ?>
-				<p class="desin_by">
-					<?php esc_html_e( 'Designed By Hakan Ertan', 'html-social-share-buttons' ); ?>
-					<a target="_blank" href="https://www.tonicons.com/" rel="follow">www.tonicons.com</a>
-				</p>
 			</form>
 		</div>
 		<?php

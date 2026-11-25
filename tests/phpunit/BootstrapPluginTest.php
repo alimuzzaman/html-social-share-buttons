@@ -33,7 +33,7 @@ final class BootstrapPluginTest extends WP_UnitTestCase {
 			$runtime->floatingPlacement()
 		);
 		$this->assertStringEndsWith(
-			'html-social-share-buttons/languages',
+			basename( dirname( HSSB_PLUGIN_FILE ) ) . '/languages',
 			$runtime->translations()->relativeLanguagePath()
 		);
 		$this->assertStringEndsWith(

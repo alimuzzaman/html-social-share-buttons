@@ -4,6 +4,9 @@ import { resolvedBrowserUrl } from './share-browser-url';
 	'use strict';
 
 	function updateLink(link) {
+		if (!link || (link.tagName && String(link.tagName).toUpperCase() !== 'A')) {
+			return;
+		}
 		link.setAttribute('href', resolvedBrowserUrl(link));
 	}
 
@@ -53,8 +56,39 @@ import { resolvedBrowserUrl } from './share-browser-url';
 	} else {
 		updateAll();
 	}
+	function hasRelevantNodes(mutations) {
+		if (!mutations) {
+			return true;
+		}
+		for (var i = 0; i < mutations.length; i++) {
+			var added = mutations[i] && mutations[i].addedNodes;
+			if (!added) {
+				continue;
+			}
+			for (var j = 0; j < added.length; j++) {
+				var node = added[j];
+				if (!node || (node.nodeType !== undefined && node.nodeType !== 1)) {
+					continue;
+				}
+				if (
+					(node.getAttribute && (node.getAttribute('data-hssb-browser-url') === '1' || node.getAttribute('data-hssb-browser-descriptor'))) ||
+					(node.querySelector && (node.querySelector('[data-hssb-browser-url="1"] [data-hssb-browser-descriptor]') || node.querySelector('[data-hssb-browser-descriptor]')))
+				) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	function handleMutations(mutations) {
+		if (hasRelevantNodes(mutations)) {
+			updateAll();
+		}
+	}
+
 	if (typeof window.MutationObserver === 'function' && document.documentElement) {
-		new window.MutationObserver(updateAll).observe(document.documentElement, { childList: true, subtree: true });
+		new window.MutationObserver(handleMutations).observe(document.documentElement, { childList: true, subtree: true });
 	}
 }());
 

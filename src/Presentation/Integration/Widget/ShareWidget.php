@@ -46,7 +46,7 @@ class ShareWidget extends \WP_Widget {
 			__( 'Html share button widget', 'html-social-share-buttons' ),
 			array(
 				'description' => __(
-					"Html share button. It show lite share button only with html. It's not using any javascript whats anothers do.",
+					'Display lightweight HTML and CSS social share buttons with local icons and no frontend JavaScript by default.',
 					'html-social-share-buttons'
 				),
 			)

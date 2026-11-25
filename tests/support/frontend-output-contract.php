@@ -26,7 +26,7 @@ function hssb_test_frontend_plugins_url( $url ) {
 	 * harness-only difference without changing the URL suffix under the plugin.
 	 */
 	return preg_replace(
-		'#/wp-content/plugins/.*/html-social-share-buttons/#',
+		'#/wp-content/plugins/.*/' . preg_quote( basename( dirname( HSSB_PLUGIN_FILE ) ), '#' ) . '/#',
 		'/wp-content/plugins/html-social-share-buttons/',
 		$url
 	);

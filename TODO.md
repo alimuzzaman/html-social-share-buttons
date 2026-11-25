@@ -3,9 +3,9 @@
 These items are intentionally outside the next release scope. They need their
 own compatibility, privacy, and runtime evidence before implementation.
 
-## Planned 3.5.0
+## Planned 3.5.0 (Shipped; hardened in 3.5.1)
 
-- [ ] Complete and validate optional Native share plus PHP runtime coverage; see [the implementation plan](docs/reviews/2026-11-11-release-3.5.0-plan.md).
+- [x] Complete and validate optional Native share plus PHP runtime coverage; see [the implementation plan](docs/reviews/2026-11-11-release-3.5.0-plan.md).
 
 ## URL and sharing behavior
 
@@ -17,7 +17,7 @@ own compatibility, privacy, and runtime evidence before implementation.
       values by default until preview/editor and repeated-key cases are tested.
 - [x] Add Copy Link with a real link fallback, Clipboard API enhancement,
       keyboard support, and screen-reader status feedback (3.4.0).
-- [ ] Validate native Web Share and its deterministic Copy link/direct-link fallback for 3.5.0.
+- [x] Validate native Web Share and its deterministic Copy link/direct-link fallback for 3.5.0.
 
 ## Network coverage
 

@@ -64,6 +64,60 @@ final class FrontendOrchestrationTest extends WP_UnitTestCase {
 		);
 	}
 
+	public function testFilterContentSkipsNonMainLoopFeedsAndEmbeds(): void {
+		$postId = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Frontend loop guard post',
+			)
+		);
+		$previousOptions = get_option( 'zm_shbt_fld', null );
+		$previousQuery   = isset( $GLOBALS['wp_query'] ) ? $GLOBALS['wp_query'] : null;
+		$previousMain    = isset( $GLOBALS['wp_the_query'] ) ? $GLOBALS['wp_the_query'] : null;
+		$previousPost    = isset( $GLOBALS['post'] ) ? $GLOBALS['post'] : null;
+
+		try {
+			update_option(
+				'zm_shbt_fld',
+				array(
+					'iconset' => 'default',
+					'icons'   => array( 'facebook' => 'on' ),
+					'show_in' => array( 'show_after_post' => '1' ),
+					'show_for_current_user'    => '1',
+					'show_for_logged_in_user'  => '1',
+					'show_for_logged_out_user' => '1',
+				)
+			);
+			$this->go_to( get_permalink( $postId ) );
+			$GLOBALS['post'] = get_post( $postId );
+			$frontend        = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->frontend();
+
+			$GLOBALS['wp_query']->in_the_loop = true;
+			$insideLoop = $frontend->filterContent( '<p>Body</p>' );
+			$this->assertStringContainsString( 'zmshbt', $insideLoop );
+
+			$GLOBALS['wp_query']->in_the_loop = false;
+			$this->assertSame( '<p>Body</p>', $frontend->filterContent( '<p>Body</p>' ) );
+
+			$GLOBALS['wp_query']->in_the_loop = true;
+			$GLOBALS['wp_the_query']          = new WP_Query();
+			$this->assertSame( '<p>Body</p>', $frontend->filterContent( '<p>Body</p>' ) );
+
+			$GLOBALS['wp_the_query']       = $GLOBALS['wp_query'];
+			$GLOBALS['wp_query']->is_feed  = true;
+			$this->assertSame( '<p>Body</p>', $frontend->filterContent( '<p>Body</p>' ) );
+		} finally {
+			if ( null === $previousOptions ) {
+				delete_option( 'zm_shbt_fld' );
+			} else {
+				update_option( 'zm_shbt_fld', $previousOptions );
+			}
+			$GLOBALS['wp_query']     = $previousQuery;
+			$GLOBALS['wp_the_query'] = $previousMain;
+			$GLOBALS['post']         = $previousPost;
+		}
+	}
+
 	private function settings( array $placementOverrides ) {
 		$defaults = SettingsDefaults::create();
 		$placements = array(

@@ -255,10 +255,10 @@ if ( array( 'social-share-default', 'social-share-prajin', 'hssb-button-appearan
 }
 
 $legacyHashes = array(
-	'iconset/default/style.css'                 => '1f36d950aaa3a10da1cc1cb8f7a0fec7e45a1ebcab50839505e39b6e943e2ccd',
-	'iconset/flat/style.css'                    => '3efa6e10fe69c19853902780f74b3fabc824951e03e36d514b2c6322d5d7dd18',
-	'iconset/long_shadow/style.css'             => 'd457626b9390437e5666a51b7ef8c01b272c03abcb7e26e04902f076e36164bb',
-	'iconset/prajin/style.css'                  => '7dbe488a8e47ff5ca996b591aeeef57892f728b66678e9fb74d4c1378ed9898b',
+	'iconset/default/style.css'                 => 'e743c30c165a8543578bfb6bb5baeb840084dfe7ff9001685eac8872fe11074d',
+	'iconset/flat/style.css'                    => 'f77c1adc7c26d368bd4c5cc8af2be9970b7a74520662f66baebaf2f87892b70c',
+	'iconset/long_shadow/style.css'             => '30693e061939f0abc82d25ea37ad0f7f6cee12d742a68839aa7a4573a2df1e12',
+	'iconset/prajin/style.css'                  => '0393ab0bc259e8e1e663863e883376820dc7dde450739299a701891aa41c06c1',
 	'assets/iconsets/bootstrap-solid/style.css' => '4729617c1391dda36dd7af1b15f668e7fc2a43fa8838d9079083063b7038242a',
 	'assets/iconsets/tabler-outline/style.css'  => '31a24fc6719c7d15f7924848dee091157c42a1d200b848235c1cec413350f76a',
 );

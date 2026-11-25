@@ -35,7 +35,9 @@ import { resolvedBrowserUrl } from './share-browser-url';
 			button.setAttribute('aria-label', node.getAttribute('data-hssb-share-label'));
 			// Preserve the resolved link even when browser-URL mode is disabled.
 			button.setAttribute('data-hssb-native-url', node.getAttribute('href') || node.getAttribute('data-hssb-native-url') || '');
-			node.parentNode.replaceChild(button, node);
+			if (node.parentNode) {
+				node.parentNode.replaceChild(button, node);
+			}
 		}
 	}
 
@@ -107,13 +109,46 @@ import { resolvedBrowserUrl } from './share-browser-url';
 		}
 	});
 
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initialize, { once: true });
-	} else {
-		initialize();
+	function hasRelevantNodes(mutations) {
+		if (!mutations) {
+			return true;
+		}
+		for (var i = 0; i < mutations.length; i++) {
+			var added = mutations[i] && mutations[i].addedNodes;
+			if (!added) {
+				continue;
+			}
+			for (var j = 0; j < added.length; j++) {
+				var node = added[j];
+				if (!node || (node.nodeType !== undefined && node.nodeType !== 1)) {
+					continue;
+				}
+				if (
+					(node.getAttribute && node.getAttribute('data-hssb-native-share') === '1') ||
+					(node.querySelector && node.querySelector('[data-hssb-native-share="1"]'))
+				) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
-	if (typeof window.MutationObserver === 'function' && document.documentElement) {
-		new window.MutationObserver(initialize).observe(document.documentElement, { childList: true, subtree: true });
+
+	function handleMutations(mutations) {
+		if (hasRelevantNodes(mutations)) {
+			initialize();
+		}
+	}
+
+	if (supported()) {
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initialize, { once: true });
+		} else {
+			initialize();
+		}
+		if (typeof window.MutationObserver === 'function' && document.documentElement) {
+			new window.MutationObserver(handleMutations).observe(document.documentElement, { childList: true, subtree: true });
+		}
 	}
 }());
 

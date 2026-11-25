@@ -1,65 +1,55 @@
 === HTML Social Share Buttons ===
 Contributors: alimuzzamanalim
 Author: Md. Alimuzzaman Alim
-Tags: social share buttons, social sharing, gutenberg block, social media, share icons
+Tags: social share, share buttons, gutenberg, elementor, social media
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 3.5.0
+Stable tag: 3.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-HTML + CSS share buttons and profile links with blocks, builders, local icons, and no frontend JavaScript by default.
+Lightweight HTML & CSS share buttons and profile links for blocks, Elementor & WPBakery. Local icons, copy link, native share, zero JS by default.
 
 == Description ==
 
-HTML Social Share Buttons adds server-rendered HTML and CSS share buttons and
-profile links to posts, pages, sidebars, and builder layouts. By default, the
-plugin adds no frontend JavaScript. Bundled icons load from your own site, and
-the plugin adds no tracking scripts.
+HTML Social Share Buttons adds lightweight, server-rendered HTML and CSS share buttons and social profile links to WordPress posts, pages, sidebars, and builder layouts. Because the default setup ships zero frontend JavaScript, zero third-party SDKs, and zero external requests, your pages stay fast for Core Web Vitals and privacy-friendly without tracking cookies or external beacons.
 
-Use the Social Share or Social Links block, automatic placement, the classic
-widget, Elementor, WPBakery, a shortcode, or PHP. Choose from six bundled icon
-sets and square or circle buttons.
+Use the **HTML Social Share** or **HTML Social Links** block, automatic placement, the classic widget, Elementor, WPBakery, a shortcode, or PHP. Choose from six bundled icon sets and square or circle buttons.
 
 <strong>Why this plugin:</strong>
 
-* <strong>HTML + CSS:</strong> Server-rendered share and profile links with no frontend plugin JavaScript.
-* <strong>Private by default:</strong> Bundled icons load from your site; the plugin adds no tracking scripts.
-* <strong>Place anywhere:</strong> Automatic before/after and floating placement, two blocks, a widget, Elementor, WPBakery, shortcodes, and PHP.
-* <strong>Share and follow separately:</strong> Share actions open a composer for the current page; profile links open the configured profile or email destination.
-* <strong>Current destinations:</strong> Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, WhatsApp, Reddit, email, and optional Copy link and Native share actions.
-* <strong>Choose the presentation:</strong> Legacy preserves the existing pack behavior; Minimal, Framed, and Soft shadow add modern frontend styles.
+* <strong>HTML + CSS performance:</strong> Server-rendered share and profile links with zero frontend JavaScript by default for strong Core Web Vitals.
+* <strong>Private by design:</strong> Local SVG and PNG icons load from your own site with no tracking scripts, external CDNs, or cookies.
+* <strong>Place anywhere:</strong> Automatic before/after and floating placement, two dynamic Gutenberg blocks, a widget, Elementor, WPBakery, shortcodes, and PHP.
+* <strong>Share and follow separately:</strong> Share actions open a composer for the current page; profile links open your configured profile or `mailto:` destination.
+* <strong>Current destinations:</strong> Facebook, X, LinkedIn, Pinterest, Telegram, Bluesky, WhatsApp, Reddit, email, plus optional Copy link and Native share actions.
+* <strong>Choose the presentation:</strong> Legacy keeps pack styling; Minimal, Framed, and Soft shadow add modern CSS-only styles.
 
 <strong>Other features:</strong>
 
-* Optional global profile/contact links with per-placement inherit or suppress controls.
-* Audience controls for the content author, other logged-in users, and logged-out visitors.
-* Bootstrap Solid as the default for new installations, plus Flat, Long Shadow, Prajin, and Tabler Outline.
-* Existing content configured with the historical Default pack keeps rendering it without migration.
-* Square buttons in every set; circle buttons in Flat, Long Shadow, Prajin, Bootstrap Solid, and Tabler Outline.
-* Responsive floating rails that become centered, wrapping rows at 600px and below.
-* Per-network URL templates and exclusions by post/page ID, slug, or searchable content.
-* Sample share-template previews with helpful diagnostics, without saving or opening a share service.
-* Translation-ready admin and editor strings.
+* Global social profile links with per-placement inherit or suppress controls.
+* Independent audience controls for the post author, logged-in users, and visitors.
+* Bootstrap Solid default for new sites, plus Flat, Long Shadow, Prajin, Tabler Outline, and retained Legacy Default.
+* Responsive floating rails that collapse into centered wrapping rows at `600px` and below.
+* Per-network URL templates with advisory preview diagnostics, plus exclusions by ID, slug, or title.
+* Translation-ready admin UI and support via the [WordPress.org support forum](https://wordpress.org/support/plugin/html-social-share-buttons/).
 
 <strong>Shortcode examples:</strong>
 
-`[zm_sh_btn iconset="long-shadows" iconset_type="square" icons="facebook,x,linkedin,pinterest,mail" class="in_widget"]`
+`[zm_sh_btn iconset="long-shadows" iconset_type="square" icons="facebook,x,linkedin,pinterest,mail"]`
 
 `[html-social-share-buttons iconset="tabler-outline" iconset_type="circle" profile_links_mode="inherit"]`
 
-The historical `[zm_sh_btn]` tag remains supported. Use `class="in_widget"`
-for a horizontal row.
+Both `[html-social-share-buttons]` and `[zm_sh_btn]` render horizontally by default across all six icon sets.
 
 == Installation ==
 
-1. Install the plugin from the WordPress plugin directory, or upload the release ZIP.
-2. Activate **HTML Social Share Buttons**.
-3. Open **Settings > HTML Social Share**.
-4. Choose networks, icon set, button appearance, button shape, automatic placements, and viewer audiences.
-5. Optionally configure profile/contact links, preview share URL templates, or set exclusions.
-6. Add a block, widget, builder element, shortcode, or generated PHP snippet where needed.
+1. Install **HTML Social Share Buttons** from the WordPress plugin directory, or upload the release ZIP.
+2. Activate the plugin and open **Settings > HTML Social Share**.
+3. Choose networks, icon set, button appearance, button shape, automatic placements, and viewer audiences.
+4. Optionally configure profile links, customize share URL templates, or set content exclusions.
+5. Insert a block, widget, Elementor/WPBakery element, shortcode, or PHP snippet anywhere needed.
 
 == Screenshots ==
 
@@ -72,68 +62,39 @@ for a horizontal row.
 
 = Does the plugin track visitors? =
 
-The plugin adds no tracking scripts. Legacy Google Social Analytics has been
-retired. Previously stored analytics preferences are retained for compatibility.
+No. Bundled icons are served from your site with no tracking scripts, external requests, or third-party SDKs. Legacy Google Social Analytics has been retired.
 
 = What is the difference between a share button and a profile link? =
 
-A share button opens a network composer for the current page. A profile link
-opens your configured social profile or email destination.
+A share button opens a sharing composer for the current page. A profile link opens your configured social profile or email destination.
+
+= What does Native share do? =
+
+Native share is off by default. When enabled, a small local script opens the browser/device share sheet in supported secure contexts, offers Copy link in unsupported browsers, and falls back to a plain link without JavaScript. Cancelling the share menu does not copy anything. Enabling both Native share and Copy link renders only one Copy link fallback.
 
 = Does a template preview save settings or contact a share service? =
 
-No. Preview sample uses fixed sample content and displays the resolved URL as
-text. Diagnostics are advisory and do not block saving. Other plugins may
-customize the live URL, and the preview does not verify a sharing service's
-availability.
+No. Preview sample uses fixed sample data and outputs the resolved URL as text without saving settings or contacting external services.
 
-= Does it work with the block editor? =
+= Does it work with the block editor and page builders? =
 
-Yes. Use the dynamic **HTML Social Share** block for share actions and the
-dynamic **HTML Social Links** block for profile/contact destinations. The share
-block resolves the current post URL on the server.
-
-= Can I use it without the block editor? =
-
-Yes. Automatic placement, widgets, Elementor, WPBakery, shortcodes, and a PHP
-code generator are supported. Both `[html-social-share-buttons]` and the
-historical `[zm_sh_btn]` shortcode tags are available.
+Yes. It provides dynamic **HTML Social Share** and **HTML Social Links** blocks (API v3 on WP 6.3+, v1 fallback on WP 5.3-6.2), Elementor widget, WPBakery element, classic widget, `[html-social-share-buttons]` / `[zm_sh_btn]` shortcodes, and PHP integration.
 
 = Can I control who sees the buttons? =
 
-Yes. Audience settings independently control the content author viewing their
-own post, other logged-in users, and logged-out visitors. All three are enabled
-by default for existing and new installations, and the settings apply to
-automatic placement, blocks, widgets, builders, shortcodes, and PHP output.
+Yes. Audience controls independently toggle buttons for the post author, other logged-in users, and logged-out visitors across every placement and integration.
 
-= Which button shapes are available? =
+= Which icon sets, shapes, and appearances are available? =
 
-The Default set supports square buttons. Flat, Long Shadow, Prajin, Bootstrap
-Solid, and Tabler Outline support square and circle buttons.
+Bootstrap Solid is the default for new installs alongside Tabler Outline, Flat, Long Shadow, Prajin (square and circle), and retained Legacy Default (square). Legacy preserves original spacing, while Minimal, Framed, and Soft shadow provide CSS-only styling.
 
-= Which button appearances are available? =
+= Need help or want to report a bug? =
 
-Legacy keeps the selected icon set's existing dimensions, spacing, and hover
-behavior. Minimal uses consistent targets and spacing, Framed adds a subtle
-shape-aware outline, and Soft shadow adds a quiet raised surface. Legacy is the
-default so existing sites keep their current presentation.
-
-= Which icon set does a new installation use? =
-
-Bootstrap Solid. The historical Default pack is hidden from normal selectors
-on a fresh installation. Existing settings and content that already select
-Default keep that selection and continue using the retained local assets.
-
-= Are icons loaded from a third-party CDN? =
-
-No. Bundled icon assets are served from your WordPress site.
+Visit the [WordPress.org support forum](https://wordpress.org/support/plugin/html-social-share-buttons/) with your WordPress version, PHP version, and active icon set or placement details.
 
 = Is the WPBakery integration tested in the paid editor? =
 
-The integration follows WPBakery's documented `vc_map()`/shortcode model and is
-covered by mapping, persistence, compiled-bundle, and public-render contracts.
-The current release-candidate evidence does not claim a live run in the paid
-WPBakery editor.
+The integration follows WPBakery's `vc_map()` and shortcode contract and is covered by mapping, persistence, bundle, and render tests without claiming a live run in the paid editor.
 
 == Credits ==
 
@@ -151,19 +112,20 @@ sources and their license notices are included with the plugin. See
 `resources/iconsets/ASSET-SOURCES.md` in the source repository for the current
 provenance record.
 
-
-= What does Native share do? =
-
-Native share is off by default. When enabled, a local script opens the device sharing menu in supported secure browsers. Other browsers offer Copy link; without JavaScript a page link remains available. Cancelling the share menu does not copy anything. Enabling both Native share and Copy link keeps only one Copy link fallback.
-
 == Changelog ==
 
-= 3.5.0 =
-* FEATURE: Added optional Native share, opening the device sharing menu with a Copy link fallback. It is off by default.
-* IMPROVEMENT: Native share loads local JavaScript and styles only on pages that render it, preserves custom and post-specific URLs, and handles cancellation without copying.
-* COMPATIBILITY: Expanded WordPress runtime checks to PHP 8.4 and 8.5 while retaining PHP 7.0 and WordPress 5.3 minimums.
-* TEST: Added native sharing, fallback, URL provenance, Pinterest image-query and runtime diagnostic coverage.
+= 3.5.1 - 2026-11-25 =
+* **FIX**: Render horizontal `inline-block` layouts consistently across all legacy icon sets inside Block, Elementor, Shortcode (`long-shadows`), and PHP function wrappers, and enforce `[hidden]` CSS specificity for paired Native + Copy buttons.
+* **FIX**: Guard `the_content` automatic placement strictly to main loop singular/front content (skipping RSS feeds, embeds, and secondary queries) and avoid writing empty metabox post meta when unchecked or on post revisions.
+* **FIX**: Resolve accurate document titles without stray post featured images for page-level floating bars, and omit `target="_blank"` from `mailto:` share buttons.
+* **SECURITY**: Harden Settings API `$_POST` parsing, AJAX `is_string()` payload checks, and metabox POST type checks; remove dead external `tonicons.com` link from admin footer.
+* **IMPROVEMENT**: Harden frontend browser-URL, native-share, and clipboard scripts (`MutationObserver` element scoping, `<button>` skip, timer cleanup, shared DOM status nodes), remove unused legacy images (~480 KB), and update widget/listing metadata.
 
+= 3.5.0 - 2026-11-12 =
+* **FEATURE**: Added optional Native share, opening the device sharing menu with a Copy link fallback. It is off by default.
+* **IMPROVEMENT**: Native share loads local JavaScript and styles only on pages that render it, preserves custom and post-specific URLs, and handles cancellation without copying.
+* **COMPATIBILITY**: Expanded WordPress runtime checks to PHP 8.4 and 8.5 while retaining PHP 7.0 and WordPress 5.3 minimums.
+* **TEST**: Added native sharing, fallback, URL provenance, Pinterest image-query and runtime diagnostic coverage.
 
 = 3.4.0 - 2026-10-09 =
 * **FEATURE**: Added WhatsApp and Reddit share buttons. Both are off by default.
@@ -172,27 +134,9 @@ Native share is off by default. When enabled, a local script opens the device sh
 * **IMPROVEMENT**: Added WhatsApp, Reddit, and Copy link icons to all six bundled icon sets.
 * **TEST**: Added Copy link smoke coverage and contracts for the new share templates and icons.
 
-= 3.3.0 - 2026-09-21 =
-* **FEATURE**: Added optional browser-URL sharing for eligible automatic links, preserving query strings and fragments at click time.
-* **IMPROVEMENT**: Added a shared admin badge that clearly marks settings which add frontend JavaScript.
-* **FIX**: Preserved server-generated destinations when custom templates, legacy URL filters, secondary queries, or archive contexts require them.
-* **FIX**: Hardened browser-URL descriptors, repeated permalink replacement, keyboard dismissal, and no-JavaScript fallbacks.
-* **TEST**: Added browser-URL smoke coverage and expanded descriptor, eligibility, and shared-control regression contracts.
+See `changelog.txt` for 3.3.0 and earlier release history.
 
-= 3.2.0 =
-* **FEATURE**: Preview share templates with fixed sample content and advisory diagnostics, without saving or contacting a share service.
-* **FIX**: The first settings screen now matches the effective sharing defaults.
-* **FIX**: Floating auto-hide works with every bundled icon set and appearance, reveals on keyboard focus, and stays visible on mobile and for reduced motion.
-* **FIX**: Supported description placeholders survive saving and preview sanitation.
-* **COMPATIBILITY**: Retired the obsolete Google Social Analytics script and port controls. Existing stored values are retained; sharing uses WordPress canonical URLs.
-* **MAINTENANCE**: Updated build tooling and added exact-archive validation before manual publication.
+== Upgrade Notice ==
 
-= 3.1.0 =
-* **FEATURE**: Added a global Button appearance selector with Legacy, Minimal, Framed, and Soft shadow options.
-* **FEATURE**: Added modern CSS-only presentation styles with consistent targets, spacing, shape-aware framing, and restrained motion.
-* **IMPROVEMENT**: Kept Legacy as the default and fallback so existing sites retain their selected icon-set presentation.
-* **IMPROVEMENT**: Added appearance previews and applied the selected presentation consistently across automatic placement, blocks, widgets, shortcodes, PHP, and builder integrations.
-* **FIX**: Modern floating rails now reveal on hover and keyboard focus while remaining inside the viewport on mobile.
-* **FIX**: Modern profile separators no longer inherit historical pack margins.
-
-See `changelog.txt` for the 3.0.0 and earlier release history.
+= 3.5.1 =
+Fixes horizontal block/Elementor layouts for legacy icon sets, skips RSS/embed automatic output, prevents empty metabox post meta rows, hardens admin input & frontend JS guards, and trims ~480 KB of unused legacy images.

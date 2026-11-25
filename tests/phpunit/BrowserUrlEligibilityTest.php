@@ -76,6 +76,44 @@ final class BrowserUrlEligibilityTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( rawurlencode( get_permalink( $loopPostId ) ), $outcome->html() );
 	}
 
+	public function testPageLevelFloatingControlsUseDocumentTitleWithoutStrayPostImage(): void {
+		$postId = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Stray post title',
+			)
+		);
+		$attachmentId = self::factory()->post->create(
+			array(
+				'post_type'      => 'attachment',
+				'post_mime_type' => 'image/jpeg',
+				'guid'           => 'https://example.test/wp-content/uploads/stray.jpg',
+			)
+		);
+		update_attached_file( $attachmentId, '2026/11/stray.jpg' );
+		set_post_thumbnail( $postId, $attachmentId );
+
+		$this->go_to( home_url( '/?s=share' ) );
+		$GLOBALS['post'] = get_post( $postId );
+
+		$outcome = $this->facade()->render(
+			array(
+				'class'                => 'left',
+				'placement'            => RenderPlacement::FLOATING_LEFT,
+				'icons'                => array( 'pinterest', 'twitter' ),
+				'browser_url_eligible' => true,
+				'browser_url_source'   => 'automatic_page',
+			),
+			0
+		);
+
+		$html = $outcome->html();
+		$this->assertStringContainsString( rawurlencode( wp_get_document_title() ), $html );
+		$this->assertStringNotContainsString( 'Stray', $html );
+		$this->assertStringNotContainsString( 'stray.jpg', $html );
+		$this->assertStringContainsString( 'media=&#038;', $html );
+	}
+
 	private function facade(): RenderFacade {
 		$root = dirname( __DIR__, 2 );
 		$networks = ( new BuiltInNetworkProvider() )->createRegistry();

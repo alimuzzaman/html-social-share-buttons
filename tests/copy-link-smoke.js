@@ -131,6 +131,72 @@ async function run({ clipboard, execCommand, event }) {
 	const middle = await run({ clipboard: null, execCommand: true, event: { button: 1 } });
 	assert.strictEqual(middle.prevented, false);
 
+	// Shared style and live-region reuse + timer cancellation on rapid clicks.
+	await (async function verifySharedDomReuseAndTimerCancellation() {
+		const listeners = {};
+		const headAppended = [];
+		const bodyAppended = [];
+		const timers = new Map();
+		const clearedIds = [];
+		let nextTimerId = 1;
+		const existingStyle = createElement({ id: 'hssb-copy-status-style' });
+		const existingRegion = createElement({ id: 'hssb-copy-live-region', role: 'status' });
+		const link = createElement({
+			'data-hssb-copy-link': '1',
+			href: 'https://site.example/rapid/',
+			'aria-label': 'Copy link',
+			'data-hssb-copied-label': 'Link copied',
+			'data-hssb-copy-failed-label': 'Could not copy the link',
+		});
+		const head = Object.assign(createElement({}), {
+			appendChild(node) { headAppended.push(node); },
+		});
+		const body = Object.assign(createElement({}), {
+			appendChild(node) { bodyAppended.push(node); },
+		});
+		const document = {
+			body,
+			head,
+			getElementById(id) {
+				if (id === 'hssb-copy-status-style') { return existingStyle; }
+				if (id === 'hssb-copy-live-region') { return existingRegion; }
+				return null;
+			},
+			createElement() { return createElement({}); },
+			execCommand() { return true; },
+			addEventListener(name, callback) { listeners[name] = callback; },
+		};
+		const window = {
+			isSecureContext: true,
+			navigator: { clipboard: { writeText: () => Promise.resolve() } },
+			setTimeout(callback) {
+				const id = nextTimerId++;
+				timers.set(id, callback);
+				return id;
+			},
+			clearTimeout(id) {
+				clearedIds.push(id);
+				timers.delete(id);
+			},
+		};
+		vm.runInNewContext(source, { window, document, Promise });
+
+		listeners.click({ target: link, button: 0, defaultPrevented: false, preventDefault() {} });
+		await new Promise((resolve) => setImmediate(resolve));
+		listeners.click({ target: link, button: 0, defaultPrevented: false, preventDefault() {} });
+		await new Promise((resolve) => setImmediate(resolve));
+
+		assert.strictEqual(headAppended.length, 0, 'existing style ID must be reused');
+		assert.strictEqual(bodyAppended.length, 0, 'existing live-region ID must be reused');
+		assert.ok(clearedIds.length >= 2, 'rapid clicks must clear previous announce and feedback timers');
+
+		for (const callback of [...timers.values()]) {
+			callback();
+		}
+		assert.strictEqual(existingRegion.textContent, 'Link copied');
+		assert.strictEqual(link.classList.contains('is-copied'), false);
+	}());
+
 	console.log('Copy link smoke passed.');
 })().catch((error) => {
 	console.error(error);

@@ -30,7 +30,7 @@
 	right: 0;
 }
 
-.zmshbt.flat.in_widget a,.zmshbt.flat.in_shortcode a{
+.zmshbt.flat.in_widget a,.zmshbt.flat.in_shortcode a,.zmshbt.flat.in_block a,.zmshbt.flat.in_elementor a,.zmshbt.flat.in_php_function a{
 	display:inline-block;
 	margin: 5px;
 }

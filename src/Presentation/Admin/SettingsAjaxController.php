@@ -153,7 +153,7 @@ final class SettingsAjaxController {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( 'Unauthorized' );
 		}
-		if ( ! isset( $_POST[ $field ] ) ) {
+		if ( ! isset( $_POST[ $field ] ) || ! is_string( $_POST[ $field ] ) ) {
 			wp_die( 'Missing iconset' . ( 'iconsetId' === $field ? ' ID' : '' ) );
 		}
 	}

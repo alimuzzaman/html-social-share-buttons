@@ -4,16 +4,22 @@ export function createClipboardController() {
 	var FEEDBACK_MS = 2000;
 	var liveRegion;
 	var styled = false;
+	var announceTimer = 0;
+	var feedbackTimers = typeof WeakMap === 'function' ? new WeakMap() : null;
 
 	// The legacy appearance loads no shared stylesheet, so the feedback rules
 	// travel with the script that needs them.
 	function addStyles() {
 		var style;
-		if (styled) {
+		if (styled || !document.head) {
 			return;
 		}
 		styled = true;
+		if (typeof document.getElementById === 'function' && document.getElementById('hssb-copy-status-style')) {
+			return;
+		}
 		style = document.createElement('style');
+		style.id = 'hssb-copy-status-style';
 		style.textContent = '.hssb-copy-status{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}' +
 			'.zmshbt a.copy,.zmshbt .native{position:relative}' +
 			'.zmshbt a.copy.is-copied::after,.zmshbt a.copy.is-copy-failed::after,.zmshbt .native.is-copied::after,.zmshbt .native.is-copy-failed::after{content:attr(data-hssb-feedback);position:absolute;left:50%;bottom:100%;transform:translate(-50%,-4px);padding:2px 6px;border-radius:3px;background:#1d2327;color:#fff;font:12px/1.4 sans-serif;white-space:nowrap;pointer-events:none;z-index:10}';
@@ -21,8 +27,12 @@ export function createClipboardController() {
 	}
 
 	function announce(message) {
+		if (!liveRegion && typeof document.getElementById === 'function') {
+			liveRegion = document.getElementById('hssb-copy-live-region');
+		}
 		if (!liveRegion) {
 			liveRegion = document.createElement('span');
+			liveRegion.id = 'hssb-copy-live-region';
 			liveRegion.className = 'hssb-copy-status';
 			liveRegion.setAttribute('role', 'status');
 			liveRegion.setAttribute('aria-live', 'polite');
@@ -30,7 +40,11 @@ export function createClipboardController() {
 		}
 		// Clear first so repeating the same message is announced again.
 		liveRegion.textContent = '';
-		window.setTimeout(function () {
+		if (announceTimer && typeof window.clearTimeout === 'function') {
+			window.clearTimeout(announceTimer);
+		}
+		announceTimer = window.setTimeout(function () {
+			announceTimer = 0;
 			liveRegion.textContent = message;
 		}, 50);
 	}
@@ -74,16 +88,30 @@ export function createClipboardController() {
 		var label = copied
 			? link.getAttribute('data-hssb-copied-label')
 			: link.getAttribute('data-hssb-copy-failed-label');
+		var previousTimer;
+		var nextTimer;
 		addStyles();
+		if (feedbackTimers && typeof window.clearTimeout === 'function') {
+			previousTimer = feedbackTimers.get(link);
+			if (previousTimer) {
+				window.clearTimeout(previousTimer);
+			}
+		}
 		link.classList.remove(COPIED_CLASS, FAILED_CLASS);
 		if (label) {
 			link.setAttribute('data-hssb-feedback', label);
 			announce(label);
 		}
 		link.classList.add(copied ? COPIED_CLASS : FAILED_CLASS);
-		window.setTimeout(function () {
+		nextTimer = window.setTimeout(function () {
+			if (feedbackTimers) {
+				feedbackTimers.delete(link);
+			}
 			link.classList.remove(COPIED_CLASS, FAILED_CLASS);
 		}, FEEDBACK_MS);
+		if (feedbackTimers) {
+			feedbackTimers.set(link, nextTimer);
+		}
 	}
 
 	return {

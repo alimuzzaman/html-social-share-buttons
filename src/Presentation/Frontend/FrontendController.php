@@ -140,6 +140,10 @@ final class FrontendController {
 	}
 
 	public function filterContent( $content ) {
+		if ( is_feed() || is_embed() || ! in_the_loop() || ! is_main_query() ) {
+			return $content;
+		}
+
 		return $this->filterContentWithSettings( $content, $this->settings() );
 	}
 

@@ -58,6 +58,8 @@ function setup(options = {}) {
 		execCommand() { return options.legacyCopy === true; },
 	};
 	let observer;
+	let observeCalls = 0;
+	let queryCalls = 0;
 	const navigator = {
 		clipboard: { writeText: (url) => { writes.push(url); return options.copyError ? Promise.reject(new Error()) : Promise.resolve(); } },
 		...(options.unsupported ? {} : { share: (payload) => {
@@ -67,12 +69,24 @@ function setup(options = {}) {
 		} }),
 		...(options.canShare === undefined ? {} : { canShare: () => options.canShare }),
 	};
+	const extraNodes = options.detached ? [element('a', {
+		href: 'https://example.test/detached',
+		'data-hssb-native-share': '1',
+		'data-hssb-share-label': 'Share…',
+	})] : [];
+	const document2Overrides = {
+		querySelectorAll() {
+			queryCalls++;
+			return extraNodes.concat(groups.flatMap((g) => g.children).filter((n) => n.getAttribute('data-hssb-native-share') === '1'));
+		},
+	};
+	Object.assign(document, document2Overrides);
 	const window = {
 		navigator, isSecureContext: options.secure !== false,
 		location: { href: 'https://example.test/current/?x=1&x=2#part' },
 		setTimeout: (callback) => timers.push(callback),
 		prompt: (label, url) => prompts.push([label, url]),
-		MutationObserver: class { constructor(callback) { observer = callback; } observe() {} },
+		MutationObserver: class { constructor(callback) { observer = callback; } observe() { observeCalls++; } },
 	};
 	vm.runInNewContext(runtime, { document, window, Promise, URL, JSON, encodeURIComponent });
 	function click(index = 0, overrides = {}) {
@@ -84,8 +98,10 @@ function setup(options = {}) {
 	async function settle() { await new Promise((resolve) => setImmediate(resolve)); timers.splice(0).forEach((callback) => callback()); }
 	return { group, window, shares, writes, prompts, statuses, click, settle, addControl,
 		get restoredFocus() { return restoredFocus; },
+		get observeCalls() { return observeCalls; },
+		get queryCalls() { return queryCalls; },
 		addGroup() { const next = element('div'); groups.push(next); return next; },
-		initialize: () => observer() };
+		initialize: (mutations) => observer(mutations) };
 }
 
 (async () => {
@@ -160,5 +176,23 @@ function setup(options = {}) {
 	assert.equal(copyFailure.restoredFocus, 1, 'legacy clipboard fallback must restore focus');
 	const modified = setup({ unsupported: true });
 	assert.equal(modified.click(0, { metaKey: true }).defaultPrevented, false);
+	assert.equal(modified.observeCalls, 0, 'unsupported browsers must not register MutationObserver');
+
+	const detached = setup({ detached: true });
+	assert.equal(detached.group.children[0].tagName, 'BUTTON');
+	detached.initialize();
+
+	const scoped = setup();
+	const initialQueries = scoped.queryCalls;
+	scoped.initialize([{ addedNodes: [Object.assign(element('p'), { nodeType: 1 }), { nodeType: 3 }] }]);
+	assert.equal(scoped.queryCalls, initialQueries, 'unrelated mutations must not rescan native controls');
+	const dynamicGroup = scoped.addGroup();
+	scoped.addControl(false, undefined, dynamicGroup);
+	dynamicGroup.nodeType = 1;
+	dynamicGroup.querySelector = (selector) => (selector === '[data-hssb-native-share="1"]' ? dynamicGroup.children[0] : null);
+	scoped.initialize([{ addedNodes: [dynamicGroup] }]);
+	assert.equal(scoped.queryCalls, initialQueries + 1, 'relevant container mutation must initialize native share controls');
+	assert.equal(dynamicGroup.children[0].tagName, 'BUTTON');
+
 	console.log('Native share smoke passed: supported, fallback, cancellation, errors, pending, dynamic groups and URL provenance.');
 })().catch((error) => { console.error(error); process.exit(1); });

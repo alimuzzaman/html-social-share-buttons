@@ -273,6 +273,57 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 		$this->assertSame( 'Twitter.png', $iconSet['icons']['x']['image'] );
 	}
 
+	public function testIconsetEndpointsRejectNonStringPayloadsSafely(): void {
+		$this->_setRole( 'administrator' );
+		$nonce = wp_create_nonce( 'zm_sh_admin' );
+
+		foreach ( array(
+			'get_iconset'         => 'iconsetId',
+			'get_iconset_details' => 'iconset',
+		) as $action => $field ) {
+			$_POST = array(
+				'nonce' => $nonce,
+				$field  => array( 'default' ),
+			);
+			try {
+				$this->requestRaw( $action );
+				$this->fail( 'Expected WPAjaxDieStopException for non-string ' . $action . ' payload.' );
+			} catch ( WPAjaxDieStopException $exception ) {
+				$this->assertSame( 'iconsetId' === $field ? 'Missing iconset ID' : 'Missing iconset', $exception->getMessage() );
+			}
+		}
+
+		$_POST = array(
+			'nonce'     => $nonce,
+			'iconsetId' => array( 'default' ),
+		);
+		$this->assertSame( 'Missing iconset ID', $this->requestRaw( 'get_iconset_preview' ) );
+	}
+
+	public function testSettingsPageSanitizeAdminAndRenderPageHardening(): void {
+		$this->_setRole( 'administrator' );
+		$settingsPage = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->admin();
+		$previousPost = $_POST;
+
+		try {
+			$_POST = array(
+				'option_page' => array( 'zm_shbt_opt' ),
+				'action'      => array( 'update' ),
+			);
+			$sanitized = $settingsPage->sanitizeAdmin( array( 'title' => 'Hardened Title' ) );
+			$this->assertIsArray( $sanitized );
+			$this->assertSame( 'Hardened Title', $sanitized['title'] );
+		} finally {
+			$_POST = $previousPost;
+		}
+
+		ob_start();
+		$settingsPage->renderPage();
+		$rendered = (string) ob_get_clean();
+		$this->assertStringNotContainsString( 'tonicons.com', $rendered );
+		$this->assertStringNotContainsString( 'desin_by', $rendered );
+	}
+
 	private function requestJson( $action ) {
 		$response = $this->requestRaw( $action );
 		$decoded = json_decode( $response, true );
