@@ -17,7 +17,7 @@
     "lint:js": "wp-scripts lint-js \"src/js/**/*.js\"",
     "browser-url:check": "node tests/browser-url-smoke.js",
     "copy-link:check": "node tests/copy-link-smoke.js",
-    "settings:check": "pnpm run build && node tests/admin-react-smoke.js && node tests/vc-scripts-smoke.js && pnpm run browser-url:check && pnpm run copy-link:check && pnpm run native-share:check && php tests/js-build-boundary-contract.php && php tests/frontend-feature-contract.php && php tests/native-share-contract.php && php tests/javascript-localization-contract.php && php tests/php-compatibility-contract.php && php tests/admin-settings-form-mapper-contract.php && php -l src/Presentation/Admin/SettingsPageController.php && php -l src/Presentation/Admin/SettingsAssetEnqueuer.php && php tests/share-template-contract.php && php tests/iconset-css-contract.php && php -l src/Application/Content/ExcludedContentPolicy.php && php tests/exclude-contract.php && php tests/elementor-integration-contract.php && php tests/block-integration-contract.php && php tests/missing-autoloader-contract.php && php tests/settings-menu-contract.php && php tests/release-metadata-contract.php && php tests/compatibility-api-thinness-contract.php && php tests/architecture-boundary-contract.php",
+    "settings:check": "pnpm run build && node tests/admin-react-smoke.js && node tests/vc-scripts-smoke.js && pnpm run browser-url:check && pnpm run copy-link:check && pnpm run native-share:check && php tests/js-build-boundary-contract.php && php tests/frontend-feature-contract.php && php tests/native-share-contract.php && php tests/javascript-localization-contract.php && pnpm run php-compat:check && pnpm run disabled-functions:check && php tests/admin-settings-form-mapper-contract.php && php -l src/Presentation/Admin/SettingsPageController.php && php -l src/Presentation/Admin/SettingsAssetEnqueuer.php && php tests/share-template-contract.php && php tests/iconset-css-contract.php && php -l src/Application/Content/ExcludedContentPolicy.php && php tests/exclude-contract.php && php tests/elementor-integration-contract.php && php tests/block-integration-contract.php && php tests/missing-autoloader-contract.php && php tests/settings-menu-contract.php && php tests/release-metadata-contract.php && php tests/compatibility-api-thinness-contract.php && php tests/architecture-boundary-contract.php",
     "appearance:check": "php tests/button-appearance-contract.php",
     "assets:deploy": "bash scripts/deploy-wordpress-org-assets.sh",
     "test:unit": "node scripts/sandbox-env.js test integration",
@@ -34,7 +34,9 @@
     "test:staging-probe": "node tests/staging-soak-probe.test.js",
     "test:staging-evidence": "node tests/staging-soak-evidence-validator.test.js",
     "release:check": "node tests/release-workflow-contract.js && python3 tests/release-candidate-contract.py && node tests/plugin-check-result-contract.js && node tests/dependency-toolchain-contract.js",
-    "native-share:check": "node tests/native-share-smoke.js"
+    "native-share:check": "node tests/native-share-smoke.js",
+    "php-compat:check": "php tests/php-compatibility-contract.php && php tests/php-compatibility-selftest.php && php tests/php-runtime-compat-smoke.php",
+    "disabled-functions:check": "php tests/disabled-functions-contract.php && php tests/disabled-functions-selftest.php && php tests/disabled-functions-runtime.php"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1",

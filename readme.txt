@@ -120,6 +120,7 @@ provenance record.
 * **FIX**: Resolve accurate document titles without stray post featured images for page-level floating bars, and omit `target="_blank"` from `mailto:` share buttons.
 * **SECURITY**: Harden Settings API `$_POST` parsing, AJAX `is_string()` payload checks, and metabox POST type checks; remove dead external `tonicons.com` link from admin footer.
 * **IMPROVEMENT**: Harden frontend browser-URL, native-share, and clipboard scripts (`MutationObserver` element scoping, `<button>` skip, timer cleanup, shared DOM status nodes), remove unused legacy images (~480 KB), and update widget/listing metadata.
+* **COMPATIBILITY**: Guard optional/host-restricted PHP functions (`filemtime`, `file_get_contents`, `json_decode`, `json_encode`, and regex ID parsing without `ctype`) and expand automated PHP 7.0–8.5 and `disable_functions` test coverage.
 
 = 3.5.0 - 2026-11-12 =
 * **FEATURE**: Added optional Native share, opening the device sharing menu with a Copy link fallback. It is off by default.

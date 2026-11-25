@@ -179,7 +179,7 @@ final class HtmlRenderer {
 
 		$json = function_exists( 'wp_json_encode' )
 			? wp_json_encode( $descriptor )
-			: json_encode( $descriptor );
+			: ( function_exists( 'json_encode' ) ? json_encode( $descriptor ) : false );
 		if ( ! is_string( $json ) || '' === $json ) {
 			return '';
 		}
