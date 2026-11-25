@@ -96,4 +96,56 @@ foreach ( array( array(), array( 'g_analytics' => false, 'use_port' => null ), a
 	}
 }
 
+// Non-boolean iconset_type and malformed literal/icons inputs must sanitize cleanly.
+$hardenedLegacy = $mapper->toStoredSubmission(
+	$settings,
+	array(
+		'iconset_type' => 'circle',
+		'show_left'    => '<script>alert(1)</script>',
+		'icons'        => array(
+			'facebook' => '1',
+			'evil'     => '<svg>',
+		),
+	)
+);
+if (
+	array(
+		'iconset_type' => 'circle',
+		'show_left'    => 'square',
+		'icons'        => array( 'facebook' => '1' ),
+	) !== $hardenedLegacy
+) {
+	echo "Legacy form mapper hardening failed.\n";
+	exit( 1 );
+}
+
+$hardenedAdmin = $mapper->toStoredReplacement(
+	$settings,
+	array(
+		'iconset'          => 'evil-pack',
+		'iconset_type'     => 'diamond',
+		'show_left'        => 'diamond',
+		'show_in'          => array( 'show_left' => '1', 'forged_slot' => '1' ),
+		'icons'            => array( 'facebook' => '1', 'evil' => '1' ),
+		'forged_top_level' => '1',
+	),
+	array(
+		'extension_state' => 'keep',
+		'icons'           => array( 'extension-net' => 'custom' ),
+		'show_in'         => array( 'extension-slot' => '1' ),
+	)
+);
+$expectedAdmin = array(
+	'extension_state' => 'keep',
+	'icons'           => array( 'extension-net' => 'custom', 'facebook' => '1' ),
+	'show_in'         => array( 'extension-slot' => '1', 'show_left' => '1' ),
+	'iconset'         => 'flat',
+	'iconset_type'    => 'square',
+	'show_left'       => 'square',
+);
+if ( $expectedAdmin !== $hardenedAdmin ) {
+	echo "Admin form mapper strict hardening failed.\n";
+	exit( 1 );
+}
+
 echo "Canonical admin settings form mapper contract passed.\n";

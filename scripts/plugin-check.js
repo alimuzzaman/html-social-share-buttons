@@ -88,6 +88,8 @@ runSandbox([
 	'--instance',
 	instanceName(),
 	'wp',
+	'--timeout',
+	'300',
 	'plugin',
 	'check',
 	'html-social-share-buttons',

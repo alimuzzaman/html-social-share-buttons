@@ -21,7 +21,7 @@ final class NativeShareTest extends WP_UnitTestCase {
 		wp_dequeue_script( 'hssb-native-share' );
 		wp_dequeue_script( 'hssb-copy-link' );
 		$collector = new \Alimuzzaman\HtmlSocialShareButtons\Presentation\Frontend\AssetCollector(
-			'fallback.css', '3.5.0', 'hssb-button-appearance', '', 'hssb-browser-url',
+			'fallback.css', '3.5.1', 'hssb-button-appearance', '', 'hssb-browser-url',
 			array( FrontendFeatureRegistry::NATIVE_SHARE => array( 'hssb-native-share', 'https://example.test/native-share.js' ) )
 		);
 		$renderer = LegacyApi::plugin()->renderer();
@@ -58,5 +58,11 @@ final class NativeShareTest extends WP_UnitTestCase {
 		} finally {
 			remove_filter( 'zm_sh_placeholder', $callback );
 		}
+	}
+
+	public function testNativeShareStylesheetHidesHiddenFallbackControls(): void {
+		$stylesheet = file_get_contents( dirname( __DIR__, 2 ) . '/assets/frontend/native-share.css' );
+		$this->assertIsString( $stylesheet );
+		$this->assertStringContainsString( '.zmshbt [hidden]{display:none!important}', $stylesheet );
 	}
 }

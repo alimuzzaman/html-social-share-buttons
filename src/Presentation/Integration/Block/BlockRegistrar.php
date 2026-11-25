@@ -218,7 +218,11 @@ final class BlockRegistrar {
 			return;
 		}
 
-		$metadata = json_decode( (string) file_get_contents( $metadataPath ), true );
+		if ( ! is_readable( $metadataPath ) || ! function_exists( 'file_get_contents' ) || ! function_exists( 'json_decode' ) ) {
+			return;
+		}
+		$rawMetadata = file_get_contents( $metadataPath );
+		$metadata = is_string( $rawMetadata ) ? json_decode( $rawMetadata, true ) : null;
 		if ( ! is_array( $metadata ) || empty( $metadata['name'] ) ) {
 			return;
 		}
@@ -239,6 +243,17 @@ final class BlockRegistrar {
 		return $outcome->html();
 	}
 
+	private function fileVersion( $path ) {
+		if ( file_exists( $path ) && function_exists( 'filemtime' ) ) {
+			$modified = filemtime( $path );
+			if ( false !== $modified ) {
+				return $modified;
+			}
+		}
+
+		return $this->config->version();
+	}
+
 	private function registerEditorScript( $handle, $entry, $objectName, array $config ) {
 		$assetPath = $this->pluginRoot . '/build/' . $entry . '.asset.php';
 		$asset = file_exists( $assetPath ) ? require $assetPath : array();
@@ -254,7 +269,7 @@ final class BlockRegistrar {
 			)
 		);
 		$scriptPath = $this->pluginRoot . '/build/' . $entry . '.js';
-		$version = isset( $asset['version'] ) ? $asset['version'] : ( file_exists( $scriptPath ) ? filemtime( $scriptPath ) : '3.4.0' );
+		$version = isset( $asset['version'] ) ? $asset['version'] : $this->fileVersion( $scriptPath );
 
 		wp_register_script(
 			$handle,

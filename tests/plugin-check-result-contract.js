@@ -9,6 +9,8 @@ try {
 	for (const [value, success] of [
 		['[]', true],
 		[JSON.stringify([{ type: 'WARNING', code: 'review-me' }]), true],
+		[JSON.stringify(Array.from({ length: 58 }, () => ({ type: 'WARNING', code: 'review-me' }))), true],
+		[JSON.stringify(Array.from({ length: 59 }, () => ({ type: 'WARNING', code: 'review-me' }))), false],
 		[JSON.stringify([{ type: 'ERROR', code: 'fail' }]), false],
 		['{}', false],
 		['invalid-json', false],

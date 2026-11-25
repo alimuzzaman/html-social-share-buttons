@@ -140,6 +140,10 @@ final class FrontendController {
 	}
 
 	public function filterContent( $content ) {
+		if ( is_feed() || is_embed() || ! is_main_query() || ! $this->isInMainContentContext() ) {
+			return $content;
+		}
+
 		return $this->filterContentWithSettings( $content, $this->settings() );
 	}
 
@@ -171,7 +175,7 @@ final class FrontendController {
 	 * @param AssetCollector|null $assets Optional isolated asset collector.
 	 */
 	private function filterContentWithSettings( $content, Settings $settings, $assets = null, array $fallbackOptions = array() ) {
-		if ( $this->excluded || ! $this->visibility->allows( $settings, $this->currentPostId() ) ) {
+		if ( is_feed() || is_embed() || $this->excluded || ! $this->visibility->allows( $settings, $this->currentPostId() ) ) {
 			return $content;
 		}
 
@@ -193,8 +197,16 @@ final class FrontendController {
 	}
 
 	public function footer() {
+		if ( is_admin() ) {
+			return;
+		}
+
 		$settings = $this->settings();
-		if ( is_admin() || $this->excluded || ! $this->visibility->allows( $settings, $this->currentPostId() ) ) {
+		if ( $this->excluded || ! $this->visibility->allows( $settings, $this->currentPostId() ) ) {
+			if ( $this->assets->hasCollectedAssets() ) {
+				$this->flushFooterAssets( $settings );
+			}
+
 			return;
 		}
 
@@ -202,9 +214,7 @@ final class FrontendController {
 			echo wp_kses_post( $this->renderPlacement( $placement, $placement ) );
 		}
 
-		$this->assets->enqueueStyles();
-		$this->assets->enqueueScripts();
-		echo $this->assets->inlineIconStyles( $settings->autoHideEnabled() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$this->flushFooterAssets( $settings );
 	}
 
 	/**
@@ -262,8 +272,19 @@ final class FrontendController {
 	 * request footer remains below and retains its request-scoped collector.
 	 */
 	public function footerWithOptions( array $options, AssetCollector $assets ) {
+		if ( is_admin() ) {
+			return '';
+		}
+
 		$settings = $this->optionCodec->decode( $options );
-		if ( is_admin() || $this->excluded || ! $this->visibility->allows( $settings, $this->currentPostId() ) ) {
+		if ( $this->excluded || ! $this->visibility->allows( $settings, $this->currentPostId() ) ) {
+			if ( $assets->hasCollectedAssets() ) {
+				$assets->enqueueStyles();
+				$assets->enqueueScripts();
+
+				return $assets->historicalInlineIconStyles( $settings->autoHideEnabled() );
+			}
+
 			return '';
 		}
 
@@ -380,6 +401,35 @@ final class FrontendController {
 			: 'inherit';
 
 		return in_array( $mode, array( 'inherit', 'none', 'custom' ), true ) ? $mode : 'inherit';
+	}
+
+	private function flushFooterAssets( Settings $settings ) {
+		$this->assets->enqueueStyles();
+		$this->assets->enqueueScripts();
+		echo $this->assets->inlineIconStyles( $settings->autoHideEnabled() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	private function isInMainContentContext() {
+		if ( in_the_loop() ) {
+			return true;
+		}
+
+		return $this->isMainSingularPostContentBlock();
+	}
+
+	private function isMainSingularPostContentBlock() {
+		if ( ! is_singular() || ! class_exists( 'WP_Block_Supports' ) || ! property_exists( 'WP_Block_Supports', 'block_to_render' ) ) {
+			return false;
+		}
+
+		$block = \WP_Block_Supports::$block_to_render;
+		if ( ! is_array( $block ) || ! isset( $block['blockName'] ) || 'core/post-content' !== $block['blockName'] ) {
+			return false;
+		}
+
+		$queriedId = (int) get_queried_object_id();
+
+		return $queriedId > 0 && (int) get_the_ID() === $queriedId;
 	}
 
 	private function currentPost() {

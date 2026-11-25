@@ -102,4 +102,79 @@ const raw = run({
 }, 'https://site.example/article/?q=a%2Bb&x=1#part');
 assert.strictEqual(raw.link.value('href'), 'https://site.example/article/?q=a%2Bb&x=1#part');
 
+(function verifyButtonSkipAndScopedObserver() {
+	let observerCallback = null;
+	let queryCalls = 0;
+	const root = createElement({ 'data-hssb-browser-url': '1' });
+	const descriptor = JSON.stringify({
+		permalink_slot: '%%permalink%%',
+		template: 'https://example.test/?url=%%permalink%%',
+	});
+	const anchor = Object.assign(createElement({
+		'data-hssb-browser-descriptor': descriptor,
+		'data-hssb-server-href': 'https://fallback.example/a',
+	}, root), { tagName: 'a' });
+	const button = Object.assign(createElement({
+		'data-hssb-browser-descriptor': descriptor,
+		'data-hssb-native-share': '1',
+	}, root), { tagName: 'button' });
+	const document = {
+		readyState: 'complete',
+		documentElement: {},
+		addEventListener() {},
+		querySelectorAll() {
+			queryCalls++;
+			return [anchor, button];
+		},
+	};
+	const window = {
+		location: { href: 'https://site.example/scoped/' },
+		MutationObserver: class {
+			constructor(callback) {
+				observerCallback = callback;
+			}
+			observe() {}
+		},
+		addEventListener() {},
+	};
+
+	vm.runInNewContext(source, { window, document, encodeURIComponent, JSON });
+
+	assert.strictEqual(anchor.value('href'), 'https://example.test/?url=https%3A%2F%2Fsite.example%2Fscoped%2F');
+	assert.strictEqual(button.value('href'), undefined, 'browser-url must never write href onto a <button>');
+	assert.strictEqual(queryCalls, 1);
+
+	observerCallback([{
+		addedNodes: [{
+			nodeType: 1,
+			getAttribute() { return null; },
+			querySelector() { return null; },
+		}],
+	}]);
+	assert.strictEqual(queryCalls, 1, 'unrelated DOM mutations must not rescan links');
+
+	observerCallback([{
+		addedNodes: [{
+			nodeType: 1,
+			getAttribute(name) { return name === 'data-hssb-browser-url' ? '1' : null; },
+			querySelector() { return null; },
+		}],
+	}]);
+	assert.strictEqual(queryCalls, 2, 'relevant DOM mutations must update browser URL links');
+
+	let selectorCalls = 0;
+	observerCallback([{
+		addedNodes: [{
+			nodeType: 1,
+			getAttribute() { return null; },
+			querySelector(selector) {
+				selectorCalls++;
+				return selector === '[data-hssb-browser-descriptor]' ? anchor : null;
+			},
+		}],
+	}]);
+	assert.strictEqual(selectorCalls, 1, 'container mutation check should query descriptor selector once');
+	assert.strictEqual(queryCalls, 3, 'nested descriptor mutation must update browser URL links');
+}());
+
 console.log('Browser URL smoke passed.');

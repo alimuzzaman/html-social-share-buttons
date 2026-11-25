@@ -5,8 +5,7 @@ actions and optional social profile/contact links. Its frontend is
 server-rendered HTML and CSS, icon assets are served locally, and the plugin
 adds no frontend tracking scripts.
 
-The current branch prepares 3.5.0 with optional native device sharing, a Copy link fallback, and expanded PHP runtime coverage. Existing sites retain their current output unless they enable the new action.
-See the [3.5.0 implementation plan](docs/reviews/2026-11-11-release-3.5.0-plan.md) and its implementation record for validation status.
+The current release branch (`3.5.1`) builds on 3.5.0 (optional Native share, Copy link fallback, and expanded PHP runtime coverage) with layout, `the_content` loop/feed guards, metabox cleanup, frontend JS scoping, dead-asset removal, and WordPress.org listing fixes. Existing sites retain their current output unless optional features are enabled.
 
 ## Features
 

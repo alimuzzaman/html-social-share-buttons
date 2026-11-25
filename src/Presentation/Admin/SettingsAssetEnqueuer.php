@@ -47,7 +47,7 @@ final class SettingsAssetEnqueuer {
 
 	private function enqueueSettingsPage() {
 		$adminStylePath = $this->pluginRoot . '/assets/admin.css';
-		$adminStyleVersion = file_exists( $adminStylePath ) ? filemtime( $adminStylePath ) : $this->config->version();
+		$adminStyleVersion = $this->fileVersion( $adminStylePath );
 		wp_enqueue_style(
 			$this->config->adminSettingsStyleHandle(),
 			plugins_url( 'assets/admin.css', $this->pluginFile ),
@@ -59,7 +59,7 @@ final class SettingsAssetEnqueuer {
 			$this->config->buttonAppearanceStyleHandle(),
 			$this->config->buttonAppearanceStyleUrl(),
 			array( $this->config->adminSettingsStyleHandle() ),
-			file_exists( $appearanceStylePath ) ? filemtime( $appearanceStylePath ) : $this->config->version()
+			$this->fileVersion( $appearanceStylePath )
 		);
 
 		$tokens = $this->adminColorSchemeTokens();
@@ -132,5 +132,16 @@ final class SettingsAssetEnqueuer {
 			'accent_strong' => '#135e96',
 			'accent_light'  => '#72aee6',
 		);
+	}
+
+	private function fileVersion( $adminStylePath ) {
+		if ( file_exists( $adminStylePath ) && function_exists( 'filemtime' ) ) {
+			$modified = filemtime( $adminStylePath );
+			if ( false !== $modified ) {
+				return $modified;
+			}
+		}
+
+		return $this->config->version();
 	}
 }

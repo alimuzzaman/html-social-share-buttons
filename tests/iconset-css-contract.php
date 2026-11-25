@@ -49,3 +49,33 @@ foreach ( $responsive_stylesheets as $relative_path ) {
 
 echo "All icon-set styles prevent fixed mobile rail collisions.\n";
 echo "All icon-set styles distinguish mixed share and profile links.\n";
+
+$horizontal_wrappers = array( 'in_widget', 'in_shortcode', 'in_block', 'in_elementor', 'in_php_function' );
+$class_prefixes = array(
+	'iconset/default/style.css'               => array( '.zmshbt.default.' ),
+	'iconset/flat/style.css'                  => array( '.zmshbt.flat.' ),
+	'iconset/long_shadow/style.css'           => array( '.zmshbt.long-shadows.' ),
+	'iconset/prajin/style.css'                => array( '.zmshbt.prajin.', '.zmshbt.Prajin.' ),
+	'assets/iconsets/bootstrap-solid/style.css' => array( '.zmshbt.bootstrap-solid.' ),
+	'assets/iconsets/tabler-outline/style.css'  => array( '.zmshbt.tabler-outline.' ),
+);
+foreach ( $class_prefixes as $relative_path => $prefixes ) {
+	$css = file_get_contents( __DIR__ . '/../' . $relative_path );
+	foreach ( $prefixes as $prefix ) {
+		foreach ( $horizontal_wrappers as $wrapper ) {
+			$selector = $prefix . $wrapper . ' a';
+			if ( false === $css || false === strpos( $css, $selector ) ) {
+				fwrite( STDERR, sprintf( "Missing horizontal wrapper selector %s in %s\n", $selector, $relative_path ) );
+				exit( 1 );
+			}
+		}
+	}
+}
+echo "All icon-set styles enforce horizontal layout across every inline wrapper.\n";
+
+$native_css = file_get_contents( __DIR__ . '/../assets/frontend/native-share.css' );
+if ( false === $native_css || false === strpos( $native_css, '.zmshbt [hidden]{display:none!important}' ) ) {
+	fwrite( STDERR, "Missing [hidden] specificity rule in assets/frontend/native-share.css\n" );
+	exit( 1 );
+}
+echo "Native share stylesheet preserves [hidden] display:none specificity.\n";

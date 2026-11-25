@@ -52,10 +52,19 @@ final class ShareContextFactory {
 	public function createPage() {
 		return new ShareContext(
 			$this->pagePermalink(),
-			$this->extensions->shareTitle( get_the_title() ),
+			$this->extensions->shareTitle( $this->pageTitle() ),
 			get_bloginfo( 'description' ),
-			$this->imageUrl( $this->postId( 0 ) )
+			''
 		);
+	}
+
+	private function pageTitle() {
+		$title = wp_get_document_title();
+		if ( '' !== $title ) {
+			return html_entity_decode( $title, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		}
+
+		return get_bloginfo( 'name' );
 	}
 
 	private function postId( $contextPostId ) {

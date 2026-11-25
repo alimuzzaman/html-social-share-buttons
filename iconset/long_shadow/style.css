@@ -30,7 +30,7 @@
 	right: 0;
 }
 
-.zmshbt.long-shadows.in_widget a{
+.zmshbt.long-shadows.in_widget a,.zmshbt.long-shadows.in_shortcode a,.zmshbt.long-shadows.in_block a,.zmshbt.long-shadows.in_elementor a,.zmshbt.long-shadows.in_php_function a{
 	display:inline-block;
 	margin: 5px;
 }

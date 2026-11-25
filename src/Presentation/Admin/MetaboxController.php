@@ -44,18 +44,21 @@ final class MetaboxController {
 	}
 
 	public function save( $postId ) {
-		if ( ! isset( $_POST[ $this->config->metaboxNonceField() ] ) ) {
+		$nonceField = $this->config->metaboxNonceField();
+		if ( ! isset( $_POST[ $nonceField ] ) || ! is_string( $_POST[ $nonceField ] ) ) {
 			return $postId;
 		}
-		$nonce = sanitize_text_field( wp_unslash( $_POST[ $this->config->metaboxNonceField() ] ) );
+		$nonce = sanitize_text_field( wp_unslash( $_POST[ $nonceField ] ) );
 		if ( ! wp_verify_nonce( $nonce, $this->config->metaboxNonceAction() ) ) {
 			return $postId;
 		}
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $postId ) ) {
 			return $postId;
 		}
 
-		$postType = isset( $_POST['post_type'] ) ? sanitize_key( wp_unslash( $_POST['post_type'] ) ) : '';
+		$postType = ( isset( $_POST['post_type'] ) && is_string( $_POST['post_type'] ) )
+			? sanitize_key( wp_unslash( $_POST['post_type'] ) )
+			: '';
 		if ( 'page' === $postType ) {
 			if ( ! current_user_can( 'edit_page', $postId ) ) {
 				return $postId;
@@ -64,10 +67,15 @@ final class MetaboxController {
 			return $postId;
 		}
 
-		$value = isset( $_POST[ $this->config->disabledMetaKey() ] )
-			? sanitize_text_field( wp_unslash( $_POST[ $this->config->disabledMetaKey() ] ) )
-			: false;
-		update_post_meta( $postId, $this->config->disabledMetaKey(), $value );
+		$metaKey  = $this->config->disabledMetaKey();
+		$disabled = ( isset( $_POST[ $metaKey ] ) && is_string( $_POST[ $metaKey ] ) )
+			? sanitize_text_field( wp_unslash( $_POST[ $metaKey ] ) )
+			: '';
+		if ( 'on' === $disabled ) {
+			update_post_meta( $postId, $metaKey, 'on' );
+		} else {
+			delete_post_meta( $postId, $metaKey );
+		}
 
 		return $postId;
 	}

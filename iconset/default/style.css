@@ -30,7 +30,7 @@
 	right: 0;
 }
 
-.zmshbt.default.in_widget a, .zmshbt.default.in_shortcode a{
+.zmshbt.default.in_widget a, .zmshbt.default.in_shortcode a, .zmshbt.default.in_block a, .zmshbt.default.in_elementor a, .zmshbt.default.in_php_function a{
 	display:inline-block;
 	margin: 5px;
 }

@@ -1,6 +1,14 @@
 HTML Social Share Buttons historical changelog
 
-= 3.5.0 =
+= 3.5.1 - 2026-11-25 =
+* **FIX**: Render horizontal inline-block layouts consistently for legacy icon sets in Block, Elementor, Shortcode (`long-shadows`), and PHP function wrappers, and add `[hidden]` CSS specificity for paired Native + Copy buttons.
+* **FIX**: Restrict automatic `the_content` placement strictly to main loop singular/front requests (skipping feeds, embeds, and secondary queries) and delete unchecked metabox post meta while skipping revisions.
+* **FIX**: Resolve document titles without stray post featured images on page-level floating bars, and omit `target="_blank"` on `mailto:` share buttons.
+* **SECURITY**: Harden Settings API `$_POST` sanitization, AJAX string checks, and metabox POST guards, and remove the dead external `tonicons.com` link from the admin footer.
+* **IMPROVEMENT**: Scope frontend `MutationObserver` callbacks, skip `<button>` elements in browser-URL updates, deduplicate shared clipboard DOM nodes and timers, remove unused legacy images, and refresh widget/listing metadata.
+* **COMPATIBILITY**: Guard optional/host-restricted PHP functions (`filemtime`, `file_get_contents`, `json_decode`, `json_encode`, and regex ID parsing without `ctype`) and expand automated PHP 7.0–8.5 and `disable_functions` test coverage.
+
+= 3.5.0 - 2026-11-12 =
 * FEATURE: Added off-by-default Native share with a device sharing menu and Copy link/direct-link fallback.
 * IMPROVEMENT: Added conditional local native-sharing assets and preserved explicit/custom/loop URL targets.
 * COMPATIBILITY: Added PHP 8.2/8.4 syntax lanes and PHP 8.4/8.5 WordPress runtime lanes.

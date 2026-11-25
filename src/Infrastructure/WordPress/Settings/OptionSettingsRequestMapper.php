@@ -15,6 +15,20 @@ final class OptionSettingsRequestMapper {
 		'show_before_post' => Placement::BEFORE_CONTENT,
 		'show_after_post'  => Placement::AFTER_CONTENT,
 	);
+	private $coreNetworkKeys = array(
+		'facebook',
+		'x',
+		'twitter',
+		'linkedin',
+		'pinterest',
+		'telegram',
+		'bluesky',
+		'whatsapp',
+		'reddit',
+		'copy',
+		'native',
+		'mail',
+	);
 
 	public function toCanonical( array $input ) {
 		$placements = array();
@@ -88,78 +102,7 @@ final class OptionSettingsRequestMapper {
 	}
 
 	public function toStoredSubmission( Settings $settings, array $input ) {
-		$sanitized = array();
-		$literalFields = array(
-			'icons',
-			'show_left',
-			'show_right',
-			'show_before_post',
-			'show_after_post',
-		);
-		$booleanFields = array(
-			'g_analytics'     => $settings->analyticsEnabled(),
-			'auto_hide_btn'   => $settings->autoHideEnabled(),
-			'use_port'        => $settings->preserveUrlPort(),
-			'nofollow'        => $settings->noFollow(),
-			'use_browser_url' => $settings->useBrowserUrl(),
-		);
-		$audienceFields = array(
-			'show_for_current_user',
-			'show_for_logged_in_user',
-			'show_for_logged_out_user',
-		);
-		$placementStates = $settings->placements();
-
-		foreach ( $input as $key => $value ) {
-			if ( 'show_in' === $key && is_array( $value ) ) {
-				foreach ( $value as $storedPlacement => $enabled ) {
-					$canonicalPlacement = isset( $this->placements[ $storedPlacement ] )
-						? $this->placements[ $storedPlacement ]
-						: null;
-					if ( $enabled && ( null === $canonicalPlacement || ! empty( $placementStates[ $canonicalPlacement ] ) ) ) {
-						$sanitized['show_in'][ $storedPlacement ] = '1';
-					}
-				}
-			} elseif ( 'share_templates' === $key && is_array( $value ) ) {
-				$sanitized['share_templates'] = $settings->shareTemplates();
-			} elseif ( 'profile_links' === $key && is_array( $value ) ) {
-				$profileLinks = $settings->profileLinks();
-				if ( isset( $profileLinks['x'] ) && array_key_exists( 'twitter', $value ) && ! array_key_exists( 'x', $value ) ) {
-					$profileLinks['twitter'] = $profileLinks['x'];
-					unset( $profileLinks['x'] );
-				}
-				if ( ! empty( $profileLinks ) ) {
-					$sanitized['profile_links'] = $profileLinks;
-				}
-			} elseif ( 'profile_link_placements' === $key && is_array( $value ) ) {
-				$placementModes = array();
-				foreach ( $this->placements as $storedPlacement => $canonicalPlacement ) {
-					if ( 'none' === $settings->profileLinkMode( $canonicalPlacement ) ) {
-						$placementModes[ $storedPlacement ] = 'none';
-					}
-				}
-				if ( ! empty( $placementModes ) ) {
-					$sanitized['profile_link_placements'] = $placementModes;
-				}
-			} elseif ( in_array( $key, $audienceFields, true ) ) {
-				$sanitized[ $key ] = $this->audienceInput( $input, $key );
-			} elseif ( 'title' === $key ) {
-				$sanitized['title'] = $settings->title();
-			} elseif ( 'excludes' === $key ) {
-				$sanitized['excludes'] = $settings->excludedContent();
-			} elseif ( 'iconset' === $key ) {
-				$sanitized['iconset'] = sanitize_key( $value );
-			} elseif ( 'button_appearance' === $key ) {
-				$sanitized['button_appearance'] = $settings->buttonAppearance();
-			} elseif ( in_array( $key, $literalFields, true ) ) {
-				$sanitized[ $key ] = $value;
-			} elseif ( isset( $booleanFields[ $key ] ) && $booleanFields[ $key ] ) {
-				$sanitized[ $key ] = true;
-			} elseif ( ! array_key_exists( $key, $booleanFields ) && isset( $input[ $key ] ) && $input[ $key ] ) {
-				$sanitized[ $key ] = true;
-			}
-		}
-		return $sanitized;
+		return $this->mapStoredSubmission( $settings, $input, false );
 	}
 
 	/**
@@ -191,14 +134,13 @@ final class OptionSettingsRequestMapper {
 		}
 
 		$placementKeys = array_keys( $this->placements );
-		$networkKeys = array( 'facebook', 'x', 'twitter', 'linkedin', 'pinterest', 'telegram', 'bluesky', 'whatsapp', 'reddit', 'copy', 'native', 'mail' );
 		$this->removeOwnedNestedKeys( $replacement, 'show_in', $placementKeys );
 		$this->removeOwnedNestedKeys( $replacement, 'profile_link_placements', $placementKeys );
-		$this->removeOwnedNestedKeys( $replacement, 'icons', $networkKeys );
-		$this->removeOwnedNestedKeys( $replacement, 'share_templates', $networkKeys );
-		$this->removeOwnedNestedKeys( $replacement, 'profile_links', $networkKeys );
+		$this->removeOwnedNestedKeys( $replacement, 'icons', $this->coreNetworkKeys );
+		$this->removeOwnedNestedKeys( $replacement, 'share_templates', $this->coreNetworkKeys );
+		$this->removeOwnedNestedKeys( $replacement, 'profile_links', $this->coreNetworkKeys );
 
-		foreach ( $this->toStoredSubmission( $settings, $input ) as $key => $value ) {
+		foreach ( $this->mapStoredSubmission( $settings, $input, true ) as $key => $value ) {
 			if ( is_array( $value ) && isset( $replacement[ $key ] ) && is_array( $replacement[ $key ] ) ) {
 				$replacement[ $key ] = array_replace( $replacement[ $key ], $value );
 			} else {
@@ -207,6 +149,158 @@ final class OptionSettingsRequestMapper {
 		}
 
 		return $replacement;
+	}
+
+	private function mapStoredSubmission( Settings $settings, array $input, $strictAdmin ) {
+		$sanitized = array();
+		$booleanFields = array(
+			'g_analytics'     => $settings->analyticsEnabled(),
+			'auto_hide_btn'   => $settings->autoHideEnabled(),
+			'use_port'        => $settings->preserveUrlPort(),
+			'nofollow'        => $settings->noFollow(),
+			'use_browser_url' => $settings->useBrowserUrl(),
+		);
+		$audienceFields = array(
+			'show_for_current_user',
+			'show_for_logged_in_user',
+			'show_for_logged_out_user',
+		);
+		$placementStates = $settings->placements();
+		$placementShapes = $settings->placementShapes();
+
+		foreach ( $input as $key => $value ) {
+			if ( 'show_in' === $key ) {
+				if ( is_array( $value ) ) {
+					foreach ( $value as $storedPlacement => $enabled ) {
+						if ( ! is_string( $storedPlacement ) || 1 !== preg_match( '/^[a-z0-9_-]+$/i', $storedPlacement ) ) {
+							continue;
+						}
+						$canonicalPlacement = isset( $this->placements[ $storedPlacement ] )
+							? $this->placements[ $storedPlacement ]
+							: null;
+						if ( $strictAdmin && null === $canonicalPlacement ) {
+							continue;
+						}
+						if ( $enabled && ( null === $canonicalPlacement || ! empty( $placementStates[ $canonicalPlacement ] ) ) ) {
+							$sanitized['show_in'][ $storedPlacement ] = '1';
+						}
+					}
+				}
+			} elseif ( 'icons' === $key ) {
+				if ( is_array( $value ) ) {
+					$icons = $this->sanitizeIcons( $value, $strictAdmin );
+					if ( ! empty( $icons ) ) {
+						$sanitized['icons'] = $icons;
+					}
+				}
+			} elseif ( 'share_templates' === $key ) {
+				if ( is_array( $value ) ) {
+					$sanitized['share_templates'] = $settings->shareTemplates();
+				}
+			} elseif ( 'profile_links' === $key ) {
+				if ( is_array( $value ) ) {
+					$profileLinks = $settings->profileLinks();
+					if ( isset( $profileLinks['x'] ) && array_key_exists( 'twitter', $value ) && ! array_key_exists( 'x', $value ) ) {
+						$profileLinks['twitter'] = $profileLinks['x'];
+						unset( $profileLinks['x'] );
+					}
+					if ( ! empty( $profileLinks ) ) {
+						$sanitized['profile_links'] = $profileLinks;
+					}
+				}
+			} elseif ( 'profile_link_placements' === $key ) {
+				if ( is_array( $value ) ) {
+					$placementModes = array();
+					foreach ( $this->placements as $storedPlacement => $canonicalPlacement ) {
+						if ( 'none' === $settings->profileLinkMode( $canonicalPlacement ) ) {
+							$placementModes[ $storedPlacement ] = 'none';
+						}
+					}
+					if ( ! empty( $placementModes ) ) {
+						$sanitized['profile_link_placements'] = $placementModes;
+					}
+				}
+			} elseif ( in_array( $key, $audienceFields, true ) ) {
+				$sanitized[ $key ] = $this->audienceInput( $input, $key );
+			} elseif ( 'title' === $key ) {
+				$sanitized['title'] = $settings->title();
+			} elseif ( 'excludes' === $key ) {
+				$sanitized['excludes'] = $settings->excludedContent();
+			} elseif ( 'iconset' === $key ) {
+				if ( $strictAdmin ) {
+					$sanitized['iconset'] = $settings->iconSetId();
+				} else {
+					$iconSet = is_scalar( $value ) ? sanitize_key( (string) $value ) : '';
+					$sanitized['iconset'] = '' !== $iconSet ? $iconSet : $settings->iconSetId();
+				}
+			} elseif ( 'iconset_type' === $key ) {
+				$sanitized['iconset_type'] = $strictAdmin
+					? $settings->defaultIconShape()
+					: $this->sanitizeShape( $value, $settings->defaultIconShape() );
+			} elseif ( 'button_appearance' === $key ) {
+				$sanitized['button_appearance'] = $settings->buttonAppearance();
+			} elseif ( isset( $this->placements[ $key ] ) ) {
+				$canonicalPlacement = $this->placements[ $key ];
+				$fallbackShape = isset( $placementShapes[ $canonicalPlacement ] )
+					? $placementShapes[ $canonicalPlacement ]
+					: $settings->defaultIconShape();
+				$sanitized[ $key ] = $strictAdmin
+					? $fallbackShape
+					: $this->sanitizeShape( $value, $fallbackShape );
+			} elseif ( isset( $booleanFields[ $key ] ) ) {
+				if ( $booleanFields[ $key ] ) {
+					$sanitized[ $key ] = true;
+				}
+			} elseif ( ! $strictAdmin && is_string( $key ) && 1 === preg_match( '/^[a-z0-9_-]+$/i', $key ) && isset( $input[ $key ] ) && $input[ $key ] ) {
+				$sanitized[ $key ] = true;
+			}
+		}
+
+		return $sanitized;
+	}
+
+	private function sanitizeShape( $value, $fallback ) {
+		if ( ! is_scalar( $value ) ) {
+			return $fallback;
+		}
+		$shape = trim( (string) $value );
+		if ( '' === $shape || 1 !== preg_match( '/^[a-z0-9_-]+$/i', $shape ) ) {
+			return $fallback;
+		}
+
+		return strtolower( $shape );
+	}
+
+	private function sanitizeIcons( array $icons, $strictAdmin ) {
+		$sanitized = array();
+		foreach ( $icons as $networkKey => $networkValue ) {
+			if ( ! is_string( $networkKey ) || 1 !== preg_match( '/^[a-z0-9_-]+$/i', $networkKey ) ) {
+				continue;
+			}
+			$cleanKey = strtolower( $networkKey );
+			if ( $strictAdmin ) {
+				if ( ! in_array( $cleanKey, $this->coreNetworkKeys, true ) ) {
+					continue;
+				}
+				if ( is_bool( $networkValue ) || 0 === $networkValue || 1 === $networkValue || in_array( $networkValue, array( '0', '1', 'on' ), true ) ) {
+					$sanitized[ $cleanKey ] = $networkValue;
+				}
+				continue;
+			}
+
+			if ( is_bool( $networkValue ) || is_int( $networkValue ) ) {
+				$sanitized[ $cleanKey ] = $networkValue;
+			} elseif ( is_string( $networkValue ) ) {
+				$cleaned = function_exists( 'sanitize_text_field' )
+					? sanitize_text_field( $networkValue )
+					: trim( (string) preg_replace( '/<(script|style)\b[^>]*>.*?<\/\1>|<[^>]*>/is', '', $networkValue ) );
+				if ( '' !== $cleaned || '' === trim( $networkValue ) ) {
+					$sanitized[ $cleanKey ] = $cleaned;
+				}
+			}
+		}
+
+		return $sanitized;
 	}
 
 	private function removeOwnedNestedKeys( array &$stored, $field, array $ownedKeys ) {

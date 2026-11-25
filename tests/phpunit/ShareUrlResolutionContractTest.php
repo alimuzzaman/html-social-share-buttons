@@ -197,6 +197,9 @@ final class ShareUrlResolutionContractTest extends WP_UnitTestCase {
 		$this->assertSame( $title, $decoded['reddit']['title'] );
 		$this->assertSame( array( 'source' => 'all' ), $decoded['copy'] );
 		$this->assertStringContainsString( "<a class='copy' href='" . $permalink . "' data-hssb-copy-link='1'", $output );
+		$this->assertStringContainsString( "<a class='mail' href='mailto:", $output );
+		$this->assertStringNotContainsString( "<a class='mail' target='_blank'", $output );
+		$this->assertStringContainsString( "<a class='facebook' target='_blank' href='", $output );
 		$this->assertSame( $title, $decoded['mail']['subject'] );
 		$this->assertSame( $permalink, $decoded['mail']['body'] );
 	}

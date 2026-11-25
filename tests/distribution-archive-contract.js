@@ -82,6 +82,7 @@ const forbidden = [
 	// directory. The manifests deliberately resolve them from iconset/ so
 	// their historical URLs, filenames, and styling remain intact.
 	/^html-social-share-buttons\/assets\/iconsets\/(?:default|flat|long-shadows|prajin)\//,
+	/^html-social-share-buttons\/assets\/image\//,
 	/^html-social-share-buttons\/(?:actions|block-integration|elementor-integration|filters|form|function|iconsets|interfaces|metabox|schemas|settings_page|share-templates|shortcode|vc-integration|widget)\.php$/,
 	/^html-social-share-buttons\/src\/Compatibility\/Legacy\/(?:Admin|Bootstrap|Global|Hook|IconSet|Integration|Network|Rendering|Runtime)\//,
 ];

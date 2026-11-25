@@ -57,7 +57,7 @@ final class ExcludedContentLookup {
 	}
 
 	private function findPublishedPost( $identifier ) {
-		if ( ctype_digit( (string) $identifier ) ) {
+		if ( 1 === preg_match( '/\A[0-9]+\z/', (string) $identifier ) ) {
 			$post = get_post( absint( $identifier ) );
 
 			return $this->isSupportedPublishedPost( $post ) ? $post : null;

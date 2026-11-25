@@ -30,15 +30,23 @@ jobs:
         include:
           - php: '7.0'
             composer: 'v2.2'
+          - php: '7.1'
+            composer: 'v2.2'
+          - php: '7.2'
+            composer: 'v2'
+          - php: '7.3'
+            composer: 'v2'
           - php: '7.4'
             composer: 'v2'
           - php: '8.0'
             composer: 'v2'
+          - php: '8.1'
+            composer: 'v2'
           - php: '8.2'
             composer: 'v2'
-          - php: '8.4'
-            composer: 'v2'
           - php: '8.3'
+            composer: 'v2'
+          - php: '8.4'
             composer: 'v2'
           - php: '8.5'
             composer: 'v2'
@@ -62,6 +70,17 @@ jobs:
             -not -path './vendor/*' -not -path './node_modules/*' -not -path './.git/*' \
             -not -path './research/*' \
             -not -path './tests/phpunit/*' | sort)
+      - name: Check PHP 7.0-8.5 static compatibility and deprecations
+        run: |
+          php tests/php-compatibility-contract.php
+          php tests/php-compatibility-selftest.php
+      - name: Check PHP runtime diagnostics under E_ALL
+        run: php tests/php-runtime-compat-smoke.php
+      - name: Check host disable_functions compatibility
+        run: |
+          php tests/disabled-functions-contract.php
+          php tests/disabled-functions-selftest.php
+          php tests/disabled-functions-runtime.php
 
   js:
     name: JavaScript and contracts
@@ -211,6 +230,12 @@ jobs:
           wp eval-file tests/support/support-floor-prepare.php --path="$WP_ROOT"
           wp eval-file tests/support/support-floor-assert.php --path="$WP_ROOT"
           wp eval-file tests/support/runtime-diagnostics.php --path="$WP_ROOT"
+      - name: Verify WordPress runtime under disabled functions
+        env:
+          WP_ROOT: ${{ runner.temp }}/wordpress
+        run: |
+          disabled_funcs="$(php -r "require 'tests/support/disabled-functions-profiles.php'; echo implode(',', hssb_disabled_functions_wordpress_runtime());")"
+          php -d "disable_functions=$disabled_funcs" -d error_reporting=E_ALL -d display_errors=1 tests/support/disabled-functions-wp-runtime.php --wp-root="$WP_ROOT"
       - name: Install the WordPress PHPUnit harness
         if: matrix.test-library != ''
         env:

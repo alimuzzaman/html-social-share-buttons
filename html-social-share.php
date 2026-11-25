@@ -2,9 +2,9 @@
 /*
 Plugin Name: HTML Social Share Buttons
 Plugin URI: https://wordpress.org/plugins/html-social-share-buttons/
-Description: HTML + CSS share buttons and profile links with blocks, builders, local icons, and no frontend JavaScript by default.
+Description: Lightweight HTML + CSS share buttons, profile links, and optional native share with local icons and zero frontend JS by default.
 Author: Alimuzzaman Alim
-Version: 3.5.0
+Version: 3.5.1
 Author URI: https://alim.dev
 Text Domain: html-social-share-buttons
 Domain Path: /languages

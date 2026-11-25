@@ -74,9 +74,10 @@ final class HtmlRenderer {
 				__( 'Share on %s', 'html-social-share-buttons' ),
 				$button->network()->label()
 			);
+			$target = 'mail' !== $button->network()->id() ? "' target='_blank' href='" : "' href='";
 			$output .= "<a class='" .
 				esc_attr( $this->cssClass( $button->network() ) ) .
-			"' target='_blank' href='" .
+				$target .
 				$this->buttonUrl( $button ) .
 				$this->browserDescriptorAttributes( $button ) .
 				"' rel='" .
@@ -178,7 +179,7 @@ final class HtmlRenderer {
 
 		$json = function_exists( 'wp_json_encode' )
 			? wp_json_encode( $descriptor )
-			: json_encode( $descriptor );
+			: ( function_exists( 'json_encode' ) ? json_encode( $descriptor ) : false );
 		if ( ! is_string( $json ) || '' === $json ) {
 			return '';
 		}

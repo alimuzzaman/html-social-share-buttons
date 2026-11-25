@@ -37,7 +37,14 @@
 }
 .zmshbt.Prajin.in_widget a,
 .zmshbt.prajin.in_widget a,
-.zmshbt.prajin.in_shortcode a{
+.zmshbt.Prajin.in_shortcode a,
+.zmshbt.prajin.in_shortcode a,
+.zmshbt.Prajin.in_block a,
+.zmshbt.prajin.in_block a,
+.zmshbt.Prajin.in_elementor a,
+.zmshbt.prajin.in_elementor a,
+.zmshbt.Prajin.in_php_function a,
+.zmshbt.prajin.in_php_function a{
 	display:inline-block;
 	margin: 5px;
 }

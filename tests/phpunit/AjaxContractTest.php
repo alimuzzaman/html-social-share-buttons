@@ -50,6 +50,57 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 		);
 	}
 
+	public function testSettingsSearchHandlesNonStringQuerySafely(): void {
+		$this->_setRole( 'administrator' );
+		$_POST = array(
+			'nonce' => wp_create_nonce( 'zm_sh_admin' ),
+			'query' => array( 'Contract' ),
+		);
+
+		$response = $this->requestJson( 'zm_sh_search_content' );
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( array(), $response['data'] );
+	}
+
+	public function testSettingsSaveRejectsMaliciousFieldsAndCorruptedIconsetType(): void {
+		$this->_setRole( 'administrator' );
+		$_POST = array(
+			'nonce'    => wp_create_nonce( 'zm_sh_admin' ),
+			'settings' => http_build_query(
+				array(
+					'zm_shbt_fld' => array(
+						'title'            => 'Hardened',
+						'iconset'          => 'unregistered-pack',
+						'iconset_type'     => 'circle',
+						'show_left'        => '<script>alert(1)</script>',
+						'show_in'          => array(
+							'show_left'   => '1',
+							'forged_slot' => '1',
+						),
+						'icons'            => array(
+							'facebook' => '1',
+							'evil'     => '<svg>',
+						),
+						'forged_top_level' => '1',
+					),
+				)
+			),
+		);
+
+		$response = $this->requestJson( 'zm_sh_save_settings' );
+		$stored   = get_option( 'zm_shbt_fld' );
+
+		$this->assertTrue( $response['success'] );
+		$this->assertSame( 'Hardened', $stored['title'] );
+		$this->assertSame( 'bootstrap-solid', $stored['iconset'] );
+		$this->assertSame( 'circle', $stored['iconset_type'] );
+		$this->assertSame( 'circle', $stored['show_left'] );
+		$this->assertSame( array( 'show_left' => '1' ), $stored['show_in'] );
+		$this->assertSame( array( 'facebook' => '1' ), $stored['icons'] );
+		$this->assertArrayNotHasKey( 'forged_top_level', $stored );
+	}
+
 	public function testSettingsSearchRejectsUsersWithoutManageOptions(): void {
 		$this->_setRole( 'subscriber' );
 		$_POST = array(
@@ -271,6 +322,57 @@ final class AjaxContractTest extends WP_Ajax_UnitTestCase {
 		$this->assertSame( 'Flat', $iconSet['name'] );
 		$this->assertSame( array( 'square', 'circle' ), $iconSet['types'] );
 		$this->assertSame( 'Twitter.png', $iconSet['icons']['x']['image'] );
+	}
+
+	public function testIconsetEndpointsRejectNonStringPayloadsSafely(): void {
+		$this->_setRole( 'administrator' );
+		$nonce = wp_create_nonce( 'zm_sh_admin' );
+
+		foreach ( array(
+			'get_iconset'         => 'iconsetId',
+			'get_iconset_details' => 'iconset',
+		) as $action => $field ) {
+			$_POST = array(
+				'nonce' => $nonce,
+				$field  => array( 'default' ),
+			);
+			try {
+				$this->requestRaw( $action );
+				$this->fail( 'Expected WPAjaxDieStopException for non-string ' . $action . ' payload.' );
+			} catch ( WPAjaxDieStopException $exception ) {
+				$this->assertSame( 'iconsetId' === $field ? 'Missing iconset ID' : 'Missing iconset', $exception->getMessage() );
+			}
+		}
+
+		$_POST = array(
+			'nonce'     => $nonce,
+			'iconsetId' => array( 'default' ),
+		);
+		$this->assertSame( 'Missing iconset ID', $this->requestRaw( 'get_iconset_preview' ) );
+	}
+
+	public function testSettingsPageSanitizeAdminAndRenderPageHardening(): void {
+		$this->_setRole( 'administrator' );
+		$settingsPage = \Alimuzzaman\HtmlSocialShareButtons\Compatibility\Legacy\Api\LegacyApi::plugin()->admin();
+		$previousPost = $_POST;
+
+		try {
+			$_POST = array(
+				'option_page' => array( 'zm_shbt_opt' ),
+				'action'      => array( 'update' ),
+			);
+			$sanitized = $settingsPage->sanitizeAdmin( array( 'title' => 'Hardened Title' ) );
+			$this->assertIsArray( $sanitized );
+			$this->assertSame( 'Hardened Title', $sanitized['title'] );
+		} finally {
+			$_POST = $previousPost;
+		}
+
+		ob_start();
+		$settingsPage->renderPage();
+		$rendered = (string) ob_get_clean();
+		$this->assertStringNotContainsString( 'tonicons.com', $rendered );
+		$this->assertStringNotContainsString( 'desin_by', $rendered );
 	}
 
 	private function requestJson( $action ) {
